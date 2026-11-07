@@ -72,3 +72,15 @@ export function parseReportOutput(stdout) {
   }
   return null;
 }
+
+// Drift fixture (scenarios layout, fixtures/tx/drift-replay/<signature>.json): the stored bytes must hash
+// to the stored sha256 and carry the expected signature.
+export function checkTxFixture(fixture, signature, sha256hex) {
+  if (!fixture || typeof fixture !== "object") return { status: "FAIL", detail: `${signature.slice(0, 8)}…: unreadable` };
+  const p = [];
+  if (fixture.signature !== signature) p.push("signature mismatch");
+  if (fixture.network !== "mainnet") p.push(`network ${fixture.network}`);
+  if (typeof fixture.transaction !== "string" || !fixture.transaction) p.push("no transaction bytes");
+  else if (sha256hex(fixture.transaction) !== fixture.sha256) p.push("sha256 does not match bytes");
+  return p.length ? { status: "FAIL", detail: `${signature.slice(0, 8)}…: ${p.join(", ")}` } : { status: "PASS", detail: `${signature.slice(0, 8)}… ok` };
+}

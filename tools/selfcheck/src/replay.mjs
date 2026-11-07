@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // G8 real test: Drift's real attack transactions are flagged, and both devnet scenarios run.
 // Inputs (PENDING until they exist):
+//   fixtures/tx/drift-replay/<signature>.json         both Drift txs (scenarios layout), sha256 must match bytes
 //   packages/cli/package.json "bin.kelvara"            -> node <bin> replay --json [--live] <sig1> <sig2>
 //       prints the session report as JSON on stdout; cached fixtures by default, Helius with --live.
 //   packages/scenarios/package.json "scenario:admin-devnet", "scenario:trap-devnet"
@@ -11,13 +12,25 @@ import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { ROOT, finish, pass, fail, pending, makeRedactor } from "./lib.mjs";
-import { DRIFT_SIGNATURES, evaluateReplay, parseReportOutput } from "./replay-checks.mjs";
+import { createHash } from "node:crypto";
+import { Buffer } from "node:buffer";
+import { DRIFT_SIGNATURES, evaluateReplay, parseReportOutput, checkTxFixture } from "./replay-checks.mjs";
 
 const live = process.env.KELVARA_LIVE === "1" || process.argv.includes("--live");
 const redact = makeRedactor();
 const readJson = (p) => { try { return JSON.parse(readFileSync(path.join(ROOT, p), "utf8")); } catch { return null; } };
 const firstLines = (s, n = 3) => redact(s).trim().split("\n").filter(Boolean).slice(-n).join(" | ").slice(0, 240);
 const checks = [];
+
+// 0. Drift fixtures: real mainnet bytes, cached with their sha256.
+const sha256hex = (b64) => createHash("sha256").update(Buffer.from(b64, "base64")).digest("hex");
+for (const sig of DRIFT_SIGNATURES) {
+  const rel = `fixtures/tx/drift-replay/${sig}.json`;
+  const name = `drift fixture ${sig.slice(0, 8)}`;
+  if (!existsSync(path.join(ROOT, rel))) { checks.push(pending(name, `${rel} not fetched yet`)); continue; }
+  const r = checkTxFixture(readJson(rel), sig, sha256hex);
+  checks.push(r.status === "PASS" ? pass(name, r.detail, `${name} ok`) : fail(name, r.detail));
+}
 
 // 1. Drift replay through the CLI.
 const cliPkg = readJson("packages/cli/package.json");

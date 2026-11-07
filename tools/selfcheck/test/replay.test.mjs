@@ -38,3 +38,16 @@ test("report JSON after log lines is parsed", () => {
   assert.deepEqual(parseReportOutput('fetching...\ncache hit\n{"level":"critical"}\n'), { level: "critical" });
   assert.equal(parseReportOutput("no json here"), null);
 });
+
+test("fixture check verifies signature, network and sha256", async () => {
+  const { checkTxFixture } = await import("../src/replay-checks.mjs");
+  const { createHash } = await import("node:crypto");
+  const { Buffer } = await import("node:buffer");
+  const h = (b64) => createHash("sha256").update(Buffer.from(b64, "base64")).digest("hex");
+  const tx = Buffer.from("not a real tx, hash test only").toString("base64");
+  const good = { signature: "SIG1", network: "mainnet", transaction: tx, sha256: h(tx) };
+  assert.equal(checkTxFixture(good, "SIG1", h).status, "PASS");
+  assert.equal(checkTxFixture({ ...good, sha256: "00" }, "SIG1", h).status, "FAIL");
+  assert.equal(checkTxFixture(good, "SIG2", h).status, "FAIL");
+  assert.equal(checkTxFixture({ ...good, network: "devnet" }, "SIG1", h).status, "FAIL");
+});
