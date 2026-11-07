@@ -1,5 +1,6 @@
 // Turn an analysis into pass / hold / block. Fail closed everywhere.
-import { b58encode, b64decode, wireMessage } from "../shared/codec.js";
+import { parseTransaction } from "@kelvara/core";
+import { b58encode } from "../shared/codec.js";
 import type { SignRequest, WorkerVerdict } from "../shared/protocol.js";
 import { validateReportView, type ReportView } from "../shared/report-view.js";
 import { pickEndpoint, type Network } from "./endpoint.js";
@@ -25,10 +26,20 @@ export type Sha256 = (bytes: Uint8Array) => Promise<Uint8Array>;
 
 export const webSha256: Sha256 = async (bytes) => new Uint8Array(await crypto.subtle.digest("SHA-256", new Uint8Array(bytes)));
 
+/**
+ * The signed message bytes of one base64 wire transaction (legacy, v0, or v1 message-first),
+ * read by the engine's own parser with the same input the engine gets (sw/engine.ts), so the
+ * worker's hashes and the report's hashes agree by construction. Throws on anything the
+ * parser rejects, and the caller blocks.
+ */
+export function wireMessageBytes(tx: string): Uint8Array {
+  return parseTransaction({ base64: tx, kind: "wire" }).messageBytes;
+}
+
 /** Base58 SHA-256 of each transaction's message: what a Ledger shows as the message hash. */
 export async function messageHashes(txs: readonly string[], sha256: Sha256 = webSha256): Promise<string[]> {
   const out: string[] = [];
-  for (const tx of txs) out.push(b58encode(await sha256(wireMessage(b64decode(tx)))));
+  for (const tx of txs) out.push(b58encode(await sha256(wireMessageBytes(tx))));
   return out;
 }
 

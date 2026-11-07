@@ -78,7 +78,7 @@ export class FixtureKey {
     let slot = -1;
     for (let i = 0; i < slots; i++) if (bytesEqual(parsed.staticKeys[i]!, this.publicKey)) slot = i;
     if (slot < 0) return { bytes: out, signed: false };
-    const sig = await this.signBytes(out.subarray(parsed.msgOffset));
+    const sig = await this.signBytes(out.subarray(parsed.msgOffset, parsed.msgEnd));
     out.set(sig, parsed.sigOffset + 64 * slot);
     return { bytes: out, signed: true };
   }

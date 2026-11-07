@@ -71,8 +71,9 @@ export interface WireTx {
   /** Offset of the first signature slot. */
   sigOffset: number;
   sigCount: number;
-  /** Offset of the message (the bytes that get signed). */
+  /** The message (the bytes that get signed) is tx[msgOffset, msgEnd). */
   msgOffset: number;
+  msgEnd: number;
   /** "legacy" or the version number. */
   version: "legacy" | number;
   numRequiredSignatures: number;
@@ -80,8 +81,24 @@ export interface WireTx {
   staticKeys: Uint8Array[];
 }
 
-/** Parse just enough of a wire transaction to find signer slots. Throws on malformed input. */
+/**
+ * Parse just enough of a wire transaction to find signer slots. Throws on malformed input.
+ * v1 (first byte 0x81) is message-first: version, header (3), config mask (u32), blockhash (32),
+ * instruction count (u8), static account count (u8), the accounts, ..., then one signature per
+ * required signer at the end with no count prefix.
+ */
 export function parseWireTx(tx: Uint8Array): WireTx {
+  if (tx[0] === 0x81) {
+    const numRequiredSignatures = tx[1] ?? 0;
+    const keysAt = 1 + 3 + 4 + 32 + 1;
+    const keyCount = tx[keysAt];
+    if (keyCount === undefined) throw new Error("truncated transaction");
+    const sigOffset = tx.length - 64 * numRequiredSignatures;
+    if (numRequiredSignatures < 1 || keysAt + 1 + 32 * keyCount > sigOffset) throw new Error("truncated account keys");
+    const staticKeys: Uint8Array[] = [];
+    for (let i = 0; i < keyCount; i++) staticKeys.push(tx.slice(keysAt + 1 + 32 * i, keysAt + 1 + 32 * (i + 1)));
+    return { sigOffset, sigCount: numRequiredSignatures, msgOffset: 0, msgEnd: sigOffset, version: 1, numRequiredSignatures, staticKeys };
+  }
   const [sigCount, n] = readShortVec(tx, 0);
   const sigOffset = n;
   const msgOffset = sigOffset + 64 * sigCount;
@@ -100,7 +117,7 @@ export function parseWireTx(tx: Uint8Array): WireTx {
   if (at + 32 * keyCount > tx.length) throw new Error("truncated account keys");
   const staticKeys: Uint8Array[] = [];
   for (let i = 0; i < keyCount; i++) staticKeys.push(tx.slice(at + 32 * i, at + 32 * (i + 1)));
-  return { sigOffset, sigCount, msgOffset, version, numRequiredSignatures, staticKeys };
+  return { sigOffset, sigCount, msgOffset, msgEnd: tx.length, version, numRequiredSignatures, staticKeys };
 }
 
 export function bytesEqual(a: Uint8Array, b: Uint8Array): boolean {

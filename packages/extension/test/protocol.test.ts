@@ -4,6 +4,7 @@ import { parseDecision, parseHandshake, parseHookMessage, validateWorkerVerdict 
 import { pickEndpoint, redactUrl } from "../src/sw/endpoint.js";
 import type { EngineLike } from "../src/sw/engine-stub.js";
 import { decide } from "../src/sw/policy.js";
+import { MINIMAL_MESSAGE } from "./helpers.js";
 
 const id = "0123456789abcdef0123456789abcdef";
 const sign = { v: 1, kind: "sign", id, method: "solana:signTransaction", wallet: "W", account: null, chain: null, txs: ["AQID"] };
@@ -45,10 +46,14 @@ describe("codec", () => {
     expect(Array.from(b58decode("Ldp"))).toEqual([1, 2, 3]);
     expect(Array.from(b58decode("LUw"))).toEqual([1, 0, 0]);
   });
-  it("builds a wire tx from a legacy or v0 message", () => {
+  it("builds a wire tx from a legacy, v0 or v1 message", () => {
     expect(Array.from(messageToWireTx(new Uint8Array([2, 0, 0])).slice(0, 1))).toEqual([2]);
     expect(messageToWireTx(new Uint8Array([2, 0, 0])).length).toBe(1 + 128 + 3);
     expect(messageToWireTx(new Uint8Array([0x80, 1, 0, 0])).length).toBe(1 + 64 + 4);
+    // v1: message first, then the signatures, no count prefix
+    const v1 = messageToWireTx(new Uint8Array([0x81, 2, 0, 0]));
+    expect(Array.from(v1.slice(0, 4))).toEqual([0x81, 2, 0, 0]);
+    expect(v1.length).toBe(4 + 128);
   });
   it("copies byte views and refuses strings", () => {
     const a = new Uint8Array([1, 2, 3]);
@@ -61,7 +66,7 @@ describe("codec", () => {
 
 describe("service worker policy", () => {
   // A wire transaction: 1 empty signature + a (minimal) legacy message.
-  const wire = b64encode(messageToWireTx(new Uint8Array([1, 0, 0, 0])));
+  const wire = b64encode(messageToWireTx(MINIMAL_MESSAGE));
   const req = parseHookMessage(JSON.stringify({ ...sign, chain: "solana:devnet", txs: [wire] }))! as never;
   const view = { summary: "", simulation: null, authorizes: null, capabilities: [], preview: [], claims: [], evidence: [] };
   const engine = (level: 0 | 1 | 2 | 3 | 4): EngineLike => ({ analyze: async () => ({ level, title: `L${level}`, ...view }) });

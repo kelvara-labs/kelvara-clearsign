@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { b58decode, b58encode, b64decode, b64encode, parseWireTx } from "../src/bytes.js";
 import { FixtureStandardWallet, makeLegacyProvider } from "../src/providers.js";
@@ -38,6 +39,51 @@ describe("bytes", () => {
       expect(p.numRequiredSignatures).toBe(1);
       expect(p.staticKeys[0]).toEqual(k);
     }
+  });
+});
+
+/** Minimal v1 wire tx: message first (no instructions, empty config), then one 64-byte slot per signer. */
+function v1WireTx(signers: Uint8Array[], extraKeys: Uint8Array[] = []): Uint8Array {
+  const keys = [...signers, ...extraKeys];
+  const msg = [0x81, signers.length, 0, extraKeys.length, 0, 0, 0, 0, ...new Array(32).fill(7), 0, keys.length, ...keys.flatMap((k) => [...k])];
+  return Uint8Array.from([...msg, ...new Array(64 * signers.length).fill(0)]);
+}
+
+describe("v1 (message-first) wire transactions", () => {
+  it("parses signer slots at the end and the message before them", () => {
+    const k = new Uint8Array(32).fill(9);
+    const tx = v1WireTx([new Uint8Array(32).fill(1), k], [new Uint8Array(32)]);
+    const p = parseWireTx(tx);
+    expect(p).toMatchObject({ version: 1, numRequiredSignatures: 2, sigCount: 2, msgOffset: 0, msgEnd: tx.length - 128, sigOffset: tx.length - 128 });
+    expect(p.staticKeys).toHaveLength(3);
+    expect(p.staticKeys[1]).toEqual(k);
+  });
+  it("parses the recorded Kamino v1 mainnet transaction", () => {
+    const root = new URL("../../fixtures/", import.meta.url);
+    const manifest = JSON.parse(readFileSync(new URL("tx/manifest.json", root), "utf8")) as { fixtures: { path: string; slug: string }[] };
+    const entry = manifest.fixtures.find((f) => f.slug === "kamino-lending" && b64decode(JSON.parse(readFileSync(new URL(f.path, root), "utf8")).transaction)[0] === 0x81)!;
+    const fx = JSON.parse(readFileSync(new URL(entry.path, root), "utf8")) as { transaction: string; signature: string };
+    const tx = b64decode(fx.transaction);
+    const p = parseWireTx(tx);
+    expect(p.version).toBe(1);
+    expect(b58encode(tx.subarray(p.sigOffset, p.sigOffset + 64))).toBe(fx.signature); // first slot = the tx signature
+  });
+  it("the wallet signs its v1 slot over the message prefix, other bytes untouched", async () => {
+    const key = await FixtureKey.generate();
+    const tx = v1WireTx([new Uint8Array(32).fill(3), key.publicKey]);
+    const { bytes, signed } = await key.signWireTx(tx);
+    expect(signed).toBe(true);
+    const p = parseWireTx(bytes);
+    expect(bytes.subarray(0, p.sigOffset + 64)).toEqual(tx.subarray(0, p.sigOffset + 64));
+    const pub = await crypto.subtle.importKey("raw", key.publicKey as BufferSource, { name: "Ed25519" }, false, ["verify"]);
+    const sig = bytes.slice(p.sigOffset + 64, p.sigOffset + 128);
+    expect(await crypto.subtle.verify({ name: "Ed25519" }, pub, sig as BufferSource, bytes.subarray(0, p.msgEnd) as BufferSource)).toBe(true);
+  });
+  it("a truncated v1 transaction is not signed", async () => {
+    const key = await FixtureKey.generate();
+    const tx = v1WireTx([key.publicKey]).subarray(0, 60);
+    expect(() => parseWireTx(tx)).toThrow();
+    expect((await key.signWireTx(tx)).signed).toBe(false);
   });
 });
 
