@@ -2,9 +2,9 @@
 // G10 security: nothing leaves the browser except Helius RPC and APIs.
 // Inputs (PENDING until they exist); every one present is checked:
 //   dist/kelvara-signguard.zip          the release zip: hosts, eval/remote code, permissions, content scripts offline,
-//                                       license key embedded, and no HELIUS_API_KEY (value from .env, never printed)
-//   packages/extension/dist/            the unpacked build: the same checks except the key (the dev build may prefill
-//                                       it from .env; PLAN.md 1a), so "no API key in zip" stays PENDING until the zip exists
+//                                       no HELIUS_API_KEY (value from .env, never printed)
+//   packages/extension/dist/            the unpacked build: the same security and secret checks.
+//                                       "no API key in zip" stays PENDING until the zip exists
 // Override for spot checks: --zip <file> and/or --dir <dir> (paths relative to the repo root or absolute).
 // Always runs: dependency licenses of packages/core and packages/extension, read offline from node_modules.
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
@@ -12,7 +12,7 @@ import path from "node:path";
 import { ROOT, finish, pass, fail, pending, secretValues } from "./lib.mjs";
 import { readZip } from "./zip.mjs";
 import {
-  checkHosts, checkNoSecrets, checkContentScriptsOffline, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded, checkDependencyLicenses,
+  checkHosts, checkNoSecrets, checkContentScriptsOffline, checkNoRemoteCode, checkPermissions, checkDependencyLicenses,
   checkNoPageControl, checkPassThroughUnwritable
 } from "./security-checks.mjs";
 
@@ -43,21 +43,9 @@ const inert = existsSync(INERT_PATH) ? JSON.parse(readFileSync(INERT_PATH, "utf8
 const asCheck = (name, r, summary) => (r.status === "PASS" ? pass(name, r.detail, summary) : fail(name, r.detail));
 
 const checks = [];
-const pk = existsSync(path.join(ROOT, "config/license-public-key.txt"))
-  ? readFileSync(path.join(ROOT, "config/license-public-key.txt"), "utf8").trim() : null;
-
-// PENDING vs FAIL: a check for a feature that is not built yet reports PENDING with the reason; anything already
-// checkable (foreign hosts, eval, permissions, network in content scripts, a Helius key anywhere) FAILs at once.
-// The offline license check (X4) counts as built once packages/extension/src has a file whose path names "license".
+// Product reports are license-free by explicit user requirement (X12); embedding a product license key
+// is no longer a gate invariant. Dependency license compliance below remains mandatory.
 const EXT_SRC = path.join(ROOT, "packages/extension/src");
-const licenseFeatureBuilt = (() => {
-  if (!existsSync(EXT_SRC)) return false;
-  const walk = (d) => readdirSync(d).some((name) => {
-    const p = path.join(d, name);
-    return statSync(p).isDirectory() ? walk(p) : /licen[cs]e/i.test(path.relative(EXT_SRC, p));
-  });
-  return walk(EXT_SRC);
-})();
 const secrets = secretValues();
 
 // passThrough skips the hold; only the service worker may read it and nothing may write it (V6, coordinator ask).
@@ -80,10 +68,6 @@ function bundleChecks(bundle, label) {
   checks.push(asCheck(n("permissions"), checkPermissions(manifest), "min perms"));
   checks.push(asCheck(n("content scripts offline"), checkContentScriptsOffline(bundle, manifest), "cs offline"));
   checks.push(asCheck(n("no page control"), checkNoPageControl(bundle, manifest), "no page control"));
-  const lic = checkLicenseKeyEmbedded(bundle, pk);
-  if (lic.status === "FAIL" && pk && !licenseFeatureBuilt) {
-    checks.push(pending(n("license key offline"), "offline license check (X4, M5) not built: no license source in packages/extension/src"));
-  } else checks.push(asCheck(n("license key offline"), lic, "license offline"));
 }
 
 let sawBundle = false;

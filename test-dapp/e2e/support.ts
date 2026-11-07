@@ -292,7 +292,8 @@ export const SEL = {
   modal: "[data-kelvara-modal]",
   level: "[data-kelvara-level]",
   block: '[data-kelvara-action="block"]',
-  signAnyway: '[data-kelvara-action="sign-anyway"]'
+  signAnyway: '[data-kelvara-action="sign-anyway"]',
+  continue: '[data-kelvara-action="continue"]'
 };
 
 /** Extension frames in the page (the report UI lives in one, inside a closed shadow root). */
@@ -342,6 +343,13 @@ export async function armSignAnyway(frame: Frame): Promise<void> {
   const btn = frame.locator(SEL.signAnyway).first();
   await btn.scrollIntoViewIfNeeded();
   await expect(btn, "Sign anyway never armed while fully in view (visibility gate)").toHaveAttribute("data-armed", "true", { timeout: 5_000 });
+}
+
+/** Harmless L0/L1 forwarding uses the same visibility gate as Sign anyway. */
+export async function armContinue(frame: Frame): Promise<void> {
+  const btn = frame.locator(SEL.continue).first();
+  await btn.scrollIntoViewIfNeeded();
+  await expect(btn, "Continue never armed while fully in view").toHaveAttribute("data-armed", "true", { timeout: 5_000 });
 }
 
 /** Hold-to-confirm: press Sign anyway for its data-hold-ms (+ margin), then release. */

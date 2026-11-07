@@ -50,9 +50,13 @@ The specs code against these; nothing else in the UI is assumed.
 - The report UI is a `chrome-extension://<id>/…` frame in the page (inside a closed shadow root
   is fine: Playwright reaches frames, the page cannot).
 - Modal report: an element with `data-kelvara-modal`, visible while the request is held or an L4
-  report is shown. The L1 notice must not carry it.
+  report is shown. L0/L1 also show this full modal and wait for a decision.
 - Level: an element with `data-kelvara-level="L0".."L4"`.
 - Buttons: `data-kelvara-action="block"` and `data-kelvara-action="sign-anyway"`.
+  L0/L1 instead offer `data-kelvara-action="continue"` labelled Continue to wallet, armed with
+  `data-armed="true"` by the same visibility gate. Only a trusted click forwards, once with identical bytes;
+  Block is focused by default and rejects with 4001 without calling the wallet. Full reports have message hashes
+  and no `data-kelvara-limited` marker. Harmless engine levels remain L0/L1 while held.
   At L4 there is no sign-anyway element at all. At L3 Block has focus when the modal opens, a
   plain click on Sign anyway does not sign, and the button carries `data-hold-ms="<n>"`: holding
   the mouse down on it for n ms confirms. At L2 both buttons are present.
