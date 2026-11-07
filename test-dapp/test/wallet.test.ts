@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { b58encode, b64decode, b64encode, parseWireTx } from "../src/bytes.js";
-import { FixtureKey, FixtureWalletCore } from "../src/wallet.js";
+import { b58decode, b58encode, b64decode, b64encode, parseWireTx } from "../src/bytes.js";
+import { FixtureStandardWallet, makeLegacyProvider } from "../src/providers.js";
+import { FixtureKey, FixtureWalletCore, parseAddress } from "../src/wallet.js";
 
 /** Minimal legacy wire tx shape for the parser: n signer slots, keys, one empty blockhash, no instructions. */
 function wireTx(signers: Uint8Array[], extraKeys: Uint8Array[] = [], versioned = false): Uint8Array {
@@ -82,5 +83,46 @@ describe("fixture wallet", () => {
     expect(core.log.calls[0]!.signed).toEqual([true]);
     core.reset();
     expect(core.log.count).toBe(0);
+  });
+});
+
+describe("presented account (scenario signer pubkey, no private key)", () => {
+  const SIGNER = "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf";
+
+  it("base58 decode round-trips and parseAddress rejects non-addresses", () => {
+    for (const a of [SIGNER, "11111111111111111111111111111111"]) expect(b58encode(b58decode(a))).toBe(a);
+    expect(parseAddress(SIGNER).publicKey.length).toBe(32);
+    for (const bad of ["", "0OIl", "abc", "1".repeat(45), "z".repeat(44), "1".repeat(31)]) expect(() => parseAddress(bad)).toThrow();
+  });
+
+  it("every path shows the presented address as connected, and the throwaway key again after null", async () => {
+    const core = new FixtureWalletCore(await FixtureKey.generate());
+    const ws = new FixtureStandardWallet(core, "ws-register");
+    const legacy = makeLegacyProvider(core);
+    await ws.features["standard:connect"].connect();
+    await legacy.connect();
+    expect(ws.accounts[0]!.address).toBe(core.key.address);
+    core.presentAccount(SIGNER);
+    expect(ws.accounts[0]!.address).toBe(SIGNER);
+    expect(ws.accounts[0]!.publicKey).toEqual(b58decode(SIGNER));
+    expect(ws.accounts[0]).toBe(ws.accounts[0]); // stable object per address
+    expect(legacy.publicKey!.toBase58()).toBe(SIGNER);
+    expect(legacy.publicKey!.toBytes()).toEqual(b58decode(SIGNER));
+    expect((await legacy.connect()).publicKey.toBase58()).toBe(SIGNER);
+    core.presentAccount(null);
+    expect(ws.accounts[0]!.address).toBe(core.key.address);
+    expect(legacy.publicKey!.toBase58()).toBe(core.key.address);
+    expect(() => core.presentAccount("not-an-address")).toThrow();
+    expect(core.account.address).toBe(core.key.address);
+  });
+
+  it("signs nothing for a presented signer: bytes come back unchanged, the call is counted", async () => {
+    const core = new FixtureWalletCore(await FixtureKey.generate());
+    core.presentAccount(SIGNER);
+    const tx = wireTx([b58decode(SIGNER)]);
+    const [out] = await core.signTransactions("ws-app-ready", "solana:signTransaction", [tx]);
+    expect(out).toEqual(tx);
+    expect(core.log.count).toBe(1);
+    expect(core.log.calls[0]!.signed).toEqual([false]);
   });
 });

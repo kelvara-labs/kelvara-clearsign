@@ -1,7 +1,7 @@
 // Fixture wallet core: a throwaway Ed25519 key and a call log.
 // The key is made fresh on every page load with WebCrypto and never leaves memory.
 // The wallet signs only; it never submits anything and makes no network requests.
-import { b58encode, b64encode, bytesEqual, parseWireTx } from "./bytes.js";
+import { b58decode, b58encode, b64encode, bytesEqual, parseWireTx } from "./bytes.js";
 
 /** Which way the call reached the wallet. */
 export type WalletPath = "ws-register" | "ws-app-ready" | "legacy";
@@ -84,13 +84,42 @@ export class FixtureKey {
   }
 }
 
-/** Shared by all three wallets on the page: one key, one log. */
+/** A public key the wallet shows as its connected account. Only the address: no private key, ever. */
+export interface PresentedAccount {
+  readonly address: string;
+  readonly publicKey: Uint8Array;
+}
+
+/** Parse a base58 Solana address (32 bytes, canonical encoding) or throw. */
+export function parseAddress(address: string): PresentedAccount {
+  if (typeof address !== "string" || !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) throw new Error("account must be a base58 address");
+  const publicKey = b58decode(address);
+  if (publicKey.length !== 32 || b58encode(publicKey) !== address) throw new Error("account must be a 32-byte base58 address");
+  return { address, publicKey };
+}
+
+/** Shared by all three wallets on the page: one key, one log, one connected account. */
 export class FixtureWalletCore {
   log: CallLog = emptyLog();
   private n = 0;
   private listeners = new Set<(log: CallLog) => void>();
+  private presented: PresentedAccount | null = null;
 
   constructor(readonly key: FixtureKey) {}
+
+  /**
+   * The account every wallet path shows as connected: the presented address when one is set
+   * (presentAccount), else this page's throwaway key. The wallet still signs only with its own
+   * key, so a transaction whose signer is a presented address comes back unsigned (signed=false).
+   */
+  get account(): PresentedAccount {
+    return this.presented ?? { address: this.key.address, publicKey: this.key.publicKey };
+  }
+
+  /** Show `address` (base58 pubkey) as the connected account; null goes back to the throwaway key. */
+  presentAccount(address: string | null): void {
+    this.presented = address === null ? null : parseAddress(address);
+  }
 
   onChange(fn: (log: CallLog) => void): void {
     this.listeners.add(fn);

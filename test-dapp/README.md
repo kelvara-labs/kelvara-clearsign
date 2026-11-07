@@ -36,10 +36,13 @@ Types are exported from `test-dapp/src/index.ts` (`TestDappApi`, `SignArgs`, `Si
 | `sign(args)` | never throws; resolves `{ ok: true, signed: string[], signatures? }` or `{ ok: false, error: { name, message, code } }` (a hook rejection is `code: 4001`) |
 | `signMessage(path, text)` | message signing (passes through with a notice) |
 | `calls()` | snapshot `CallLog`: `count` (tx-signing calls that reached the wallet), `byPath`, `calls[]` with `received` (base64, exactly the bytes the wallet got), `returned`, `signed`, plus `messageCount`, `messages[]` |
+| `account` | base58 address the wallet shows as connected now (`address`, or a presented one); DOM `#account` |
+| `presentAccount(address \| null)` | show `address` (base58 public key) as the connected account on every path until changed; `null` = back to the throwaway key; throws on an invalid address |
 | `reset()` | zero the log |
 | `lastForge` | report of the last forged-approval run: `attempts`, `learnedChannels`, `answeredRequests` (both must stay empty) |
 
-`SignArgs`: `{ path, txs: base64[], method?: "signTransaction" | "signAndSendTransaction" | "signAllTransactions", legacyArg?: "bytes" | "object", chain?: string, forge?: boolean }`.
+`SignArgs`: `{ path, txs: base64[], method?: "signTransaction" | "signAndSendTransaction" | "signAllTransactions", legacyArg?: "bytes" | "object", chain?: string, forge?: boolean, account?: string }`.
+`account` (base58 public key) presents that address as the connected account for this call only, then restores the previous one: Wallet Standard `accounts[0]` and every `input.account`, legacy `provider.publicKey` (and `connect()`'s result). Use it to make a localnet scenario's signer the requesting wallet, so the extension's `SignRequest.account` is a required signer and wallet-bound rules fire. Public key only: the page never holds that account's private key and signs nothing for it, so the transaction is counted and returned byte-identical (`signed: [false]`). An invalid address resolves `{ ok: false }` without calling the wallet.
 Defaults: `signTransaction` (legacy with several txs: `signAllTransactions`), `legacyArg: "object"` (web3.js-like `serialize()`), `chain: "solana:devnet"`.
 Wallet Standard paths take several txs as several inputs to one call. `signAndSendTransaction` signs and returns the signature without sending.
 
@@ -60,4 +63,13 @@ const pending = page.evaluate((tx) => window.kelvaraTestDapp.sign({ path: "ws-ap
 // ... click Block in the report ...
 expect(await pending).toMatchObject({ ok: false, error: { code: 4001 } });
 expect(await page.evaluate(() => window.kelvaraTestDapp.calls().count)).toBe(0);
+```
+
+As a localnet scenario's signer (extension on localnet; `chain` selects localhost:8899 on Wallet Standard paths):
+
+```ts
+const pending = page.evaluate(
+  ([tx, signer]) => window.kelvaraTestDapp.sign({ path: "ws-app-ready", txs: [tx], chain: "solana:localnet", account: signer }),
+  [txB64, signerPubkey]
+);
 ```

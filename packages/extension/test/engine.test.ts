@@ -8,7 +8,8 @@ import { describe, expect, it } from "vitest";
 import { ingestSession, type RpcClient } from "@kelvara/core";
 import { validateWorkerVerdict, type SignRequest } from "../src/shared/protocol.js";
 import { createRealEngine, walletFor } from "../src/sw/engine.js";
-import { buildRegistry } from "../src/sw/registry.js";
+import { BUNDLED, buildRegistry } from "../src/sw/registry.js";
+import { loadRegistry } from "../../cli/src/registry.js";
 import { decide, messageHashes, type Settings, type Sha256 } from "../src/sw/policy.js";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
@@ -52,12 +53,25 @@ function deadRpc(network: RpcClient["network"] = "localnet", hang = false): RpcC
 }
 
 describe("bundled registry", () => {
-  it("builds the CLI's registry from the IDL manifest, with Squads and the demo program as authority maps", () => {
+  const readIdls = <T>(f: string) => JSON.parse(readFileSync(path.join(ROOT, "packages/idls", f), "utf8")) as T;
+
+  it("bundles every program E12's registry.json and manifest.json name (roots, Anchor IDLs)", () => {
+    const registry = readIdls<{ programs: { name: string; root: string | null; idl: string | null }[] }>("registry.json").programs;
+    const manifest = readIdls<{ idls: { name: string; format: string }[] }>("manifest.json").idls;
+    const withRoot = registry.filter((p) => p.root !== null).map((p) => p.name).sort();
+    expect(manifest.map((e) => e.name).sort()).toEqual(withRoot);
+    expect([...BUNDLED.roots].sort()).toEqual(withRoot);
+    expect([...BUNDLED.anchor].sort()).toEqual(manifest.filter((e) => e.format.startsWith("anchor")).map((e) => e.name).sort());
+  });
+
+  it("builds the same authority maps as the CLI's loadRegistry (Squads, Drift, marginfi demo)", () => {
     const reg = buildRegistry();
-    const ids = reg.authorityMaps.map((m) => m.programId);
-    expect(ids).toContain("SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf");
-    expect(ids).toContain("dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH");
-    expect(ids.length).toBe(3); // squads, drift, marginfi demo
+    const cli = loadRegistry({ root: ROOT });
+    const key = (m: { programId: string; entries: unknown[]; verified: boolean }) => [m.programId, m.verified, JSON.stringify(m.entries)];
+    expect(reg.authorityMaps.map(key).sort()).toEqual(cli.authorityMaps.map(key).sort());
+    expect(reg.authorityMaps.map((m) => m.programId)).toEqual(
+      expect.arrayContaining(["SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf", "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH", "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA"])
+    );
     expect(reg.squadsAccounts).toBeTruthy();
   });
 });
