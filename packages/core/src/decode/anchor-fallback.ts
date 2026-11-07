@@ -62,6 +62,11 @@ class Reader {
   }
 }
 
+/** Decode an IDL-defined Borsh value; account padding may follow the value. */
+export function decodeAnchorType(data: Uint8Array, type: AnchorIdlType, types: AnchorIdlTypeDef[]): unknown {
+  return readType(new Reader(data), type, new Map(types.map((d) => [d.name, d])), 0);
+}
+
 type Defs = Map<string, AnchorIdlTypeDef>;
 
 function definedName(t: Record<string, unknown>): string {

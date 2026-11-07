@@ -1,6 +1,8 @@
 // @kelvara/core public API. This file is a contract: announce changes to @all before merging.
 export const ENGINE_VERSION = "0.1.0";
 
+export { createSquadsDecoder, decodeSquadsMessage, SQUADS_V4_PROGRAM, type SquadsMessage, type SquadsAccount } from "./decode/squads.js";
+
 // M1 / E1: ingest (parse legacy, v0 and v1 messages; resolve lookup tables; sessions).
 export {
   ingestSession,

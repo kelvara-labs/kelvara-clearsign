@@ -60,6 +60,8 @@ M5 | verifier | V3 G7 Playwright specs + runner (merged) ; root test:e2e -> @kel
 
 M1 | engine | E4 loader/Memo decoders reviewed and merged from b7e3e65 + 79bc390 | coordinator execution: 56/56 core tests; fast selfcheck G1 PASS, G2/G3/G4 PENDING | ~15 review | BOM preservation regression fixed; all seven changed paths reviewed; no dependencies added. This is task integration, not M1 gate closure; independent verifier check requested. Busy E3 branch untouched; KICKOFF.md sha256 unchanged.
 
+M1 | engine | E3 Squads compact creation-message and IDL-driven stored-account decoders integrated from f475a58 | coordinator execution: 59/59 core tests; fast selfcheck G1 PASS, G2/G3/G4 PENDING | ~10 review | no new dependencies or AGPL code; creation message tested against real attack transaction and truncations. Stored accounts have layout-unit coverage only, caller must verify owner, lookup references unresolved. E5 assigned on same kept-open engine terminal; M1 remains open.
+
 ## Hermes coordinator resume
 - Existing run `run_aa6bac067188` rebound with run-use to live coordinator `term_114a6f4d-05d3-4638-bcbd-39b6c21b65ab`; no replacement run/tasks/worktrees. Main remains edd7b9d. User KICKOFF.md preserved (sha256 da61e3196ddbf70d3b588cc98232fd5c317b6127ecb6a302eac6cf2aa5223de2).
 - With explicit additional user approval, closed five older settled Claude worker terminals (E1/E2/X1/S0/V1); all close receipts ptyKilled=true and all five Claude PIDs absent afterward. Did not resend the previously approved coordinator/E4/S2 stops. Released stopped E4/S2 resource records without process action; historical attempts retained.
