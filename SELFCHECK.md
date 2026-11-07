@@ -1,3 +1,55 @@
+# V9 hour-24 checkpoint: G6 on main 5800793, then G3 + G6 on main 1bcd75d
+
+**G6 localnet: PASS** on a fresh checkout of `main` 5800793 (2 runs + 1 post-mutant run) and on a fresh checkout of `main` 1bcd75d (E10 merged). **G3 rules: PASS** on 1bcd75d (was PENDING). G1, G2, G4 PASS on both. Both mutants FAIL as required.
+
+Fresh detached worktrees in the verifier scratchpad, `pnpm install --frozen-lockfile && pnpm build` (both exit 0). Localnet keys and `.localnet/state.json` copied from the scenarios worktree (gitignored; `git status` clean before every run).
+
+```text
+main 5800793 (clean)
+pnpm selfcheck --only G6   2026-11-07T16:50:54Z  G6  localnet  PASS  25.3s   (cold: no validator, fresh `localnet up`)
+pnpm selfcheck --only G6   2026-11-07T16:51:24Z  G6  localnet  PASS  26.5s   (warm: post-attack localnet, runner reset it)
+pnpm selfcheck --fast      2026-11-07T16:51:51Z  G1 PASS 22.6s | G2 PASS 8.7s 97.91%, 1000/1000 | G3 PENDING 11.4s (M2) | G4 PASS 3.5s
+pnpm selfcheck --only G6   2026-11-07T16:55:44Z  G6  localnet  PASS  26.1s   (after reverting the mutants and rebuilding)
+
+main 1bcd75d = aac4df9 (E10) + coordinator log (clean)
+pnpm selfcheck --fast  x2  2026-11-07T16:58:00Z / 16:58:34Z
+  G1 PASS 19.4s / 18.8s | G2 PASS 6.0s / 6.2s 97.91%, 1000/1000 | G3 PASS 5.4s / 5.6s | G4 PASS 2.2s / 2.3s
+pnpm selfcheck --only G6   2026-11-07T16:59:07Z  G6  localnet  PASS  25.2s
+pnpm selfcheck --only G3 x3 (after G3 mutant revert + rebuild)  PASS 5.4s, 5.5s, 5.4s
+```
+
+## What G6 proves, checked by hand (5800793, CLI JSON read directly, chain read with solana / spl-token CLIs)
+
+Admin: `node packages/cli/dist/kelvara.mjs analyze --network localnet --json packages/scenarios/.localnet/admin/approval.unsigned.b64` exit 0:
+`alertLevel L3`, `level critical`, `action hold_block_default`, simulation `ok`, "Simulation shows: Transaction 0: FczL…8kxT -0.000005 SOL".
+Claims: `authority.transfer` (Fact L3) "Proposed setAuthority program.upgrade on 4Q8u…PQR7 (= demo programData): C1sE…g7Ug (vault) gives authority to dtmpNZtc…qWf" = scenario.json `attacker`; `lifetime.durable_nonce` (Fact L3); `nonce.staged_by_outsider` (Fact L3) naming funder Er6o…NPFB = scenario.json `outsider`; `squads.zero_timelock_execution` (Derived L1, multisig AeSy…tSAw); plus `graph.capability_preview`, `capability.recovery_path`. Every claim carries evidenceIds.
+Attack (`admin-local.mjs --attack-only`, exit 0): `solana program show MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA` Authority before = C1sEWkDnzuit3A6Q858UFcvFmzt1XV9ycszVQud6g7Ug (vault), after = dtmpNZtcTx4PsHcwUXQC464wvZVgEgrkeT78rBA8qWf (attacker).
+
+Trap: `analyze --network localnet --json --wallet 696J…JZRe(user) packages/scenarios/.localnet/trap/buy.partial.b64` exit 0:
+`alertLevel L2`, `level warning`, `action hold`, simulation `ok` with "+50000 of mint 64qj…nuAs" to the user.
+Claims: `token2022.permanent_delegate` (Fact L2) and `token.freeze_authority` (Fact L2) both name 2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6 = scenario.json `creator`; plus `address.first_send`, 2x `graph.capability_preview`. `spl-token display` of the mint: Token-2022, freeze authority and permanent delegate both 2qjr…qQy6.
+Attack (`trap-local.mjs --attack-only`, exit 0): buy tx 3uJzgfw9… user token balance pre [] post 50000; pull-back tx 5KbcjdNt… signed only by 2qjr…qQy6 (creator), TransferChecked + FreezeAccount, user balance 50000 -> 0. `spl-token display` user ATA HmwH…JZRe: Balance 0, State Frozen.
+
+On 1bcd75d the runner's admin claim list adds `intent.label_mismatch` and `sim.power_without_value` (E10), still L3; trap adds `sim.power_without_value`, still L2.
+
+## Gate is live (mutants in the scratch checkout, reverted, `git status` clean afterwards; nothing committed)
+
+- Engine mutant (5800793): `nonceStagedByOutsiderRule` dropped from `packages/core/src/rules/index.ts`, rebuilt -> `G6 localnet FAIL 21.4 missing claim nonce.staged_by_outsider`, selfcheck exit 1.
+- Runner mutant (5800793): trap `token.freeze_authority` expected to name the seller instead of the creator -> `G6 localnet FAIL 24.0 claim token.freeze_authority does not name HbseETMPYmfQxhGNKtcpTnyGTJUzzhQHh4CowhMsiZEw`, exit 1.
+- G3 engine mutant (1bcd75d): `address.first_send` emits L4 instead of L1 -> G3 FAIL 4.6s: rules-address "23 real first-time transfers: none reaches L4" fails; rules-benign rejects the report (`Fact claim from address.first_send cannot reach L4`); rules-session sim.power_without_value fails.
+
+## G3 sweep timing (coordinator asked)
+
+rules-benign sweep, 1bcd75d, 5 runs warm: test 1793 / 2660 / 2662 / 2629 ms (file), `rules+decode` 1413-1525 ms, prepare 114-149 ms. No run near the 5 s vitest per-test timeout here; the engine's one cold 6.0 s was not reproduced. Headroom is ~2x; a heavily loaded machine could still approach it: watch, not a FAIL.
+
+## Findings
+
+1. Selfcheck (verifier-owned, fixed on team/verifier): on a FAIL the scoreboard note quoted the first line containing "FAIL", which for G6 is the runner's expected pre-reset probe `[localnet] FAIL demo program upgrade authority is our key`, hiding the real cause. `failNote()` now prefers SELFCHECK-SUMMARY, then the gate's own `G<n> … FAIL … <reason>` line, and strips ANSI colours. Re-run of the engine mutant with the fix: `G6 localnet FAIL 22.5s pnpm test:localnet: missing claim nonce.staged_by_outsider`. Self-tests 38/38, lint PASS.
+2. G6 from a fresh checkout cannot reset a localnet started by another checkout: `localnet up` refuses (`127.0.0.1:8899 is held by another process`) and the CLI only accepts :8899, so the first attempt failed in 11.4s (environmental, not a product failure). Workaround used: `localnet:down` in the owning checkout, then G6 in the fresh checkout owns the validator; the scenarios-owned localnet was restored afterwards with a fresh `localnet up` (11 checks ok). Reported to scenarios/coordinator as an operability note for the M8 clean-clone run.
+3. `squads.zero_timelock_execution` is Derived L1 on its own; the L3 comes from authority.transfer / durable nonce / outsider. Matches PLAN (claim required, overall L3).
+
+---
+
 # V8 combined X9 readiness verification
 
 Merged `main` first without local changes: combined candidate `ee8822750c73f41dbcda17d35ca55e74bb706449` contains X9 `03b0f12` (via main `741ded5`) and readiness fix `b3f45fd`. No extension-owned paths were edited. X9 retains the L2 stub until G6; its `@kelvara/core` workspace dependency is not integration evidence.
