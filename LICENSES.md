@@ -24,3 +24,4 @@ Every dependency, its license, and where it is used. Nothing under AGPL, BUSL or
 | Token-2022 Codama root (solana-program/token-2022 idl.json) | e6b4af36 (js@v0.20.0) | Apache-2.0 | packages/idls (raw + roots) |
 | Drift v2 IDL (on-chain anchor:idl account, v2.150.0) | see packages/idls/manifest.json | Apache-2.0 (drift-labs/protocol-v2) | packages/idls (raw + roots) |
 | Squads v4 IDL (on-chain anchor:idl account, v2.0.0) | see packages/idls/manifest.json | interface data published on-chain by Squads; source repo AGPL-3.0. Only the IDL is used (PLAN.md Risks: decode Squads from its IDL); no Squads code | packages/idls (raw + roots) |
+| @playwright/test (+ playwright, playwright-core) and its bundled Chromium | 1.63.0 (Chromium build 1243) | Apache-2.0 | dev only: tools/selfcheck devDependency, G7 specs in test-dapp/e2e; not bundled |

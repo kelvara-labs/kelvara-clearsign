@@ -15,7 +15,7 @@
     "test:contract": "pnpm --filter @kelvara/core test:contract",
     "test:registry": "pnpm --filter @kelvara/idls test:registry",
     "test:localnet": "pnpm --filter @kelvara/scenarios test:localnet",
-    "test:e2e": "pnpm --filter @kelvara/test-dapp test:e2e",
+    "test:e2e": "pnpm --filter @kelvara/selfcheck test:e2e",
     "test:replay": "pnpm --filter @kelvara/selfcheck test:replay",
     "test:determinism": "pnpm --filter @kelvara/core test:determinism",
     "test:security": "pnpm --filter @kelvara/selfcheck test:security",
