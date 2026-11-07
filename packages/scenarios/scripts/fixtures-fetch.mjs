@@ -6,11 +6,11 @@
 // unless --refresh, so reruns only top up. Drift's attack txs are fetched by signature.
 // Helius only. The key comes from the main checkout's .env and is never logged or written.
 /* global fetch, AbortSignal, Buffer, setTimeout */
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { loadHeliusKey } from './lib/helius.mjs';
 import { PROGRAMS, DRIFT_REPLAY } from './fixture-programs.mjs';
 import { parseWireTransaction } from './wire.mjs';
 import { walkFixtures, writeManifest } from './lib/manifest.mjs';
@@ -35,22 +35,8 @@ const MAX_TX_FETCH = 25; // getTransaction calls per program before settling
 
 const redact = (s) => String(s).replace(/api-key=[^&\s"]*/gi, 'api-key=REDACTED');
 
-function loadKey() {
-  if (process.env.HELIUS_API_KEY) return process.env.HELIUS_API_KEY;
-  const common = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], {
-    cwd: repoRoot,
-    encoding: 'utf8'
-  }).trim();
-  const envPath = resolve(common, '..', '.env');
-  if (!existsSync(envPath)) throw new Error('no .env in the main checkout; set HELIUS_API_KEY there');
-  for (const line of readFileSync(envPath, 'utf8').split('\n')) {
-    const m = /^\s*HELIUS_API_KEY\s*=\s*"?([^"\s#]+)"?/.exec(line);
-    if (m) return m[1];
-  }
-  throw new Error('HELIUS_API_KEY missing from .env');
-}
 
-const RPC = `https://mainnet.helius-rpc.com/?api-key=${loadKey()}`;
+const RPC = `https://mainnet.helius-rpc.com/?api-key=${loadHeliusKey(repoRoot)}`;
 if (new URL(RPC).hostname !== 'mainnet.helius-rpc.com') throw new Error('Helius only');
 
 // Helius mainnet throttles near 10 rps and the key is shared with other tools: pace to ~6 rps, back off on 429.

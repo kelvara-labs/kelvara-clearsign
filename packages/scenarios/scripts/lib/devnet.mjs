@@ -7,6 +7,7 @@ import { heliusDevnet, loadHeliusKey, redact } from './helius.mjs';
 import { b58encode, findProgramAddress, readKeypair } from './tx.mjs';
 import { systemTransfer } from './token2022.mjs';
 import { PAYER_FLOOR } from './recycle.mjs';
+import { mainCheckout as resolveMainCheckout } from './main-checkout.mjs';
 import { SQUADS_PROGRAM } from './squads.mjs';
 import { readUpgradeAuthority } from '../admin-local.mjs';
 
@@ -14,7 +15,7 @@ export const REPO = resolve(dirname(fileURLToPath(import.meta.url)), '../../../.
 export const PKG = join(REPO, 'packages/scenarios');
 export const KEYS = join(REPO, '.keys/devnet');
 export function mainCheckout() {
-  return resolve(execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: REPO, encoding: 'utf8' }).trim(), '..');
+  return resolveMainCheckout(REPO, '.keys/devnet-payer.json');
 }
 export function exportSolflare(keyPath, output) {
   const raw = JSON.parse(readFileSync(keyPath, 'utf8'));
