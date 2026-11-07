@@ -63,7 +63,7 @@ describe("service worker policy", () => {
   // A wire transaction: 1 empty signature + a (minimal) legacy message.
   const wire = b64encode(messageToWireTx(new Uint8Array([1, 0, 0, 0])));
   const req = parseHookMessage(JSON.stringify({ ...sign, chain: "solana:devnet", txs: [wire] }))! as never;
-  const view = { summary: "", simulation: null, authorizes: null, capabilities: [], preview: [], claims: [] };
+  const view = { summary: "", simulation: null, authorizes: null, capabilities: [], preview: [], claims: [], evidence: [] };
   const engine = (level: 0 | 1 | 2 | 3 | 4): EngineLike => ({ analyze: async () => ({ level, title: `L${level}`, ...view }) });
   const s = { heliusApiKey: "k", network: "mainnet" as const, passThrough: false };
 

@@ -5,11 +5,12 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
-import { ReportBuilder, ingestSession, reportDigest, reportSessionFrom, type Report, type Session } from "@kelvara/core";
+import { FALLBACK_TEMPLATE, RULE_TEMPLATES, ReportBuilder, explainReport, ingestSession, reportDigest, reportSessionFrom, type Report, type Session } from "@kelvara/core";
 import { limitReport } from "../src/license/limit.js";
 import { validateWorkerVerdict, type SignRequest } from "../src/shared/protocol.js";
 import { validateReportView } from "../src/shared/report-view.js";
 import { DEPLOY_ANY_CODE, fromReport, type FromReport } from "../src/sw/from-report.js";
+import { idlPathFor } from "../src/sw/idl-paths.js";
 import type { EngineLike } from "../src/sw/engine-stub.js";
 import { decide, messageHashes, type Sha256 } from "../src/sw/policy.js";
 
@@ -107,10 +108,11 @@ describe("fromReport: Drift session", () => {
     expect(ok(fromReport(driftReport(), hashes)).report.messageHashes).toEqual(hashes);
   });
 
-  it("level, title and summary come from the alert claims", () => {
+  it("level, title and summary come from the alert claims; the title is the engine's template headline", () => {
     const m = ok(fromReport(driftReport(), hashes));
     expect(m.level).toBe(3);
-    expect(m.report.title).toBe("Critical: Transaction 2 can be held and submitted at any later time.");
+    expect(m.report.title).toBe(explainReport(driftReport()).headline);
+    expect(m.report.title).toBe("Critical: The transaction does not expire; This signature reaches the multisig threshold");
     expect(m.report.summary).toContain("If the proposal reaches its threshold");
     expect(m.report.summary).toContain("4 claim(s), 3 granted and 1 revoked capability change(s).");
     expect(m.report.limited).toBe(false);
@@ -153,14 +155,36 @@ describe("fromReport: Drift session", () => {
     expect(p[1]!.can.map((c) => c.name)).toEqual(["admin_call", "config_change"]);
   });
 
-  it("claims: highest level first, each with its evidence lines", () => {
-    const c = ok(fromReport(driftReport(), hashes)).report.claims;
+  it("claims: explanation order, template title/text/advice from the engine, evidence by id", () => {
+    const r = driftReport();
+    const ex = explainReport(r);
+    const c = ok(fromReport(r, hashes)).report.claims;
+    expect(c.map((x) => x.id)).toEqual(ex.claims.map((x) => x.claimId));
     expect(c.map((x) => x.id)).toEqual(["c3", "c4", "c1", "c2"]);
-    expect(c[0]!.evidence).toEqual([]);
+    for (const [i, x] of ex.claims.entries()) {
+      expect(c[i]!.title).toBe(x.title);
+      expect(c[i]!.text.startsWith(x.text)).toBe(true);
+      expect(c[i]!.advice).toBe(x.advice);
+      expect(c[i]!.rule).toBe(x.ruleId);
+      expect(c[i]!.level).toBe(x.level);
+    }
+    expect(c[0]!.title).toBe(RULE_TEMPLATES["lifetime.durable_nonce"]!.title);
+    expect(c[0]!.text).toContain("Derived from the decoded instructions: Transaction 2 can be held and submitted at any later time.");
+    expect(c[0]!.evidenceIds).toEqual([]);
     expect(c[0]!.text).toContain("Follows from c1.");
     expect(c[1]!.text).toContain("Assumes: the multisig threshold read from chain is current.");
+    expect(c[3]!.title).toBe(FALLBACK_TEMPLATE.title);
     expect(c[2]!.kind).toBe("Fact");
-    expect(c[2]!.evidence[0]).toMatch(/^e\d+ · instruction from message · tx 2 · ix 0 · 1{32}: instruction 0 calls 1{32}$/);
+  });
+
+  it("evidence explorer: transaction, instruction path, address for each claim's evidence, listed once", () => {
+    const v = ok(fromReport(driftReport(), hashes)).report;
+    const c1 = v.claims.find((x) => x.id === "c1")!;
+    expect(c1.evidenceIds).toHaveLength(1);
+    const e = v.evidence.find((x) => x.id === c1.evidenceIds[0])!;
+    expect(e).toMatchObject({ type: "instruction", source: "message", tx: 1, path: "0", address: "1".repeat(32), summary: "instruction 0 calls " + "1".repeat(32) });
+    const referenced = new Set(v.claims.flatMap((x) => x.evidenceIds));
+    expect(v.evidence.map((x) => x.id).sort()).toEqual([...referenced].sort());
   });
 
   it("an empty report is L0 Clear", () => {
@@ -246,13 +270,15 @@ describe("fromReport: fail closed", () => {
 
   it("long text is shortened to fit, many evidence items end in a count", () => {
     const b = new ReportBuilder(session);
-    const ev = Array.from({ length: 40 }, (_, i) => b.addEvidence({ type: "message", source: "message", summary: `m${i}`, transactionIndex: 0, data: i }));
+    const ev = Array.from({ length: 70 }, (_, i) => b.addEvidence({ type: "message", source: "message", summary: `m${i}`, transactionIndex: 0, data: i }));
     b.addClaim({ kind: "Fact", statement: "x".repeat(5000), evidenceIds: ev, level: "L2" });
     const m = ok(fromReport(b.build(), hashes));
     expect(m.report.title.length).toBeLessThanOrEqual(200);
     expect(m.report.claims[0]!.text.length).toBeLessThanOrEqual(2000);
-    expect(m.report.claims[0]!.evidence).toHaveLength(32);
-    expect(m.report.claims[0]!.evidence[31]).toMatch(/^and 9 more evidence items \(e32, .*e40\)$/);
+    expect(m.report.claims[0]!.evidenceIds).toHaveLength(64);
+    expect(m.report.claims[0]!.moreEvidence).toBe(6);
+    expect(m.report.evidence).toHaveLength(64);
+    expect(m.report.evidence[5]!.fields).toEqual([{ key: "value", value: "5" }]);
   });
 
   it("an incomplete session is never shown below L2", () => {
@@ -261,5 +287,85 @@ describe("fromReport: fail closed", () => {
     expect(m.level).toBe(2);
     expect(m.report.title).toMatch(/^Warning: analysis incomplete/);
     expect(m.report.claims[0]).toMatchObject({ id: "extension.session_incomplete", kind: "Unknown" });
+  });
+});
+
+describe("evidence explorer (X8)", () => {
+  it("IDL path: Codama root, Anchor fallback, built-in decoder, unknown program", () => {
+    expect(idlPathFor("11111111111111111111111111111111", "codama")).toBe("packages/idls/roots/system.json");
+    expect(idlPathFor("SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf", "anchor-fallback")).toBe("packages/idls/raw/squads-v4.json");
+    expect(idlPathFor("SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf", "builtin")).toBe("built-in decoder (packages/core)");
+    expect(idlPathFor("SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf", "none")).toBeNull();
+    expect(idlPathFor("9".repeat(32), "codama")).toBeNull();
+  });
+
+  it("instruction evidence: decoded args and named accounts as rows; idl evidence keeps its IDL path; account data is the snapshot", () => {
+    const b = new ReportBuilder(session);
+    const ix = b.addEvidence({
+      type: "instruction",
+      source: "message",
+      summary: "transaction 0, instruction 1: system.transferSol",
+      transactionIndex: 0,
+      instructionPath: [1, 0],
+      address: "11111111111111111111111111111111",
+      data: {
+        programId: "11111111111111111111111111111111",
+        program: "system",
+        name: "transferSol",
+        decoder: "codama",
+        args: { amount: "5000", nested: { seeds: [1, 2, 3] } },
+        accounts: [{ name: "source", address: "S".repeat(32), signer: true, writable: true }, { name: "destination", address: null, signer: false, writable: true }]
+      }
+    });
+    const idl = b.addEvidence({ type: "idl", source: "idl", summary: "x.y", address: "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf", data: { idl: "packages/idls/raw/squads-v4.json", instruction: "y" } });
+    const acct = b.addEvidence({ type: "account", source: "rpc", summary: "Account snapshot", address: "A".repeat(32), data: { owner: "o", lamports: 10, data: "z".repeat(900) } });
+    b.addClaim({ kind: "Fact", statement: "x", evidenceIds: [ix, idl, acct, ix], ruleId: "wallet.sweep", level: "L4" });
+    const v = ok(fromReport(b.build(), hashes)).report;
+    expect(v.claims[0]!.evidenceIds).toEqual([ix, idl, acct]);
+    const [eIx, eIdl, eAcct] = v.evidence;
+    expect(eIx).toMatchObject({ tx: 0, path: "1.0", idl: "packages/idls/roots/system.json" });
+    expect(eIx!.fields).toEqual([
+      { key: "program", value: "system" },
+      { key: "name", value: "transferSol" },
+      { key: "args.amount", value: "5000" },
+      { key: "args.nested.seeds", value: "1, 2, 3" },
+      { key: "accounts.source", value: `${"S".repeat(32)} (signer, writable)` },
+      { key: "accounts.destination", value: "unresolved (writable)" }
+    ]);
+    expect(eIdl).toMatchObject({ type: "idl", idl: "packages/idls/raw/squads-v4.json", tx: null, path: null });
+    expect(eAcct!.fields.map((f) => f.key)).toEqual(["owner", "lamports", "data"]);
+    expect(eAcct!.fields[2]!.value.length).toBeLessThanOrEqual(200);
+  });
+
+  it("the view validator refuses a claim pointing at missing evidence, duplicate evidence ids and unknown evidence types", () => {
+    const v = ok(fromReport(driftReport(), hashes)).report;
+    expect(validateReportView(v)).not.toBeNull();
+    const c = v.claims.find((x) => x.evidenceIds.length)!;
+    expect(validateReportView({ ...v, evidence: v.evidence.filter((e) => e.id !== c.evidenceIds[0]) })).toBeNull();
+    expect(validateReportView({ ...v, evidence: [...v.evidence, v.evidence[0]] })).toBeNull();
+    expect(validateReportView({ ...v, evidence: v.evidence.map((e, i) => (i ? e : { ...e, type: "script" })) })).toBeNull();
+    expect(validateReportView({ ...v, evidence: v.evidence.map((e, i) => (i ? e : { ...e, path: "0;alert(1)" })) })).toBeNull();
+  });
+
+  it("template text covers every engine ruleId the report can carry", () => {
+    for (const rule of Object.keys(RULE_TEMPLATES)) {
+      // The rubric decides which level a rule may reach: use the first one the builder accepts.
+      let b!: ReportBuilder;
+      const accepted = (["L1", "L2", "L3", "L4", "L0"] as const).some((level) => {
+        b = new ReportBuilder(session);
+        const e = b.addEvidence({ type: "message", source: "message", summary: "m", transactionIndex: 0 });
+        try {
+          b.addClaim({ kind: "Fact", statement: "s", evidenceIds: [e], ruleId: rule, level });
+          return true;
+        } catch {
+          return false;
+        }
+      });
+      expect(accepted, rule).toBe(true);
+      const c = ok(fromReport(b.build(), hashes)).report.claims[0]!;
+      expect(c.title).toBe(RULE_TEMPLATES[rule]!.title);
+      expect(c.advice).toBe(RULE_TEMPLATES[rule]!.advice);
+      expect(c.text).toContain(RULE_TEMPLATES[rule]!.why);
+    }
   });
 });

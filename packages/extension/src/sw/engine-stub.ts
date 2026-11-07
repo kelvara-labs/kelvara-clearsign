@@ -29,8 +29,26 @@ export const stubEngine: EngineLike = {
         {
           id: "extension.engine_stub",
           kind: "Unknown",
+          level: "L2",
+          rule: null,
+          title: "Not analyzed",
           text: `${req.txs.length} transaction(s) were not analyzed. Unknown is never treated as safe.`,
-          evidence: ["Engine stub in packages/extension/src/sw/engine-stub.ts (PLAN M5: real engine after the hour-24 checkpoint)"]
+          advice: "Block unless you trust this site and checked the request in your wallet.",
+          evidenceIds: ["x1"],
+          moreEvidence: 0
+        }
+      ],
+      evidence: [
+        {
+          id: "x1",
+          type: "derivation",
+          source: "extension",
+          summary: "Engine stub in packages/extension/src/sw/engine-stub.ts (PLAN M5: real engine after the hour-24 checkpoint)",
+          tx: null,
+          path: null,
+          address: null,
+          idl: null,
+          fields: []
         }
       ]
     };

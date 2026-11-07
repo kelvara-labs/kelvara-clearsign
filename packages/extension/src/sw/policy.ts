@@ -57,6 +57,7 @@ export async function decide(
       capabilities: [],
       preview: [],
       claims: [],
+      evidence: [],
       messageHashes: hashes,
       limited: false
     });

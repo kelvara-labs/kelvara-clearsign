@@ -119,7 +119,8 @@ const full: ReportView = {
     { rank: 1, change: "granted", authority: "upgrade authority of X", holder: "Attacker111", risk: "critical" }
   ],
   preview: [{ authority: "upgrade authority of X", confidence: "verified", can: [{ name: "can deploy any code", detail: "" }] }],
-  claims: [{ id: "c1", kind: "Fact", text: "t", evidence: ["e1"] }],
+  claims: [{ id: "c1", kind: "Fact", level: "L3", rule: "authority.transfer", title: "T", text: "t", advice: "a", evidenceIds: ["e1"], moreEvidence: 0 }],
+  evidence: [{ id: "e1", type: "instruction", source: "message", summary: "secret sauce evidence", tx: 0, path: "0", address: null, idl: null, fields: [{ key: "args.x", value: "1" }] }],
   messageHashes: ["11111111111111111111111111111111"],
   limited: false
 };
@@ -135,6 +136,7 @@ describe("limited report", () => {
       capabilities: [full.capabilities[1]],
       preview: [],
       claims: [],
+      evidence: [],
       messageHashes: full.messageHashes,
       limited: true
     });
@@ -142,8 +144,10 @@ describe("limited report", () => {
     expect(JSON.stringify(r)).not.toMatch(/secret sauce|0 tokens move|can deploy|"e1"/);
   });
   it("with no capability change the top finding is the first claim, without evidence", () => {
-    const r = limitReport({ ...full, capabilities: [], claims: [full.claims[0]!, { id: "c2", kind: "Unknown", text: "u", evidence: [] }] });
-    expect(r.claims).toEqual([{ id: "c1", kind: "Fact", text: "t", evidence: [] }]);
+    const r = limitReport({ ...full, capabilities: [], claims: [full.claims[0]!, { ...full.claims[0]!, id: "c2", kind: "Unknown", evidenceIds: [] }] });
+    expect(r.claims).toEqual([{ ...full.claims[0]!, evidenceIds: [], moreEvidence: 0 }]);
+    expect(r.evidence).toEqual([]);
+    expect(validateReportView(r)).not.toBeNull();
     expect(limitReport({ ...full, capabilities: [], claims: [] }).claims).toEqual([]);
   });
   it("the validator requires the limited flag", () => {
@@ -160,8 +164,8 @@ describe("service worker: the license changes the report, never the decision", (
   const settings = { heliusApiKey: "0123abcd-4567-89ef-0123-456789abcdef", network: "devnet" as const, passThrough: false, licenseKey: "KSG1.x.y" };
   const engineAt = (level: 0 | 1 | 2 | 3 | 4): EngineLike => ({
     analyze: async () => {
-      const { title, summary, simulation, authorizes, capabilities, preview, claims } = full;
-      return { title, summary, simulation, authorizes, capabilities, preview, claims, level };
+      const { title, summary, simulation, authorizes, capabilities, preview, claims, evidence } = full;
+      return { title, summary, simulation, authorizes, capabilities, preview, claims, evidence, level };
     }
   });
   const yes: LicenseCheck = async () => true;
