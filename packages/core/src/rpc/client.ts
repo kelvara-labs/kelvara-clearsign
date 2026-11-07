@@ -111,12 +111,15 @@ export interface RpcStats {
   rateLimited: number;
 }
 
+/** JSON-RPC params: positional, or named (Helius DAS methods such as getAssetBatch). */
+export type RpcParams = readonly unknown[] | Readonly<Record<string, unknown>>;
+
 export interface RpcClient {
   readonly network: RpcNetwork;
   /** Endpoint with any api-key redacted, safe to log. */
   readonly endpoint: string;
   readonly stats: RpcStats;
-  call<T>(method: string, params?: readonly unknown[]): Promise<T>;
+  call<T>(method: string, params?: RpcParams): Promise<T>;
   clearCache(): void;
 }
 
@@ -131,7 +134,7 @@ export function parseRetryAfter(value: string | null, nowMs: number): number | n
   return Number.isNaN(date) ? null : Math.max(0, date - nowMs);
 }
 
-function cacheKey(method: string, params: readonly unknown[]): string {
+function cacheKey(method: string, params: RpcParams): string {
   return `${method}:${JSON.stringify(params, (_k, v: unknown) => (typeof v === "bigint" ? v.toString() : v))}`;
 }
 
@@ -174,7 +177,7 @@ export function createRpcClient(options: RpcClientOptions): RpcClient {
     return Math.round(exp / 2 + (exp / 2) * random());
   }
 
-  async function attemptOnce(method: string, params: readonly unknown[]): Promise<{ ok: true; value: unknown } | { ok: false; error: RpcError; retryable: boolean; waitMs?: number }> {
+  async function attemptOnce(method: string, params: RpcParams): Promise<{ ok: true; value: unknown } | { ok: false; error: RpcError; retryable: boolean; waitMs?: number }> {
     await takeSlot();
     stats.requests++;
     const controller = new AbortController();
@@ -226,7 +229,7 @@ export function createRpcClient(options: RpcClientOptions): RpcClient {
     }
   }
 
-  async function send(method: string, params: readonly unknown[]): Promise<unknown> {
+  async function send(method: string, params: RpcParams): Promise<unknown> {
     for (let attempt = 0; ; attempt++) {
       const r = await attemptOnce(method, params);
       if (r.ok) return r.value;
@@ -248,7 +251,7 @@ export function createRpcClient(options: RpcClientOptions): RpcClient {
     network,
     endpoint: redactUrl(options.url),
     stats,
-    call<T>(method: string, params: readonly unknown[] = []): Promise<T> {
+    call<T>(method: string, params: RpcParams = []): Promise<T> {
       if (!ALLOWED_METHODS.has(method)) return Promise.reject(new RpcError("refused", method, "method not allowed (the engine never submits or signs)"));
       if (!useCache || UNCACHEABLE.has(method)) return send(method, params) as Promise<T>;
       const key = cacheKey(method, params);

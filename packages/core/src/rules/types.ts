@@ -31,6 +31,8 @@ export interface RuleState {
   nonces?: Record<string, NonceFacts>;
   /** Squads v4 accounts (Multisig, Proposal, VaultTransaction) by address, owner already verified. */
   squads?: Record<string, SquadsAccount>;
+  /** Wallet transfer history (readAddressRuleState) for the address rules; must be for `wallet`. */
+  history?: import("../state/history.js").WalletHistory;
 }
 
 export interface RuleContext {
