@@ -53,9 +53,16 @@ export interface SimulatedInnerInstruction {
   /** Index of the top-level instruction this ran under. */
   index: number;
   stackHeight: number | null;
-  programIdIndex: number;
-  accountIndices: number[];
-  data: Uint8Array;
+  /** Compiled form: indices into the message's account keys. null when the RPC sent a decoded form. */
+  programIdIndex: number | null;
+  accountIndices: number[] | null;
+  /** Decoded forms (Agave encodes simulated inner instructions like jsonParsed): program and account addresses. */
+  programId: string | null;
+  accounts: string[] | null;
+  /** Raw data; null when the RPC sent only its parsed form. */
+  data: Uint8Array | null;
+  /** RPC parser output ({type, info}) when the RPC parsed it; never trusted for decisions. */
+  parsed: unknown;
 }
 
 export interface SolBalanceChange {
@@ -113,12 +120,37 @@ export interface SimulateOptions {
   commitment?: Commitment;
 }
 
+/** Compiled ({programIdIndex, accounts: number[]}), partially decoded ({programId, accounts: string[]}) or parsed ({programId, parsed}). */
+interface RpcInnerInstruction {
+  programIdIndex?: number;
+  programId?: string;
+  accounts?: (number | string)[];
+  data?: string;
+  parsed?: unknown;
+  stackHeight?: number | null;
+}
+
+function innerInstruction(index: number, ix: RpcInnerInstruction): SimulatedInnerInstruction {
+  const accs = Array.isArray(ix.accounts) ? ix.accounts : null;
+  const compiled = typeof ix.programIdIndex === "number";
+  return {
+    index,
+    stackHeight: ix.stackHeight ?? null,
+    programIdIndex: compiled ? ix.programIdIndex! : null,
+    accountIndices: compiled && accs ? accs.map(Number) : null,
+    programId: typeof ix.programId === "string" ? ix.programId : null,
+    accounts: !compiled && accs ? accs.map(String) : null,
+    data: typeof ix.data === "string" ? decodeIxData(ix.data) : null,
+    parsed: ix.parsed ?? null
+  };
+}
+
 interface RpcSimValue {
   err: unknown;
   logs: string[] | null;
   accounts: (RpcAccount | null)[] | null;
   unitsConsumed?: number;
-  innerInstructions?: { index: number; instructions: { programIdIndex: number; accounts: number[]; data: string; stackHeight?: number | null }[] }[] | null;
+  innerInstructions?: { index: number; instructions: RpcInnerInstruction[] }[] | null;
   replacementBlockhash?: { blockhash: string } | null;
 }
 
@@ -158,9 +190,7 @@ export async function simulateTransaction(rpc: RpcClient, wire: Uint8Array, opts
   }));
   const innerInstructions: SimulatedInnerInstruction[] = [];
   for (const group of v.innerInstructions ?? []) {
-    for (const ix of group.instructions) {
-      innerInstructions.push({ index: group.index, stackHeight: ix.stackHeight ?? null, programIdIndex: ix.programIdIndex, accountIndices: [...ix.accounts], data: decodeIxData(ix.data) });
-    }
+    for (const ix of group.instructions) innerInstructions.push(innerInstruction(group.index, ix));
   }
   const ok = v.err === null || v.err === undefined;
   const changes = opts.reader && ok ? await diffAccounts(accounts, opts.reader) : { solChanges: [], tokenChanges: [], stateChanges: [] };

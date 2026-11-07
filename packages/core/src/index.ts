@@ -262,3 +262,7 @@ export {
   type CapabilityGraphOptions
 } from "./graph/index.js";
 export { readAuthorityHistory, authorityCallsOfTransaction, type AuthorityHistory, type AuthorityCall, type ReadAuthorityHistoryOptions } from "./state/authority-history.js";
+
+// M4 / E14: one-call analysis (state reads, simulation, rules, capability graph, "what simulation shows").
+// Online with an RpcClient (Helius or localnet); offline without one. Used by the CLI and the extension.
+export { analyzeSession, addSimulationSummary, squadsTransactionPda, type AnalyzeOptions, type AnalyzeResult, type ReadNote } from "./analyze/index.js";
