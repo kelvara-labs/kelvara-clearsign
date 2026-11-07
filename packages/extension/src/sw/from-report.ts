@@ -4,7 +4,7 @@
 //
 // Fail closed: a report that fails validateReport, analyzed different bytes than the worker holds,
 // or does not fit the view's caps maps to a blocked engine-error verdict, never to a pass.
-import { validateReport, type Capability, type Claim, type Evidence, type Report } from "../../../core/src/report/index.js";
+import { validateReport, type Capability, type Claim, type Evidence, type Report } from "@kelvara/core";
 import type { WorkerVerdict } from "../shared/protocol.js";
 import {
   validateReportView,

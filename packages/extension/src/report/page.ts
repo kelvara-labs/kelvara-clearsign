@@ -204,7 +204,23 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
       (document.activeElement === block ? sign : block).focus();
     }
   });
-  block.focus();
+  // A newly attached cross-origin iframe can have layout before its compositor hit-test
+  // region exists. Keep decisions inert until intersection delivery and a painted frame.
+  block.disabled = true;
+  if (sign) sign.disabled = true;
+  let warming = false;
+  const ready = new IntersectionObserver((entries) => {
+    if (warming || !entries.some((e) => e.isIntersecting)) return;
+    warming = true;
+    ready.disconnect();
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (answered) return;
+      block.disabled = false;
+      if (sign) sign.disabled = false;
+      block.focus();
+    }));
+  });
+  ready.observe(card);
 
   if (mode === "hold") {
     const t = setInterval(() => {
