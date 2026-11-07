@@ -127,9 +127,9 @@ export type AnalyzeRecording = Recording & { inputs: { transactions: string[]; w
 export const analyzeRecording = (name: string): AnalyzeRecording => json<AnalyzeRecording>(`packages/core/test/fixtures/analyze/${name}.json`);
 
 /** analyzeSession over a recorded real RPC run (fixtures/analyze): its report and the state it read, simulations included. */
-export async function analyzedState(name: "admin-local" | "trap-local"): Promise<{ report: Report; state: RuleState; rec: AnalyzeRecording }> {
+export async function analyzedState(name: "admin-local" | "trap-local" | "sweep-local" | "sweep-ata-local"): Promise<{ report: Report; state: RuleState; rec: AnalyzeRecording }> {
   const r = analyzeRecording(name);
   const { rpc } = replay(r);
-  const out = await analyzeSession(await sessionOf(r.inputs.transactions), { decoder, squadsAccounts, rpc, ...(r.inputs.wallet ? { wallet: r.inputs.wallet } : {}) });
+  const out = await analyzeSession(await sessionOf(r.inputs.transactions), { decoder, squadsAccounts, rpc, ...(r.inputs.wallet ? { wallet: r.inputs.wallet } : {}), ...(r.inputs.inventory ? { inventory: true } : {}) });
   return { report: out.report, state: out.state, rec: r };
 }
