@@ -1,0 +1,80 @@
+{
+  "startedAt": "2026-11-07T22:43:48Z",
+  "commit": "7b00cbd",
+  "branch": "main",
+  "dirty": false,
+  "fast": false,
+  "live": true,
+  "gates": [
+    {
+      "id": "G1",
+      "name": "build",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G2",
+      "name": "decode",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G3",
+      "name": "rules",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G4",
+      "name": "contract",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G5",
+      "name": "registry",
+      "status": "PASS",
+      "secs": 9.4,
+      "note": ""
+    },
+    {
+      "id": "G6",
+      "name": "localnet",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G7",
+      "name": "e2e",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G8",
+      "name": "replay",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G9",
+      "name": "determinism",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "security",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    }
+  ]
+}
