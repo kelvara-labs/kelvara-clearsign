@@ -36,6 +36,8 @@
     "scenario:admin-devnet:attack": "pnpm --filter @kelvara/scenarios scenario:admin-devnet:attack",
     "scenario:trap-devnet": "pnpm --filter @kelvara/scenarios scenario:trap-devnet",
     "scenario:trap-devnet:attack": "pnpm --filter @kelvara/scenarios scenario:trap-devnet:attack",
+    "scenario:sweep-devnet": "pnpm --filter @kelvara/scenarios scenario:sweep-devnet",
+    "scenario:sweep-devnet:attack": "pnpm --filter @kelvara/scenarios scenario:sweep-devnet:attack",
     "fixtures:poison": "pnpm --filter @kelvara/scenarios fixtures:poison"
   },
   "devDependencies": {
