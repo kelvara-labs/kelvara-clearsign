@@ -31,7 +31,12 @@ absent, after asserting everything that already exists. A plain skip is a FAIL.
 
 Feature detection (static, from the tree under test):
 - **report UI**: `dist/manifest.json` has `web_accessible_resources` listing an `.html` page.
-- **real engine**: `packages/extension/package.json` depends on `@kelvara/core`.
+- **real engine**: TypeScript AST inspection of the service worker and its stub adapter. Only direct
+  `decide(..., stubEngine)` calls using the imported, fixed L2 literal placeholder defer cases.
+  A workspace dependency alone changes nothing. Non-stub, mixed, indirect or unrecognized wiring
+  runs the engine assertions; unreadable/invalid source fails rather than becoming PENDING.
+  Comments, unused stub imports and a real analyzer hidden inside a stub-named adapter cannot
+  suppress integrated failures. Regression self-tests run before every G7 invocation.
 - **fixtures**: an entry in `fixtures/tx/manifest.json` with `"e2e": "<role>"`, role one of
   `benign`, `l4-sweep`, `l3-batch`, `l2-trap` (scenarios tags them; real executed bytes only).
   Until `benign` is tagged, the real mainnet System transfer `51AfDTHp…` is used.

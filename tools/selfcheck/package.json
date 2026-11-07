@@ -8,7 +8,7 @@
     "test:replay": "node --test test/replay.test.mjs && node src/replay.mjs",
     "test:security": "node --test test/security.test.mjs && node src/security.mjs",
     "helius:probe": "node src/helius-probe.mjs",
-    "test:e2e": "node --test test/e2e.test.mjs && node src/e2e.mjs"
+    "test:e2e": "node --test test/e2e.test.mjs test/engine-readiness.test.mjs && node src/e2e.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0"

@@ -7,6 +7,7 @@
 // can before that point, so a regression in what exists FAILs. The runner
 // (tools/selfcheck/src/e2e.mjs) maps any failure to FAIL, else any pending to PENDING (78).
 import { test as base, expect, chromium, type BrowserContext, type Frame, type Page, type Worker } from "../../tools/selfcheck/src/playwright.mjs";
+import { hasRealEngine as detectRealEngine } from "../../tools/selfcheck/src/engine-readiness.mjs";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -45,11 +46,9 @@ export function hasReportUi(): boolean {
   return war.some((w) => Array.isArray(w.resources) && w.resources.some((r) => typeof r === "string" && r.endsWith(".html")));
 }
 
-/** Real engine wired: the extension depends on @kelvara/core (until then it runs the L2 stub). */
+/** Only proven L2 stub wiring defers the engine cases; dependencies are not integration. */
 export function hasRealEngine(): boolean {
-  const pkg = readJson(path.join(ROOT, "packages/extension/package.json"));
-  const deps = { ...(pkg?.dependencies as object), ...(pkg?.devDependencies as object) } as Record<string, unknown>;
-  return "@kelvara/core" in deps;
+  return detectRealEngine(ROOT);
 }
 
 /** HELIUS_API_KEY from the environment or the main checkout's .env. Never printed. */
