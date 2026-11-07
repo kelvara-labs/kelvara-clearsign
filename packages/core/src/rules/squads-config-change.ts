@@ -5,7 +5,7 @@
 // on our decoded session. Severity map: Watchtower critical = L3, high = L2, medium = L1.
 import type { AlertLevel } from "../report/rubrics.js";
 import { maxLevel } from "../report/rubrics.js";
-import { instructionEvidence, sessionSigners, short } from "./common.js";
+import { instructionEvidence, signersOf, short } from "./common.js";
 import { arg, proposalViews, squadsCalls } from "./squads-session.js";
 import type { Rule, RuleContext } from "./types.js";
 
@@ -98,12 +98,16 @@ export const squadsConfigChangeRule: Rule = {
   ruleIds: [RULE_ID],
   description: "Squads membership, threshold, time lock, spending-limit and config-authority changes (Watchtower multisigChange.ts)",
   run(ctx: RuleContext) {
-    const signers = sessionSigners(ctx);
-    const outside = (k: string): boolean => !signers.has(k);
+    // Outside = signs none of the transactions that carry the change (never the whole session).
+    const outsideOf = (txs: Iterable<number>) => {
+      const signers = signersOf(ctx, txs);
+      return (k: string): boolean => !signers.has(k);
+    };
     // Config transactions that go through a member vote.
     for (const v of proposalViews(ctx)) {
       if (v.kind !== "config" || !v.configActions) continue;
       const calls = [v.transactionCreate, v.proposalCreate, ...v.approvals, ...v.executes].filter((c): c is NonNullable<typeof c> => !!c);
+      const outside = outsideOf(calls.map((c) => c.txIndex));
       const actions = v.configActions.map((a) => describeConfigAction(a, outside));
       const worst = maxLevel(["L1", ...actions.map((a) => a.level)]);
       const verbs = [v.transactionCreate && "proposes", v.approvals.length && "approves", v.executes.length && "executes"].filter(Boolean).join(" and ");
@@ -122,7 +126,7 @@ export const squadsConfigChangeRule: Rule = {
     for (const c of squadsCalls(ctx)) {
       const describe = DIRECT[c.name];
       if (!describe) continue;
-      const d = describe(c.ix, outside);
+      const d = describe(c.ix, outsideOf([c.txIndex]));
       ctx.report.addClaim({
         kind: "Fact",
         statement: `Config authority ${short(c.signer)} changes multisig ${short(c.multisig)} directly, without a member vote: ${d.text}.`,

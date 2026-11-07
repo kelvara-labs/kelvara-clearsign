@@ -1,6 +1,6 @@
 import { UPGRADEABLE_LOADER_PROGRAM } from "../decode/builtin.js";
 import type { CapabilityClass } from "../report/rubrics.js";
-import { accountNamed, instructionEvidence, sessionSigners } from "./common.js";
+import { accountNamed, instructionEvidence, signersOf } from "./common.js";
 import { arg, proposalViews, vaultInstructions } from "./squads-session.js";
 import { TOKEN_PROGRAM, TOKEN_2022_PROGRAM } from "../state/layouts.js";
 import type { DecodedInstruction } from "../decode/types.js";
@@ -31,7 +31,6 @@ export function authorityType(ix: DecodedInstruction): string | null {
 export const authorityTransferRule: Rule = {
   id: "authority.transfer", ruleIds: ["authority.transfer"], description: "Explicit token, loader and Drift admin authority changes.",
   run(ctx) {
-    const signers = sessionSigners(ctx);
     for (const c of authorityInstructions(ctx)) {
       const ix = c.ix;
       if (ix.status !== "named") continue;
@@ -52,16 +51,19 @@ export const authorityTransferRule: Rule = {
         old = accountNamed(ix, "admin"); target = accountNamed(ix, "state"); capability = "protocol.admin"; cls = "admin_control";
       } else continue;
       if (!target || next === old) continue;
+      // The transactions that carry or land this grant: its own, plus the approvals and executions of its proposal.
+      const transactions = new Set([c.txIndex]);
+      if (c.proposed) for (const v of proposalViews(ctx)) {
+        const call = v.transactionCreate ?? v.executes[0] ?? v.approvals[0];
+        if (call?.txIndex === c.txIndex && call.ix.index === c.path[0]) {
+          for (const linked of [...v.approvals, ...v.executes]) transactions.add(linked.txIndex);
+        }
+      }
+      // An insider signs one of those transactions; a signer of an unrelated transaction is not one.
+      const signers = signersOf(ctx, transactions);
       const id = ctx.report.addClaim({ kind: "Fact", ruleId: this.id, level: next && !signers.has(next) ? "L3" : "L1", statement: `${c.proposed ? "Proposed " : ""}${ix.name} ${capability} on ${target}: ${old ?? "current authority"} gives authority to ${next ?? "nobody (authority removed)"}.`, evidenceIds: [...c.evidence, instructionEvidence(ctx, c.txIndex, ix, c.path)], transactionIndices: [c.txIndex] });
       // A nonce raises urgency only when linked to an evidenced outside control grant.
       if (next && !signers.has(next)) {
-        const transactions = new Set([c.txIndex]);
-        if (c.proposed) for (const v of proposalViews(ctx)) {
-          const call = v.transactionCreate ?? v.executes[0] ?? v.approvals[0];
-          if (call?.txIndex === c.txIndex && call.ix.index === c.path[0]) {
-            for (const linked of [...v.approvals, ...v.executes]) transactions.add(linked.txIndex);
-          }
-        }
         for (const t of transactions) ctx.claims.set(`controlGrant:${t}`, id);
       }
       // Loader targets are ProgramData/Buffer accounts: the graph resolves their program from state.

@@ -37,9 +37,18 @@ export function txSigners(tx: SessionTransaction): string[] {
   return tx.accounts.filter((a) => a.signer && a.address).map((a) => a.address!);
 }
 
-/** Every signer across the session. */
-export function sessionSigners(ctx: RuleContext): Set<string> {
-  return new Set(ctx.session.transactions.flatMap(txSigners));
+/**
+ * Signers of the given transactions: the keys that take part in an action, so a grant to one of them is
+ * not a grant to an outsider. Never the whole session: a signer of an unrelated transaction does not
+ * sign the grant, and adding such a transaction must never lower a session's level (monotonicity).
+ */
+export function signersOf(ctx: RuleContext, txIndices: Iterable<number>): Set<string> {
+  const out = new Set<string>();
+  for (const i of txIndices) {
+    const tx = ctx.session.transactions[i];
+    if (tx) for (const s of txSigners(tx)) out.add(s);
+  }
+  return out;
 }
 
 export function isSystemIx(ix: DecodedInstruction | undefined, name: string, tag: number): boolean {
