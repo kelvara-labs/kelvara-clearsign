@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.keys/
+*.keypair.json
+test-ledger/
+target/
+.anchor/
+coverage/
+playwright-report/
+test-results/
+.env
+.env.*
+.DS_Store
