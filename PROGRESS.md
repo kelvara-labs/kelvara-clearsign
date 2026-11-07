@@ -46,3 +46,4 @@ Workers: engine ctx_ee4c1e75b027, scenarios ctx_d31e5a8e9570, extension ctx_d14d
 | V2 | task_3f6444e60aaf | verifier | G10 security check: hosts allowlist, no key in zip, no eval/remote code, minimal permissions, offline license |
 | V3 | task_e9de25fbeec0 | verifier | G7 Playwright e2e specs in test-dapp/e2e (headless chromium with the extension) |
 | V4 | task_fa879236ceeb | verifier | G8 test:replay: Drift replay critical with required claims; both devnet scripts pass |
+M1 | engine | E1 ingest: legacy/v0/v1 parse, ALT resolution, sessions (merged ee332e7) | G1 PASS, 30 core tests | ~20 | @solana/kit 8.5.0 (MIT); v1 messages already on mainnet, supported; 2,000 fuzz/mutated inputs -> IngestError, no crash
