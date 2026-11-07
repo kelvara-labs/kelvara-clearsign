@@ -46,9 +46,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const PKG = resolve(here, '..');
 const REPO = resolve(PKG, '../..');
 const STATE = join(PKG, '.localnet', 'state.json');
-const OUT = join(PKG, '.localnet', 'trap');
-const KEYS = join(REPO, '.keys', 'localnet');
-const RUN_KEYS = join(KEYS, 'trap-run');
 
 export const TOKEN = { name: 'Shiny', symbol: 'SHINY', uri: '', decimals: 6 };
 export const PRICE_LAMPORTS = 1_000_000_000; // 1 SOL
@@ -56,7 +53,7 @@ export const BUY_AMOUNT = 50_000n * 10n ** 6n; // 50,000 SHINY
 const SELLER_SUPPLY = 1_000_000n * 10n ** 6n;
 const STABLE_KEYS = ['trap-creator', 'trap-seller', 'trap-user'];
 
-const log = (...a) => console.log('[trap-local]', ...a);
+const logger = (context) => (...a) => console.log(context.network === 'devnet' ? '[trap-devnet]' : '[trap-local]', ...a);
 
 function keygen(path, force) {
   if (existsSync(path) && !force) return;
@@ -106,9 +103,12 @@ export function partialSign(compiled, sellerKp) {
   return Buffer.concat([Buffer.from([compiled.signers.length]), ...sigs, Buffer.from(compiled.message)]);
 }
 
-export async function setup() {
-  const state = loadState();
-  const rpc = localRpc(state.rpcUrl);
+export async function setup(context = {}) {
+  const log = logger(context);
+  const { out: OUT = join(PKG, '.localnet', 'trap'), keys: KEYS = join(REPO, '.keys', 'localnet') } = context;
+  const RUN_KEYS = join(KEYS, 'trap-run');
+  const state = context.state ?? loadState();
+  const rpc = context.rpc ?? localRpc(state.rpcUrl);
   await rpc.call('getHealth');
 
   mkdirSync(RUN_KEYS, { recursive: true, mode: 0o700 });
@@ -118,9 +118,9 @@ export async function setup() {
   const mintKey = readKeypair(join(RUN_KEYS, 'mint.json'));
   const mint = mintKey.publicKey;
 
-  await rpc.airdrop(creator.publicKey, 10e9);
-  await rpc.airdrop(seller.publicKey, 2e9);
-  await rpc.airdrop(user.publicKey, 5e9);
+  await (context.fund ?? rpc.airdrop)(creator.publicKey, 10e9);
+  await (context.fund ?? rpc.airdrop)(seller.publicKey, 2e9);
+  await (context.fund ?? rpc.airdrop)(user.publicKey, 5e9);
 
   // 1. the mint: extensions first, then InitializeMint2, then metadata (reallocs into prefunded lamports)
   const fullLen = MINT_LEN_FIXED + tokenMetadataLen(TOKEN);
@@ -170,8 +170,9 @@ export async function setup() {
 
   mkdirSync(OUT, { recursive: true });
   writeFileSync(join(OUT, 'buy.partial.b64'), wire.toString('base64') + '\n');
+  const keyNetwork = context.network === 'devnet' ? 'devnet' : 'localnet';
   const scenario = {
-    scenario: 'trap-local',
+    scenario: context.network === 'devnet' ? 'trap-devnet' : 'trap-local',
     createdAt: new Date().toISOString(),
     rpcUrl: state.rpcUrl,
     token: { mint, ...TOKEN, program: TOKEN_2022, mintAuthority: m.mintAuthority, freezeAuthority: m.freezeAuthority, permanentDelegate: m.extensions.permanentDelegate },
@@ -181,7 +182,7 @@ export async function setup() {
     sellerAta,
     userAta,
     buy: {
-      file: 'packages/scenarios/.localnet/trap/buy.partial.b64',
+      file: (context.network === 'devnet' ? 'packages/scenarios/.devnet/trap/' : 'packages/scenarios/.localnet/trap/') + 'buy.partial.b64',
       recentBlockhash: bh.blockhash,
       lastValidBlockHeight: bh.lastValidBlockHeight,
       feePayer: user.publicKey,
@@ -194,7 +195,7 @@ export async function setup() {
       // Looks like a normal purchase: the user pays 1 SOL plus fee and ATA rent, and receives 50,000 SHINY.
       simulation: { err: null, unitsConsumed: sim.value.unitsConsumed, lamportsDelta, tokenDelta }
     },
-    keyFiles: { ...Object.fromEntries(STABLE_KEYS.map((n) => [n, `.keys/localnet/${n}.json`])), mint: '.keys/localnet/trap-run/mint.json' }
+    keyFiles: { ...Object.fromEntries(STABLE_KEYS.map((n) => [n, `.keys/${keyNetwork}/${n}.json`])), mint: `.keys/${keyNetwork}/trap-run/mint.json` }
   };
   writeFileSync(join(OUT, 'scenario.json'), JSON.stringify(scenario, null, 2) + '\n');
   log(`buy tx (seller-signed, user slot empty, ${wire.length} bytes) -> ${scenario.buy.file}`);
@@ -202,9 +203,12 @@ export async function setup() {
   return scenario;
 }
 
-export async function attack() {
+export async function attack(context = {}) {
+  const log = logger(context);
+  const OUT = context.out ?? join(PKG, '.localnet', 'trap');
+
   const s = JSON.parse(readFileSync(join(OUT, 'scenario.json'), 'utf8'));
-  const rpc = localRpc(s.rpcUrl);
+  const rpc = context.rpc ?? localRpc(s.rpcUrl);
   const kp = (n) => readKeypair(join(REPO, s.keyFiles[n]));
   const [creator, seller, user] = STABLE_KEYS.map(kp);
   const mint = s.token.mint;
