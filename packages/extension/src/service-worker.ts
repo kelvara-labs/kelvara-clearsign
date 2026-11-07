@@ -2,7 +2,9 @@
 // Never signs, never submits, never stores wallet secrets.
 import {
   SW_ANALYZE,
+  SW_DECIDED,
   SW_NOTICE,
+  isId,
   validateNotice,
   validateSignRequest,
   type WorkerVerdict
@@ -16,6 +18,8 @@ const LOG_MAX = 100;
 
 interface LogEntry {
   ts: number;
+  /** The hook's random request id, so the user's decision on a held request can be recorded. */
+  id: string;
   url: string;
   method: string;
   wallet: string;
@@ -23,21 +27,41 @@ interface LogEntry {
   txCount: number;
   level: number | null;
   allow: boolean;
+  /** Held for the user; allow is false until the user chooses Sign anyway. */
+  hold: boolean;
+  decided?: "user";
   reason: string;
 }
 
-async function appendLog(entry: LogEntry): Promise<void> {
-  try {
-    const got = await chrome.storage.local.get(LOG_KEY);
-    const log = Array.isArray(got[LOG_KEY]) ? (got[LOG_KEY] as LogEntry[]) : [];
-    log.unshift(entry);
-    await chrome.storage.local.set({ [LOG_KEY]: log.slice(0, LOG_MAX) });
-  } catch {
-    /* logging never affects the decision */
-  }
+// Every read-modify-write of the log runs in turn, so concurrent requests never drop entries.
+let logQueue: Promise<void> = Promise.resolve();
+function editLog(edit: (log: LogEntry[]) => LogEntry[] | null): Promise<void> {
+  const run = async () => {
+    try {
+      const got = await chrome.storage.local.get(LOG_KEY);
+      const next = edit(Array.isArray(got[LOG_KEY]) ? (got[LOG_KEY] as LogEntry[]) : []);
+      if (next) await chrome.storage.local.set({ [LOG_KEY]: next.slice(0, LOG_MAX) });
+    } catch {
+      /* logging never affects the decision */
+    }
+  };
+  logQueue = logQueue.then(run, run);
+  return logQueue;
 }
 
-const blocked = (reason: string): WorkerVerdict => ({ allow: false, level: null, reason });
+const appendLog = (entry: LogEntry) => editLog((log) => [entry, ...log]);
+
+/** The user answered a held request: record it, so the log matches what reached the wallet. */
+const recordDecision = (id: string, allow: boolean) =>
+  editLog((log) => {
+    const entry = log.find((e) => e.id === id && e.hold && e.decided === undefined);
+    if (!entry) return null;
+    entry.allow = allow;
+    entry.decided = "user";
+    return log;
+  });
+
+const blocked = (reason: string): WorkerVerdict => ({ allow: false, hold: false, level: null, reason, report: null });
 
 async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdict> {
   const req = validateSignRequest(msg.request);
@@ -46,6 +70,7 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   const verdict = loaded.ok ? await decide(req, loaded.settings, stubEngine) : blocked(loaded.reason);
   await appendLog({
     ts: Date.now(),
+    id: req.id,
     url: msg.url.slice(0, 512),
     method: req.method,
     wallet: req.wallet,
@@ -53,6 +78,7 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
     txCount: req.txs.length,
     level: verdict.level,
     allow: verdict.allow,
+    hold: verdict.hold,
     reason: verdict.reason
   });
   return verdict;
@@ -67,7 +93,8 @@ chrome.runtime.onInstalled.addListener((details) => {
       (raw) => !readSettings(raw).heliusApiKey,
       () => true
     )
-    .then((open) => (open ? chrome.runtime.openOptionsPage() : undefined))
+    // Always a new tab: openOptionsPage() may navigate the user's current blank tab away.
+    .then((open) => (open ? chrome.tabs.create({ url: chrome.runtime.getURL("options.html"), active: true }) : undefined))
     .catch(() => {});
 });
 
@@ -81,6 +108,10 @@ chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
       .catch(() => blocked("service worker error"))
       .then(sendResponse);
     return true; // async response
+  }
+  if (m.type === SW_DECIDED) {
+    if (isId(m.id) && typeof m.allow === "boolean") void recordDecision(m.id, m.allow);
+    return false;
   }
   if (m.type === SW_NOTICE) {
     if (validateNotice(m.notice)) {

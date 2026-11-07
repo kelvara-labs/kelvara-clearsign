@@ -15,6 +15,8 @@
 //   Nothing from the page is trusted beyond the transaction bytes and the wallet name;
 //   the chain is a validated hint, the URL is read by the bridge itself.
 
+import { validateReportView, type ReportView } from "./report-view.js";
+
 export const PROTOCOL_VERSION = 1;
 export const HOOK_READY_EVENT = "kelvara-signguard:hook-ready";
 export const BRIDGE_READY_EVENT = "kelvara-signguard:bridge-ready";
@@ -190,15 +192,33 @@ export interface NoticeMessage {
   topFrame: boolean;
 }
 
+/** bridge -> worker: what the user chose for a held request (updates the capture log only). */
+export const SW_DECIDED = "kelvara-signguard/decided";
+export interface DecidedMessage {
+  type: typeof SW_DECIDED;
+  id: string;
+  allow: boolean;
+}
+
+/**
+ * Worker -> bridge. allow: pass to the wallet now. hold: ask the user in the report UI
+ * (only L2/L3, never with allow). Neither: blocked (4001). report: what the UI shows.
+ */
 export interface WorkerVerdict {
   allow: boolean;
+  hold: boolean;
   level: 0 | 1 | 2 | 3 | 4 | null;
   reason: string;
+  report: ReportView | null;
 }
 
 export function validateWorkerVerdict(x: unknown): WorkerVerdict | null {
-  if (!isPlainObject(x) || !hasExactKeys(x, ["allow", "level", "reason"])) return null;
-  if (typeof x.allow !== "boolean" || typeof x.reason !== "string") return null;
+  if (!isPlainObject(x) || !hasExactKeys(x, ["allow", "hold", "level", "reason", "report"])) return null;
+  if (typeof x.allow !== "boolean" || typeof x.hold !== "boolean" || typeof x.reason !== "string" || x.reason.length > 2000) return null;
   if (!(x.level === null || (typeof x.level === "number" && [0, 1, 2, 3, 4].includes(x.level)))) return null;
+  if (x.hold && (x.allow || (x.level !== 2 && x.level !== 3))) return null;
+  // L4 never passes, whatever the worker says.
+  if (x.allow && x.level === 4) return null;
+  if (!(x.report === null || validateReportView(x.report))) return null;
   return x as unknown as WorkerVerdict;
 }

@@ -4,10 +4,14 @@
 import {
   BRIDGE_READY_EVENT,
   HOOK_READY_EVENT,
+  DECISION_TIMEOUT_MS,
   SW_ANALYZE,
+  SW_DECIDED,
   SW_NOTICE,
   type AnalyzeMessage,
+  type DecidedMessage,
   type NoticeMessage,
+  type WorkerVerdict,
   decisionEventName,
   parseHookMessage,
   randomId,
@@ -16,10 +20,17 @@ import {
 } from "../shared/protocol.js";
 
 export interface BridgeDeps {
-  sendToWorker(msg: AnalyzeMessage | NoticeMessage): Promise<unknown>;
+  sendToWorker(msg: AnalyzeMessage | NoticeMessage | DecidedMessage): Promise<unknown>;
   url(): string;
   topFrame: boolean;
   getRandomValues(a: Uint8Array): Uint8Array;
+  /**
+   * Show the report in the extension iframe. For a held verdict, resolves with the
+   * user's choice (false on Block, removal, error or the deadline); otherwise it only
+   * shows the report and the result is ignored. Absent: held requests are blocked.
+   */
+  showReport?(verdict: WorkerVerdict, deadline: number): Promise<boolean>;
+  now?(): number;
 }
 
 export interface Bridge {
@@ -54,10 +65,30 @@ export function installBridge(win: EventTarget, deps: BridgeDeps): Bridge {
       deps.sendToWorker({ type: SW_NOTICE, notice: msg, url: deps.url(), topFrame: deps.topFrame }).catch(() => {});
       return;
     }
+    // The hook rejects at arrival + 90 s on its own; the report closes at the same moment.
+    const deadline = (deps.now ?? Date.now)() + DECISION_TIMEOUT_MS;
     deps
       .sendToWorker({ type: SW_ANALYZE, request: msg, url: deps.url(), topFrame: deps.topFrame })
-      .then((res) => validateWorkerVerdict(res)?.allow === true)
-      .catch(() => false) // worker gone, context invalidated, bad shape: block
+      .then(async (res) => {
+        const verdict = validateWorkerVerdict(res);
+        if (!verdict) return false;
+        if (verdict.hold) {
+          if (!deps.showReport) return false;
+          const allow = (await deps.showReport(verdict, deadline)) === true;
+          deps.sendToWorker({ type: SW_DECIDED, id: msg.id, allow }).catch(() => {});
+          return allow;
+        }
+        // L1 notice, L4 or failure report: shown, never waited on. L0 and pass-through: silent.
+        if (verdict.level !== 0 && !(verdict.allow && verdict.level === null)) {
+          try {
+            void deps.showReport?.(verdict, deadline).catch(() => {});
+          } catch {
+            /* showing the report never changes the verdict */
+          }
+        }
+        return verdict.allow;
+      })
+      .catch(() => false) // worker gone, context invalidated, bad shape, UI error: block
       .then((allow) => reply(msg.id, allow));
   };
 

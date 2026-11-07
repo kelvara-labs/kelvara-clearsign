@@ -49,8 +49,8 @@ export function rig(worker: Worker, opts: { bridge?: boolean; hookFirst?: boolea
   return { win, hook, bridge, sent };
 }
 
-export const allow: Worker = async () => ({ allow: true, level: 0, reason: "ok" });
-export const block: Worker = async () => ({ allow: false, level: 4, reason: "sweep" });
+export const allow: Worker = async () => ({ allow: true, hold: false, level: 0, reason: "ok", report: null });
+export const block: Worker = async () => ({ allow: false, hold: false, level: 4, reason: "sweep", report: null });
 export const never: Worker = () => new Promise(() => {});
 
 /** A small real-looking wire transaction: 1 signature slot + legacy message bytes. */

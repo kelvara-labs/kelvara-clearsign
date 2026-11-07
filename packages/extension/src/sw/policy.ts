@@ -1,5 +1,7 @@
-// Turn an analysis into allow/block. Fail closed everywhere.
+// Turn an analysis into pass / hold / block. Fail closed everywhere.
+import { b58encode, b64decode, wireMessage } from "../shared/codec.js";
 import type { SignRequest, WorkerVerdict } from "../shared/protocol.js";
+import { validateReportView, type ReportView } from "../shared/report-view.js";
 import { pickEndpoint, type Network } from "./endpoint.js";
 import type { EngineLike } from "./engine-stub.js";
 
@@ -10,34 +12,53 @@ export interface Settings {
   passThrough: boolean;
 }
 
-/**
- * Asks the user for L2/L3. Until the report UI lands (M5 UI task) this is absent,
- * and a held request is blocked.
- */
-export type AskUser = (req: SignRequest, level: 2 | 3, title: string) => Promise<boolean>;
+export type Sha256 = (bytes: Uint8Array) => Promise<Uint8Array>;
 
-export async function decide(
-  req: SignRequest,
-  settings: Settings,
-  engine: EngineLike,
-  askUser?: AskUser
-): Promise<WorkerVerdict> {
-  if (settings.passThrough) return { allow: true, level: null, reason: "pass-through mode" };
+export const webSha256: Sha256 = async (bytes) => new Uint8Array(await crypto.subtle.digest("SHA-256", new Uint8Array(bytes)));
+
+/** Base58 SHA-256 of each transaction's message: what a Ledger shows as the message hash. */
+export async function messageHashes(txs: readonly string[], sha256: Sha256 = webSha256): Promise<string[]> {
+  const out: string[] = [];
+  for (const tx of txs) out.push(b58encode(await sha256(wireMessage(b64decode(tx)))));
+  return out;
+}
+
+const blocked = (reason: string, report: ReportView | null = null): WorkerVerdict => ({ allow: false, hold: false, level: null, reason, report });
+
+export async function decide(req: SignRequest, settings: Settings, engine: EngineLike, sha256: Sha256 = webSha256): Promise<WorkerVerdict> {
+  if (settings.passThrough) return { allow: true, hold: false, level: null, reason: "pass-through mode", report: null };
+  let hashes: string[];
+  try {
+    hashes = await messageHashes(req.txs, sha256);
+  } catch {
+    return blocked("could not read the transaction message");
+  }
+  const failure = (reason: string): WorkerVerdict =>
+    blocked(reason, {
+      title: "Blocked: request could not be analyzed",
+      summary: `${reason}. SignGuard blocks what it cannot check.`,
+      simulation: null,
+      authorizes: null,
+      capabilities: [],
+      preview: [],
+      claims: [],
+      messageHashes: hashes
+    });
   const endpoint = pickEndpoint(req.chain, settings.network, settings.heliusApiKey);
-  if (!endpoint.ok) return { allow: false, level: null, reason: endpoint.reason };
-  let report;
+  if (!endpoint.ok) return failure(endpoint.reason);
+  let level: 0 | 1 | 2 | 3 | 4;
+  let report: ReportView | null;
   try {
-    report = await engine.analyze(req, endpoint);
+    const { level: l, ...view } = await engine.analyze(req, endpoint);
+    level = l;
+    report = validateReportView({ ...view, messageHashes: hashes });
   } catch {
-    return { allow: false, level: null, reason: "engine error" };
+    return failure("engine error");
   }
-  const { level, title } = report;
-  if (level === 0 || level === 1) return { allow: true, level, reason: title };
-  if (level === 4) return { allow: false, level, reason: title };
-  if (!askUser) return { allow: false, level, reason: `${title} (no report UI yet: blocked)` };
-  try {
-    return { allow: (await askUser(req, level, title)) === true, level, reason: title };
-  } catch {
-    return { allow: false, level, reason: "report UI error" };
-  }
+  if (![0, 1, 2, 3, 4].includes(level)) return failure("engine error: no alert level");
+  if (!report) return failure("engine error: report failed validation");
+  const reason = report.title;
+  if (level === 0 || level === 1) return { allow: true, hold: false, level, reason, report };
+  if (level === 4) return { allow: false, hold: false, level, reason, report };
+  return { allow: false, hold: true, level, reason, report };
 }
