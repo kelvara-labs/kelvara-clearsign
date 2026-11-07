@@ -1,0 +1,74 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "2KZK2jSHhJ95jSUgG4CZmzGJm4GxBSTBQdyAT1jzD3FMSBLRLGAimG6PFsVoGuzocqTmJzKkZG2TYx5dms8yHJfc",
+  "slot": 466431397,
+  "blockTime": 1794037156,
+  "fetchedAt": "2026-11-07T07:49:07.885Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "priority": "P0",
+    "name": "Squads v4"
+  },
+  "encoding": "base64",
+  "transaction": "AUIFGa0MaL+KXzcpYl98ySJJccUkLW5xPjUWPAtuETiiykdpedkY3+51FWqZzjd5ULDaFbs2AH9aK/lJvO4uRAOAAQAECXoB7bmKTF/NL28LaITeD5hz75IhUrwR96MEZX5hW7yRv5cbWRCLW4WgT7CT8eIbTj/UxMj0h90JuVdSdp8N2MPP5FHsVoFA5E9UYLoLPGZ9upYCmhskUkI+SKqQOXT97zeG69Gqm0+/kK+QATuwChcpou4zcSFdGCMV6bOBw/yUCa3BSydb40vie3AzHG9+ZaGJ19q3AxhUopO2U+IpSSUDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6jjmhcJMsEJhOb1XvN4s17nD6xJ09PbSSRxPrfbgzsDQe/00TuG6ZKigDY7jEhH6IBuiEI2o5itmpzNoBxSNdWxBQUACQNQwwAAAAAAAAUABQJg6gAABgIAAQwCAAAAoIYBAAAAAAAGAgAADAIAAAAAAAAAAAAAAAcFCAIDBAYIxEe7sAIjqqUA",
+  "sha256": "b9e5a148926f614cad374839f6c9ebdea2ce51be5b5a92b52656033f2efd956a",
+  "version": 0,
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 8000,
+    "preBalances": [
+      185965228,
+      810672,
+      2468880,
+      1818640,
+      3429391855,
+      1,
+      1,
+      12171440,
+      2498640
+    ],
+    "postBalances": [
+      185857228,
+      910672,
+      0,
+      0,
+      3433679375,
+      1,
+      1,
+      12171440,
+      2498640
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: VaultTransactionAccountsClose",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 12697 of 59400 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 13297,
+    "costUnits": 15888
+  },
+  "discriminator": "c447bbb00223aaa5"
+}

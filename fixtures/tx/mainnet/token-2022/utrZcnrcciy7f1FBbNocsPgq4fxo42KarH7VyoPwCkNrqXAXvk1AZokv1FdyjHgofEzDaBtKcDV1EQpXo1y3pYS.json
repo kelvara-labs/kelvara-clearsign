@@ -1,0 +1,118 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "utrZcnrcciy7f1FBbNocsPgq4fxo42KarH7VyoPwCkNrqXAXvk1AZokv1FdyjHgofEzDaBtKcDV1EQpXo1y3pYS",
+  "slot": 466435589,
+  "blockTime": 1794038055,
+  "fetchedAt": "2026-11-07T07:54:29.768Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "token-2022",
+    "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+    "priority": "P0",
+    "name": "Token-2022"
+  },
+  "encoding": "base64",
+  "transaction": "Ai2dIwA+X1vYq5xCTRG8+9aI+YesBTA8CaytfNOVTxEwpR4iSLOQrtSgBMlvas56TAVYMII1BpQewa2SyGiC9AvIXfTmUTF3AHywILOfzPu2id/Ctcv0Gv2t8yeKfHk4fULFEwmqqLGpd9fhqdkHtSHilBGlCJGXaLLLTL0TkisHAgAECN/24GakgjCadUwy7P9XRe/EOx5YwtQOJVFapE2BnVh2hFsxjgDLNd27yR+d+NDqPqR6nPZ8y2JvfS376aJ0R+wOfiiOlX1eoxKf49ih04ZirWGlDfw6CMLvU8VDcSMKk/7hQCU0zwjeo6HCNEH+aR9LpeMXmWKG3UQaj3qdobM3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAbd9uHudY/eGEJdvORszdq2GvxNg7kNJ/69+SjYoYv8pdthqvFWnacSNMwAHBIwEumDEWeE757ZWOtSXxn6iJYmY3Y4VrOr+1geOqlDaSKouwNczGEcr7SbUxrt6+yDFgMFAAUCMHUAAAQCAAEMAgAAAIDw+gIAAAAABgQDBwIBCgwJtQIAAAAAAAY=",
+  "sha256": "f146d177981d67e6f34b7d20ae2d4a6c6df018170d32bdb62b0ff0005fe38561",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 10000,
+    "preBalances": [
+      54019438528,
+      0,
+      2108880,
+      2108880,
+      1,
+      1,
+      70228638,
+      341035795
+    ],
+    "postBalances": [
+      53969428528,
+      50000000,
+      2108880,
+      2108880,
+      1,
+      1,
+      70228638,
+      341035795
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb invoke [1]",
+      "Program log: Instruction: TransferChecked",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb consumed 3939 of 29700 compute units",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb success"
+    ],
+    "preTokenBalances": [
+      {
+        "accountIndex": 2,
+        "mint": "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH",
+        "uiTokenAmount": {
+          "uiAmount": 1592.418325,
+          "decimals": 6,
+          "amount": "1592418325",
+          "uiAmountString": "1592.418325"
+        },
+        "owner": "9yj3zvLS3fDMqi1F8zhkaWfq8TZpZWHe6cz1Sgt7djXf",
+        "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+      },
+      {
+        "accountIndex": 3,
+        "mint": "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH",
+        "uiTokenAmount": {
+          "uiAmount": 82.81489,
+          "decimals": 6,
+          "amount": "82814890",
+          "uiAmountString": "82.81489"
+        },
+        "owner": "9ufU9uBEoSYGTfTahVU4cCruQVgv9V923NYztS1d9zxs",
+        "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+      }
+    ],
+    "postTokenBalances": [
+      {
+        "accountIndex": 2,
+        "mint": "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH",
+        "uiTokenAmount": {
+          "uiAmount": 1592.595742,
+          "decimals": 6,
+          "amount": "1592595742",
+          "uiAmountString": "1592.595742"
+        },
+        "owner": "9yj3zvLS3fDMqi1F8zhkaWfq8TZpZWHe6cz1Sgt7djXf",
+        "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+      },
+      {
+        "accountIndex": 3,
+        "mint": "CASHx9KJUStyftLFWGvEVf59SGeG9sh5FfcnZMVPCASH",
+        "uiTokenAmount": {
+          "uiAmount": 82.637473,
+          "decimals": 6,
+          "amount": "82637473",
+          "uiAmountString": "82.637473"
+        },
+        "owner": "9ufU9uBEoSYGTfTahVU4cCruQVgv9V923NYztS1d9zxs",
+        "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+      }
+    ],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 4239,
+    "costUnits": 7229
+  },
+  "discriminator": "0c09b50200000000"
+}

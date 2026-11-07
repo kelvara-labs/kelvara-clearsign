@@ -1,0 +1,77 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "3vHnoLYQqBLh3Y5eYeEwrdPrHP8sz9XLjpLtiahNFXhSVSQwfSc1GCm4US51Z521BT8vfU9jzsNthNGgcFMPgpeF",
+  "slot": 459337908,
+  "blockTime": 1792522746,
+  "fetchedAt": "2026-11-07T07:55:30.282Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "address-lookup-table",
+    "programId": "AddressLookupTab1e1111111111111111111111111",
+    "priority": "P1",
+    "name": "Address Lookup Table"
+  },
+  "encoding": "base64",
+  "transaction": "AZH9IzVDfgT5wSAl4I6faN8zpmPYgJGax51awv6qxYjRhLC5OQAlhmgaeIQQ2sD3mefPTiOZy0g7ohdgWjwStgQBAAMFfQ6jQkBTBTu72GD3TDLwS8Pchyrfmk9O0XDCTuD0PtMqZDYReGAvisvZtsGoFQ8YzQ2HJqj/lKnxbdXDSn8CWAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAnemr5czm3rIjRiSyQRG9QACMJJm9i5TwRgkSYIAAAADBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAPzoKjT+QO9MaxvqSctz6uozfB34YEvcLeHqmZAZPzSbAgQACQNAS0wAAAAAAAMEAQAAAuwBAgAAAAcAAAAAAAAAQSRuzH14/oHkF3OkaWVBmTeSOgdkR5ffbz61FEJgEMsL8WGg5jEsqd1INioH7ULdrKQIumXBx3pU6MAUqucFXw7Clp0hKFMZIET7GygCSq/2W99zlNMZwVG5R4PPinZMpfcGHRV+N4lApz6jWjnxhFom7wd36SO6xpb9xjW/qHr+vw6dZvvzJH/Qb/mr9UlPLKtHI2fxhiPglWoinftAiwwU3vyCXsZ2lCUIGLtlQGX0KY0xVtVxtNT4CQwY6ahjoQazAWOpHVUwm3uafJmrCZZJ4vYc7RfqexMRPecR1EI=",
+  "sha256": "42513f940bc7b8add5ac68d84153548847780cecb7f07d670ed23efab704b036",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 1020000,
+    "preBalances": [
+      273011464784,
+      40274240,
+      1,
+      1141440,
+      1
+    ],
+    "postBalances": [
+      273009306864,
+      41412160,
+      1,
+      1141440,
+      1
+    ],
+    "innerInstructions": [
+      {
+        "index": 1,
+        "instructions": [
+          {
+            "programIdIndex": 2,
+            "accounts": [
+              0,
+              1
+            ],
+            "data": "3Bxs3zvBodWANz5V",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program AddressLookupTab1e1111111111111111111111111 invoke [1]",
+      "Program log: Instruction: ExtendLookupTable",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program AddressLookupTab1e1111111111111111111111111 consumed 7863 of 202850 compute units",
+      "Program AddressLookupTab1e1111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 8013,
+    "costUnits": 9442
+  },
+  "discriminator": "0200000007000000"
+}

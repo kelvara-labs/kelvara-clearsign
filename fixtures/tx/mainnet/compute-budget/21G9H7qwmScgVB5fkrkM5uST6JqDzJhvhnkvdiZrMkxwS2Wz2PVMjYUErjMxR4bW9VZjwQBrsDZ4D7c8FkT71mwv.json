@@ -1,0 +1,59 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "21G9H7qwmScgVB5fkrkM5uST6JqDzJhvhnkvdiZrMkxwS2Wz2PVMjYUErjMxR4bW9VZjwQBrsDZ4D7c8FkT71mwv",
+  "slot": 466434975,
+  "blockTime": 1794037923,
+  "fetchedAt": "2026-11-07T07:52:05.326Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "compute-budget",
+    "programId": "ComputeBudget111111111111111111111111111111",
+    "priority": "P1",
+    "name": "Compute Budget"
+  },
+  "encoding": "base64",
+  "transaction": "ATI9/Th5wGwVFvMJBRGAfihmhQTrtq3fF5crt61f+WdBc8DqR2PeXE739BvlYT1/YY8eRGHK51VR4tRq2tbsjAEBAAIEBtPmgwE9998Ang2vn9M1HNacU0qniOotcC0jWr6vbiz96ApZ3QarCR0Ti/R47RPLaBOisiHQ/ihMRu+tXFZ6fgMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAADADHKfD0uO+9OvCpa2HEmZHXcwNeyc/pORJPlF700hblKVCmTNZpwCK1/KifMO+aMl7Z8tCLrMQ/hO5DKwxPVAMCAAUCtAIAAAIACQMAAAAAAAAAAAMCAAFAB61LZn78s+UYy9sAAAAAAAAAAAAAAAAAADgKAAAAAAAAu0sBAAAAAAAgMAUAAAAAAAAwdQAAAAMAV6YWAAAAAA==",
+  "sha256": "3d9267a7dd177285dd7c06ddd97e4f339ad078b32c14a33878516287567332e4",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      29148919039,
+      1219200,
+      1,
+      1141440
+    ],
+    "postBalances": [
+      29148914039,
+      1219200,
+      1,
+      1141440
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program orafZ4BdfzikRRg498P23vG3EdEyMR7bYoYcD2zcwiD invoke [1]",
+      "Program orafZ4BdfzikRRg498P23vG3EdEyMR7bYoYcD2zcwiD consumed 276 of 392 compute units",
+      "Program orafZ4BdfzikRRg498P23vG3EdEyMR7bYoYcD2zcwiD success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 576,
+    "costUnits": 1931
+  },
+  "discriminator": "02b4020000"
+}

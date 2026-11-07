@@ -1,0 +1,109 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "5h7QKo1xgUW4TY5UkbhhkVVRYCzRq3STXqHsWjUYPdbmk1zfLd3LhPMV8RjVbKjhtoqz9R9gdRBkj2MYDMFnXZ6g",
+  "slot": 444313123,
+  "blockTime": 1788546388,
+  "fetchedAt": "2026-11-07T07:54:42.836Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "bpf-loader-upgradeable",
+    "programId": "BPFLoaderUpgradeab1e11111111111111111111111",
+    "priority": "P0",
+    "name": "Upgradeable loader"
+  },
+  "encoding": "base64",
+  "transaction": "AeqoXK23zOpb96HvTrm+4p0tQ3UkAs0o/hsx7mB1jY/tb9aH5vSJTWrqswFaxhz/krzlTcKTzs0v5I/Cb4jDdwmAAQAIEIGRnh/88aJdKjeVUVWQjF2O/vIDVMKI0OR4/DQ5L/6yv5cbWRCLW4WgT7CT8eIbTj/UxMj0h90JuVdSdp8N2MNpRbfPexOXlKQso2xLkazAv91YCeszxyrpqG0+ecmUAAReCRkdRtdqqO2/G2LgeZcbZOl/cb294fa4YmCZiRAUMoBZQRzcR44B4onl/6KVieD91fPl+tP/1AUaAmvCO7IFMHrWRUu8Xh5OkgWSU6GLuMiGjFimMS7IajnmIk43O+jiDIN+Pbsl/FEfMNziDwrYbwWG60f687hZZT7V6KoWv/GESDlVX6yNYLHFhgUmP+eYKM4+KEvK7uhXY4vNvLADBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6hcySIxeNX8eGK/MweIHAHF1K2M2duSWm3wvIl69It6j57Z+2hSsmwKIY8nBUU2/4RVH4aVcUyDPfBN9kFFhCKjAqj2kU6IobDiEBU+92OuKwDCuT0WwSTSwFN6EASAAAAGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAan1RcYx3TJKFZjmGkdXraLXrijm0ttXHNVWyEAAAAAMIRsng9SIckY9wdTyguMffjVofSp3jKbH5lxDNrugBwECAAFAkKMAQAIAAkDRMUAAAAAAAAJAgABDAIAAACghgEAAAAAAAoMCwIMAAMEBQYHDQ4PCMIIoVeZpBmrAA==",
+  "sha256": "7a1e33a30c7bf8c2e01c0a1fff388adea42dda7603aac08bd3cc657abbbf22a7",
+  "version": 0,
+  "invocation": "inner",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 10123,
+    "preBalances": [
+      3538688129,
+      864290,
+      10373454,
+      7223814589,
+      72981780480,
+      1141459,
+      21229818249,
+      9371054764,
+      1,
+      1,
+      12171440,
+      6632880,
+      3204498,
+      1,
+      1009200,
+      1169280
+    ],
+    "postBalances": [
+      3538578006,
+      964290,
+      10373454,
+      7223814589,
+      66407128704,
+      1141459,
+      0,
+      37175524789,
+      1,
+      1,
+      12171440,
+      6632880,
+      3204498,
+      1,
+      1009200,
+      1169280
+    ],
+    "innerInstructions": [
+      {
+        "index": 3,
+        "instructions": [
+          {
+            "programIdIndex": 13,
+            "accounts": [
+              4,
+              5,
+              6,
+              7,
+              14,
+              15,
+              3
+            ],
+            "data": "5Sxr3",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: VaultTransactionExecute",
+      "Program BPFLoaderUpgradeab1e11111111111111111111111 invoke [2]",
+      "Upgraded program MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+      "Program BPFLoaderUpgradeab1e11111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 90992 of 100992 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 91442,
+    "costUnits": 98314
+  },
+  "discriminator": null
+}

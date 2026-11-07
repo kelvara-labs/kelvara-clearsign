@@ -1,0 +1,111 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H",
+  "slot": 410344005,
+  "blockTime": 1775059518,
+  "fetchedAt": "2026-11-07T07:49:07.921Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "priority": "P0",
+    "name": "Squads v4"
+  },
+  "encoding": "base64",
+  "transaction": "AUCbqUv9bezB4PKRp6mNFLAJ/lIXgK33Uih97FI+VMTA9Y8MZ8cWwR+FRJDHlQefmgkg4z/vyB3lU3gOIrZlJgIBAAMIH9hYErV4XikPqBdSr/B4HAoZn+DpP/Vw6mMapZAUpcsT2p4izt5hqfe4kl1EN90o6b7usccoiGr6aqfJsm6oGRTyMg4dsRyihUh47CbojtjK+VicBfxLmexQWw5HHRWDZfzsRo8uJGh5TA4AJvmFhb6ppRwyd17HyFrmkQfruNn8076t9/m/97Bb74GUNE6z/PJdKB9WR+buAYgPE8T4NQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6gGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqUAAAPoJrVNT30Q+LEw4ZvEYFP/ZAzLHmvzmgm1T448+BYUnBAUDAwcABAQAAAAGBQECAAAFowEw+k6o0OLa0wAAlAAAAAEBAQOQT8iVPc/J87UXmJPuEvycRFytiJqVfWHPuNvMFy9qT0o+70sDyCpxWZ6gehbuS89tzjE1fYRgsqwb1MOphgydCVTbvp7JYMmKeik/4hM2lm/hgNFRrkuBeVYfiYVKU/YBAgIAASgAobAo1Ty4s+TvXifglhVGqtRnSazAkuA8Gox8EYfoh8wkXbnPK8qamQAABgUBBAAABRHcPEngHmxPnwcAAAAAAAAAAAYDAQAECZAlpIi82Cr4AA==",
+  "sha256": "63ec997fca34971e67927352226f359cad84e67207f326b4c6a5b5a14d6e70da",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      342979947,
+      2958000,
+      0,
+      1447680,
+      0,
+      1,
+      2141440,
+      42706560
+    ],
+    "postBalances": [
+      335632147,
+      2958000,
+      2623920,
+      1447680,
+      4718880,
+      1,
+      2141440,
+      42706560
+    ],
+    "innerInstructions": [
+      {
+        "index": 1,
+        "instructions": [
+          {
+            "programIdIndex": 5,
+            "accounts": [
+              0,
+              2
+            ],
+            "data": "11117TXo5FP4bXmEJRsWejhkmg4A6ERoEcQAzQM8LJcHeoiaFiXF6uTCbqRgGmYrFSQdks",
+            "stackHeight": 2
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "instructions": [
+          {
+            "programIdIndex": 5,
+            "accounts": [
+              0,
+              4
+            ],
+            "data": "11112B6R242kTmdJWEUkVTHoaFvym1QC1q224Vwbe3cyd1qVQkuCC6q1Cs6bm5dDVaUTAo",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: VaultTransactionCreate",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program log: transaction index: 7",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 25244 of 602850 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: ProposalCreate",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 14148 of 577606 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: ProposalApprove",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 9591 of 563458 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 49133,
+    "costUnits": 51769
+  },
+  "label": "Drift attack 1/2: create and approve",
+  "role": "create-and-approve",
+  "reference": "BlockSec, Drift Protocol incident analysis",
+  "attackStep": true
+}

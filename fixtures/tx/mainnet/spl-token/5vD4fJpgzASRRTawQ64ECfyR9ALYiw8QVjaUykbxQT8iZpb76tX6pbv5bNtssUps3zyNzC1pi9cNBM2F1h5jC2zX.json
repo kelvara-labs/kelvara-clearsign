@@ -1,0 +1,68 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "5vD4fJpgzASRRTawQ64ECfyR9ALYiw8QVjaUykbxQT8iZpb76tX6pbv5bNtssUps3zyNzC1pi9cNBM2F1h5jC2zX",
+  "slot": 466434893,
+  "blockTime": 1794037906,
+  "fetchedAt": "2026-11-07T07:51:51.133Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "spl-token",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "priority": "P0",
+    "name": "SPL Token"
+  },
+  "encoding": "base64",
+  "transaction": "AvXz2aYa9SDxtLBN+VFyoAcBHYwRTZgSgtojNxhyMpQqtbXILDiN4BBoIIvjirlNHgxGjQ+9IjqO9erAk2+WZwTfh/GWKlV1EdeeR/N6uDUCyP1YTCl0+M3hKZKgO1Y/NjW8z1c0Pqdh69ib5X1Y6Jeiv2YL/Morz0PjFf7lXckOAgEECPOnLC+4i6kUNB82tfF4jQ2Rpi0Dkc71O9mNWIRipRQctzegvYOfXUS16475nLWSmhygdxZ3KoGn9kx5LHjgNKmFzolGVvC3R0uuQ5EkjPA4dwoHuS23YQIeWsqRMyMoudb20dHziBpGSLrO7NB2TrQTaOwKmBri7hVclsVGhPtUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKmBH+dyB0V7CFEgevqq44jJJKaGEIWg9pHmnuSgIahEdAMEAwADAXIDAAAAtzegvYOfXUS16475nLWSmhygdxZ3KoGn9kx5LHjgNKkWAAAAAAAAAEQ1Y0FSNWk2UjJiM3RONkJYdVpXRG2DZ0kBAAAAAKUAAAAAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKkHBAMFAQYBAQcDAwIBAQk=",
+  "sha256": "aa4fdecffb66267f1c9b4acc965b1e1ea8a2dbe908cde10a022d04b449d1fad8",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 10000,
+    "preBalances": [
+      21597843,
+      0,
+      48000646427,
+      0,
+      1,
+      1863895793513,
+      1009200,
+      230130698
+    ],
+    "postBalances": [
+      0,
+      0,
+      48022234270,
+      0,
+      1,
+      1863895793513,
+      1009200,
+      230130698
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [1]",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 145 of 402850 compute units",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [1]",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 116 of 402705 compute units",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 411,
+    "costUnits": 2812
+  },
+  "discriminator": "01"
+}
