@@ -2,7 +2,7 @@ import { SYSTEM_PROGRAM, decodeTokenAccount } from "../state/layouts.js";
 import type { DecodedInstruction } from "../decode/types.js";
 import type { SimulationResult } from "../simulate/index.js";
 import { isToken } from "./authority-transfer.js";
-import { accountNamed, instructionEvidence, sessionSigners, txSigners } from "./common.js";
+import { accountNamed, instructionEvidence, txSigners } from "./common.js";
 import { accountEvidence, tokenAccount } from "./token-state.js";
 import { arg } from "./squads-session.js";
 import type { Rule, RuleContext } from "./types.js";
@@ -16,6 +16,9 @@ import type { Rule, RuleContext } from "./types.js";
 //      ATA CreateIdempotent for the destination (rent paid by the user) + TransferChecked(all) + CloseAccount
 //      (user ATA -> destination), then SOL minus fee and rent. Instructions are not allow-listed here; the
 //      outcome decides, so any value coming back to the wallet or a co-signing destination keeps it below L4.
+// Each transaction is judged on its own (reads and its own simulation are pre-session state), so only a
+// transaction no other session transaction can change qualifies: no other transaction takes the wallet or
+// an inventory account writable. Another, unrelated transaction in the session never hides a sweep.
 const MEMO = ["MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr", "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo"];
 
 export const walletSweepRule: Rule = {
@@ -24,23 +27,27 @@ export const walletSweepRule: Rule = {
   run(ctx) {
     const wallet = ctx.state.wallet, inventory = ctx.state.walletInventory;
     if (!wallet || !inventory?.complete) return;
-    // Multi-transaction balances need sequential state; this rule never guesses it.
-    if (ctx.session.transactions.length !== 1) return;
-    const tx = ctx.session.transactions[0]!, fee = ctx.state.fees?.[0];
-    if (!tx.complete || !txSigners(tx).includes(wallet) || fee === undefined || fee < 0n) return;
-    if (!simulatedSweep(ctx, wallet, inventory.tokenAccounts, fee)) exactSweep(ctx, wallet, inventory.tokenAccounts, fee);
+    const watched = new Set([wallet, ...inventory.tokenAccounts]);
+    const writes = ctx.session.transactions.map((t) => !t.complete || t.accounts.some((a) => a.writable && (!a.address || watched.has(a.address))));
+    for (const tx of ctx.session.transactions) {
+      const t = tx.index, fee = ctx.state.fees?.[t];
+      if (!tx.complete || !txSigners(tx).includes(wallet) || fee === undefined || fee < 0n) continue;
+      // Sequential balances are never guessed: another transaction that may change the wallet's holdings rules it out.
+      if (writes.some((w, i) => w && i !== t)) continue;
+      if (!simulatedSweep(ctx, t, wallet, inventory.tokenAccounts, fee)) exactSweep(ctx, t, wallet, inventory.tokenAccounts, fee);
+    }
   }
 };
 
-function nonceDeps(ctx: RuleContext): string[] {
-  return ctx.claims.has("nonce:0") ? [ctx.claims.get("nonce:0")!] : [];
+function nonceDeps(ctx: RuleContext, t: number): string[] {
+  return ctx.claims.has(`nonce:${t}`) ? [ctx.claims.get(`nonce:${t}`)!] : [];
 }
 
 /** (a) Exact message amounts against read balances; the wallet pays the fee. */
-function exactSweep(ctx: RuleContext, wallet: string, tokenAccounts: string[], fee: bigint): void {
-  const raw = ctx.state.accounts?.[wallet], tx = ctx.session.transactions[0]!, ixs = ctx.decoded[0] ?? [];
+function exactSweep(ctx: RuleContext, t: number, wallet: string, tokenAccounts: string[], fee: bigint): void {
+  const raw = ctx.state.accounts?.[wallet], tx = ctx.session.transactions[t]!, ixs = ctx.decoded[t] ?? [];
   if (!raw || raw.owner !== SYSTEM_PROGRAM || raw.data.length || tx.accounts[0]?.address !== wallet) return;
-  const signers = sessionSigners(ctx);
+  const signers = new Set(txSigners(tx));
   let sol = 0n, recipient: string | null = null;
   const spent = new Map<string, bigint>(), evidence: string[] = [];
   for (const ix of ixs) {
@@ -56,7 +63,7 @@ function exactSweep(ctx: RuleContext, wallet: string, tokenAccounts: string[], f
       evidence.push(accountEvidence(ctx, source), accountEvidence(ctx, dest));
     } else return;
     if (!to || to === wallet || signers.has(to) || (recipient !== null && recipient !== to)) return;
-    recipient = to; evidence.push(instructionEvidence(ctx, 0, ix));
+    recipient = to; evidence.push(instructionEvidence(ctx, t, ix));
   }
   if (!recipient || sol <= 0n || sol + fee !== raw.lamports) return;
   for (const address of tokenAccounts) {
@@ -65,7 +72,7 @@ function exactSweep(ctx: RuleContext, wallet: string, tokenAccounts: string[], f
     evidence.push(accountEvidence(ctx, address));
   }
   evidence.push(accountEvidence(ctx, wallet), ctx.report.addEvidence({ type: "account", source: "rpc", summary: "Complete inventory from both token programs and exact message fee", data: { wallet, inventory: ctx.state.walletInventory, fee } }));
-  ctx.report.addClaim({ kind: "Fact", ruleId: "wallet.sweep", level: "L4", statement: `All wallet SOL (${sol} lamports after ${fee} fee) and every token balance are sent to non-signing recipient ${recipient}.`, evidenceIds: evidence, dependsOn: nonceDeps(ctx) });
+  ctx.report.addClaim({ kind: "Fact", ruleId: "wallet.sweep", level: "L4", statement: `All wallet SOL (${sol} lamports after ${fee} fee) and every token balance are sent to non-signing recipient ${recipient}.`, evidenceIds: evidence, dependsOn: nonceDeps(ctx, t), transactionIndices: [t] });
 }
 
 /** Token account state after simulation: decoded post data, else the simulated token change, else the pre read. */
@@ -82,8 +89,8 @@ function postTokenOwner(ctx: RuleContext, sim: SimulationResult, address: string
 }
 
 /** (b) Simulated outcome. Returns true when it made the claim. */
-function simulatedSweep(ctx: RuleContext, wallet: string, tokenAccounts: string[], fee: bigint): boolean {
-  const sim = ctx.state.simulations?.[0], tx = ctx.session.transactions[0]!;
+function simulatedSweep(ctx: RuleContext, t: number, wallet: string, tokenAccounts: string[], fee: bigint): boolean {
+  const sim = ctx.state.simulations?.[t], tx = ctx.session.transactions[t]!;
   // Unknown changes (omitted accounts) are not zero; a failed simulation proves nothing.
   if (!sim || !sim.ok || sim.accountsOmitted.length || !sim.solChanges.length) return false;
   const walletFee = tx.accounts[0]?.address === wallet ? fee : 0n;
@@ -116,19 +123,19 @@ function simulatedSweep(ctx: RuleContext, wallet: string, tokenAccounts: string[
     if (!owner || owner === wallet) return false;
     destinations.add(owner); received += c.delta;
   }
-  const signers = sessionSigners(ctx);
+  const signers = new Set(txSigners(tx));
   if (destinations.size !== 1) return false;
   const [destination] = [...destinations] as [string];
   if (destination === wallet || signers.has(destination) || inv.has(destination)) return false;
   // The destination gets everything the wallet and its token accounts lose, except the fee.
   if (received + walletFee < lost) return false;
   const evidence: string[] = [ctx.report.addEvidence({ type: "simulation", source: "simulation", address: wallet, summary: `Simulation: wallet ${wallet} goes from ${w.pre} to ${w.post} lamports (fee ${walletFee}); destination ${destination} gains ${received} lamports and every token balance`, data: { wallet: { pre: w.pre, post: w.post }, destination, received, lost, fee: walletFee, solChanges: sim.solChanges, tokenChanges: sim.tokenChanges.filter((t) => inv.has(t.account) || t.owner === destination), blockhashReplaced: sim.blockhashReplaced } })];
-  for (const ix of ctx.decoded[0] ?? []) if (!skippable(ix)) evidence.push(instructionEvidence(ctx, 0, ix));
+  for (const ix of ctx.decoded[t] ?? []) if (!skippable(ix)) evidence.push(instructionEvidence(ctx, t, ix));
   for (const address of tokenAccounts) if (ctx.state.accounts?.[address]) evidence.push(accountEvidence(ctx, address));
   if (ctx.state.accounts?.[wallet]) evidence.push(accountEvidence(ctx, wallet));
   evidence.push(ctx.report.addEvidence({ type: "account", source: "rpc", summary: "Complete inventory from both token programs and exact message fee", data: { wallet, inventory: ctx.state.walletInventory, fee } }));
   const tokens = movedMints.length;
-  ctx.report.addClaim({ kind: "Fact", ruleId: "wallet.sweep", level: "L4", statement: `Simulation shows the wallet emptied: ${lost - walletFee} lamports (all but the ${walletFee} fee, including token account rent) and all ${tokens} token balance${tokens === 1 ? "" : "s"} go to non-signing destination ${destination}.`, evidenceIds: evidence, dependsOn: nonceDeps(ctx) });
+  ctx.report.addClaim({ kind: "Fact", ruleId: "wallet.sweep", level: "L4", statement: `Simulation shows the wallet emptied: ${lost - walletFee} lamports (all but the ${walletFee} fee, including token account rent) and all ${tokens} token balance${tokens === 1 ? "" : "s"} go to non-signing destination ${destination}.`, evidenceIds: evidence, dependsOn: nonceDeps(ctx, t), transactionIndices: [t] });
   return true;
 }
 

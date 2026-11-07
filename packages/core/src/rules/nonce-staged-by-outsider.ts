@@ -4,7 +4,7 @@
 // the admin-local scenario. Port of Helius Watchtower src/detectors/nonceAuthority.ts (MIT): there
 // the monitor sees the outsider create a nonce for a privileged key; here the signer sees it at
 // signing time, from the nonce account's oldest transaction (state/findAccountOrigin).
-import { durableNonceUse, instructionEvidence, sessionSigners, short } from "./common.js";
+import { durableNonceUse, instructionEvidence, signersOf, short } from "./common.js";
 import { SQUADS_PRIVILEGED } from "./lifetime-durable-nonce.js";
 import type { Rule, RuleContext } from "./types.js";
 
@@ -15,8 +15,8 @@ export const nonceStagedByOutsiderRule: Rule = {
   ruleIds: [RULE_ID],
   description: "Durable nonce funded by a key outside the session (Watchtower nonceAuthority.ts)",
   run(ctx: RuleContext) {
-    const signers = sessionSigners(ctx);
     for (const tx of ctx.session.transactions) {
+      const signers = signersOf(ctx, [tx.index]);
       const use = durableNonceUse(ctx, tx.index);
       if (!use) continue;
       const nonceClaim = ctx.claims.get(`nonce:${tx.index}`);

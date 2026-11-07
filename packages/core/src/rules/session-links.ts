@@ -5,7 +5,7 @@ import { SQUADS_V4_PROGRAM } from "../decode/squads.js";
 import type { DecodedInstruction } from "../decode/types.js";
 import type { CapabilityRecord } from "../report/builder.js";
 import { SYSTEM_PROGRAM } from "../state/layouts.js";
-import { sessionSigners, short } from "./common.js";
+import { signersOf, short } from "./common.js";
 import type { RuleContext } from "./types.js";
 
 export interface OutsideGrant {
@@ -16,14 +16,13 @@ export interface OutsideGrant {
   proposed: boolean;
 }
 
-/** Granted capabilities whose holder signs nothing in the session, as the rules so far recorded them. */
+/** Granted capabilities whose holder signs none of the granting claim's transactions, as the rules so far recorded them. */
 export function outsideGrants(ctx: RuleContext): OutsideGrant[] {
-  const signers = sessionSigners(ctx);
   const out: OutsideGrant[] = [];
   for (const cap of ctx.report.listCapabilities()) {
-    if (cap.direction !== "granted" || !cap.holder || signers.has(cap.holder)) continue;
+    if (cap.direction !== "granted" || !cap.holder) continue;
     const claim = ctx.report.getClaim(cap.claimId);
-    if (!claim) continue;
+    if (!claim || signersOf(ctx, claim.transactionIndices).has(cap.holder)) continue;
     // Proposed content is evidenced by an instruction path below a Squads call (two levels deep).
     const proposed = claim.evidenceIds.some((e) => {
       const ev = ctx.report.evidence.get(e);
