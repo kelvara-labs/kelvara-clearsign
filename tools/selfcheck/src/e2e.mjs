@@ -4,8 +4,9 @@
 // Steps: build packages/extension -> pick a free port -> playwright test -> classify the JSON report.
 // Exit 0 PASS, 1 FAIL, 78 PENDING (cases whose feature has not landed; never for a regression).
 // The Helius key goes to the specs through the child env only; output is redacted.
+/* global fetch, setTimeout */
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import { createWriteStream, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { createServer } from "node:net";
 import path from "node:path";
 import { createRequire } from "node:module";
@@ -75,10 +76,57 @@ if ((await run(path.join(ROOT, "node_modules/.bin/tsc"), ["-p", "test-dapp/e2e/t
 mkdirSync(LOGS, { recursive: true });
 rmSync(JSON_OUT, { force: true });
 const env = { ...process.env, TEST_DAPP_PORT: String(await freePort()), E2E_JSON: JSON_OUT, FORCE_COLOR: "0" };
+
+// 3b. Live localnet cases for the level specs (V10): scenarios S12 sets up admin-local, trap-local and sweep-local
+// without attacking and serves them with a fresh blockhash. Script absent -> those cases PENDING; script present
+// but failing -> FAIL (owner: scenarios). KELVARA_E2E_CASES_URL set by the caller skips the start.
+const CASES_SCRIPT = path.join(ROOT, "packages/scenarios/scripts/e2e-cases.mjs");
+const CASES_PORT = Number(process.env.KELVARA_E2E_CASES_PORT ?? "8784");
+let casesServer = null;
+if (!env.KELVARA_E2E_CASES_URL) {
+  if (!existsSync(CASES_SCRIPT)) {
+    env.KELVARA_E2E_CASES_MISSING = "packages/scenarios/scripts/e2e-cases.mjs not in this tree (scenarios S12)";
+  } else {
+    const url = `http://127.0.0.1:${CASES_PORT}`;
+    console.log(`G7 starting localnet case server (${path.relative(ROOT, CASES_SCRIPT)} --serve)`);
+    const caseLog = createWriteStream(path.join(LOGS, "e2e-cases.log"));
+    casesServer = spawn(process.execPath, [CASES_SCRIPT, "--serve"], { cwd: path.dirname(path.dirname(CASES_SCRIPT)), stdio: ["ignore", "pipe", "pipe"] });
+    casesServer.stdout.on("data", (d) => caseLog.write(redact(d.toString())));
+    casesServer.stderr.on("data", (d) => caseLog.write(redact(d.toString())));
+    process.on("exit", () => casesServer?.kill());
+    let exited = null;
+    casesServer.on("exit", (c) => (exited = c ?? 1));
+    const deadline = Date.now() + Number(process.env.KELVARA_E2E_CASES_TIMEOUT_MS ?? 300_000);
+    let ok = false, last = "";
+    while (Date.now() < deadline && exited === null) {
+      try {
+        const r = await fetch(`${url}/cases`);
+        if (r.ok) {
+          const body = await r.json();
+          const roles = (body.cases ?? []).map((c) => c.role);
+          if (["l3-admin", "l2-trap", "l4-sweep"].every((x) => roles.includes(x))) { ok = true; break; }
+          last = `roles ${roles.join(",")}`;
+        } else last = `HTTP ${r.status}`;
+      } catch (e) { last = e.cause?.code ?? e.message; }
+      await new Promise((r) => setTimeout(r, 1_000));
+    }
+    if (ok) {
+      env.KELVARA_E2E_CASES_URL = url;
+      console.log(`G7 localnet cases ready at ${url}`);
+    } else {
+      const why = exited !== null ? `case server exited ${exited}` : `case server not ready (${last})`;
+      checks.push(fail("localnet cases", `${why}; log tools/selfcheck/logs/e2e-cases.log (owner: scenarios)`));
+      env.KELVARA_E2E_CASES_MISSING = why;
+      casesServer.kill();
+    }
+  }
+}
 const key = loadEnv().HELIUS_API_KEY ?? process.env.HELIUS_API_KEY;
 if (key) env.HELIUS_API_KEY = key;
 const extra = process.argv.slice(2); // e.g. a spec file or -g "pattern" for spot checks
 const code = await run(process.execPath, [pwBin, "test", "-c", path.join(HERE, "playwright.config.mjs"), ...extra], { env });
+
+casesServer?.kill();
 
 let report;
 try {
@@ -99,7 +147,8 @@ for (const c of result.cases) {
 }
 if (!result.cases.length) checks.push(fail("specs", "no G7 specs ran"));
 const counts = (v) => result.cases.filter((c) => c.verdict === v).length;
-const verdict = gateVerdict(result);
+// A setup failure (e.g. the localnet case server) FAILs the gate even if every spec passed or went PENDING.
+const verdict = checks.some((c) => c.status === "FAIL") ? "FAIL" : gateVerdict(result);
 if (verdict === "PASS") {
   // One summary line for SELFCHECK.md instead of one per case.
   checks.length = 0;
