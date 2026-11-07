@@ -96,5 +96,5 @@ test("devnet run: exactly one passing test", () => {
   assert.match(evaluateDevnetRun(0, out(0, 0, 0)).detail, /expected 1 passing test, got tests=0/);
   assert.equal(evaluateDevnetRun(1, out(1, 0, 1)).status, "FAIL");
   assert.equal(evaluateDevnetRun(0, "garbage").status, "FAIL");
-  assert.equal(evaluateDevnetRun(null ?? -1, out(1, 1, 0)).status, "FAIL");
+  assert.equal(evaluateDevnetRun(-1, out(1, 1, 0)).status, "FAIL");
 });
