@@ -1,0 +1,57 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "3ge568xDFz8zvZyqdQQ43fjbDMJEuZknpkM4JnJzJyHbf8irTcGYL4anipf6twoAhVc6shfjgSYyNQtVXNLvES1C",
+  "slot": 466434975,
+  "blockTime": 1794037923,
+  "fetchedAt": "2026-11-07T07:52:05.326Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "compute-budget",
+    "programId": "ComputeBudget111111111111111111111111111111",
+    "priority": "P1",
+    "name": "Compute Budget"
+  },
+  "encoding": "base64",
+  "transaction": "AYY3oHKRjgaQCcL4sEv7Tz+ZuwkKhxwPxf63XLjqgCPxd4ZOc8VwTgPj1hjZKxjCaQcWIc9gePPusy5ifkxreAcBAAIEC+QRjKS7MYT6fZbHHxqIFaw9iHoCS/b30v20LQzDNwrOVZ5CMEglQIk+SUiPAiJN1MOIrOMZn5oVGoGiwSziawMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAABuFOO7QXSS5pD8ELr856ElZOtT8figarb8WfqMWJqzvlKVCmTNZpwCK1/KifMO+aMl7Z8tCLrMQ/hO5DKwxPVAICAAUC3wcAAAMCAAERAhkAYFsDABAJBQBCP/60oQE=",
+  "sha256": "99fb2a4d4be800501a181660a1e71516653a7f5b61c4298da7c6b96a3b1fa059",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      54071229664,
+      1503680,
+      1,
+      1141440
+    ],
+    "postBalances": [
+      54071224664,
+      1503680,
+      1,
+      1141440
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program Tri3NG4HkZ6DddYPKoX2ehgkqFtDuej9Aspw5BmvSo4 invoke [1]",
+      "Program Tri3NG4HkZ6DddYPKoX2ehgkqFtDuej9Aspw5BmvSo4 consumed 618 of 1865 compute units",
+      "Program Tri3NG4HkZ6DddYPKoX2ehgkqFtDuej9Aspw5BmvSo4 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 768,
+    "costUnits": 2125
+  },
+  "discriminator": "02df070000"
+}

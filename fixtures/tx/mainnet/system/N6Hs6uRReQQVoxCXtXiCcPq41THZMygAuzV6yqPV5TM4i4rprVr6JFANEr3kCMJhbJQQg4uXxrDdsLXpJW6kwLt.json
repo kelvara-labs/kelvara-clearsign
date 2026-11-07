@@ -1,0 +1,63 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "N6Hs6uRReQQVoxCXtXiCcPq41THZMygAuzV6yqPV5TM4i4rprVr6JFANEr3kCMJhbJQQg4uXxrDdsLXpJW6kwLt",
+  "slot": 466434875,
+  "blockTime": 1794037901,
+  "fetchedAt": "2026-11-07T07:51:46.550Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "system",
+    "programId": "11111111111111111111111111111111",
+    "priority": "P0",
+    "name": "System"
+  },
+  "encoding": "base64",
+  "transaction": "gQEABA8AAADrl5DTynx0oUNuaJqm4d0BXd6Z1e+G959t3jG/CWvULAIHDQQy4ipPfDn3XTBx5zQxW7jPYOraWNnQXVAjsr4neABPXplF7QkbocfKysUBbsGn6sQvRFFkU8IYKgXydz/hO7wrVwZe8d1mVDC+YGumWWwClTAbre+LWvxBAUFQ9BJ0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC5SLOUX/bz66wr/jzykdL4kzjDFFSI6ocugxurgkgMuc5w1vtWjkPr/JZKkBVsO+lWOwgXBnyraU68g+/ds36G6FcmwLK1vPr2Zot8G4Np+wHJmF/MFn8LQpm/HX0ewqUAAAAAAAAAAO4CAAAAAAAEBQU4AAMCDAAFBgAEAZmiwMm8WB7gnDMAABgAAAB3ltn/ql8GAAAAAAAAAAAAAAAAAAAAAAAIAAAKEwDw////////awowAAICAAAA6AMAAAAAAAASMDJL47BFwdFr3EqYPqgJsgwnmqLBtoRF4zzmi9cgXgG7inrFNKPd2BAPDaA+8bYIf4sOylUIumWr0KpQt88B",
+  "sha256": "534b8e88be8874c6b8ec8a3225581acc8c03c3b484938a3136a5e50db31ceeb7",
+  "version": 1,
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      166883607575,
+      38864640,
+      694628,
+      1,
+      38196480,
+      1241441,
+      0
+    ],
+    "postBalances": [
+      166883601575,
+      38864640,
+      695628,
+      1,
+      38196480,
+      1241441,
+      0
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih invoke [1]",
+      "Program EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih consumed 357 of 750 compute units",
+      "Program EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 507,
+    "costUnits": 3032
+  },
+  "discriminator": null
+}

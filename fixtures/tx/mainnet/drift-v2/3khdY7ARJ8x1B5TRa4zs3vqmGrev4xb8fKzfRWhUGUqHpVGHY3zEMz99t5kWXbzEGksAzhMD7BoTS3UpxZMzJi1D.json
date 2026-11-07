@@ -1,0 +1,67 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "3khdY7ARJ8x1B5TRa4zs3vqmGrev4xb8fKzfRWhUGUqHpVGHY3zEMz99t5kWXbzEGksAzhMD7BoTS3UpxZMzJi1D",
+  "slot": 410344005,
+  "blockTime": 1775059518,
+  "fetchedAt": "2026-11-07T07:52:03.893Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "drift-v2",
+    "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+    "priority": "P0",
+    "name": "Drift v2"
+  },
+  "encoding": "base64",
+  "transaction": "AYm4O9a9AF5kZ/ySw31zKg799vCiUmo+zi6mo6z6U0DrfTO3onW9uaoJr5Vg5FgCw26sBVwJAmqjzwTwFEozVwiAAQADBA12ZEQbr3zz4XGjd5IGjUvx+in2Rx+X4C+YGs189UmsAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAJVNu+nslgyYp6KT/iEzaWb+GA0VGuS4F5Vh+JhUpT9gan1RcYx3TJKFZjmGkdXraLXrijm0ttXHNVWyEAAAAAeOKgDWmQwZzhROE8lXCLMZqhV4+9pBkyGGIBcKRNTc8DAQAFAhQFAAABAAkDECcAAAAAAAACBAQAAwUV/////wCiBAIAAAAAAMCYCUBoTgYAAtxONipe6ZD/rwoF+myvtExTLVh89hFJ2ICUsTjCNXA3AAGDy8oJvYnPtx7kN2onhfw+W8YH76ZlH9wDf2Pf94CrU2QBnwA=",
+  "sha256": "f4b51ba0a2068a2771bcb8a47d19e4013b455448a80c423beaf259239f3724bc",
+  "version": 0,
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5013,
+    "preBalances": [
+      1078590548,
+      1,
+      49151453,
+      1169280,
+      9354240,
+      7795213
+    ],
+    "postBalances": [
+      1078585535,
+      1,
+      49151453,
+      1169280,
+      9354240,
+      7795213
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 986 of 1000 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [
+        "HpR1bLcW6rsXrBigRhW18WnQNwAVBq7wBPhteRKGBU5z"
+      ],
+      "readonly": [
+        "5zpq7DvB6UdFFvpmBPspGPNfUGoBRRCE2HHg5u3gxcsN"
+      ]
+    },
+    "computeUnitsConsumed": 1286,
+    "costUnits": 4254
+  },
+  "discriminator": "ffffffff00a20402"
+}

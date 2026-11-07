@@ -1,0 +1,93 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "55YgpZLfq6ajwcXnJvoWWhVC5dpwGYvmeRTPPdeCynGMLbGrtdff3G4L5YidgEsdiN4irwbWvzCgcfGjMYpXWe2S",
+  "slot": 466434088,
+  "blockTime": 1794037734,
+  "fetchedAt": "2026-11-07T07:49:07.883Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "priority": "P0",
+    "name": "Squads v4"
+  },
+  "encoding": "base64",
+  "transaction": "Acv9Er1fR+Ni90xziQBmHI5EzHPvYZxZwEg60s8Fpfd1wKhDiNxjgN0BZOzGVhjCd8/iZr9hJF2S8xPcuQ4MwQ+AAQAGC8Zw8jCeBk6DAGVtEDKDA8Os4Ma+9SG8q71/TUz6yk4mv5cbWRCLW4WgT7CT8eIbTj/UxMj0h90JuVdSdp8N2MM+j5rMKwa+wb+3Y6ZSzyQjpPdMNOv4GcAzN3HAEMeOYQbetAweTP4Sp1w/miXm2k1GjL8Oc0rrwUt5sItytVQpEMqnfxjpv5C45eJUvgM2lAF8mSlNjaya0273MMPea+UDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6iyAVix0iF/q9R7Pj47v4YClryPjiN11hTe4TXP6Cf08ClllUkWnR2w+1h0yxu1jp7+vWgSOBAQS9FBm4jaSEbMuqYsSRK6ZVVHVrbhjLquSRYjUgBIrqDUBDfQNehOxER83KAsfkEcgH4in1ES5//ZeWWXCh1/AXQtND2M7kKGXAQFAAUCIKEHAAUACQNRwwAAAAAAAAYCAAEMAgAAAKCGAQAAAAAABwgIAgkACgMEBgjCCKFXmaQZqwA=",
+  "sha256": "2e62e0b02a107fe59f51b184662af31fc23212c1ec1df5f42b3101f0d7aa1e61",
+  "version": 0,
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 30001,
+    "preBalances": [
+      249100232,
+      690880,
+      2468880,
+      24440786227,
+      0,
+      1,
+      1,
+      12171440,
+      4795440,
+      1818640,
+      21102720
+    ],
+    "postBalances": [
+      248970231,
+      790880,
+      2468880,
+      23660456227,
+      780330000,
+      1,
+      1,
+      12171440,
+      4795440,
+      1818640,
+      21102720
+    ],
+    "innerInstructions": [
+      {
+        "index": 3,
+        "instructions": [
+          {
+            "programIdIndex": 6,
+            "accounts": [
+              3,
+              4
+            ],
+            "data": "3Bxs43gYG5og1CHd",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: VaultTransactionExecute",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 23652 of 499550 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 24102,
+    "costUnits": 26698
+  },
+  "discriminator": "c208a15799a419ab"
+}

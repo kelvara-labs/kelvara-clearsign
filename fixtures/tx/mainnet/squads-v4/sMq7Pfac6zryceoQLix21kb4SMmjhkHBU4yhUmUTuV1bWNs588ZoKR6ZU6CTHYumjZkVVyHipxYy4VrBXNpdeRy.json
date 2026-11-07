@@ -1,0 +1,82 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "sMq7Pfac6zryceoQLix21kb4SMmjhkHBU4yhUmUTuV1bWNs588ZoKR6ZU6CTHYumjZkVVyHipxYy4VrBXNpdeRy",
+  "slot": 466433467,
+  "blockTime": 1794037601,
+  "fetchedAt": "2026-11-07T07:49:07.885Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "priority": "P0",
+    "name": "Squads v4"
+  },
+  "encoding": "base64",
+  "transaction": "AStthGNXC0ryZdGkmq1vBs22m17phevqiAZc5BlKesy66uceNpEZQkptjBttuOkyCUW5GsjtIhLFBGnsi5wlzwwBAAMG/78398FZof9DyIDnc2E2//g7TNek9ShFMaU37VjbynMFqv9zV9StSRGqSN55/OAikBYJ9P5eP0YHVBWeAPDcOtN66PWtYuhdlGp4OWAXpLTIhVMQIwQMhPlco0wOlHU8AwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAhufzAfk+7UV4A+PQmbd5gPmygU5p8dOk/aEzsJw/oloDAwAFAheVAAADAAkDQBIBAAAAAAAEBQECAAAFwAIw+k6o0OLa0wAAMQEAAAEBBAZQEkzyPexFIw2rEpeOGJJyph1U8cK5W4Ltl9GEiu8r/6q0JEQSzhLTB1buDC2Aoz8k7vZe0qNxrJXBKXGuSVZdOO+xo552VEevLtJ/fu9qpS6ty6N+XaeVWMEGnZZAnjMZI3DOV/1f0IYxYI79jENvEEO5s+5v9KVKAjM0dygj+ILUhOKWG5FTNrPxW1vIb3SwcPxZgKDR3iyOV1XMrUZvDchRcLhQP4tWiRIAAw8gBvAWZNwAXRtKVl9mIQjX/2QEBQUBAgAABggA2LaPC9wmVrkHBgADAggGCQAABQMBAgAJAKOdoYSza3+PAQUGAQIDAAQJEAAFqHY1SC7Lkuha7i0AAAAAAbqmLEkSumVVR1a24Yy6rkkWI1IASK6g1AQ30DXoTsREAAQFByMIAA==",
+  "sha256": "5d9be01b015fecb88dc18f6b7f6a9b58aeab811560bf2a8f2c4f45d18c9822a3",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 7680,
+    "preBalances": [
+      8036508,
+      3500120,
+      0,
+      1,
+      12171440,
+      1
+    ],
+    "postBalances": [
+      5209428,
+      3500120,
+      2819400,
+      1,
+      12171440,
+      1
+    ],
+    "innerInstructions": [
+      {
+        "index": 2,
+        "instructions": [
+          {
+            "programIdIndex": 5,
+            "accounts": [
+              0,
+              2
+            ],
+            "data": "11113eEHRsFzotWLGB9HWtfL28jJt12987jT6vvqJpVrucMFbnmXgtdy8LYSXoVURYCth5",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: VaultTransactionCreate",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program log: transaction index: 9",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 32867 of 37867 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 33167,
+    "costUnits": 35230
+  },
+  "discriminator": "30fa4ea8d0e2dad3"
+}
