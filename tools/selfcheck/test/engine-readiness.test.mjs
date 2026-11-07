@@ -34,7 +34,15 @@ async function handleAnalyze(req, loaded) {
     assert.equal(hasRealEngine(root), true, "indirect decision path must not be skipped");
     setWorker(worker.replace("loaded.settings, stubEngine)", "loaded.settings, realEngine) /* decide(req, loaded.settings, stubEngine) */"));
     assert.equal(hasRealEngine(root), true, "comments cannot prove stub wiring");
+    setWorker(worker.replace('import { stubEngine } from "./sw/engine-stub.js";', 'import { realEngine } from "./sw/engine.js";').replace("loaded.settings, stubEngine)", "loaded.settings, realEngine)"));
+    assert.equal(hasRealEngine(root), true, "fully replaced adapter must run engine assertions");
+    setWorker(worker.replace("return decide(req, loaded.settings, stubEngine);", "return realEngine.analyze(req);"));
+    assert.equal(hasRealEngine(root), true, "a new path bypassing decide must run engine assertions");
+    setWorker(`${worker}\nfunction broken( {`);
+    assert.throws(() => hasRealEngine(root), /cannot inspect engine wiring/, "invalid source must fail rather than defer assertions");
     setWorker(worker);
+    writeFileSync(path.join(src, "sw/engine-stub.ts"), `${stub}\ninitializeRealEngine();`);
+    assert.equal(hasRealEngine(root), true, "adapter setup beyond the literal stub is unknown wiring");
     writeFileSync(path.join(src, "sw/engine-stub.ts"), stub.replace("level: 2,", "level: analyzeSession(req),"));
     assert.equal(hasRealEngine(root), true, "integration inside a stub-named adapter must run G7");
     writeFileSync(path.join(src, "sw/engine-stub.ts"), stub.replace("level: 2,", "...await realEngine.analyze(req), level: 2,"));
