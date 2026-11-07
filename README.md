@@ -60,3 +60,9 @@ Gates: G1 build, G2 decode, G3 rules, G4 report contract, G5 registry, G6 localn
 - **Speed.** p95 analysis is about 235 ms on localnet and about 1.7 s on Helius (budget 3 s). Helius time is sequential RPC round trips.
 - **Bundle size.** The service worker is about 1.6 MB minified (211 KB gzip). It still bundles the raw Anchor IDLs with docs (about 940 KB) for Drift, marginfi and Squads.
 - **Read-only, Helius only.** The extension never signs or submits, uses no scanner, price feed, analytics or remote AI, and needs a Helius key to analyze. With no key it blocks the request and says why.
+
+## Test playground
+
+Open http://localhost:8780 while the demo server is running. It has a benign memo (L0), a Token-2022 trap (L2), a Squads authority hijack (L3), and a wallet sweep (L4), all on devnet. Every action requests a signature preview; the page never submits it.
+
+Connect a devnet wallet. The attack cards show the required funded test account and the local import-file path; manually import/select that account, reconnect, then preview and choose Block. A benign memo can use any funded devnet account. No license is needed. See DEMO.md for setup and `pnpm demo:serve` startup; run it from the checkout containing the prepared scenario state. The current server runs from the scenarios worktree.
