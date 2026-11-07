@@ -47,3 +47,4 @@ Workers: engine ctx_ee4c1e75b027, scenarios ctx_d31e5a8e9570, extension ctx_d14d
 | V3 | task_e9de25fbeec0 | verifier | G7 Playwright e2e specs in test-dapp/e2e (headless chromium with the extension) |
 | V4 | task_fa879236ceeb | verifier | G8 test:replay: Drift replay critical with required claims; both devnet scripts pass |
 M1 | engine | E1 ingest: legacy/v0/v1 parse, ALT resolution, sessions (merged ee332e7) | G1 PASS, 30 core tests | ~20 | @solana/kit 8.5.0 (MIT); v1 messages already on mainnet, supported; 2,000 fuzz/mutated inputs -> IngestError, no crash
+M0 | scenarios | S0 tools/browser/launch.sh + cdp-check, demo program pick, @sqds/multisig license (merged d42033e) | G1 PASS | ~25 | Demo program = marginfi v2 (Apache-2.0, on-chain Anchor IDL, 38 admin-signer ix), .so + IDL pinned in packages/scenarios/programs. SolSub UNVERIFIED: CDP port 28538 held by a Docker container (NEEDS_HUMAN); moved to M6. @sqds/multisig treated as AGPL-tainted, scenarios only.
