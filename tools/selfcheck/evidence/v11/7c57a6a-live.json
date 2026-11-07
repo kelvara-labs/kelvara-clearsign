@@ -1,0 +1,80 @@
+{
+  "startedAt": "2026-11-07T22:38:39Z",
+  "commit": "7c57a6a",
+  "branch": "HEAD",
+  "dirty": false,
+  "fast": false,
+  "live": true,
+  "gates": [
+    {
+      "id": "G1",
+      "name": "build",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G2",
+      "name": "decode",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G3",
+      "name": "rules",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G4",
+      "name": "contract",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G5",
+      "name": "registry",
+      "status": "FAIL",
+      "secs": 7.4,
+      "note": "pnpm test:registry: ❯ test/registry.test.ts (7 tests | 1 failed) 3594ms"
+    },
+    {
+      "id": "G6",
+      "name": "localnet",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G7",
+      "name": "e2e",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G8",
+      "name": "replay",
+      "status": "PASS",
+      "secs": 48.2,
+      "note": "drift fixture 2HvMSgDE ok, drift fixture 4BKBmAJn ok, drift critical (live), admin-devnet ok (live), trap-devnet ok (live)"
+    },
+    {
+      "id": "G9",
+      "name": "determinism",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "security",
+      "status": "SKIPPED",
+      "secs": 0,
+      "note": ""
+    }
+  ]
+}
