@@ -25,6 +25,8 @@ const childEnv = { ...process.env };
 const redact = makeRedactor();
 const readJson = (p) => { try { return JSON.parse(readFileSync(path.join(ROOT, p), "utf8")); } catch { return null; } };
 const firstLines = (s, n = 3) => redact(s).trim().split("\n").filter(Boolean).slice(-n).join(" | ").slice(0, 240);
+// node:test failures: the first "Error: ..." line says why; the last lines are only stack frames.
+const errorLine = (s) => { const m = redact(s).match(/^\s*(?:\w*Error|AssertionError)[^\n]*:\s[^\n]+/m); return m ? m[0].trim().slice(0, 240) : null; };
 const checks = [];
 
 // 0. Drift fixtures: real mainnet bytes, cached with their sha256.
@@ -78,7 +80,7 @@ for (const s of ["scenario:admin-devnet", "scenario:trap-devnet"]) {
   process.stdout.write(redact(out));
   const ev = evaluateDevnetRun(r.status ?? -1, out);
   const secs = ((Date.now() - t0) / 1000).toFixed(0);
-  checks.push(ev.status === "PASS" ? pass(s, `${ev.detail} (${secs}s)`, `${short} ok (live)`) : fail(s, `${ev.detail}: ${firstLines(out)}`));
+  checks.push(ev.status === "PASS" ? pass(s, `${ev.detail} (${secs}s)`, `${short} ok (live)`) : fail(s, `${ev.detail}: ${errorLine(out) ?? firstLines(out)}`));
 }
 
 finish("G8", checks);
