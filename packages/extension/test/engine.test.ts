@@ -21,7 +21,6 @@ const fixture = (role: string) => {
 };
 const squads = fixture("l3-batch");
 const nodeSha256: Sha256 = async (b) => new Uint8Array(createHash("sha256").update(b).digest());
-const unlicensed = async () => false;
 
 const req = (over: Partial<SignRequest> = {}): SignRequest => ({
   v: 1,
@@ -90,7 +89,7 @@ describe("real engine in decide()", () => {
   it("analyzes the real Squads approval: durable nonce + unknown proposal holds at L2 even with every read failing", async () => {
     const rpc = deadRpc();
     const engine = createRealEngine({ rpcFor: () => rpc });
-    const v = await decide(req(), settings, engine, nodeSha256, async () => true);
+    const v = await decide(req(), settings, engine, nodeSha256);
     expect(validateWorkerVerdict(v)).not.toBeNull();
     expect(v).toMatchObject({ allow: false, hold: true, level: 2 });
     expect(v.report!.messageHashes).toEqual(await messageHashes([squads.transaction], nodeSha256));
@@ -108,7 +107,7 @@ describe("real engine in decide()", () => {
 
   it("times out closed: a hanging RPC blocks with a fixed reason", async () => {
     const engine = createRealEngine({ rpcFor: () => deadRpc("localnet", true), timeoutMs: 50 });
-    const v = await decide(req(), settings, engine, nodeSha256, unlicensed);
+    const v = await decide(req(), settings, engine, nodeSha256);
     expect(v).toMatchObject({ allow: false, hold: false, level: null });
     expect(v.reason).toMatch(/engine timed out/);
     expect(v.report!.title).toMatch(/could not be analyzed/);
@@ -120,14 +119,14 @@ describe("real engine in decide()", () => {
         throw new Error("endpoint not allowed: https://devnet.helius-rpc.com/?api-key=SECRET");
       }
     });
-    const v = await decide(req({ chain: "solana:devnet" }), { ...settings, heliusApiKey: "SECRET-KEY-0123456789" }, engine, nodeSha256, unlicensed);
+    const v = await decide(req({ chain: "solana:devnet" }), { ...settings, heliusApiKey: "SECRET-KEY-0123456789" }, engine, nodeSha256);
     expect(v).toMatchObject({ allow: false, hold: false, level: null, reason: "engine error: could not start the analysis" });
     expect(JSON.stringify(v)).not.toMatch(/SECRET|api-key/);
   });
 
   it("bytes the engine cannot parse block", async () => {
     const engine = createRealEngine({ rpcFor: () => deadRpc() });
-    const v = await decide(req({ txs: ["AQID"] }), settings, engine, nodeSha256, unlicensed);
+    const v = await decide(req({ txs: ["AQID"] }), settings, engine, nodeSha256);
     expect(v.allow).toBe(false);
     expect(v.hold).toBe(false);
   });
@@ -142,7 +141,7 @@ describe("real engine in decide()", () => {
   it("no Helius key on devnet: blocked before any RPC, and the report says to add a key", async () => {
     let started = 0;
     const engine = createRealEngine({ rpcFor: () => (started++, deadRpc("devnet")) });
-    const v = await decide(req({ chain: "solana:devnet" }), settings, engine, nodeSha256, unlicensed);
+    const v = await decide(req({ chain: "solana:devnet" }), settings, engine, nodeSha256);
     expect(started).toBe(0);
     expect(v).toMatchObject({ allow: false, level: null });
     expect(v.report!.summary).toMatch(/no Helius API key/);

@@ -10,7 +10,7 @@ import { b58encode, b64encode, messageToWireTx } from "../src/shared/codec.js";
 import { validateReportView, type ReportView } from "../src/shared/report-view.js";
 import type { SignRequest } from "../src/shared/protocol.js";
 import type { EngineLike } from "../src/sw/engine-stub.js";
-import { decide, type LicenseCheck } from "../src/sw/policy.js";
+import { decide } from "../src/sw/policy.js";
 import { readSettings } from "../src/sw/settings.js";
 
 const subtle = globalThis.crypto.subtle;
@@ -158,7 +158,7 @@ describe("limited report", () => {
   });
 });
 
-describe("service worker: the license changes the report, never the decision", () => {
+describe("service worker: MVP full reports require no license", () => {
   const tx = b64encode(messageToWireTx(Uint8Array.from([1, 0, 0, 1, ...new Uint8Array(32), ...new Uint8Array(32), 0])));
   const req: SignRequest = { v: 1, kind: "sign", id: "a".repeat(32), method: "solana:signTransaction", wallet: "W", account: null, chain: "solana:devnet", txs: [tx] };
   const settings = { heliusApiKey: "0123abcd-4567-89ef-0123-456789abcdef", network: "devnet" as const, passThrough: false, licenseKey: "KSG1.x.y" };
@@ -168,31 +168,17 @@ describe("service worker: the license changes the report, never the decision", (
       return { title, summary, simulation, authorizes, capabilities, preview, claims, evidence, level };
     }
   });
-  const yes: LicenseCheck = async () => true;
-  const no: LicenseCheck = async () => false;
-  const boom: LicenseCheck = async () => {
-    throw new Error("x");
-  };
-
-  it("same allow / hold / level with and without a license, at every level", async () => {
+  it("MVP: full report and correct decision at every level without a license", async () => {
     for (const level of [0, 1, 2, 3, 4] as const) {
-      const lic = await decide(req, settings, engineAt(level), undefined, yes);
-      const unl = await decide(req, settings, engineAt(level), undefined, no);
-      expect({ ...unl, report: null }).toEqual({ ...lic, report: null });
-      expect(lic.report?.limited).toBe(false);
-      expect(lic.report?.summary).toBe(full.summary);
-      expect(unl.report?.limited).toBe(true);
-      expect(unl.report?.capabilities).toHaveLength(1);
+      for (const licenseKey of [undefined, "invalid", settings.licenseKey]) {
+        const v = await decide(req, { ...settings, licenseKey }, engineAt(level));
+        expect(v).toMatchObject({ level, allow: level < 2, hold: level === 2 || level === 3 });
+        expect(v.report?.limited).toBe(false);
+        expect(v.report?.summary).toBe(full.summary);
+        expect(v.report?.evidence).toEqual(full.evidence);
+        expect(v.report?.capabilities).toEqual(full.capabilities);
+      }
     }
-  });
-  it("a license check that throws means limited, not an error", async () => {
-    const v = await decide(req, settings, engineAt(3), undefined, boom);
-    expect(v).toMatchObject({ allow: false, hold: true, level: 3 });
-    expect(v.report?.limited).toBe(true);
-  });
-  it("default check: no license or a junk license is limited (verified against the bundled key)", async () => {
-    expect((await decide(req, { ...settings, licenseKey: undefined }, engineAt(2))).report?.limited).toBe(true);
-    expect((await decide(req, settings, engineAt(2))).report?.limited).toBe(true);
   });
   it("license is passed through from storage, capped in size", () => {
     expect(readSettings({ licenseKey: "KSG1.a.b" }).licenseKey).toBe("KSG1.a.b");

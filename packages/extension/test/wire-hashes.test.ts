@@ -81,7 +81,7 @@ describe("worker message hashes = engine message hashes", () => {
   });
 
   it("a v1 request reaches the engine instead of blocking before analysis", async () => {
-    const v = await decide(req([v1[0]!.transaction]), settings, stubEngine, nodeSha256, async () => false);
+    const v = await decide(req([v1[0]!.transaction]), settings, stubEngine, nodeSha256);
     expect(v).toMatchObject({ allow: false, hold: true, level: 2 });
     expect(v.report?.messageHashes).toEqual(await messageHashes([v1[0]!.transaction], nodeSha256));
   });
@@ -104,7 +104,7 @@ describe("fail closed on wire bytes neither can parse", () => {
     it(`${name}: blocked before the engine runs`, async () => {
       let ran = false;
       const engine = { analyze: async () => ((ran = true), stubEngine.analyze(req([]), { ok: true, network: "mainnet", url: "x" } as never)) };
-      const v = await decide(req([b64encode(bytes)]), settings, engine, nodeSha256, async () => false);
+      const v = await decide(req([b64encode(bytes)]), settings, engine, nodeSha256);
       expect(v).toMatchObject({ allow: false, hold: false, level: null, reason: "could not read the transaction message" });
       expect(ran).toBe(false);
       await expect(ingestSession([{ base64: b64encode(bytes), kind: "wire" }])).rejects.toThrow();

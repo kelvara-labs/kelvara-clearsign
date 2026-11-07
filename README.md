@@ -36,7 +36,7 @@ Needs Node 22+, pnpm 10, the Solana CLI and `cargo-build-sbf` (for the devnet de
     pnpm selfcheck            # all ten gates; --fast runs G1-G4
     pnpm release              # dist/kelvara-signguard.zip (reproducible, no key)
 
-The unpacked extension is `packages/extension/dist`: load it with Developer mode, then set the Helius key, network and license on its options page. Without a valid license the report shows the level, title and top finding only; the decision (pass, hold, block) never depends on the license.
+The unpacked extension is `packages/extension/dist`: load it with Developer mode, then set the Helius key and network on its options page. The MVP enables full reports for everyone; no license is required.
 
 Analyze a transaction from the command line:
 

@@ -211,7 +211,7 @@ describe("fromReport: Drift session", () => {
       }
     };
     const req = { txs, chain: "solana:mainnet" } as unknown as SignRequest;
-    const v = await decide(req, { network: "mainnet", passThrough: false, heliusApiKey: "a".repeat(36) }, engine, nodeSha256, async () => true);
+    const v = await decide(req, { network: "mainnet", passThrough: false, heliusApiKey: "a".repeat(36) }, engine, nodeSha256);
     expect(v.allow).toBe(false);
     expect(v.hold).toBe(true);
     expect(v.level).toBe(3);

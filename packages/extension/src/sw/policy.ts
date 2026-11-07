@@ -6,8 +6,6 @@ import { validateReportView, type ReportView } from "../shared/report-view.js";
 import { pickEndpoint, type Network } from "./endpoint.js";
 import type { EngineLike } from "./engine-stub.js";
 import { EngineFailure } from "./engine-failure.js";
-import { limitReport } from "../license/limit.js";
-import { verifyLicense } from "../license/verify.js";
 
 export interface Settings {
   heliusApiKey?: string;
@@ -17,10 +15,6 @@ export interface Settings {
   /** Raw license string as stored; verified offline on every request (expiry included). */
   licenseKey?: string;
 }
-
-/** True only for a license that verifies now. Never affects hold or block. */
-export type LicenseCheck = (licenseKey: string | undefined) => Promise<boolean>;
-export const offlineLicenseCheck: LicenseCheck = async (k) => (await verifyLicense(k).catch(() => null))?.ok === true;
 
 export type Sha256 = (bytes: Uint8Array) => Promise<Uint8Array>;
 
@@ -49,8 +43,7 @@ export async function decide(
   req: SignRequest,
   settings: Settings,
   engine: EngineLike,
-  sha256: Sha256 = webSha256,
-  licensed: LicenseCheck = offlineLicenseCheck
+  sha256: Sha256 = webSha256
 ): Promise<WorkerVerdict> {
   if (settings.passThrough) return { allow: true, hold: false, level: null, reason: "pass-through mode", report: null };
   let hashes: string[];
@@ -86,8 +79,7 @@ export async function decide(
   }
   if (![0, 1, 2, 3, 4].includes(level)) return failure("engine error: no alert level");
   if (!report) return failure("engine error: report failed validation");
-  // The license decides only how much of the report is shown, after the level is fixed.
-  if (!(await licensed(settings.licenseKey).catch(() => false))) report = limitReport(report);
+  // MVP: full reports are available without a license.
   const reason = report.title;
   if (level === 0 || level === 1) return { allow: true, hold: false, level, reason, report };
   if (level === 4) return { allow: false, hold: false, level, reason, report };
