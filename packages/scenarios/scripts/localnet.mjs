@@ -205,6 +205,8 @@ export async function down() {
 async function startValidator(manifest, keys) {
   await down();
   for (const port of [RPC_PORT, FAUCET_PORT]) {
+    // A just-stopped validator can hold its sockets for a few seconds after the pid is gone.
+    for (let i = 0; i < 40 && (await portOpen(port)); i++) await sleep(250);
     if (await portOpen(port)) throw new Error(`127.0.0.1:${port} is held by another process; set KELVARA_LOCALNET_PORT / KELVARA_LOCALNET_FAUCET_PORT`);
   }
   mkdirSync(DIR, { recursive: true });

@@ -1,9 +1,7 @@
-// S3 admin scenario tests. Unit checks run offline; the end-to-end check runs the real scenario against
-// `localnet:up` and is skipped (with the reason) when no localnet answers on 127.0.0.1.
-/* global Buffer, fetch, AbortSignal */
+// S3 admin scenario unit tests: offline, no validator. The end-to-end case is e2e/admin-local.test.mjs.
+/* global Buffer */
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { compileVaultMessage, multisigCreateV2, proposalApprove, proposalPda, transactionPda, vaultPda } from '../scripts/lib/squads.mjs';
 import { b58decode } from '../scripts/lib/tx.mjs';
@@ -51,41 +49,4 @@ test('PDAs are distinct and deterministic', () => {
   const set = new Set([vaultPda(MS, 0), transactionPda(MS, 1), proposalPda(MS, 1), proposalPda(MS, 2)]);
   assert.equal(set.size, 4);
   assert.equal(vaultPda(MS, 0), vaultPda(MS, 0));
-});
-
-async function localnetUp() {
-  try {
-    const res = await fetch('http://127.0.0.1:8899', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{"jsonrpc":"2.0","id":1,"method":"getHealth"}', signal: AbortSignal.timeout(2000) });
-    return (await res.json()).result === 'ok';
-  } catch {
-    return false;
-  }
-}
-
-test('admin-local end to end: approval is a durable-nonce approve that moves nothing; the attack changes the upgrade authority', async (t) => {
-  if (!(await localnetUp())) return t.skip('no localnet on 127.0.0.1:8899 (run localnet:up)');
-  const { setup, attack, readUpgradeAuthority, MEMO } = await import('../scripts/admin-local.mjs');
-  const { localRpc } = await import('../scripts/lib/tx.mjs');
-  const s = await setup();
-  const rpc = localRpc(s.rpcUrl);
-  assert.equal((await readUpgradeAuthority(rpc, s.demoProgram)).authority, s.vault);
-  assert.equal(s.threshold, 2);
-  assert.equal(s.timeLock, 0);
-  assert.notEqual(s.nonce.funder, s.members.A);
-  assert.deepEqual(s.approval.signers, [s.members.A]);
-
-  const wire = Buffer.from(readFileSync(new URL('../.localnet/admin/approval.unsigned.b64', import.meta.url), 'utf8').trim(), 'base64');
-  assert.equal(wire[0], 1);
-  assert.ok(wire.subarray(1, 65).every((b) => b === 0), 'signature slot is empty');
-  assert.ok(wire.includes(Buffer.from(MEMO)), 'memo text in the approval');
-  assert.ok(wire.includes(Buffer.from(b58decode(s.nonce.value))), 'recent blockhash is the nonce value');
-  // Simulation: only Member A's fee leaves; vault and outsider unchanged.
-  const delta = s.approval.simulation.lamportsDelta;
-  assert.equal(delta[s.vault], 0);
-  assert.equal(delta[s.outsider], 0);
-  assert.ok(delta[s.members.A] < 0 && delta[s.members.A] >= -10_000);
-
-  const r = await attack();
-  assert.equal(r.upgradeAuthorityAfter, s.attacker);
-  assert.equal((await readUpgradeAuthority(rpc, s.demoProgram)).authority, s.attacker);
 });
