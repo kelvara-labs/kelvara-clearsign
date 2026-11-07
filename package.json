@@ -22,7 +22,12 @@
     "idls:build": "pnpm --filter @kelvara/idls idls:build",
     "selfcheck": "node tools/selfcheck/src/run.mjs",
     "fixtures:fetch": "pnpm --filter @kelvara/scenarios fixtures:fetch",
-    "fixtures:verify": "pnpm --filter @kelvara/scenarios fixtures:verify"
+    "fixtures:verify": "pnpm --filter @kelvara/scenarios fixtures:verify",
+    "localnet:up": "pnpm --filter @kelvara/scenarios localnet:up",
+    "localnet:check": "pnpm --filter @kelvara/scenarios localnet:check",
+    "localnet:down": "pnpm --filter @kelvara/scenarios localnet:down",
+    "scenario:admin-local": "pnpm --filter @kelvara/scenarios scenario:admin-local",
+    "scenario:admin-local:attack": "pnpm --filter @kelvara/scenarios scenario:admin-local:attack"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
