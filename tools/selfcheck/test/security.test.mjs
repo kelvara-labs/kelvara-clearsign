@@ -9,7 +9,8 @@ import path from "node:path";
 import { readZip, writeZip } from "../src/zip.mjs";
 import {
   checkHosts, checkNoSecrets, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded,
-  checkDependencyLicenses, licenseForbidden, checkContentScriptsOffline, secretVariants
+  checkDependencyLicenses, licenseForbidden, checkContentScriptsOffline, secretVariants,
+  checkNoPageControl, checkPassThroughUnwritable
 } from "../src/security-checks.mjs";
 
 const PK = "96kkANgM8egAtbFSa81PHfjNFajQNo77dpTcno2xmM1s";
@@ -143,4 +144,25 @@ test("zip round trip", () => {
   const files = readZip(writeZip({ "manifest.json": "{}", "dir/a.js": "eval(1)" }));
   assert.deepEqual([...files.keys()], ["manifest.json", "dir/a.js"]);
   assert.equal(files.get("dir/a.js").toString(), "eval(1)");
+});
+
+test("no page control: externally_connectable, external listeners, storage in content scripts fail", () => {
+  assert.equal(checkNoPageControl(clean(), goodManifest).status, "PASS");
+  const ec = { ...goodManifest, externally_connectable: { matches: ["https://*/*"] } };
+  assert.equal(checkNoPageControl(bundle({ "manifest.json": JSON.stringify(ec) }), ec).status, "FAIL");
+  assert.equal(checkNoPageControl(bundle({ "service-worker.js": "chrome.runtime.onMessageExternal.addListener(f)" }), goodManifest).status, "FAIL");
+  assert.equal(checkNoPageControl(bundle({ "service-worker.js": "c.runtime.onConnectExternal.addListener(f)" }), goodManifest).status, "FAIL");
+  assert.equal(checkNoPageControl(bundle({ "hook.js": "chrome.storage.local.set({passThrough:!0})" }), goodManifest).status, "FAIL");
+  assert.equal(checkNoPageControl(bundle({ "hook.js": "n.storage.sync.get(x)" }), goodManifest).status, "FAIL");
+  // The service worker may use storage.
+  assert.equal(checkNoPageControl(bundle({ "service-worker.js": "chrome.storage.local.set({a:1})", "hook.js": "x" }), goodManifest).status, "PASS");
+});
+
+test("passThrough: only the policy readers may name it, and they may not write it", () => {
+  const ok = new Map([["sw/settings.ts", 'const K=["passThrough"];x={passThrough: raw.passThrough === true}'], ["sw/policy.ts", "if (settings.passThrough) return"]]);
+  assert.equal(checkPassThroughUnwritable(ok).status, "PASS");
+  assert.equal(checkPassThroughUnwritable(new Map([...ok, ["options/form.ts", "patch.passThrough = box.checked"]])).status, "FAIL");
+  assert.equal(checkPassThroughUnwritable(new Map([...ok, ["service-worker.ts", 'if (m.type==="pt") chrome.storage.local.set({ passThrough: true })']])).status, "FAIL");
+  assert.equal(checkPassThroughUnwritable(new Map([["sw/settings.ts", "await chrome.storage.local.set({ passThrough: v })"]])).status, "FAIL");
+  assert.equal(checkPassThroughUnwritable(new Map([["sw/policy.ts", "settings.passThrough = true"]])).status, "FAIL");
 });
