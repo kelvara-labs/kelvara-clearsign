@@ -1,5 +1,16 @@
 // Rules (M2): one file per rule, run in this order; later rules may depend on earlier claims.
 // E7: durable nonce, outsider-staged nonce and Squads approve/execute/threshold/time lock/unknown/config.
+import { token2022PermanentDelegateRule } from "./token2022-permanent-delegate.js";
+import { tokenFreezeAuthorityRule } from "./token-freeze-authority.js";
+import { token2022TransferHookRule } from "./token2022-transfer-hook.js";
+import { token2022DefaultFrozenRule } from "./token2022-default-frozen.js";
+import { token2022NonTransferableRule } from "./token2022-non-transferable.js";
+import { tokenDelegateGrantedRule } from "./token-delegate-granted.js";
+import { tokenDelegateRevokedRule } from "./token-delegate-revoked.js";
+import { systemAssignTakeoverRule } from "./system-assign-takeover.js";
+import { tokenOwnerTakeoverRule } from "./token-owner-takeover.js";
+import { walletSweepRule } from "./wallet-sweep.js";
+import { authorityTransferRule } from "./authority-transfer.js";
 import { durableNonceRule } from "./lifetime-durable-nonce.js";
 import { nonceStagedByOutsiderRule } from "./nonce-staged-by-outsider.js";
 import { squadsApproveAndExecuteRule } from "./squads-approve-and-execute.js";
@@ -14,13 +25,24 @@ import type { ReportBuilder } from "../report/builder.js";
 import type { Rule, RuleContext, RuleState } from "./types.js";
 
 export const RULES: readonly Rule[] = [
+  authorityTransferRule,
   durableNonceRule,
   nonceStagedByOutsiderRule,
   squadsApproveAndExecuteRule,
   squadsThresholdMetRule,
   squadsZeroTimelockRule,
   squadsUnknownProposalRule,
-  squadsConfigChangeRule
+  squadsConfigChangeRule,
+  tokenDelegateGrantedRule,
+  tokenDelegateRevokedRule,
+  token2022PermanentDelegateRule,
+  tokenFreezeAuthorityRule,
+  token2022TransferHookRule,
+  token2022DefaultFrozenRule,
+  token2022NonTransferableRule,
+  systemAssignTakeoverRule,
+  tokenOwnerTakeoverRule,
+  walletSweepRule
 ];
 
 export const RULE_IDS: readonly string[] = RULES.flatMap((r) => r.ruleIds);
@@ -44,6 +66,7 @@ export function runRules(input: RunRulesInput): RuleContext {
   return ctx;
 }
 
+export { readTokenRuleState } from "./read-token-state.js";
 export { describeConfigAction } from "./squads-config-change.js";
 export { proposalViews, vaultInstructions, type ProposalView, type MultisigView } from "./squads-session.js";
 export { durableNonceUse, type DurableNonceUse } from "./common.js";

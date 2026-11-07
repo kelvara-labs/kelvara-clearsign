@@ -24,6 +24,7 @@ export const ALLOWED_METHODS: ReadonlySet<string> = new Set([
   "getTransaction",
   "simulateTransaction",
   "getLatestBlockhash",
+  "getFeeForMessage",
   "getSlot",
   "getHealth",
   "getGenesisHash",
@@ -34,7 +35,7 @@ export const ALLOWED_METHODS: ReadonlySet<string> = new Set([
 ]);
 
 /** Results that depend on time and must never be served from the cache. */
-const UNCACHEABLE: ReadonlySet<string> = new Set(["simulateTransaction", "getLatestBlockhash", "getSlot", "getHealth"]);
+const UNCACHEABLE: ReadonlySet<string> = new Set(["simulateTransaction", "getLatestBlockhash", "getFeeForMessage", "getSlot", "getHealth"]);
 
 export function redactUrl(s: string): string {
   return s.replace(/api-key=[^&\s"']+/gi, "api-key=REDACTED");

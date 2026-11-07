@@ -26,7 +26,7 @@ export const squadsApproveAndExecuteRule: Rule = {
         evidenceIds: evidence,
         dependsOn: nonceClaims,
         ruleId: RULE_ID,
-        level: nonceClaims.length ? "L3" : "L2"
+        level: nonceClaims.length && txs.some(t => ctx.claims.has(`controlGrant:${t}`)) ? "L3" : "L2"
       });
       ctx.claims.set(`squads.approve_and_execute:${v.proposal ?? v.transaction}`, id);
     }

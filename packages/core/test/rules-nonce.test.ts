@@ -24,7 +24,7 @@ const NONCE = "lifetime.durable_nonce";
 const STAGED = "nonce.staged_by_outsider";
 
 describe("lifetime.durable_nonce", () => {
-  it("flags both Drift attack transactions, at L3 because each carries a Squads vote", async () => {
+  it("flags both Drift attack transactions, at L3 because votes authorize an evidenced admin control grant", async () => {
     const r = analyze(await sessionOf([driftTx(DRIFT_1), driftTx(DRIFT_2)]));
     const claims = byRule(r, NONCE);
     expect(claims.map((c) => [c.kind, c.level, c.transactionIndices])).toEqual([
@@ -42,6 +42,19 @@ describe("lifetime.durable_nonce", () => {
   it("is L1 when the nonce transaction carries no vote or execution (real Squads create on a nonce)", async () => {
     const r = analyze(await sessionOf([ruleFixture("49BwdDv6").transaction]));
     expect(byRule(r, NONCE).map((c) => [c.kind, c.level])).toEqual([["Fact", "L1"]]);
+  });
+
+  it("real benign nonce approvals stay below critical even with outsider funding", async () => {
+    for (const prefix of ["H7jKsHbL", "37bM"]) {
+      const session = await sessionOf([ruleFixture(prefix).transaction]);
+      const nonce = session.transactions[0]!.instructions[0]!.accounts[0]!.address!;
+      const report = analyze(session, await stateFrom(rulesRecording, {nonces:[nonce]}));
+      expect(byRule(report, STAGED)[0]?.level).toBe("L2");
+      expect(byRule(report, NONCE)[0]?.level).toBe("L2");
+      expect(report.alert.level).not.toBe("L3");
+      expect(report.alert.level).not.toBe("L4");
+      expect(byRule(report, "authority.transfer")).toEqual([]);
+    }
   });
 
   it("does not fire on any manifest fixture that does not start with AdvanceNonceAccount", async () => {
@@ -76,7 +89,7 @@ describe("nonce.staged_by_outsider", () => {
 
   it("admin-local: the scenario's outsider funded Member A's nonce", async () => {
     const session = await sessionOf([LOCAL.inputs.approval.wireBase64]);
-    const state = await stateFrom(LOCAL, { nonces: [LOCAL.inputs.nonce] });
+    const state = await stateFrom(LOCAL, { nonces: [LOCAL.inputs.nonce], squads: [LOCAL.inputs.multisig, LOCAL.inputs.proposal, LOCAL.inputs.vaultTransaction] });
     const [c] = byRule(analyze(session, state), STAGED);
     expect(c).toMatchObject({ kind: "Fact", level: "L3" });
     expect(c!.statement).toContain(LOCAL.inputs.nonceFunder.slice(0, 4));

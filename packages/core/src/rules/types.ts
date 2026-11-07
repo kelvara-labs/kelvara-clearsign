@@ -19,6 +19,14 @@ export interface NonceFacts {
 
 /** Chain state the rules may use. Missing entries mean "not read", never "safe". */
 export interface RuleState {
+  /** Connected wallet, never inferred from a fee payer or co-signer. Required for L4. */
+  wallet?: string;
+  /** Raw getAccountInfo results; owners and layouts are checked by rules. */
+  accounts?: Record<string, import("../state/account-reader.js").AccountInfo | null>;
+  /** Exact getFeeForMessage result per transaction (not an estimate). */
+  fees?: Record<number, bigint>;
+  /** Complete inventory from BOTH token programs. Incomplete inventories cannot prove a sweep. */
+  walletInventory?: { complete: boolean; tokenAccounts: string[] };
   /** By nonce account address. */
   nonces?: Record<string, NonceFacts>;
   /** Squads v4 accounts (Multisig, Proposal, VaultTransaction) by address, owner already verified. */

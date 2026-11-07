@@ -26,6 +26,7 @@ export const nonceStagedByOutsiderRule: Rule = {
       if (!use.nonceAccount || !origin) {
         // Fail closed: an unchecked funder is reported, never assumed safe.
         ctx.report.addClaim({
+        transactionIndices: [tx.index],
           kind: "Unknown",
           statement: `Who created nonce account ${short(use.nonceAccount)} was ${origin === null ? "not found in its history" : "not checked"}, so it is unknown whether an outsider prepared this never-expiring transaction.`,
           evidenceIds: [instructionEvidence(ctx, tx.index, use.ix)],
@@ -61,13 +62,14 @@ export const nonceStagedByOutsiderRule: Rule = {
       }
       const privileged = ctx.decoded[tx.index]!.some((ix) => ix.status === "named" && SQUADS_PRIVILEGED.has(ix.name!));
       ctx.report.addClaim({
+        transactionIndices: [tx.index],
         kind: origin.complete ? "Fact" : "Conditional",
         statement: `Nonce account ${short(use.nonceAccount)} was created and funded by ${short(origin.funder)}, who is not its authority ${short(authority)} and does not sign this session: someone else set up the never-expiring slot this signature fills${privileged ? ", for a multisig vote" : ""}.`,
         evidenceIds: evidence,
         dependsOn,
         ruleId: RULE_ID,
         assumptions: origin.complete ? [] : ["the account's history walk stopped early; the oldest transaction found is taken as its creation"],
-        level: privileged ? "L3" : "L2"
+        level: ctx.claims.has(`controlGrant:${tx.index}`) ? "L3" : "L2"
       });
     }
   }

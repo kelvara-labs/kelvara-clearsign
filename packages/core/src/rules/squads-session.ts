@@ -124,7 +124,18 @@ function bigintOf(v: unknown): bigint | null {
 }
 
 /** Every proposal the session touches, linked to its transaction and content where possible. */
-export function proposalViews(ctx: RuleContext, calls = squadsCalls(ctx)): ProposalView[] {
+const proposalCache = new WeakMap<RuleContext, ProposalView[]>();
+/** Rule contexts hold immutable session/state snapshots for one run; reuse the linked content. */
+export function proposalViews(ctx: RuleContext, calls?: SquadsCall[]): ProposalView[] {
+  if (calls) return buildProposalViews(ctx, calls);
+  let views = proposalCache.get(ctx);
+  if (!views) {
+    views = buildProposalViews(ctx, squadsCalls(ctx));
+    proposalCache.set(ctx, views);
+  }
+  return views;
+}
+function buildProposalViews(ctx: RuleContext, calls: SquadsCall[]): ProposalView[] {
   const views: ProposalView[] = [];
   const byProposal = new Map<string, ProposalView>();
   const byTransaction = new Map<string, ProposalView>();
