@@ -27,6 +27,7 @@ import {
   type Session
 } from "../src/index.js";
 import { toBase64 } from "../src/util/encoding.js";
+import { schemaDifference } from "./report-schema-full.js";
 
 const fixturesDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../fixtures/tx/drift-replay");
 const ATTACK_1 = "2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H";
@@ -297,6 +298,17 @@ describe("G4: the validator rejects broken reports", () => {
     const v = broken(mutate);
     expect(v.ok).toBe(false);
     expect(v.problems.join("\n")).toMatch(problem);
+  });
+
+  // E17: the zod/mini schema decides every mutant exactly like the full-zod schema it replaced.
+  it("full zod and zod/mini agree on the report and every mutant", () => {
+    expect(schemaDifference(driftReport())).toBeNull();
+    for (const [name, mutate] of cases) {
+      const r = structuredClone(driftReport());
+      mutate(r);
+      r.digest = reportDigest(r);
+      expect(schemaDifference(r), name).toBeNull();
+    }
   });
 
   it("detects a tampered statement through the digest", () => {
