@@ -123,7 +123,7 @@ export function decodeUpgradeableLoaderInstruction(data: Uint8Array): BuiltinDec
   return { name: v.name, args, accountNames: [...v.accounts] };
 }
 
-const utf8 = new TextDecoder("utf-8", { fatal: true });
+const utf8 = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true });
 
 /**
  * Memo: the whole instruction data is the memo, which the program requires to be valid UTF-8

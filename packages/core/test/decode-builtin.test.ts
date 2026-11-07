@@ -163,8 +163,9 @@ describe("E4 memo decoder", () => {
   });
 
   it("keeps the text exactly as written (no trim, no normalization)", () => {
-    const text = "  Q4 fee update‮\n";
-    expect(decodeMemoInstruction(new TextEncoder().encode(text)).args.memo).toBe(text);
+    for (const text of ["  Q4 fee update‮\n", "\uFEFFapprove upgrade", ""]) {
+      expect(decodeMemoInstruction(new TextEncoder().encode(text)).args.memo).toBe(text);
+    }
   });
 
   it("rejects invalid UTF-8 (the program would fail) as Unknown", () => {
