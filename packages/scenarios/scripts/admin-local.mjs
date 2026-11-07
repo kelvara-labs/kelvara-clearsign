@@ -44,9 +44,6 @@ const here = dirname(fileURLToPath(import.meta.url));
 const PKG = resolve(here, '..');
 const REPO = resolve(PKG, '../..');
 const STATE = join(PKG, '.localnet', 'state.json');
-const OUT = join(PKG, '.localnet', 'admin');
-const KEYS = join(REPO, '.keys', 'localnet');
-const RUN_KEYS = join(KEYS, 'admin-run');
 
 export const MEMO = 'Q4 fee update';
 const MEMO_PROGRAM = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr';
@@ -55,7 +52,7 @@ const RENT_SYSVAR = 'SysvarRent111111111111111111111111111111111';
 const NONCE_SPACE = 80;
 const STABLE_KEYS = ['member-a', 'member-b', 'member-c', 'attacker', 'outsider'];
 
-const log = (...a) => console.log('[admin-local]', ...a);
+const logger = (context) => (...a) => console.log(context.network === 'devnet' ? '[admin-devnet]' : '[admin-local]', ...a);
 
 function keygen(path, force) {
   if (existsSync(path) && !force) return;
@@ -131,9 +128,12 @@ function loadState() {
   return JSON.parse(readFileSync(STATE, 'utf8'));
 }
 
-export async function setup() {
-  const state = loadState();
-  const rpc = localRpc(state.rpcUrl);
+export async function setup(context = {}) {
+  const log = logger(context);
+  const { out: OUT = join(PKG, '.localnet', 'admin'), keys: KEYS = join(REPO, '.keys', 'localnet') } = context;
+  const RUN_KEYS = join(KEYS, 'admin-run');
+  const state = context.state ?? loadState();
+  const rpc = context.rpc ?? localRpc(state.rpcUrl);
   await rpc.call('getHealth');
 
   mkdirSync(RUN_KEYS, { recursive: true, mode: 0o700 });
@@ -145,7 +145,7 @@ export async function setup() {
   const nonceKey = readKeypair(join(RUN_KEYS, 'nonce.json'));
   const demoAuthority = readKeypair(join(REPO, state.keyFiles['demo-upgrade-authority']));
 
-  for (const n of ['member-a', 'member-b', 'member-c', 'outsider']) await rpc.airdrop(k[n].publicKey, 10e9);
+  for (const n of ['member-a', 'member-b', 'member-c', 'outsider']) await (context.fund ?? rpc.airdrop)(k[n].publicKey, 10e9);
 
   // 1. council
   const programConfig = state.squads.programConfig;
@@ -162,7 +162,7 @@ export async function setup() {
   if (ms.threshold !== 2 || ms.timeLock !== 0) throw new Error(`multisig created with threshold ${ms.threshold}, time lock ${ms.timeLock}`);
   log(`multisig ${multisig} (2 of 3, time lock 0), vault ${vault}`);
   // The vault pays nothing in this scenario, but a funded vault is what a real council has.
-  await rpc.send([transfer(k['member-c'].publicKey, vault, 1e9)], k['member-c'], []);
+  await rpc.send([transfer(k['member-c'].publicKey, vault, context.network === 'devnet' ? 1_000_000 : 1e9)], k['member-c'], []);
 
   // 2. vault becomes the demo program's upgrade authority
   const { programData, authority: before } = await readUpgradeAuthority(rpc, state.demo.programId);
@@ -230,8 +230,9 @@ export async function setup() {
 
   mkdirSync(OUT, { recursive: true });
   writeFileSync(join(OUT, 'approval.unsigned.b64'), unsigned.toString('base64') + '\n');
+  const keyNetwork = context.network === 'devnet' ? 'devnet' : 'localnet';
   const scenario = {
-    scenario: 'admin-local',
+    scenario: context.network === 'devnet' ? 'admin-devnet' : 'admin-local',
     createdAt: new Date().toISOString(),
     rpcUrl: state.rpcUrl,
     memo: MEMO,
@@ -251,7 +252,7 @@ export async function setup() {
     proposal,
     vaultMessageAccounts: vaultAccounts.map((pubkey, i) => ({ pubkey, isWritable: i === 1 })),
     approval: {
-      file: 'packages/scenarios/.localnet/admin/approval.unsigned.b64',
+      file: (context.network === 'devnet' ? 'packages/scenarios/.devnet/admin/' : 'packages/scenarios/.localnet/admin/') + 'approval.unsigned.b64',
       signers: compiled.signers,
       feePayer: a.publicKey,
       instructions: ['System AdvanceNonceAccount', `Memo "${MEMO}"`, 'Squads proposalApprove'],
@@ -263,9 +264,9 @@ export async function setup() {
       }
     },
     keyFiles: {
-      ...Object.fromEntries(STABLE_KEYS.map((n) => [n, `.keys/localnet/${n}.json`])),
-      createKey: '.keys/localnet/admin-run/create-key.json',
-      nonce: '.keys/localnet/admin-run/nonce.json'
+      ...Object.fromEntries(STABLE_KEYS.map((n) => [n, `.keys/${keyNetwork}/${n}.json`])),
+      createKey: `.keys/${keyNetwork}/admin-run/create-key.json`,
+      nonce: `.keys/${keyNetwork}/admin-run/nonce.json`
     }
   };
   writeFileSync(join(OUT, 'scenario.json'), JSON.stringify(scenario, null, 2) + '\n');
@@ -274,9 +275,12 @@ export async function setup() {
   return scenario;
 }
 
-export async function attack() {
+export async function attack(context = {}) {
+  const log = logger(context);
+  const OUT = context.out ?? join(PKG, '.localnet', 'admin');
+
   const s = JSON.parse(readFileSync(join(OUT, 'scenario.json'), 'utf8'));
-  const rpc = localRpc(s.rpcUrl);
+  const rpc = context.rpc ?? localRpc(s.rpcUrl);
   const kp = (n) => readKeypair(join(REPO, s.keyFiles[n]));
   const [a, b, c] = ['member-a', 'member-b', 'member-c'].map(kp);
 

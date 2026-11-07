@@ -24,6 +24,10 @@
     "fixtures:e2e": "node scripts/fixtures-e2e.mjs",
     "scenario:poison-devnet": "node scripts/poison-devnet.mjs",
     "scenario:poison-devnet:attack": "node scripts/poison-devnet.mjs --attack-only",
-    "test:devnet": "node --test e2e-devnet/"
+    "test:devnet": "node --test e2e-devnet/",
+    "scenario:admin-devnet": "node scripts/admin-devnet.mjs",
+    "scenario:admin-devnet:attack": "node scripts/admin-devnet.mjs --attack-only",
+    "scenario:trap-devnet": "node scripts/trap-devnet.mjs",
+    "scenario:trap-devnet:attack": "node scripts/trap-devnet.mjs --attack-only"
   }
 }
