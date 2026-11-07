@@ -16,7 +16,7 @@
 #     --wallet-only   load Solflare only (before packages/extension/dist exists)
 #   Then: node tools/browser/cdp-check.mjs
 #
-# Env overrides: KELVARA_BROWSER_SESSION, SOLFLARE_DIR, SIGNGUARD_DIST, BRAVE_BIN.
+# Env overrides: KELVARA_CDP_PORT (default 28538, always on 127.0.0.1), KELVARA_BROWSER_SESSION, SOLFLARE_DIR, SIGNGUARD_DIST, BRAVE_BIN.
 set -euo pipefail
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -29,7 +29,8 @@ SOLFLARE="${SOLFLARE_DIR:-$(ls -d "$SOLFLARE_ROOT"/*/ 2>/dev/null | sort -V | ta
 SIGNGUARD="${SIGNGUARD_DIST:-$REPO/packages/extension/dist}"
 BRAVE="${BRAVE_BIN:-/usr/bin/brave-browser}"
 CDP_HOST=127.0.0.1
-CDP_PORT=28538
+CDP_PORT="${KELVARA_CDP_PORT:-28538}"   # host is always loopback
+[[ "$CDP_PORT" =~ ^[0-9]+$ ]] || { printf "launch.sh: bad KELVARA_CDP_PORT\n" >&2; exit 1; }
 
 WALLET_ONLY=0
 if [[ "${1:-}" == "--wallet-only" ]]; then WALLET_ONLY=1; shift; fi

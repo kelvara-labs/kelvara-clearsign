@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Checks that the Kelvara wallet browser answers CDP on 127.0.0.1:28538 and on
+// Checks that the Kelvara wallet browser answers CDP on 127.0.0.1:$KELVARA_CDP_PORT (default 28538) and on
 // loopback only, and lists page/extension targets (URLs only, api-key redacted).
 /* global fetch, AbortSignal */
 // Exit 0 = all checks pass. Usage: node tools/browser/cdp-check.mjs [--expect-signguard]
@@ -9,7 +9,8 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HOST = '127.0.0.1';
-const PORT = 28538;
+const PORT = Number(process.env.KELVARA_CDP_PORT ?? 28538);
+if (!Number.isInteger(PORT) || PORT <= 0 || PORT > 65535) throw new Error('bad KELVARA_CDP_PORT');
 const here = dirname(fileURLToPath(import.meta.url));
 const distPath = process.env.SIGNGUARD_DIST ?? resolve(here, '../../packages/extension/dist');
 const expectSignguard = process.argv.includes('--expect-signguard');

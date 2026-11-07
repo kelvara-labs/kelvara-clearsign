@@ -1,7 +1,7 @@
 # Kelvara wallet browser
 
 `launch.sh` starts the isolated Kelvara Brave profile (`/home/andy/KELVARA/local-browser-session/profile`)
-with Solflare plus our unpacked build (`packages/extension/dist`), CDP on `127.0.0.1:28538` only.
+with Solflare plus our unpacked build (`packages/extension/dist`), CDP on `127.0.0.1:28538` only (`KELVARA_CDP_PORT` changes the port, never the loopback host).
 `--wallet-only` loads Solflare alone. `cdp-check.mjs` verifies CDP answers, that the listener is
 loopback-only, and lists targets with `api-key=` redacted.
 
