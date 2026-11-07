@@ -43,7 +43,8 @@
     "scenario:sweep-local:attack": "pnpm --filter @kelvara/scenarios scenario:sweep-local:attack",
     "scenario:e2e-cases": "pnpm --filter @kelvara/scenarios scenario:e2e-cases",
     "fixtures:poison": "pnpm --filter @kelvara/scenarios fixtures:poison",
-    "demo:serve": "pnpm --filter @kelvara/scenarios demo:serve"
+    "demo:serve": "pnpm --filter @kelvara/scenarios demo:serve",
+    "demo:prepare": "pnpm --filter @kelvara/scenarios demo:prepare"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
