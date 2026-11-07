@@ -11,3 +11,4 @@ test-results/
 .env
 .env.*
 .DS_Store
+!.env.example

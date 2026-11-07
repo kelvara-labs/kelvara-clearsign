@@ -70,8 +70,16 @@ prompt, and keep working on anything unblocked while you wait.
   first relevant output, and copy the coordinator.
 
 ## Hard rules (all roles)
-- Network: Solana JSON-RPC only (localnet, devnet, or the configured mainnet endpoint).
-  No third-party APIs, analytics, telemetry or remote AI.
+- Network: Helius only (RPC and APIs) for mainnet and devnet; localnet for local tests.
+  No other RPC providers, scanning services, price feeds, analytics, telemetry or remote AI.
+- Helius key: read HELIUS_API_KEY from `.env` (tools, scenarios, CLI) or from the extension's
+  options storage. Never print it, log it, commit it, put it in a fixture or a report, or
+  bake it into the release zip. Redact `api-key=` from every URL before logging.
+- Reused code: sol-sign-preview, Watchtower and OPEN DevTool are sources, not dependencies.
+  Port what you need with attribution in LICENSES.md; strip every non-Helius host.
+- Wallet browser (tools/browser): follow /home/andy/KELVARA/local-browser-session/SKILL.md.
+  Drive pages and click Block in our report over CDP; never click Sign anyway, never touch
+  Solflare, never read the profile or its .env. The human approves every wallet prompt.
 - Keys: localnet and devnet only, kept in `.keys/` (gitignored). Never a mainnet key.
 - Tests: never skip, weaken or delete a failing test to go green. Fix the code, or
   write a waiver with the reason in your progress log.
