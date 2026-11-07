@@ -8,16 +8,31 @@ import path from "node:path";
 export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
 export const PENDING_EXIT = 78;
 
+const gitOut = (cwd, args) =>
+  execFileSync("git", args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+
 // .env lives only in the main checkout. From any worktree it is <git-common-dir>/../.env.
+// A plain `git clone` of a local checkout (the clean-clone gate run) has its own .git and no .env:
+// follow origin when it is a local directory, to that repo's main checkout (same rule as scenarios' S10).
 export function envFilePath(cwd = ROOT) {
+  let file;
   try {
-    const common = execFileSync("git", ["rev-parse", "--path-format=absolute", "--git-common-dir"], {
-      cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"]
-    }).trim();
-    return path.resolve(common, "..", ".env");
+    file = path.resolve(gitOut(cwd, ["rev-parse", "--path-format=absolute", "--git-common-dir"]), "..", ".env");
   } catch {
     return path.join(cwd, ".env");
   }
+  if (existsSync(file)) return file;
+  try {
+    const origin = gitOut(cwd, ["config", "--get", "remote.origin.url"]);
+    const local = origin.startsWith("file://") ? origin.slice(7) : origin;
+    if (path.isAbsolute(local) && existsSync(local)) {
+      const viaOrigin = path.resolve(gitOut(local, ["rev-parse", "--path-format=absolute", "--git-common-dir"]), "..", ".env");
+      if (existsSync(viaOrigin)) return viaOrigin;
+    }
+  } catch {
+    // no local origin
+  }
+  return file;
 }
 
 // Parse KEY=VALUE lines; supports quotes, comments and ${VAR} expansion. Never logs values.

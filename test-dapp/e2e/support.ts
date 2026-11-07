@@ -113,7 +113,7 @@ export function txCase(role: E2eRole): TxCase | null {
 // `scenario:e2e-cases --serve` (setup only, no attack) and passes its URL; GET /cases/<role> returns the case with
 // a fresh blockhash. The test wallet presents the case's signer (test-dapp SignArgs.account, X6b).
 
-export type LocalRole = "l3-admin" | "l2-trap" | "l4-sweep";
+export type LocalRole = "l3-admin" | "l2-trap" | "l4-sweep" | "l4-sweep-ata";
 export interface LocalCase {
   role: LocalRole;
   scenario: string;

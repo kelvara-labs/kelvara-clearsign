@@ -224,3 +224,16 @@ test("hosts: the repo allowlist is well formed", async () => {
   assert.ok(list.length > 0);
   assert.deepEqual(validateInertEntries(list), []);
 });
+
+test("checkHosts names inert entries that no longer occur (stale allowlist)", () => {
+  const b = bundle({ "service-worker.js": `const m="see https://docs.example.org/err for help";` });
+  const inert = [
+    { string: "https://docs.example.org/err", file: "service-worker.js", reason: "error message text" },
+    { string: "https://gone.example.org/x", file: "service-worker.js", reason: "removed by a dependency change" }
+  ];
+  const r = checkHosts(b, inert);
+  assert.equal(r.status, "PASS");
+  assert.deepEqual(r.unused, ["https://gone.example.org/x"]);
+  assert.match(r.detail ?? r.note ?? JSON.stringify(r), /1 unused inert entry .*gone\.example\.org/);
+  assert.deepEqual(checkHosts(b, inert.slice(0, 1)).unused, []);
+});

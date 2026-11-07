@@ -88,9 +88,9 @@ if (!env.KELVARA_E2E_CASES_URL) {
     env.KELVARA_E2E_CASES_MISSING = "packages/scenarios/scripts/e2e-cases.mjs not in this tree (scenarios S12)";
   } else {
     const url = `http://127.0.0.1:${CASES_PORT}`;
-    console.log(`G7 starting localnet case server (${path.relative(ROOT, CASES_SCRIPT)} --serve)`);
+    console.log(`G7 starting localnet case server (${path.relative(ROOT, CASES_SCRIPT)} --serve --with-ata-sweep)`);
     const caseLog = createWriteStream(path.join(LOGS, "e2e-cases.log"));
-    casesServer = spawn(process.execPath, [CASES_SCRIPT, "--serve"], { cwd: path.dirname(path.dirname(CASES_SCRIPT)), stdio: ["ignore", "pipe", "pipe"] });
+    casesServer = spawn(process.execPath, [CASES_SCRIPT, "--serve", "--with-ata-sweep"], { cwd: path.dirname(path.dirname(CASES_SCRIPT)), stdio: ["ignore", "pipe", "pipe"] });
     casesServer.stdout.on("data", (d) => caseLog.write(redact(d.toString())));
     casesServer.stderr.on("data", (d) => caseLog.write(redact(d.toString())));
     process.on("exit", () => casesServer?.kill());

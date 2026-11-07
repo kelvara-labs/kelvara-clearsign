@@ -1,7 +1,11 @@
 // Self-tests for redaction and .env parsing used by every gate log.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { failNote, makeRedactor, parseEnv } from "../src/lib.mjs";
+import { envFilePath, failNote, makeRedactor, parseEnv } from "../src/lib.mjs";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, realpathSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 
 test("redacts api-key params, JSON fields and the literal key", () => {
   const key = "0f0e0d0c-1111-4222-8333-444455556666";
@@ -38,4 +42,21 @@ test("FAIL note: SELFCHECK-SUMMARY first, then first error line, then last line,
 
 test("FAIL note strips ANSI colour codes (V9 G3 mutant note)", () => {
   assert.equal(failNote(["\x1b[31m❯\x1b[39m test/rules-address.test.ts \x1b[2m(\x1b[22m38 tests | \x1b[31m1 failed\x1b[39m)"], 1), "❯ test/rules-address.test.ts (38 tests | 1 failed)");
+});
+
+test("envFilePath: worktree uses common dir, plain clone follows a local origin", () => {
+  const dir = realpathSync(mkdtempSync(path.join(tmpdir(), "kv-env-")));
+  const git = (cwd, ...a) => execFileSync("git", a, { cwd, stdio: "ignore" });
+  const main = path.join(dir, "main");
+  git(dir, "init", "-q", main);
+  git(main, "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-q", "--allow-empty", "-m", "x");
+  writeFileSync(path.join(main, ".env"), "HELIUS_API_KEY=dummy-not-a-key\n");
+  assert.equal(envFilePath(main), path.join(main, ".env"));
+  git(main, "worktree", "add", "-q", "--detach", path.join(dir, "wt"));
+  assert.equal(envFilePath(path.join(dir, "wt")), path.join(main, ".env"));
+  git(dir, "clone", "-q", main, path.join(dir, "clone"));
+  assert.equal(envFilePath(path.join(dir, "clone")), path.join(main, ".env"));
+  git(dir, "clone", "-q", main, path.join(dir, "orphan"));
+  git(path.join(dir, "orphan"), "remote", "remove", "origin");
+  assert.equal(envFilePath(path.join(dir, "orphan")), path.join(dir, "orphan", ".env"));
 });
