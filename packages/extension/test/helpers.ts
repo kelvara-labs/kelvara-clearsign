@@ -164,3 +164,9 @@ export type SignFeature = { signTransaction: (...i: unknown[]) => Promise<unknow
 export function signFeature(wallet: unknown): SignFeature {
   return (wallet as { features: Record<string, SignFeature> }).features["solana:signTransaction"]!;
 }
+
+/**
+ * Smallest legacy message core's parser accepts: header (1 signer), one account, a blockhash,
+ * no instructions. Synthetic bytes for policy tests only; real transactions come from fixtures/tx.
+ */
+export const MINIMAL_MESSAGE = Uint8Array.from([1, 0, 0, 1, ...new Uint8Array(32), ...new Uint8Array(32), 0]);

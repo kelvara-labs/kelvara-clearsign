@@ -1,14 +1,14 @@
 import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import { installBridge } from "../src/bridge/bridge.js";
-import { b58decode, b58encode, b64encode, messageToWireTx, wireMessage } from "../src/shared/codec.js";
+import { b58decode, b58encode, b64encode, messageToWireTx } from "../src/shared/codec.js";
 import { decisionEventName, requestEventName, SW_ANALYZE, SW_DECIDED, type WorkerVerdict } from "../src/shared/protocol.js";
 import { rankedCapabilities, validateReportView, type ReportView } from "../src/shared/report-view.js";
 import { buttonsFor, HOLD_MS, HoldGesture, MIN_VISIBLE_MS, reportMode, VisibilityGate } from "../src/report/model.js";
 import { parseFrameAnswer } from "../src/report/overlay.js";
 import { stubEngine } from "../src/sw/engine-stub.js";
-import { decide, messageHashes } from "../src/sw/policy.js";
-import { makeWin } from "./helpers.js";
+import { decide, messageHashes, wireMessageBytes } from "../src/sw/policy.js";
+import { makeWin, MINIMAL_MESSAGE } from "./helpers.js";
 
 const base = { allow: false, hold: false, reason: "r", report: null };
 const v = (level: WorkerVerdict["level"], over: Partial<WorkerVerdict> = {}): WorkerVerdict => ({ ...base, level, ...over });
@@ -109,21 +109,21 @@ describe("message hash (match on a Ledger)", () => {
     expect(Array.from(b58decode(b58encode(r)))).toEqual(Array.from(r));
   });
   it("is base58(sha256(message)), skipping the signatures", async () => {
-    const msg = new Uint8Array([2, 1, 1, 0, 5, 9, 9]);
+    const msg = MINIMAL_MESSAGE;
     const wire = messageToWireTx(msg);
-    expect(Array.from(wireMessage(wire))).toEqual(Array.from(msg));
+    expect(Array.from(wireMessageBytes(b64encode(wire)))).toEqual(Array.from(msg));
     const expected = b58encode(createHash("sha256").update(msg).digest());
     expect(await messageHashes([b64encode(wire)])).toEqual([expected]);
   });
-  it("a wire tx with no message is refused", () => {
-    expect(() => wireMessage(new Uint8Array([1, ...new Array(64).fill(0)]))).toThrow();
-    expect(() => wireMessage(new Uint8Array([0, 1, 2]))).toThrow();
+  it("a wire tx with no message is refused", async () => {
+    await expect(messageHashes([b64encode(new Uint8Array([1, ...new Array(64).fill(0)]))])).rejects.toThrow();
+    await expect(messageHashes([b64encode(new Uint8Array([0, 1, 2]))])).rejects.toThrow();
   });
 });
 
 describe("stub engine through decide()", () => {
   it("holds at L2 with an Unknown claim and the message hash; never claims safe", async () => {
-    const wire = b64encode(messageToWireTx(new Uint8Array([1, 0, 0, 0])));
+    const wire = b64encode(messageToWireTx(MINIMAL_MESSAGE));
     const req = { v: 1, kind: "sign", id: "0".repeat(32), method: "solana:signTransaction", wallet: "W", account: null, chain: "solana:localnet", txs: [wire] } as const;
     const out = await decide(req as never, { network: "mainnet", passThrough: false }, stubEngine);
     expect(out).toMatchObject({ allow: false, hold: true, level: 2 });
