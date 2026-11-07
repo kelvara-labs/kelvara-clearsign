@@ -2,6 +2,8 @@
 
 One line per task: `M<n> | task | gates | minutes | decisions`
 
+M4 | S2 redispatch task_56acb932fb46 | localnet:check 11/11; selfcheck --fast completed, G2–G4 PENDING, G6 skipped | 5 | Existing implementation at 921e235 remains healthy; did not reset the running validator or modify scenario code. Squads binary/config/treasury match cached Helius clone; demo ELF matches pinned binary and upgrade authority is our local key. IDL remains pinned from the mainnet on-chain account and explicitly unverified after Anchor 101 (not a repo-source IDL); verifier owns gate declarations and full G6 still needs S3/S4 plus engine.
+
 M4 | S2 redispatch verification | localnet:up + localnet:check 11/11; selfcheck --fast G1 PASS, G2–G4 PENDING | 5 | Implementation already committed at 921e235; initial check found validator stopped, then fresh localnet:up succeeded using cached Helius mainnet clone and left validator running at 127.0.0.1:8899. IDL publish again returned Anchor 101; pinned IDL remains explicitly unverified. Full G6 awaits S3/S4 and engine; no gate PASS declaration.
 
 
