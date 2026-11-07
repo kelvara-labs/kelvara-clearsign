@@ -1,0 +1,95 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "4ey8KzLVau33AbCj2RzwzrKmEeVhD1MUgznDM5EiwNXn1A45fNxnBxUxUorDwJiVn9tqAfzsYMjxSyPm3pgueJim",
+  "slot": 410344004,
+  "blockTime": 1775059517,
+  "fetchedAt": "2026-11-07T17:07:09.672Z",
+  "source": "helius:getTransaction",
+  "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+  "encoding": "base64",
+  "transaction": "AbbK+yHCMMXOtJVrUVrW9aVSslLNu9BV1TJXGUw0vqu/GIf0bQLo74mqREmU+m675mXyRUQJhRF2cruA94fR3gKAAQAGB9m4THQkbXgH4Ch9mHFvvwxJAieGyshcUsA8NfllcMqbAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAADfUbWfJP7vhL5Qo+DjUD/BXB0SSf0imT8ynBEgAAAAAlU276eyWDJinopP+ITNpZv4YDRUa5LgXlWH4mFSlP2wwtpPa/3gFL2HKm56e+zK66MRY/2i1mRnnI7FGSFtbXlliIjJ2ZmFz74wI22Iwu5xKBu6GNU6qjdWjzSBaxgc5rb4f/nLdoYDJKFuRrUtE8QJcEJHPN8l4FgcyFy/sPBDiUy4iNrYc5LkG8LEVX114w8CC6ppDCrbvbKVoj0zvsFAQAFAkANAwABAAkDECcAAAAAAAACABABABAAAwBQAAMAcgCVAAMAAwYADQsJCgeHAtrtqvUnj6Yh+wAAALkBGoKmIoOrREXzHcmLZ03gKmwS32tZ5EXXsuH50f/qfwH0epoA0XkT+9Q7MrUNrT/rWG5ZwgXaU+DKXY55Tpl+5N8CgO/B9IDFYVrz+2c9Qih+mT2p+8NQa25B36MpUIIMLmyVAHXTx5OAiwZAaE4GAAMDXAkAAAUAsaQlAAAAAAACuKQlAAAAAAABeKMlAAAAAAAE+P8MAYCLBkBoTgYAaQsAAAUAtqhMBQAAAAACwM9MBQAAAAABoIFMBQAAAAAE+P8MAYCLBkBoTgYABAwAAAUA88HkAAAAAAAC+/3kAAAAAAABgEXkAAAAAAAE+P8MAYCLBkBoTgYAAwcMCAcEAAUGCPcX/0HUWt3CAtxONipe6ZD/rwoF+myvtExTLVh89hFJ2ICUsTjCNXA3Avb1AqODy8oJvYnPtx7kN2onhfw+W8YH76ZlH9wDf2Pf94CrU2QCrbEBQQ==",
+  "sha256": "264a77d6d47eb28958176402361cba5e3c256f754e59074d14e3c8de050d0da9",
+  "version": 0,
+  "purpose": "G5: drift-v2 IDL decodes real transactions (postPythLazerOracleUpdate, updatePerpBidAskTwap)",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 12000,
+    "preBalances": [
+      1816905095,
+      1,
+      1,
+      49151453,
+      2561280,
+      31347841,
+      2561280,
+      1224960,
+      9354240,
+      1224960,
+      1224960,
+      0,
+      7795213,
+      3542640
+    ],
+    "postBalances": [
+      1816893095,
+      1,
+      1,
+      49151453,
+      2561280,
+      31347841,
+      2561280,
+      1224960,
+      9354240,
+      1224960,
+      1224960,
+      0,
+      7795213,
+      3542640
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: PostPythLazerOracleUpdate",
+      "Program log: Price updated to 2466993",
+      "Program log: Posting new lazer update. current ts 1775059518000000 < next_timestamp 1775059518000000",
+      "Program log: Price updated to 88910006",
+      "Program log: Posting new lazer update. current ts 1775059518000000 < next_timestamp 1775059518000000",
+      "Program log: Price updated to 14991859",
+      "Program log: Posting new lazer update. current ts 1775059518000000 < next_timestamp 1775059518000000",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 21112 of 199700 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: UpdatePerpBidAskTwap",
+      "Program log: estimated_bid = None estimated_ask = Some(149870)",
+      "Program log: after amm bid twap = 152373 -> 152356 \n        ask twap = 152627 -> 152611 \n        ts = 1775059496 -> 1775059517",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 61479 of 178588 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [
+        "BrwBRpuJZzqa1VufrgfT3dNy44XkL31xmbS8PUNrsR5z",
+        "6ZSJj24KkdUvfVqK5RMwi8qszi3uDRieEGJJrzW3NQGF",
+        "585jsthKg9BeTfnFGAxgfNie9krGGyPbd5feMpWneHf7",
+        "HsfwxaJdpY5Dvd3ttrrY7YL635T7D9W443XdTwE2Dvbh"
+      ],
+      "readonly": [
+        "Sysvar1nstructions1111111111111111111111111",
+        "5zpq7DvB6UdFFvpmBPspGPNfUGoBRRCE2HHg5u3gxcsN",
+        "3rdJbqfnagQ4yx9HXJViD4zc4xpiSqmFsKpPuSCQVyQL"
+      ]
+    },
+    "computeUnitsConsumed": 82891,
+    "costUnits": 89226
+  }
+}

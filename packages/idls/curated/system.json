@@ -1,0 +1,20 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "system",
+  "programId": "11111111111111111111111111111111",
+  "reviewed": "E12 (engine), 2026-11-07: instruction and account names checked against roots/system.json",
+  "instructions": [
+    { "instruction": "assign", "authority": "account", "capability": "account.owner", "class": "account_control", "changes": "hands the account to another program, which then controls its lamports and data (assign takeover)" },
+    { "instruction": "assignWithSeed", "authority": "baseAccount", "capability": "account.owner", "class": "account_control", "changes": "hands a seed-derived account to another program" },
+    { "instruction": "transferSol", "authority": "source", "capability": "account.lamports", "class": "fund_movement", "changes": "moves SOL out of the signer's account" },
+    { "instruction": "transferSolWithSeed", "authority": "baseAccount", "capability": "account.lamports", "class": "fund_movement", "changes": "moves SOL out of a seed-derived account" },
+    { "instruction": "advanceNonceAccount", "authority": "nonceAuthority", "capability": "nonce.authority", "class": "other", "changes": "uses the durable nonce: a transaction signed now can land at any later time" },
+    { "instruction": "authorizeNonceAccount", "authority": "nonceAuthority", "capability": "nonce.authority", "class": "account_control", "changes": "hands the nonce authority to another key" },
+    { "instruction": "withdrawNonceAccount", "authority": "nonceAuthority", "capability": "nonce.authority", "class": "fund_movement", "changes": "withdraws lamports from the nonce account" },
+    { "instruction": "initializeNonceAccount", "authority": null, "capability": "nonce.authority", "class": "other", "changes": "creates a durable nonce and names its authority (args.nonceAuthority)" },
+    { "instruction": "allocate", "authority": "newAccount", "capability": "account.data", "class": "other", "changes": "sizes the signer's account data" },
+    { "instruction": "allocateWithSeed", "authority": "baseAccount", "capability": "account.data", "class": "other", "changes": "sizes a seed-derived account and assigns it to a program" },
+    { "instruction": "createAccount", "authority": "payer", "capability": "account.lamports", "class": "other", "changes": "funds and creates an account owned by the given program" },
+    { "instruction": "createAccountWithSeed", "authority": "payer", "capability": "account.lamports", "class": "other", "changes": "funds and creates a seed-derived account owned by the given program" }
+  ]
+}

@@ -28,5 +28,11 @@
     "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
     "decoder": "codama",
     "instructions": 241
+  },
+  {
+    "name": "marginfi-v2",
+    "programId": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+    "decoder": "codama",
+    "instructions": 91
   }
 ]

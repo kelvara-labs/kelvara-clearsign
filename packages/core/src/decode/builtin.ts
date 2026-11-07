@@ -113,6 +113,9 @@ const LOADER_VARIANTS: LoaderVariant[] = [
 /** Upgradeable loader instruction names, in variant order. */
 export const UPGRADEABLE_LOADER_INSTRUCTIONS: readonly string[] = LOADER_VARIANTS.map((v) => v.name);
 
+/** Upgradeable loader account names by instruction (positions as the decoder names them). */
+export const UPGRADEABLE_LOADER_ACCOUNTS: Readonly<Record<string, readonly string[]>> = Object.fromEntries(LOADER_VARIANTS.map((v) => [v.name, [...v.accounts]]));
+
 export function decodeUpgradeableLoaderInstruction(data: Uint8Array): BuiltinDecoded | null {
   if (data.length < 4) return null;
   const r = new Reader(data);

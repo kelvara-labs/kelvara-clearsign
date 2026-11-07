@@ -1,0 +1,1182 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "marginfi-v2",
+  "programId": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+  "kind": "keyword",
+  "checkedAgainst": "packages/idls/roots/marginfi-v2.json",
+  "reviewed": null,
+  "entries": [
+    {
+      "instruction": "configGroupFee",
+      "discriminator": "e7cd42f2dc579126",
+      "authority": null,
+      "signers": [
+        "globalFeeAdmin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "config group fee: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "configureBankRateLimits",
+      "discriminator": "af5455ddcedc6eae",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "configure bank rate limits: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "configureDeleverageWithdrawalLimit",
+      "discriminator": "1c84cd9e434db13f",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "configure deleverage withdrawal limit: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "configureGroupRateLimits",
+      "discriminator": "6f2fd58e9e33e266",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "configure group rate limits: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "driftDeposit",
+      "discriminator": "fc3ffac96237820c",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "drift deposit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "driftHarvestReward",
+      "discriminator": "a7a1f0c28a3657bd",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "drift harvest reward: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "driftInitUser",
+      "discriminator": "1d12ecbe1dfe72a9",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "drift init user: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "driftWithdraw",
+      "discriminator": "563bba7bb7b5ea89",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "drift withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "editGlobalFeeState",
+      "discriminator": "343e23815d45a5ca",
+      "authority": null,
+      "signers": [
+        "globalFeeAdmin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "edit global fee state: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "editStakedSettings",
+      "discriminator": "0b6cd757f00942f1",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "edit staked settings: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "endDeleverage",
+      "discriminator": "720efa8ffc68d6d1",
+      "authority": null,
+      "signers": [
+        "riskAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "end deleverage: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "endLiquidation",
+      "discriminator": "6e0bf436e5b516b8",
+      "authority": null,
+      "signers": [
+        "liquidationReceiver"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "end liquidation: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initBankMetadata",
+      "discriminator": "5eef328889ccfed5",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init bank metadata: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initGlobalFeeState",
+      "discriminator": "5230f73bdc6de72c",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init global fee state: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initStakedSettings",
+      "discriminator": "3423952c45564550",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init staked settings: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "juplendDeposit",
+      "discriminator": "720bda51b7a58fff",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "juplend deposit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "juplendInitPosition",
+      "discriminator": "b0ff976a05cf4ad7",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "juplend init position: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "juplendWithdraw",
+      "discriminator": "f5a4fdca354dfbdd",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "juplend withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "kaminoDeposit",
+      "discriminator": "ed08bcbb73633155",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "kamino deposit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "kaminoHarvestReward",
+      "discriminator": "a3caf88d6a147405",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "kamino harvest reward: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "kaminoInitObligation",
+      "discriminator": "fdb1a0e1469cd96d",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "kamino init obligation: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "kaminoWithdraw",
+      "discriminator": "c765292dd562e0c8",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "kamino withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountBorrow",
+      "discriminator": "047e74353005d41f",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "lending account borrow: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountClearEmissions",
+      "discriminator": "ef04dd622da7c9f4",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "lending account clear emissions: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountCloseBalance",
+      "discriminator": "f5362904f3ca1f11",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "lending account close balance: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountDeposit",
+      "discriminator": "ab5eeb675240d48c",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "lending account deposit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountEndFlashloan",
+      "discriminator": "697cc96a9902089c",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "lending account end flashloan: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountLiquidate",
+      "discriminator": "d6a997d5fba756db",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending account liquidate: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountPulseHealth",
+      "discriminator": "ba347561224a27fd",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "lending account pulse health: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountRepay",
+      "discriminator": "4fd1acb1de33ad97",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "lending account repay: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountStartFlashloan",
+      "discriminator": "0e8321dc51bab46b",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "lending account start flashloan: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingAccountWithdraw",
+      "discriminator": "24484a13d2d2c0c0",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "lending account withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAccrueBankInterest",
+      "discriminator": "6cc91e572f4161bc",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "lending pool accrue bank interest: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAddBank",
+      "discriminator": "d744484ed0da67b6",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer",
+        "bank"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool add bank: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAddBankDrift",
+      "discriminator": "3e3f31304c376c9b",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool add bank drift: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAddBankJuplend",
+      "discriminator": "12d0755a356fc329",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool add bank juplend: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAddBankKamino",
+      "discriminator": "763510f3fff595f1",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool add bank kamino: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAddBankPermissionless",
+      "discriminator": "7fbb7922bba7ee66",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool add bank permissionless: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAddBankSolend",
+      "discriminator": "51e9cbc72fe20044",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool add bank solend: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolAddBankWithSeed",
+      "discriminator": "4cd3d5ab754e9e4c",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool add bank with seed: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolCloneBank",
+      "discriminator": "d65d11ecb1e44e11",
+      "authority": null,
+      "signers": [
+        "admin",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "lending pool clone bank: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolCloneEmode",
+      "discriminator": "92a75e6ab8ca0f0a",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "lending pool clone emode: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolCloseBank",
+      "discriminator": "16730782e355002f",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "lending pool close bank: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolCollectBankFees",
+      "discriminator": "c905d774e65c4b96",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "lending pool collect bank fees: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolConfigureBank",
+      "discriminator": "79ad9c285d9438ed",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool configure bank: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolConfigureBankEmode",
+      "discriminator": "11af5b39ef563147",
+      "authority": null,
+      "signers": [
+        "emodeAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool configure bank emode: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolConfigureBankInterestOnly",
+      "discriminator": "f56b532667dba3f1",
+      "authority": null,
+      "signers": [
+        "delegateCurveAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool configure bank interest only: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolConfigureBankLimitsOnly",
+      "discriminator": "9dc4ddc8ca3e5415",
+      "authority": null,
+      "signers": [
+        "delegateLimitAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool configure bank limits only: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolConfigureBankOracle",
+      "discriminator": "d152ffab7c154751",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool configure bank oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolForceTokenlessRepayComplete",
+      "discriminator": "0fcb93e8c70ee725",
+      "authority": null,
+      "signers": [
+        "riskAdmin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "lending pool force tokenless repay complete: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolHandleBankruptcy",
+      "discriminator": "a20b388b5a8046ad",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool handle bankruptcy: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolPulseBankPriceCache",
+      "discriminator": "c013c98769cb20de",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "lending pool pulse bank price cache: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolReclaimEmissionsVault",
+      "discriminator": "ce43bae1291e5fd8",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "lending pool reclaim emissions vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolSetFixedOraclePrice",
+      "discriminator": "1c7e7f7f3c25d37d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "lending pool set fixed oracle price: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolUpdateFeesDestinationAccount",
+      "discriminator": "660479f3ed6e5f0d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "lending pool update fees destination account: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolWithdrawFees",
+      "discriminator": "5c8cd7feaa0053ae",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "lending pool withdraw fees: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolWithdrawFeesPermissionless",
+      "discriminator": "39f501d082129171",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "lending pool withdraw fees permissionless: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "lendingPoolWithdrawInsurance",
+      "discriminator": "6c3c3cf6684f9ff3",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "lending pool withdraw insurance: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountClose",
+      "discriminator": "badd5d223261c2f1",
+      "authority": null,
+      "signers": [
+        "authority",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "marginfi account close: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountCloseOrder",
+      "discriminator": "d4df4fb6acb7cded",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "marginfi account close order: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountEndExecuteOrder",
+      "discriminator": "732a145d7954b253",
+      "authority": null,
+      "signers": [
+        "executor"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi account end execute order: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountInitLiqRecord",
+      "discriminator": "ecd5ee7e93fba408",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi account init liq record: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountInitialize",
+      "discriminator": "2b4e3dff9434f99a",
+      "authority": null,
+      "signers": [
+        "marginfiAccount",
+        "authority",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi account initialize: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountInitializePda",
+      "discriminator": "57b15b50da77f51f",
+      "authority": null,
+      "signers": [
+        "authority",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi account initialize pda: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountKeeperCloseOrder",
+      "discriminator": "8072472ec247ba6a",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "account_control",
+      "changes": "marginfi account keeper close order: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountPlaceOrder",
+      "discriminator": "f4704b8a8f6c07ba",
+      "authority": null,
+      "signers": [
+        "feePayer",
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi account place order: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountSetFreeze",
+      "discriminator": "c7b3e71e8af76ee3",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "marginfi account set freeze: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountSetKeeperCloseFlags",
+      "discriminator": "52a3a5ded4ff21d2",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "marginfi account set keeper close flags: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountStartExecuteOrder",
+      "discriminator": "01468c86b71dd0e0",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi account start execute order: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiAccountUpdateEmissionsDestinationAccount",
+      "discriminator": "49b9a2c96f1874b9",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi account update emissions destination account: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiGroupConfigure",
+      "discriminator": "3ec7514e210dec3d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi group configure: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "marginfiGroupInitialize",
+      "discriminator": "ff43431a5e1f2214",
+      "authority": null,
+      "signers": [
+        "marginfiGroup",
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "marginfi group initialize: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "migrateCurve",
+      "discriminator": "97fe320d70eb9848",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "migrate curve: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "panicPause",
+      "discriminator": "4ca47b19042b4fa5",
+      "authority": null,
+      "signers": [
+        "globalFeeAdmin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "panic pause: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "panicUnpause",
+      "discriminator": "ec6bc2f263337980",
+      "authority": null,
+      "signers": [
+        "globalFeeAdmin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "panic unpause: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "panicUnpausePermissionless",
+      "discriminator": "f58b329fd53e5bf8",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "freeze",
+      "changes": "panic unpause permissionless: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "propagateFeeState",
+      "discriminator": "4003a6c28115659b",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "propagate fee state: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "propagateStakedSettings",
+      "discriminator": "d21e98458263deaa",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "propagate staked settings: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "purgeDeleverageBalance",
+      "discriminator": "84bb1995b53bfd88",
+      "authority": null,
+      "signers": [
+        "riskAdmin"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "purge deleverage balance: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "solendDeposit",
+      "discriminator": "387fb0940c190318",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "solend deposit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "solendInitObligation",
+      "discriminator": "51607b95da74ebc4",
+      "authority": null,
+      "signers": [
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "solend init obligation: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "solendWithdraw",
+      "discriminator": "ee90aac715489b24",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "solend withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "startDeleverage",
+      "discriminator": "0a8a0a3928e8b6c1",
+      "authority": null,
+      "signers": [
+        "riskAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "start deleverage: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "startLiquidation",
+      "discriminator": "f45d5ad6c0a6bf15",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "start liquidation: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "superAdminDeposit",
+      "discriminator": "f1bdc711cfe1404b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "super admin deposit: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "superAdminWithdraw",
+      "discriminator": "ca43557e688a4fc5",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "super admin withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transferToNewAccount",
+      "discriminator": "1c4f81e7a9454541",
+      "authority": null,
+      "signers": [
+        "newMarginfiAccount",
+        "authority",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "transfer to new account: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transferToNewAccountPda",
+      "discriminator": "acd2e0dc92d4fd31",
+      "authority": null,
+      "signers": [
+        "authority",
+        "feePayer"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "transfer to new account pda: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateDeleverageWithdrawals",
+      "discriminator": "3803b5761bf7cfe3",
+      "authority": null,
+      "signers": [
+        "delegateFlowAdmin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "update deleverage withdrawals: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGroupRateLimiter",
+      "discriminator": "174e3c8bbb2c8125",
+      "authority": null,
+      "signers": [
+        "delegateFlowAdmin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update group rate limiter: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "writeBankMetadata",
+      "discriminator": "934e5185818ae93b",
+      "authority": null,
+      "signers": [
+        "metadataAdmin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "write bank metadata: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": []
+}

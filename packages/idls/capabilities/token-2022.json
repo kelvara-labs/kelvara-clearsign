@@ -1,0 +1,1361 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "token-2022",
+  "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/token-2022.json",
+  "reviewed": "E12 (engine), 2026-11-07: SPL Token entries plus extension authorities; names checked against roots/token-2022.json",
+  "entries": [
+    {
+      "instruction": "initializeMint",
+      "discriminator": "00",
+      "authority": null,
+      "signers": [],
+      "capability": "token.mintTokens",
+      "class": "mint_control",
+      "changes": "creates a mint and names its mint and freeze authorities",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeAccount",
+      "discriminator": "01",
+      "authority": null,
+      "signers": [],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "creates a token account owned by the owner account",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeMultisig",
+      "discriminator": "02",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize multisig: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transfer",
+      "discriminator": "03",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "moves tokens out of the account (owner or delegate)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "approve",
+      "discriminator": "04",
+      "authority": "owner",
+      "signers": [
+        "owner"
+      ],
+      "capability": "token.delegate",
+      "class": "bounded_spend",
+      "changes": "lets a delegate spend up to the approved amount (unlimited or near-max reads as fund movement)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "revoke",
+      "discriminator": "05",
+      "authority": "owner",
+      "signers": [
+        "owner"
+      ],
+      "capability": "token.delegate",
+      "class": "bounded_spend",
+      "changes": "removes the account's delegate",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "setAuthority",
+      "discriminator": "06",
+      "authority": "owner",
+      "signers": [
+        "owner"
+      ],
+      "capability": "token.authority",
+      "class": "account_control",
+      "changes": "hands one authority of a mint or token account (args.authorityType) to another key, or removes it",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "mintTo",
+      "discriminator": "07",
+      "authority": "mintAuthority",
+      "signers": [
+        "mintAuthority"
+      ],
+      "capability": "token.mintTokens",
+      "class": "mint_control",
+      "changes": "mints new supply",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "burn",
+      "discriminator": "08",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "destroys tokens in the account",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "closeAccount",
+      "discriminator": "09",
+      "authority": "owner",
+      "signers": [
+        "owner"
+      ],
+      "capability": "token.closeAccount",
+      "class": "account_control",
+      "changes": "closes the account and sends its rent to the destination",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "freezeAccount",
+      "discriminator": "0a",
+      "authority": "owner",
+      "signers": [
+        "owner"
+      ],
+      "capability": "token.freezeAccount",
+      "class": "freeze",
+      "changes": "freezes a holder's token account",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "thawAccount",
+      "discriminator": "0b",
+      "authority": "owner",
+      "signers": [
+        "owner"
+      ],
+      "capability": "token.freezeAccount",
+      "class": "freeze",
+      "changes": "thaws a frozen token account",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "transferChecked",
+      "discriminator": "0c",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "moves tokens out of the account (checked form)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "approveChecked",
+      "discriminator": "0d",
+      "authority": "owner",
+      "signers": [
+        "owner"
+      ],
+      "capability": "token.delegate",
+      "class": "bounded_spend",
+      "changes": "lets a delegate spend up to the approved amount (checked form)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "mintToChecked",
+      "discriminator": "0e",
+      "authority": "mintAuthority",
+      "signers": [
+        "mintAuthority"
+      ],
+      "capability": "token.mintTokens",
+      "class": "mint_control",
+      "changes": "mints new supply (checked form)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "burnChecked",
+      "discriminator": "0f",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "destroys tokens in the account (checked form)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeAccount2",
+      "discriminator": "10",
+      "authority": null,
+      "signers": [],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "creates a token account owned by args.owner",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "syncNative",
+      "discriminator": "11",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "sync native: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeAccount3",
+      "discriminator": "12",
+      "authority": null,
+      "signers": [],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "creates a token account owned by args.owner",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeMultisig2",
+      "discriminator": "13",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize multisig2: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeMint2",
+      "discriminator": "14",
+      "authority": null,
+      "signers": [],
+      "capability": "token.mintTokens",
+      "class": "mint_control",
+      "changes": "creates a mint and names its mint and freeze authorities",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "getAccountDataSize",
+      "discriminator": "15",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "get account data size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeImmutableOwner",
+      "discriminator": "16",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize immutable owner: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "amountToUiAmount",
+      "discriminator": "17",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "amount to ui amount: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "uiAmountToAmount",
+      "discriminator": "18",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "ui amount to amount: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeMintCloseAuthority",
+      "discriminator": "19",
+      "authority": null,
+      "signers": [],
+      "capability": "token.closeMint",
+      "class": "account_control",
+      "changes": "names an authority that can close the mint",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeTransferFeeConfig",
+      "discriminator": "1a00",
+      "authority": null,
+      "signers": [],
+      "capability": "token.transferFeeConfig",
+      "class": "config",
+      "changes": "sets a transfer fee and its config and withdraw authorities",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "transferCheckedWithFee",
+      "discriminator": "1a01",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "moves tokens out of the account and pays the transfer fee",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawWithheldTokensFromMint",
+      "discriminator": "1a02",
+      "authority": "withdrawWithheldAuthority",
+      "signers": [
+        "withdrawWithheldAuthority"
+      ],
+      "capability": "token.withheldWithdraw",
+      "class": "fund_movement",
+      "changes": "takes the fees withheld on the mint",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawWithheldTokensFromAccounts",
+      "discriminator": "1a03",
+      "authority": "withdrawWithheldAuthority",
+      "signers": [
+        "withdrawWithheldAuthority"
+      ],
+      "capability": "token.withheldWithdraw",
+      "class": "fund_movement",
+      "changes": "takes the fees withheld in holders' accounts",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "harvestWithheldTokensToMint",
+      "discriminator": "1a04",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "mint_control",
+      "changes": "harvest withheld tokens to mint: can mint new supply (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setTransferFee",
+      "discriminator": "1a05",
+      "authority": "transferFeeConfigAuthority",
+      "signers": [
+        "transferFeeConfigAuthority"
+      ],
+      "capability": "token.transferFeeConfig",
+      "class": "config",
+      "changes": "changes the transfer fee (up to its maximum)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeConfidentialTransferMint",
+      "discriminator": "1b00",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "initialize confidential transfer mint: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateConfidentialTransferMint",
+      "discriminator": "1b01",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "update confidential transfer mint: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "configureConfidentialTransferAccount",
+      "discriminator": "1b02",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "configure confidential transfer account: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "approveConfidentialTransferAccount",
+      "discriminator": "1b03",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "approve confidential transfer account: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "emptyConfidentialTransferAccount",
+      "discriminator": "1b04",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "empty confidential transfer account: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "confidentialDeposit",
+      "discriminator": "1b05",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "confidential deposit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "confidentialWithdraw",
+      "discriminator": "1b06",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "confidential withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "confidentialTransfer",
+      "discriminator": "1b07",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "confidential transfer: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "applyConfidentialPendingBalance",
+      "discriminator": "1b08",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "apply confidential pending balance: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "enableConfidentialCredits",
+      "discriminator": "1b09",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "enable confidential credits: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "disableConfidentialCredits",
+      "discriminator": "1b0a",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "disable confidential credits: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "enableNonConfidentialCredits",
+      "discriminator": "1b0b",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "enable non confidential credits: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "disableNonConfidentialCredits",
+      "discriminator": "1b0c",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "disable non confidential credits: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "confidentialTransferWithFee",
+      "discriminator": "1b0d",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "confidential transfer with fee: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "configureConfidentialTransferAccountWithRegistry",
+      "discriminator": "1b0e",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "configure confidential transfer account with registry: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeDefaultAccountState",
+      "discriminator": "1c00",
+      "authority": null,
+      "signers": [],
+      "capability": "token.freezeAccount",
+      "class": "freeze",
+      "changes": "new token accounts start frozen (or initialized) by default",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateDefaultAccountState",
+      "discriminator": "1c01",
+      "authority": "freezeAuthority",
+      "signers": [
+        "freezeAuthority"
+      ],
+      "capability": "token.freezeAccount",
+      "class": "freeze",
+      "changes": "changes whether new token accounts start frozen",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "reallocate",
+      "discriminator": "1d",
+      "authority": null,
+      "signers": [
+        "payer",
+        "owner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "reallocate: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "enableMemoTransfers",
+      "discriminator": "1e00",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "enable memo transfers: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "disableMemoTransfers",
+      "discriminator": "1e01",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "disable memo transfers: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "createNativeMint",
+      "discriminator": "1f",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "mint_control",
+      "changes": "create native mint: can mint new supply (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeNonTransferableMint",
+      "discriminator": "20",
+      "authority": null,
+      "signers": [],
+      "capability": "token.nonTransferable",
+      "class": "freeze",
+      "changes": "makes the token non-transferable: holders can never move it",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeInterestBearingMint",
+      "discriminator": "2100",
+      "authority": null,
+      "signers": [],
+      "capability": "token.interestRate",
+      "class": "config",
+      "changes": "sets an interest rate for the displayed amount",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateRateInterestBearingMint",
+      "discriminator": "2101",
+      "authority": "rateAuthority",
+      "signers": [
+        "rateAuthority"
+      ],
+      "capability": "token.interestRate",
+      "class": "config",
+      "changes": "changes the displayed interest rate",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "enableCpiGuard",
+      "discriminator": "2200",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "enable cpi guard: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "disableCpiGuard",
+      "discriminator": "2201",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "disable cpi guard: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializePermanentDelegate",
+      "discriminator": "23",
+      "authority": null,
+      "signers": [],
+      "capability": "token.permanentDelegate",
+      "class": "fund_movement",
+      "changes": "names a permanent delegate that can transfer or burn every holder's balance, at any time",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeTransferHook",
+      "discriminator": "2400",
+      "authority": null,
+      "signers": [],
+      "capability": "token.transferHookProgramId",
+      "class": "admin_control",
+      "changes": "names a program that runs on every transfer of this token",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateTransferHook",
+      "discriminator": "2401",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.transferHookProgramId",
+      "class": "admin_control",
+      "changes": "changes the program that runs on every transfer",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeConfidentialTransferFee",
+      "discriminator": "2500",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "initialize confidential transfer fee: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawWithheldTokensFromMintForConfidentialTransferFee",
+      "discriminator": "2501",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw withheld tokens from mint for confidential transfer fee: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawWithheldTokensFromAccountsForConfidentialTransferFee",
+      "discriminator": "2502",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw withheld tokens from accounts for confidential transfer fee: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "harvestWithheldTokensToMintForConfidentialTransferFee",
+      "discriminator": "2503",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "harvest withheld tokens to mint for confidential transfer fee: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "enableHarvestToMint",
+      "discriminator": "2504",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "mint_control",
+      "changes": "enable harvest to mint: can mint new supply (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "disableHarvestToMint",
+      "discriminator": "2505",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "mint_control",
+      "changes": "disable harvest to mint: can mint new supply (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawExcessLamports",
+      "discriminator": "26",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "withdraws lamports above rent from a mint, account or multisig",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeMetadataPointer",
+      "discriminator": "2700",
+      "authority": null,
+      "signers": [],
+      "capability": "token.metadataPointer",
+      "class": "config",
+      "changes": "points the mint at its metadata",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateMetadataPointer",
+      "discriminator": "2701",
+      "authority": "metadataPointerAuthority",
+      "signers": [
+        "metadataPointerAuthority"
+      ],
+      "capability": "token.metadataPointer",
+      "class": "config",
+      "changes": "repoints the mint's metadata (name, symbol, image can change)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeGroupPointer",
+      "discriminator": "2800",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize group pointer: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGroupPointer",
+      "discriminator": "2801",
+      "authority": "groupPointerAuthority",
+      "signers": [
+        "groupPointerAuthority"
+      ],
+      "capability": "token.groupPointer",
+      "class": "config",
+      "changes": "repoints the mint's group",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeGroupMemberPointer",
+      "discriminator": "2900",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize group member pointer: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGroupMemberPointer",
+      "discriminator": "2901",
+      "authority": null,
+      "signers": [
+        "groupMemberPointerAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update group member pointer: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeConfidentialMintBurn",
+      "discriminator": "2a00",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize confidential mint burn: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "rotateSupplyElgamalPubkey",
+      "discriminator": "2a01",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "rotate supply elgamal pubkey: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateConfidentialMintBurnDecryptableSupply",
+      "discriminator": "2a02",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update confidential mint burn decryptable supply: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "confidentialMint",
+      "discriminator": "2a03",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "mint_control",
+      "changes": "confidential mint: can mint new supply (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "confidentialBurn",
+      "discriminator": "2a04",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "confidential burn: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "applyConfidentialPendingBurn",
+      "discriminator": "2a05",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "apply confidential pending burn: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeScaledUiAmountMint",
+      "discriminator": "2b00",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "mint_control",
+      "changes": "initialize scaled ui amount mint: can mint new supply (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateMultiplierScaledUiMint",
+      "discriminator": "2b01",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.scaledUiAmount",
+      "class": "config",
+      "changes": "changes the displayed-amount multiplier",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializePausableConfig",
+      "discriminator": "2c00",
+      "authority": null,
+      "signers": [],
+      "capability": "token.pause",
+      "class": "freeze",
+      "changes": "names an authority that can pause every transfer, mint and burn",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "pause",
+      "discriminator": "2c01",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.pause",
+      "class": "freeze",
+      "changes": "pauses every transfer, mint and burn of the token",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "resume",
+      "discriminator": "2c02",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "token.pause",
+      "class": "freeze",
+      "changes": "resumes a paused token",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeTokenMetadata",
+      "discriminator": "d2e11ea258b84d8d",
+      "authority": null,
+      "signers": [
+        "mintAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize token metadata: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateTokenMetadataField",
+      "discriminator": "dde9312db5cadcc8",
+      "authority": "updateAuthority",
+      "signers": [
+        "updateAuthority"
+      ],
+      "capability": "token.metadataUpdate",
+      "class": "config",
+      "changes": "rewrites a metadata field (name, symbol, uri)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "removeTokenMetadataKey",
+      "discriminator": "ea122038598d25b5",
+      "authority": null,
+      "signers": [
+        "updateAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "remove token metadata key: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateTokenMetadataUpdateAuthority",
+      "discriminator": "d7e4a6e45464567b",
+      "authority": "updateAuthority",
+      "signers": [
+        "updateAuthority"
+      ],
+      "capability": "token.metadataUpdate",
+      "class": "config",
+      "changes": "hands the metadata update authority to another key",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "emitTokenMetadata",
+      "discriminator": "faa6b4fa0d0cb846",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "emit token metadata: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeTokenGroup",
+      "discriminator": "79716c2736330004",
+      "authority": null,
+      "signers": [
+        "mintAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize token group: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateTokenGroupMaxSize",
+      "discriminator": "6c25ab8ff81e126e",
+      "authority": null,
+      "signers": [
+        "updateAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update token group max size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateTokenGroupUpdateAuthority",
+      "discriminator": "a1695801edddd8cb",
+      "authority": null,
+      "signers": [
+        "updateAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update token group update authority: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeTokenGroupMember",
+      "discriminator": "9820deb0dfed7486",
+      "authority": null,
+      "signers": [
+        "memberMintAuthority",
+        "groupUpdateAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize token group member: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "unwrapLamports",
+      "discriminator": "2d",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "unwrap lamports: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializePermissionedBurn",
+      "discriminator": "2e00",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize permissioned burn: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "permissionedBurn",
+      "discriminator": "2e01",
+      "authority": "permissionedBurnAuthority",
+      "signers": [
+        "permissionedBurnAuthority",
+        "authority"
+      ],
+      "capability": "token.permissionedBurn",
+      "class": "fund_movement",
+      "changes": "burns tokens with the permissioned-burn authority's co-signature",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "permissionedBurnChecked",
+      "discriminator": "2e02",
+      "authority": "permissionedBurnAuthority",
+      "signers": [
+        "permissionedBurnAuthority",
+        "authority"
+      ],
+      "capability": "token.permissionedBurn",
+      "class": "fund_movement",
+      "changes": "burns tokens with the permissioned-burn authority's co-signature (checked form)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "permissionedConfidentialBurn",
+      "discriminator": "2e03",
+      "authority": null,
+      "signers": [
+        "permissionedBurnAuthority",
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "permissioned confidential burn: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "batch",
+      "discriminator": "ff",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "batch: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": [
+    {
+      "variant": "mintTokens",
+      "capability": "token.mintTokens",
+      "class": "mint_control",
+      "changes": "mint new supply"
+    },
+    {
+      "variant": "freezeAccount",
+      "capability": "token.freezeAccount",
+      "class": "freeze",
+      "changes": "freeze and thaw every holder's account"
+    },
+    {
+      "variant": "accountOwner",
+      "capability": "token.accountOwner",
+      "class": "fund_movement",
+      "changes": "own the token account: move, burn or close its whole balance"
+    },
+    {
+      "variant": "closeAccount",
+      "capability": "token.closeAccount",
+      "class": "account_control",
+      "changes": "close the token account and take its rent"
+    },
+    {
+      "variant": "permanentDelegate",
+      "capability": "token.permanentDelegate",
+      "class": "fund_movement",
+      "changes": "transfer or burn every holder's balance, at any time"
+    },
+    {
+      "variant": "transferHookProgramId",
+      "capability": "token.transferHookProgramId",
+      "class": "admin_control",
+      "changes": "choose the program that runs on every transfer"
+    },
+    {
+      "variant": "closeMint",
+      "capability": "token.closeMint",
+      "class": "account_control",
+      "changes": "close the mint"
+    },
+    {
+      "variant": "transferFeeConfig",
+      "capability": "token.transferFeeConfig",
+      "class": "config",
+      "changes": "change the transfer fee"
+    },
+    {
+      "variant": "withheldWithdraw",
+      "capability": "token.withheldWithdraw",
+      "class": "fund_movement",
+      "changes": "take withheld transfer fees"
+    },
+    {
+      "variant": "interestRate",
+      "capability": "token.interestRate",
+      "class": "config",
+      "changes": "change the displayed interest rate"
+    },
+    {
+      "variant": "metadataPointer",
+      "capability": "token.metadataPointer",
+      "class": "config",
+      "changes": "repoint the token's metadata"
+    },
+    {
+      "variant": "groupPointer",
+      "capability": "token.groupPointer",
+      "class": "config",
+      "changes": "repoint the token's group"
+    },
+    {
+      "variant": "groupMemberPointer",
+      "capability": "token.groupMemberPointer",
+      "class": "config",
+      "changes": "repoint the token's group membership"
+    },
+    {
+      "variant": "scaledUiAmount",
+      "capability": "token.scaledUiAmount",
+      "class": "config",
+      "changes": "change the displayed-amount multiplier"
+    },
+    {
+      "variant": "pause",
+      "capability": "token.pause",
+      "class": "freeze",
+      "changes": "pause every transfer, mint and burn"
+    },
+    {
+      "variant": "permissionedBurn",
+      "capability": "token.permissionedBurn",
+      "class": "fund_movement",
+      "changes": "co-sign burns of holders' balances"
+    },
+    {
+      "variant": "confidentialTransferMint",
+      "capability": "token.confidentialTransferMint",
+      "class": "config",
+      "changes": "approve accounts for confidential transfers"
+    },
+    {
+      "variant": "confidentialTransferFeeConfig",
+      "capability": "token.confidentialTransferFeeConfig",
+      "class": "config",
+      "changes": "manage confidential transfer fee keys"
+    }
+  ]
+}

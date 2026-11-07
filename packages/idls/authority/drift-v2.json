@@ -1,0 +1,2810 @@
+{
+  "schema": "kelvara.authority-map/v1",
+  "review": "E12 (engine), 2026-11-07, by hand: legacy IDL (no relations), so all 200 entries are field-name ties, lower confidence by construction: 136 admin -> state.admin, 64 per-user (authority -> user.authority, userStats.authority, insuranceFundStake.authority, referrerName.authority; signer -> state.signer) with admin=false, which program.upgrade previews skip; checked updateAdmin, withdrawFromProgramVault, updatePerpMarketOracle, updateSpotMarketOracle, updateExchangeStatus (admin -> state.admin) against the IDL accounts. On-chain IDL authority Fqo8…Pyn is not the upgrade authority 8jj7…BMai, so the IDL is unverified under PLAN's rule",
+  "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+  "name": "drift-v2",
+  "source": "packages/idls/raw/drift-v2.json",
+  "verified": false,
+  "entries": [
+    {
+      "instruction": "initializeUser",
+      "discriminator": "6f11b9fa3c7a26fe",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "initialize user: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "initializeUserStats",
+      "discriminator": "fef34862fb82a8d5",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "userStats",
+        "field": "authority",
+        "accountType": "userStats"
+      },
+      "changes": "initialize user stats: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "resetFuelSeason",
+      "discriminator": "c77ac0ff20633fc8",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "reset fuel season: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "initializeReferrerName",
+      "discriminator": "eb7ee70a2aa41a3d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "referrerName",
+        "field": "authority",
+        "accountType": "referrerName"
+      },
+      "changes": "initialize referrer name: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "deposit",
+      "discriminator": "f223c68952e1f2b6",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "deposit: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "withdraw",
+      "discriminator": "b712469c946da122",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": false
+    },
+    {
+      "instruction": "transferDeposit",
+      "discriminator": "141493df293fcc6f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "userStats",
+        "field": "authority",
+        "accountType": "userStats"
+      },
+      "changes": "transfer deposit: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": false
+    },
+    {
+      "instruction": "transferPools",
+      "discriminator": "c5679a196b5a3c5e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "userStats",
+        "field": "authority",
+        "accountType": "userStats"
+      },
+      "changes": "transfer pools: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": false
+    },
+    {
+      "instruction": "transferPerpPosition",
+      "discriminator": "17acbca886d2036c",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "userStats",
+        "field": "authority",
+        "accountType": "userStats"
+      },
+      "changes": "transfer perp position: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": false
+    },
+    {
+      "instruction": "placePerpOrder",
+      "discriminator": "45a15dca787e4cb9",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place perp order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "cancelOrder",
+      "discriminator": "5f81edf00831df84",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "cancel order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "cancelOrderByUserId",
+      "discriminator": "6bd3fa8512253964",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "cancel order by user id: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "cancelOrders",
+      "discriminator": "eee15f9ee36708c2",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "cancel orders: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "cancelOrdersByIds",
+      "discriminator": "861390a55ef0d25e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "cancel orders by ids: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "modifyOrder",
+      "discriminator": "2f7c75ffc9c5825e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "modify order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "modifyOrderByUserId",
+      "discriminator": "9e4d04fdfcc2a1b3",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "modify order by user id: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeAndTakePerpOrder",
+      "discriminator": "d53301bb6cdce6e0",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place and take perp order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeAndMakePerpOrder",
+      "discriminator": "95750bed2f5f59ed",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place and make perp order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeAndMakeSignedMsgPerpOrder",
+      "discriminator": "101a7b835e1daf62",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place and make signed msg perp order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeSignedMsgTakerOrder",
+      "discriminator": "204f658b1906620f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place signed msg taker order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeSpotOrder",
+      "discriminator": "2d4f51a0f85a5bdc",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place spot order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeAndTakeSpotOrder",
+      "discriminator": "bf038a4772c6ca64",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place and take spot order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeAndMakeSpotOrder",
+      "discriminator": "959e5542ef09f362",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place and make spot order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "placeOrders",
+      "discriminator": "3c3f327b0cc53cbe",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "place orders: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "beginSwap",
+      "discriminator": "ae6de401f269e869",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "begin swap: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "endSwap",
+      "discriminator": "b1b81bc1220dd291",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "end swap: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserName",
+      "discriminator": "8719b938a5352288",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user name: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserCustomMarginRatio",
+      "discriminator": "15dd8cbb20810b7b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user custom margin ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserPerpPositionCustomMarginRatio",
+      "discriminator": "79899d9b59ba9171",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user perp position custom margin ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserMarginTradingEnabled",
+      "discriminator": "c25cccdff6bc1fcb",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user margin trading enabled: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserPoolId",
+      "discriminator": "db56496a38da806d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user pool id: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserDelegate",
+      "discriminator": "8bcd8d8d71245ebb",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user delegate: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserReduceOnly",
+      "discriminator": "c7472a439013566d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user reduce only: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserProtectedMakerOrders",
+      "discriminator": "72277bc6bb195adb",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user protected maker orders: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "deleteUser",
+      "discriminator": "ba5511f9dbe762fb",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "delete user: can close, reassign or take over accounts (keyword map)",
+      "class": "account_control",
+      "admin": false
+    },
+    {
+      "instruction": "reclaimRent",
+      "discriminator": "dac813c5e359c016",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "reclaim rent: can close, reassign or take over accounts (keyword map)",
+      "class": "account_control",
+      "admin": false
+    },
+    {
+      "instruction": "enableUserHighLeverageMode",
+      "discriminator": "e718e670c9ad49b8",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "enable user high leverage mode: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "fillPerpOrder",
+      "discriminator": "0dbcf86786d96af0",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "fill perp order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "fillSpotOrder",
+      "discriminator": "d4ce82ad1522c728",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "fill spot order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "triggerOrder",
+      "discriminator": "3f7033e9e82ff0c7",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "trigger order: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "forceCancelOrders",
+      "discriminator": "40b5c43fde4840e8",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "force cancel orders: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserIdle",
+      "discriminator": "fd85431667a11464",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "update user idle: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "logUserBalances",
+      "discriminator": "a21523fb2039a1d2",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "log user balances: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "disableUserHighLeverageMode",
+      "discriminator": "b79b2d00e255d545",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "disable user high leverage mode: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserStatsReferrerStatus",
+      "discriminator": "ae9a482abf9491cd",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "userStats",
+        "field": "authority",
+        "accountType": "userStats"
+      },
+      "changes": "update user stats referrer status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": false
+    },
+    {
+      "instruction": "adminUpdateUserStatsPausedOperations",
+      "discriminator": "b7683f96f0c7030a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "admin update user stats paused operations: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "settlePnl",
+      "discriminator": "2b3dea2d0f5f9899",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "settle pnl: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "settleMultiplePnls",
+      "discriminator": "7f4275392832987f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "settle multiple pnls: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "settleExpiredMarket",
+      "discriminator": "78590b197a4d48c1",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "settle expired market: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "liquidatePerp",
+      "discriminator": "4b2377f7bf128b02",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "liquidate perp: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "liquidatePerpWithFill",
+      "discriminator": "5f6f7c6956a9bb22",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "liquidate perp with fill: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "liquidateSpot",
+      "discriminator": "6b00802923e5fb12",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "liquidate spot: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "liquidateSpotWithSwapBegin",
+      "discriminator": "0c2bb0539cfb750d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "liquidate spot with swap begin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "liquidateSpotWithSwapEnd",
+      "discriminator": "8e58a3a0df4b37e1",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "liquidate spot with swap end: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "liquidateBorrowForPerpPnl",
+      "discriminator": "a911205acf94d11b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "liquidate borrow for perp pnl: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "liquidatePerpPnlForDeposit",
+      "discriminator": "ed4bc6ebe9ba4b23",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "liquidate perp pnl for deposit: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "setUserStatusToBeingLiquidated",
+      "discriminator": "6a85a0cec1abc0c2",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "set user status to being liquidated: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": false
+    },
+    {
+      "instruction": "resolvePerpBankruptcy",
+      "discriminator": "e010b0d6a2d5b7de",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "resolve perp bankruptcy: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "resolveSpotBankruptcy",
+      "discriminator": "7cc2f0fec6d5347a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "user",
+        "field": "authority",
+        "accountType": "user"
+      },
+      "changes": "resolve spot bankruptcy: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "updateSpotMarketExpiry",
+      "discriminator": "d00bd39fe2180bf7",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market expiry: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateUserQuoteAssetInsuranceStake",
+      "discriminator": "fb659c07023f1e17",
+      "tie": {
+        "kind": "field_name",
+        "signer": "signer",
+        "account": "state",
+        "field": "signer",
+        "accountType": "state"
+      },
+      "changes": "update user quote asset insurance stake: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "updateUserGovTokenInsuranceStake",
+      "discriminator": "8f63ebbb149fb854",
+      "tie": {
+        "kind": "field_name",
+        "signer": "signer",
+        "account": "state",
+        "field": "signer",
+        "accountType": "state"
+      },
+      "changes": "update user gov token insurance stake: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "updateDelegateUserGovTokenInsuranceStake",
+      "discriminator": "f11dd7e48e7416a0",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update delegate user gov token insurance stake: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "initializeInsuranceFundStake",
+      "discriminator": "bbb3f346f85a5c93",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "insuranceFundStake",
+        "field": "authority",
+        "accountType": "insuranceFundStake"
+      },
+      "changes": "initialize insurance fund stake: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": false
+    },
+    {
+      "instruction": "addInsuranceFundStake",
+      "discriminator": "fb90730bde2f3eec",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "insuranceFundStake",
+        "field": "authority",
+        "accountType": "insuranceFundStake"
+      },
+      "changes": "add insurance fund stake: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "requestRemoveInsuranceFundStake",
+      "discriminator": "8e46cc5c496ab434",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "insuranceFundStake",
+        "field": "authority",
+        "accountType": "insuranceFundStake"
+      },
+      "changes": "request remove insurance fund stake: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "cancelRequestRemoveInsuranceFundStake",
+      "discriminator": "61eb4e3ed42af17f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "insuranceFundStake",
+        "field": "authority",
+        "accountType": "insuranceFundStake"
+      },
+      "changes": "cancel request remove insurance fund stake: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "removeInsuranceFundStake",
+      "discriminator": "80a68e09febb8fae",
+      "tie": {
+        "kind": "field_name",
+        "signer": "authority",
+        "account": "insuranceFundStake",
+        "field": "authority",
+        "accountType": "insuranceFundStake"
+      },
+      "changes": "remove insurance fund stake: any other power (keyword map)",
+      "class": "other",
+      "admin": false
+    },
+    {
+      "instruction": "depositIntoInsuranceFundStake",
+      "discriminator": "0416e2c97c2c52e6",
+      "tie": {
+        "kind": "field_name",
+        "signer": "signer",
+        "account": "state",
+        "field": "signer",
+        "accountType": "state"
+      },
+      "changes": "deposit into insurance fund stake: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": false
+    },
+    {
+      "instruction": "initialize",
+      "discriminator": "afaf6d1f0d989bed",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "initializeSpotMarket",
+      "discriminator": "eac4802c5e0f30c9",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize spot market: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "deleteInitializedSpotMarket",
+      "discriminator": "1f8c43bfbd1465dd",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "delete initialized spot market: can close, reassign or take over accounts (keyword map)",
+      "class": "account_control",
+      "admin": true
+    },
+    {
+      "instruction": "initializeSerumFulfillmentConfig",
+      "discriminator": "c1d384ac46ab075e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize serum fulfillment config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateSerumFulfillmentConfigStatus",
+      "discriminator": "ab6df0fb5f019559",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update serum fulfillment config status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "initializeOpenbookV2FulfillmentConfig",
+      "discriminator": "07dd67996b391bc5",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize openbook v2 fulfillment config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "openbookV2FulfillmentConfigStatus",
+      "discriminator": "19ad13bd04d340ee",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "openbook v2 fulfillment config status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "initializePhoenixFulfillmentConfig",
+      "discriminator": "87846e6bb9a0a99a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize phoenix fulfillment config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "phoenixFulfillmentConfigStatus",
+      "discriminator": "601f71200ccb079a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "phoenix fulfillment config status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "initializePerpMarket",
+      "discriminator": "8409e5767576753e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize perp market: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "initializeAmmCache",
+      "discriminator": "263cab9ecb3a8908",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize amm cache: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "addMarketToAmmCache",
+      "discriminator": "7095c3de7c0757ed",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "add market to amm cache: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "deleteAmmCache",
+      "discriminator": "d882d7cee9e8bf58",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "delete amm cache: can close, reassign or take over accounts (keyword map)",
+      "class": "account_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateInitialAmmCacheInfo",
+      "discriminator": "9dd26d43d4aa0c6b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update initial amm cache info: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "initializePredictionMarket",
+      "discriminator": "f846c6e0e0697dc3",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize prediction market: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "deleteInitializedPerpMarket",
+      "discriminator": "5b9a18576a3bbe42",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "delete initialized perp market: can close, reassign or take over accounts (keyword map)",
+      "class": "account_control",
+      "admin": true
+    },
+    {
+      "instruction": "moveAmmPrice",
+      "discriminator": "eb6d0252db76069f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "move amm price: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "recenterPerpMarketAmm",
+      "discriminator": "18570a73a5be508b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "recenter perp market amm: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "recenterPerpMarketAmmCrank",
+      "discriminator": "a613400a0e33657a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "recenter perp market amm crank: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketAmmSummaryStats",
+      "discriminator": "7a65f9eed109f1f5",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market amm summary stats: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketExpiry",
+      "discriminator": "2cdde397838c166e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market expiry: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketLpPoolPausedOperations",
+      "discriminator": "b55e5d9233592087",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market lp pool paused operations: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketLpPoolStatus",
+      "discriminator": "4306fc3d365859e9",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market lp pool status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketLpPoolFeeTransferScalar",
+      "discriminator": "5ee4ed6d64b90451",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market lp pool fee transfer scalar: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": true
+    },
+    {
+      "instruction": "settleExpiredMarketPoolsToRevenuePool",
+      "discriminator": "3713eea9e35ac8b8",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "settle expired market pools to revenue pool: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "depositIntoPerpMarketFeePool",
+      "discriminator": "223a39446150f406",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "deposit into perp market fee pool: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketPnlPool",
+      "discriminator": "32caf9e0a6b80d8f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market pnl pool: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "depositIntoSpotMarketVault",
+      "discriminator": "30fc7749ffcdaef7",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "deposit into spot market vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": true
+    },
+    {
+      "instruction": "repegAmmCurve",
+      "discriminator": "03246659b48078d5",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "repeg amm curve: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketAmmOracleTwap",
+      "discriminator": "f14a727bce9918ca",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market amm oracle twap: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "resetPerpMarketAmmOracleTwap",
+      "discriminator": "7f0a37a47be22f18",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "reset perp market amm oracle twap: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateK",
+      "discriminator": "4862098b81e5ac38",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update k: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketMarginRatio",
+      "discriminator": "82ad6b2d77691a71",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market margin ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketHighLeverageMarginRatio",
+      "discriminator": "5870563118744a9d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market high leverage margin ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketFundingPeriod",
+      "discriminator": "aba1455b818ba11c",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market funding period: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketMaxImbalances",
+      "discriminator": "0fce49853c085659",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market max imbalances: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketLiquidationFee",
+      "discriminator": "5a89099129089475",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market liquidation fee: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketLpPoolId",
+      "discriminator": "77d09a58a55c15bc",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market lp pool id: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateInsuranceFundUnstakingPeriod",
+      "discriminator": "2c452be2ccdfca34",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update insurance fund unstaking period: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketPoolId",
+      "discriminator": "16d5c5a08bc15195",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market pool id: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketLiquidationFee",
+      "discriminator": "0b0dff35388868b1",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market liquidation fee: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateWithdrawGuardThreshold",
+      "discriminator": "3812273d9bd32c85",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update withdraw guard threshold: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketIfFactor",
+      "discriminator": "931ee02212e66904",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market if factor: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketRevenueSettlePeriod",
+      "discriminator": "515c7e29fae19cdb",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market revenue settle period: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketStatus",
+      "discriminator": "4e5e10bcc16ee71f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketPausedOperations",
+      "discriminator": "643d9951b40c06f8",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market paused operations: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketAssetTier",
+      "discriminator": "fdd1e70ef2d0f382",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market asset tier: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketMarginWeights",
+      "discriminator": "6d2157c3ff240651",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market margin weights: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketBorrowRate",
+      "discriminator": "47efec99d23efe4c",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market borrow rate: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketMaxTokenDeposits",
+      "discriminator": "38bf4f121a7950d0",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market max token deposits: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketMaxTokenBorrows",
+      "discriminator": "3966ccd4fd5f0dc7",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market max token borrows: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketScaleInitialAssetWeightStart",
+      "discriminator": "d9cccc76cc82e193",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market scale initial asset weight start: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketOracle",
+      "discriminator": "72b86625f6bab463",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketStepSizeAndTickSize",
+      "discriminator": "ee998950ce3bfa3d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market step size and tick size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketMinOrderSize",
+      "discriminator": "5d800b771a14b532",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market min order size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketOrdersEnabled",
+      "discriminator": "be4fce0f1ae5e52b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market orders enabled: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketIfPausedOperations",
+      "discriminator": "65d74f4a3b294f0c",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market if paused operations: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketName",
+      "discriminator": "11d00101a2d3bce0",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market name: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketStatus",
+      "discriminator": "47c9af7affcfc4cf",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketPausedOperations",
+      "discriminator": "351088841edc7955",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market paused operations: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketContractTier",
+      "discriminator": "ec800f5fcbd64475",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market contract tier: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketImfFactor",
+      "discriminator": "cfc23884234347f4",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market imf factor: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketUnrealizedAssetWeight",
+      "discriminator": "8784cda56d96a66a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market unrealized asset weight: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketConcentrationCoef",
+      "discriminator": "184ee87ea9b0e610",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market concentration coef: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketCurveUpdateIntensity",
+      "discriminator": "3283069ce2e7bd48",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market curve update intensity: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketReferencePriceOffsetDeadbandPct",
+      "discriminator": "d649a60bda4c6ea3",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market reference price offset deadband pct: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpFeeStructure",
+      "discriminator": "17b26fcb49168c4b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp fee structure: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotFeeStructure",
+      "discriminator": "61d8698371f68e8d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot fee structure: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateInitialPctToLiquidate",
+      "discriminator": "d285e180c2320d6d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update initial pct to liquidate: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateLiquidationDuration",
+      "discriminator": "1c9a14f966c04947",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update liquidation duration: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateLiquidationMarginBufferRatio",
+      "discriminator": "84e0f3a09a5261d7",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update liquidation margin buffer ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateOracleGuardRails",
+      "discriminator": "83700a3b203628a4",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update oracle guard rails: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateStateSettlementDuration",
+      "discriminator": "6144c7eb83503dad",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update state settlement duration: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateStateMaxNumberOfSubAccounts",
+      "discriminator": "9b7bd602dda6cc55",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update state max number of sub accounts: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateStateMaxInitializeUserFee",
+      "discriminator": "ede119edc12d4d61",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update state max initialize user fee: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketOracle",
+      "discriminator": "b6716fa043ae59bf",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketBaseSpread",
+      "discriminator": "475f54a8099dc641",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market base spread: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateAmmJitIntensity",
+      "discriminator": "b5bf356da6f9378e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update amm jit intensity: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketMaxSpread",
+      "discriminator": "50fc7a3e28da5b64",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market max spread: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketStepSizeAndTickSize",
+      "discriminator": "e7ff6119928bae04",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market step size and tick size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketName",
+      "discriminator": "d31f15d2406c42c9",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market name: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketMinOrderSize",
+      "discriminator": "e24a05596cdf2e8d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market min order size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketMaxSlippageRatio",
+      "discriminator": "eb2528c4469236c9",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market max slippage ratio: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketMaxFillReserveFraction",
+      "discriminator": "13ac729a2a87a185",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market max fill reserve fraction: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketMaxOpenInterest",
+      "discriminator": "c24f95e0f666ba8c",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market max open interest: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketNumberOfUsers",
+      "discriminator": "233e90b1b43ed7c4",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market number of users: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketFeeAdjustment",
+      "discriminator": "c2ae57662b942070",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market fee adjustment: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotMarketFeeAdjustment",
+      "discriminator": "94b6037e9d72dc63",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot market fee adjustment: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketProtectedMakerParams",
+      "discriminator": "f9d57322fdef4bad",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market protected maker params: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketOracleLowRiskSlotDelayOverride",
+      "discriminator": "7c6c93e56d757b03",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market oracle low risk slot delay override: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketAmmSpreadAdjustment",
+      "discriminator": "9bc3952bdc52adcd",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market amm spread adjustment: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpMarketOracleSlotDelayOverride",
+      "discriminator": "a55befe33face308",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp market oracle slot delay override: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateAdmin",
+      "discriminator": "a1b028d53cb8b3e4",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateDiscountMint",
+      "discriminator": "20fc7ad3421f2ff1",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update discount mint: can mint new supply (keyword map)",
+      "class": "mint_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateExchangeStatus",
+      "discriminator": "53a0fcfa817431df",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update exchange status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updatePerpAuctionDuration",
+      "discriminator": "7e6e34ae1eced75a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update perp auction duration: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateSpotAuctionDuration",
+      "discriminator": "b6b2cb48bb8f9d6b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update spot auction duration: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "initializePrelaunchOracle",
+      "discriminator": "a9b25419af3e1df7",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize prelaunch oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updatePrelaunchOracleParams",
+      "discriminator": "62cd93f3124b53cf",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update prelaunch oracle params: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "deletePrelaunchOracle",
+      "discriminator": "3ba964314511adfd",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "delete prelaunch oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "initializePythPullOracle",
+      "discriminator": "f98cfdf3f84af0ee",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize pyth pull oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "initializePythLazerOracle",
+      "discriminator": "8c6b21d6ebdb6714",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize pyth lazer oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "initializeHighLeverageModeConfig",
+      "discriminator": "d5a75df6d0825af8",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize high leverage mode config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateHighLeverageModeConfig",
+      "discriminator": "407ad45d8dd9ca37",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update high leverage mode config: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "initializeProtectedMakerModeConfig",
+      "discriminator": "4367dc435820fc08",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize protected maker mode config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateProtectedMakerModeConfig",
+      "discriminator": "56a6ebfd43cadf11",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update protected maker mode config: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "adminDeposit",
+      "discriminator": "d24241b666d6b01e",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "admin deposit: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": true
+    },
+    {
+      "instruction": "initializeIfRebalanceConfig",
+      "discriminator": "0855b8a7b03dade2",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize if rebalance config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateIfRebalanceConfig",
+      "discriminator": "8ef5f942f9b51653",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update if rebalance config: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "updateFeatureBitFlagsMmOracle",
+      "discriminator": "da8621bae73b8295",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update feature bit flags mm oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "zeroMmOracleFields",
+      "discriminator": "c0e227cccf7894fa",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "zero mm oracle fields: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateFeatureBitFlagsMedianTriggerPrice",
+      "discriminator": "40b9dd2d57930c13",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update feature bit flags median trigger price: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateFeatureBitFlagsBuilderCodes",
+      "discriminator": "0180b133ad2d0b66",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update feature bit flags builder codes: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "initializeLpPool",
+      "discriminator": "f24001de8e2ecce3",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize lp pool: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateFeatureBitFlagsSettleLpPool",
+      "discriminator": "ba1c4ee69b53f21a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update feature bit flags settle lp pool: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateFeatureBitFlagsSwapLpPool",
+      "discriminator": "5310960c6603163a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update feature bit flags swap lp pool: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateFeatureBitFlagsMintRedeemLpPool",
+      "discriminator": "1a0b8e7ace9f092d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update feature bit flags mint redeem lp pool: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "initializeConstituent",
+      "discriminator": "0cc42dda5d590021",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "initialize constituent: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateConstituentStatus",
+      "discriminator": "4c9fd3efb6d6060f",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update constituent status: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updateConstituentPausedOperations",
+      "discriminator": "b97a99bf83b184d0",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update constituent paused operations: can freeze or thaw balances (keyword map)",
+      "class": "freeze",
+      "admin": true
+    },
+    {
+      "instruction": "updateConstituentParams",
+      "discriminator": "ee827a1f0c68c07a",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update constituent params: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateLpPoolParams",
+      "discriminator": "d95c02ff1ba7b251",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update lp pool params: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "addAmmConstituentMappingData",
+      "discriminator": "a4ec822876b32eeb",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "add amm constituent mapping data: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "updateAmmConstituentMappingData",
+      "discriminator": "544621a7856b3b18",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update amm constituent mapping data: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "removeAmmConstituentMappingData",
+      "discriminator": "14b7d3a21034e573",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "remove amm constituent mapping data: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "updateConstituentCorrelationData",
+      "discriminator": "4f0e1349dd6a3e6d",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "update constituent correlation data: can change non-custodial settings (fees, metadata) (keyword map)",
+      "class": "config",
+      "admin": true
+    },
+    {
+      "instruction": "overrideAmmCacheInfo",
+      "discriminator": "bdc680093191c973",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "override amm cache info: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "class": "admin_control",
+      "admin": true
+    },
+    {
+      "instruction": "beginLpSwap",
+      "discriminator": "402c18c7307d435b",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "begin lp swap: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "endLpSwap",
+      "discriminator": "637dd6a581affd87",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "end lp swap: any other power (keyword map)",
+      "class": "other",
+      "admin": true
+    },
+    {
+      "instruction": "depositToProgramVault",
+      "discriminator": "ebab795039ef93dc",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "deposit to program vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": true
+    },
+    {
+      "instruction": "withdrawFromProgramVault",
+      "discriminator": "7828b795e812e097",
+      "tie": {
+        "kind": "field_name",
+        "signer": "admin",
+        "account": "state",
+        "field": "admin",
+        "accountType": "state"
+      },
+      "changes": "withdraw from program vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "class": "fund_movement",
+      "admin": true
+    }
+  ]
+}

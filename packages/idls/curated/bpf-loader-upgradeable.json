@@ -1,0 +1,18 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "bpf-loader-upgradeable",
+  "programId": "BPFLoaderUpgradeab1e11111111111111111111111",
+  "reviewed": "E12 (engine), 2026-11-07: names checked against the hand-written decoder (packages/core/src/decode/builtin.ts)",
+  "instructions": [
+    { "instruction": "upgrade", "authority": "authority", "capability": "program.upgrade", "class": "code_control", "changes": "replaces the program's code with the buffer's" },
+    { "instruction": "setAuthority", "authority": "currentAuthority", "capability": "program.upgrade", "class": "code_control", "changes": "hands the upgrade authority to another key (or makes the program immutable)" },
+    { "instruction": "setAuthorityChecked", "authority": "currentAuthority", "capability": "program.upgrade", "class": "code_control", "changes": "hands the upgrade authority to another key that co-signs" },
+    { "instruction": "close", "authority": "authority", "capability": "program.upgrade", "class": "account_control", "changes": "closes the program or buffer and takes its rent; a closed program stops working" },
+    { "instruction": "extendProgram", "authority": null, "capability": "program.upgrade", "class": "other", "changes": "grows ProgramData so larger code can be deployed" },
+    { "instruction": "extendProgramChecked", "authority": "authority", "capability": "program.upgrade", "class": "other", "changes": "grows ProgramData so larger code can be deployed (authority signs)" },
+    { "instruction": "deployWithMaxDataLen", "authority": "authority", "capability": "program.upgrade", "class": "code_control", "changes": "deploys a new program and names its upgrade authority" },
+    { "instruction": "write", "authority": "bufferAuthority", "capability": "program.buffer", "class": "other", "changes": "writes code into a buffer" },
+    { "instruction": "initializeBuffer", "authority": null, "capability": "program.buffer", "class": "other", "changes": "creates a code buffer and names its authority" },
+    { "instruction": "migrate", "authority": "authority", "capability": "program.upgrade", "class": "code_control", "changes": "migrates the program to the loader-v4" }
+  ]
+}

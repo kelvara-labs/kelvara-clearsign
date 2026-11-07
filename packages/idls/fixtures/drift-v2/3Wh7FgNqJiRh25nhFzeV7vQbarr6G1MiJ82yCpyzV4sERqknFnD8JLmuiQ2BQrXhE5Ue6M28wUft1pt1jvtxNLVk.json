@@ -1,0 +1,78 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "3Wh7FgNqJiRh25nhFzeV7vQbarr6G1MiJ82yCpyzV4sERqknFnD8JLmuiQ2BQrXhE5Ue6M28wUft1pt1jvtxNLVk",
+  "slot": 410344005,
+  "blockTime": 1775059518,
+  "fetchedAt": "2026-11-07T17:07:08.971Z",
+  "source": "helius:getTransaction",
+  "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+  "encoding": "base64",
+  "transaction": "AX2jinQQG6JuqXiUMkmpN7gIhTMlTlVpKTFFE+OS4msBSXIMSP4VIe5wK2HJZmWdqUxQlVhOGVQmLkrjmg8IYQeAAQACBO6r+8zGcLJVc/pxnY4Mfu0xG9F+fcuKxebu3e7Ek3YMXWoJxeMmvVKaw80IweO4HI1TsQWEapVmXPX9s7WnapMDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAlU276eyWDJinopP+ITNpZv4YDRUa5LgXlWH4mFSlP2zUm80GUCX/IVYd+TjNIKcEwyCwKSuBWJ0TafDMM8hYgDAgAFAkANAwACAAkDUMMAAAAAAAADCAUBAAkIBgQHKEWhXcp4fky5AAEBAAA7WAgAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAC3E42Kl7pkP+vCgX6bK+0TFMtWHz2EUnYgJSxOMI1cDcABFyDWwHLygm9ic+3HuQ3aieF/D5bxgfvpmUf3AN/Y9/3gKtTZAACMCo=",
+  "sha256": "72e085ed633226d3c77f631673093d91310aac8e6dda6aa0754af7cd8c2be967",
+  "version": 0,
+  "purpose": "G5: drift-v2 IDL decodes real transactions (placePerpOrder)",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 15000,
+    "preBalances": [
+      93245000,
+      31347840,
+      1,
+      49151453,
+      6291851,
+      7795213,
+      6291851,
+      54889725,
+      1224971,
+      1224971
+    ],
+    "postBalances": [
+      93230000,
+      31347840,
+      1,
+      49151453,
+      6291851,
+      7795213,
+      6291851,
+      54889725,
+      1224971,
+      1224971
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: PlacePerpOrder",
+      "Program log: Updating auction start price to 83593646",
+      "Program log: Updating auction end price to 83200267",
+      "Program log: Updating auction duration to 48",
+      "Program log: 4DRDR8LtbQE+Qs1pAAAAAAAAAAABAAAAAAAAAAAAAAFdagnF4ya9UprDzQjB47gcjVOxBYRqlWZc9f2ztadqkwHDLgAAAQEBADtYCAAAAAABAAAAAAAAAAABAAAAAAAAAAAAAAAAAADwq/gEAAAAAAAAAAAAAAAA",
+      "Program log: aBNAOFkVAlo+Qs1pAAAAAF1qCcXjJr1SmsPNCMHjuByNU7EFhGqVZlz1/bO1p2qTRVp1GAAAAAAAAAAAAAAAAAA7WAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA5In7BAAAAAAsifUEAAAAAGBCzWkAAAAAAAAAAMMuAAAAAAEAAQAAAQEAAAAwRQAA",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 45981 of 199700 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": [
+        "3x85u7SWkmmr7YQGYhtjARgxwegTLJgkSLRprfXod6rh",
+        "5zpq7DvB6UdFFvpmBPspGPNfUGoBRRCE2HHg5u3gxcsN",
+        "6gMq3mRCKf8aP3ttTyYhuijVZ2LGi14oDsBbkgubfLB3",
+        "8UJgxaiQx5nTrdDgph5FiahMmzduuLTLf5WmsPegYA6W",
+        "3m6i4RFWEDw2Ft4tFHPJtYgmpPe21k56M3FHeWYrgGBz",
+        "9VCioxmni2gDLv11qufWzT3RDERhQE4iY5Gf7NTfYyAV"
+      ]
+    },
+    "computeUnitsConsumed": 46281,
+    "costUnits": 49254
+  }
+}
