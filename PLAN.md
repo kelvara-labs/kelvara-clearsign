@@ -7,7 +7,7 @@ The thesis
 Blockaid-style scanners mostly simulate a transaction and show what moves right now: balances, approvals, known-bad addresses. SignGuard reads what a signature authorizes: who gains control of what, and when it can be used. Its findings are the cases where simulation says "0 tokens move" or "normal swap" and the transaction is still dangerous. Before the pitch claims that scanners miss a scenario, M6 checks it in a Blockaid-powered wallet (Phantom) and records what it showed. The pitch claims only what was observed.
 Graded alerts
 Every report lands on exactly one of five levels. Only the top level acts without asking; every other dangerous level asks the user, because a real admin may mean to do exactly this.
-• L4 Blocked, obvious scam. Rejected at once with code 4001; the wallet never opens and there is no Sign anyway. The report explains why. Only Fact claims from a short scam-rule list can reach L4, never Derived, Conditional or Unknown ones: the user's own wallet assigned to another program (System Assign); the owner or close authority of the user's token accounts handed to a key outside the session (SetAuthority); a sweep that moves all of the signer's SOL and tokens to one address that did not sign; any of these behind a durable nonce. To sign anyway the user pauses the extension; there is no in-page override.
+• L4 Blocked, obvious scam. Rejected at once with code 4001; the wallet never opens and there is no Sign anyway. The report explains why. Only Fact claims from a short scam-rule list can reach L4, never Derived, Conditional or Unknown ones: the user's own wallet assigned to another program (System Assign); the owner or close authority of the user's token accounts handed to a key outside the session (SetAuthority); a sweep that moves all of the signer's SOL and tokens to one address that did not sign; a transfer to a poisoned address (see address.poisoning below); any of these behind a durable nonce. To sign anyway the user pauses the extension; there is no in-page override.
 • L3 Critical, approval required. Held; Block is the default button, and Sign anyway needs a second, deliberate step (hold to confirm). Examples: control of a program, multisig, mint or protocol admin passes to a key outside the session; a durable-nonce approval of a Squads proposal that does this.
 • L2 Warning, approval required. Held with Block and Sign anyway side by side. Examples: Token-2022 trap extensions on a token the user receives, an unlimited token allowance, a fee payer outside the user's keys.
 • L1 Notice. Passes; a small notice shows what was checked.
@@ -34,7 +34,7 @@ Definition of done
 [ ] Both stories: the extension stops the request before the wallet is ever called (Playwright), and the attack really works when the extension is off
 [ ] Drift replay: both real attack transactions rated critical
 [ ] Benign requests (SOL transfer, token transfer, swap of a plain SPL token) land on L0 or L1, no modal
-[ ] An obvious-scam request (a wallet sweep) is blocked at L4 without the wallet ever opening, and no benign fixture reaches L4
+[ ] Obvious-scam requests (a wallet sweep, a send to a poisoned lookalike address) are blocked at L4 without the wallet ever opening, and no benign fixture reaches L4
 [ ] Capability preview: the Drift replay lists the admin-gated Drift instructions the attacker gained, from Drift's verified IDL; the admin story lists the demo program's admin instructions under "can deploy any code"
 [ ] The report matches the example JSON contract: schema valid, every claim and evidence reference resolves
 [ ] The same input produces a byte-identical report
@@ -213,11 +213,15 @@ Goal: findings with evidence, in exactly the shape of the example API response.
     2. squads.approve_and_execute, squads.threshold_met_in_session, squads.zero_timelock_execution, squads.unknown_proposal, Squads config changes
     3. authority.transfer (SPL SetAuthority, loader authority, protocol admin changes), token.delegate_granted (exact delegate and amount; unlimited or near-max allowance ranks high), token.delegate_revoked, Token-2022 permanent delegate
     3b. Token-2022 trap rules on any mint the user receives or buys: token2022.permanent_delegate (the creator can move or burn the user's balance), token.freeze_authority (the creator can freeze it), token2022.transfer_hook (a program runs on every transfer), token2022.default_frozen and token2022.non_transferable. Read the mint and its extensions with getAccountInfo; never trust the dApp's label.
+    3d. Address poisoning (farmed lookalike addresses). For every SOL or token transfer, resolve the real recipient (the owner of a token account) and read the user's recent history over Helius (the last 30 days, at most 1,000 signatures, cached per session). Dust means: SOL of 0.001 or less, a zero-amount token transfer, a token worth $0.01 or less by Helius DAS price, or a token that copies the name or symbol of one the user holds but has a different mint.
+        • address.poisoning (L4): the recipient sent the user dust, the user has never sent to the recipient, and the recipient looks like an address the user really has sent to: they share at least 5 characters across the start and the end, at least 2 on each side. The report shows both addresses one above the other with the matching characters marked, and the dust transaction as evidence.
+        • address.dust_sender (L3): the recipient sent the user dust and the user has never sent to it, with no lookalike found.
+        • address.first_send (L1): a first transfer to a new address, as a notice only.
     3c. sim.power_without_value: when simulation shows no balance change (or only the expected purchase) but the session grants a capability, say so in plain words. This is the line the demo points at.
     4. session.dependency, session.partial_execution, ordering outcomes
     5. tx.foreign_fee_payer, and intent.label_mismatch only when a label exists, such as a memo
 • Capability diff: granted powers ranked by damage, revoked powers by defensive loss, recovery paths through the upgrade authority, using rubric capability-risk-v1 from the example.
-• Alert level: the report takes the highest level any claim reaches, under rubric alert-levels-v1 (Graded alerts). L4 only from Fact claims of the scam-rule list: system.assign_takeover, token.owner_takeover, wallet.sweep, and each of them behind a durable nonce.
+• Alert level: the report takes the highest level any claim reaches, under rubric alert-levels-v1 (Graded alerts). L4 only from Fact claims of the scam-rule list: system.assign_takeover, token.owner_takeover, wallet.sweep, address.poisoning, and each of them behind a durable nonce.
 • Capability preview (graph/preview): for each authority the session grants, list the instructions it unlocks from the authority map, ranked by damage; fall back to simulate-and-diff and to the old authority's Helius history, labeled Conditional; Unknown for the rest.
 • Report: zod schema, canonical JSON, sha256 digest.
 Gates: G3, where every rule has passing positive and negative cases, and no benign fixture from any program reaches L4. G4, where the schema validates, every reference resolves, counts match, ranks follow the rubric, no Fact lacks evidence and no Derived claim lacks a ruleId.
@@ -256,7 +260,8 @@ Real-wallet check (not a gate, logged in PROGRESS.md): in the Kelvara wallet bro
 M6 · Real-test assets (hours 32–38)
 Goal: both demo stories run from scripts on devnet, every transaction in them is real, and the scanner comparison is recorded.
 • Devnet scenarios. pnpm scenario:admin-devnet and pnpm scenario:trap-devnet do the same as the localnet versions on devnet, using the real Squads v4 devnet program. Each serves its attacker page on localhost (the "Ops Portal" and the "$SHINY launch" page) and writes the keys you import into Solflare.
-• Sweep scenario (pnpm scenario:sweep-devnet): a "claim airdrop" page that asks the wallet to sign a transaction moving all of its devnet SOL and tokens to one address. It is the L4 example for the closing shot and for G7.
+• Poisoning scenario (pnpm scenario:poison-devnet): the user's wallet first pays a "friend" address; the script grinds a lookalike (solana-keygen grind, 3 characters at the start and 2 at the end) and sends the user 0.0001 SOL from it; a page then asks the user to send 0.5 SOL to the lookalike. It is the L4 example for the closing shot. Real fixtures: find at least 5 real poisoning transactions on mainnet through Helius history (dust from a lookalike right after a real transfer) and use them in G3, along with 20 real first-time transfers that must not reach L4.
+• Sweep scenario (pnpm scenario:sweep-devnet): a "claim airdrop" page that asks the wallet to sign a transaction moving all of its devnet SOL and tokens to one address. It is the L4 example for G7.
 • Scanner comparison. In a separate browser profile with Phantom (Blockaid-powered) in testnet mode on devnet, run both scenarios up to Phantom's confirmation screen and screenshot what it shows. Record it in PROGRESS.md; DEMO.md and the pitch use only what was observed. Never approve in Phantom.
 • Drift replay. kelvara replay <sig1> <sig2> fetches both transactions over Helius, stores raw bytes and sha256 as fixtures, and analyzes them as one session. The extension's Replay tab runs the same flow for the 10-second opening shot.
 • Delegation test. On SolSub's allowances view in the Kelvara wallet browser, grant and then revoke an allowance. The report must name the delegate, the token and the amount, and the revoke must show as a revoked power. Store both transactions as fixtures once you have signed them; if SolSub has no devnet, this runs on mainnet with a tiny amount only after you approve it in NEEDS_HUMAN.md.
@@ -274,7 +279,7 @@ Goal: anyone can rebuild the demo from the repo.
 • README.md, a known-limitations list and dist/kelvara-signguard.zip.
 • A final run from a clean clone, git clean -xfd && pnpm install && pnpm selfcheck, then commit SELFCHECK.md.
 Gate: all ten gates PASS from the clean clone.
-Cut list if behind schedule, top first: on-device AI; P1 and P2 IDLs; the SolSub delegation test; the Replay tab (keep the CLI replay and G8); trap rules beyond permanent delegate and freeze authority; partial-execution scenarios; the license gate (keep a stub). Never cut G4, G6, G7 or G8, or either demo scenario.
+Cut list if behind schedule, top first: on-device AI; P1 and P2 IDLs; the SolSub delegation test; the devnet poisoning scenario (keep the rule and its mainnet fixtures); the Replay tab (keep the CLI replay and G8); trap rules beyond permanent delegate and freeze authority; partial-execution scenarios; the license gate (keep a stub). Never cut G4, G6, G7 or G8, or either demo scenario.
 Self-check system
 One command, pnpm selfcheck, runs ten gates in order and writes SELFCHECK.md. The agent may not close a milestone until that milestone's gates pass.
 Gate
@@ -363,7 +368,7 @@ User: without Kelvara
 Extension off. The purchase goes through; the creator runs one command and the 50,000 $SHINY leave the buyer's wallet.
 1:50–2:00
 Close
-A wallet-drainer sweep is blocked at L4 before the wallet opens; a plain SOL transfer passes with a small notice. "Simulation shows what moves. Kelvara shows what you give away."
+The user pastes an address from their history to send 0.5 SOL. It is the farmed lookalike that dusted them yesterday: blocked at L4, the two addresses shown one above the other with the matching characters marked. The same send to the real address passes with a small notice. "Simulation shows what moves. Kelvara shows what you give away."
 Recording notes
 • Run pnpm scenario:admin-devnet --reset and pnpm scenario:trap-devnet --reset before each take for fresh accounts and nonces.
 • Record in the Kelvara wallet browser (tools/browser/launch.sh) with Solflare on devnet, after the real-wallet check in M5 has passed.
