@@ -5,20 +5,37 @@ Goal and definition of done
 In 48 agent-hours, ship a Chrome extension that catches every Solana signing request in the page, analyzes the exact bytes against Helius RPC, and stops the signatures that simulation-based scanners pass: ones that move no tokens now but hand over power for later. The 2-minute demo shows two of them, one for protocol admins and one for everyday users. Done means the self-check scoreboard is green and both demo stories run end to end on devnet.
 The thesis
 Blockaid-style scanners mostly simulate a transaction and show what moves right now: balances, approvals, known-bad addresses. SignGuard reads what a signature authorizes: who gains control of what, and when it can be used. Its findings are the cases where simulation says "0 tokens move" or "normal swap" and the transaction is still dangerous. Before the pitch claims that scanners miss a scenario, M6 checks it in a Blockaid-powered wallet (Phantom) and records what it showed. The pitch claims only what was observed.
+Graded alerts
+Every report lands on exactly one of five levels. Only the top level acts without asking; every other dangerous level asks the user, because a real admin may mean to do exactly this.
+• L4 Blocked, obvious scam. Rejected at once with code 4001; the wallet never opens and there is no Sign anyway. The report explains why. Only Fact claims from a short scam-rule list can reach L4, never Derived, Conditional or Unknown ones: the user's own wallet assigned to another program (System Assign); the owner or close authority of the user's token accounts handed to a key outside the session (SetAuthority); a sweep that moves all of the signer's SOL and tokens to one address that did not sign; any of these behind a durable nonce. To sign anyway the user pauses the extension; there is no in-page override.
+• L3 Critical, approval required. Held; Block is the default button, and Sign anyway needs a second, deliberate step (hold to confirm). Examples: control of a program, multisig, mint or protocol admin passes to a key outside the session; a durable-nonce approval of a Squads proposal that does this.
+• L2 Warning, approval required. Held with Block and Sign anyway side by side. Examples: Token-2022 trap extensions on a token the user receives, an unlimited token allowance, a fee payer outside the user's keys.
+• L1 Notice. Passes; a small notice shows what was checked.
+• L0 Clear. Passes silently.
+The level is the highest one any claim reaches, and the rubric (alert-levels-v1) is part of the report contract. Precision matters most at L4: G3 requires that no benign fixture, from any program, ever reaches L4.
+Capability preview: what the new authority can do
+When a transaction hands an authority to someone, the report lists what that authority will be able to call, before the user signs.
+• From a verified Anchor IDL. For the program the authority governs, list every instruction whose signer is tied to that authority, with its name, its 8-byte discriminator, what it changes, and a damage rank. The tie comes from the IDL itself: an account constraint (relations or has_one to the field that holds the authority, a fixed address, or a PDA seeded by it), read from the program's Codama root. "Verified" means the IDL is the program's own on-chain Anchor IDL account, its authority equals the program's upgrade authority, and its hash is pinned in packages/idls/manifest.json; everything else is labeled lower confidence.
+• Upgrade authority is the extreme case. Whoever holds it can replace the code, so the preview says "can deploy any code" first, then lists the instructions already reachable today as examples.
+• No IDL or no constraint data: assess the future state instead. (1) Simulate and diff, to find every account where the new key now appears as an authority. (2) Read the program's recent history over Helius and list the instructions that the old authority actually signed: an observed capability list, labeled Conditional. (3) Anything still unknown is shown as Unknown, never as harmless.
+• Token-2022 uses the same view: a permanent delegate "can call Transfer and Burn on your account"; a freeze authority "can call FreezeAccount on your account".
+The preview is a claim like any other, with evidence (IDL path, constraint, history signatures) behind every line.
 What ships
 • Chrome extension (Manifest V3). Hooks Wallet Standard wallets and the legacy Phantom, Solflare and Backpack providers. Holds signTransaction, signAllTransactions, signAndSendTransaction and sendTransaction until the user chooses Block or Sign anyway.
-• Analysis engine. Decodes System, SPL Token, Token-2022 (including mint extensions), the upgradeable loader and Squads v4 (including the transaction inside a proposal). Applies durable-nonce, authority, Token-2022 and multi-transaction rules, ranks granted and revoked capabilities by risk, and emits claims labeled Fact, Derived, Conditional or Unknown, each tied to evidence.
-• Report UI. Risk summary, ranked capability changes, a "what simulation shows" line next to "what you actually authorize", claims that open their evidence, and the message hash to match on a Ledger.
+• Analysis engine. Decodes System, SPL Token, Token-2022 (including mint extensions), the upgradeable loader and Squads v4 (including the transaction inside a proposal). Applies durable-nonce, authority, Token-2022 and multi-transaction rules, ranks granted and revoked capabilities by risk, assigns one of five alert levels, previews what a newly granted authority can call, and emits claims labeled Fact, Derived, Conditional or Unknown, each tied to evidence.
+• Report UI. Alert level, risk summary, ranked capability changes, the capability preview ("what the new authority can do"), a "what simulation shows" line next to "what you actually authorize", claims that open their evidence, and the message hash to match on a Ledger.
 • License gate. An offline-verified signed license key unlocks the full report; without one, the user sees the risk level and top finding.
 • Scenario kit. Two scenarios, each on localnet and devnet: the Squads upgrade hijack (admins) and the Token-2022 trap token (users). Plus a replay of Drift's two real attack transactions for the opening shot.
 • Self-check. One command, pnpm selfcheck, runs ten gates and writes a scoreboard.
 Definition of done
 [ ] pnpm selfcheck passes all ten gates from a clean clone
-[ ] Admin story: approving the "Q4 fee update" proposal is rated critical, with the inner SetAuthority on the program's upgrade authority, the durable nonce and its outsider funder, and "simulation: 0 tokens move"
-[ ] User story: buying the trap token is rated high, naming the permanent delegate and freeze authority, while simulation shows a normal purchase
+[ ] Admin story: approving the "Q4 fee update" proposal is held at L3 Critical, with the inner SetAuthority on the program's upgrade authority, the durable nonce and its outsider funder, and "simulation: 0 tokens move"
+[ ] User story: buying the trap token is held at L2 Warning, naming the permanent delegate and freeze authority, while simulation shows a normal purchase
 [ ] Both stories: the extension stops the request before the wallet is ever called (Playwright), and the attack really works when the extension is off
 [ ] Drift replay: both real attack transactions rated critical
-[ ] Benign requests (SOL transfer, token transfer, swap of a plain SPL token) pass with a low rating and a small notice, no modal
+[ ] Benign requests (SOL transfer, token transfer, swap of a plain SPL token) land on L0 or L1, no modal
+[ ] An obvious-scam request (a wallet sweep) is blocked at L4 without the wallet ever opening, and no benign fixture reaches L4
+[ ] Capability preview: the Drift replay lists the admin-gated Drift instructions the attacker gained, from Drift's verified IDL; the admin story lists the demo program's admin instructions under "can deploy any code"
 [ ] The report matches the example JSON contract: schema valid, every claim and evidence reference resolves
 [ ] The same input produces a byte-identical report
 [ ] DEMO.md lets you rebuild the devnet video setup in under 15 minutes
@@ -161,6 +178,7 @@ How each IDL is processed (pnpm idls:build)
 3. Convert each Anchor or Shank IDL to a Codama root node at build time. Ship the root nodes, not raw IDLs.
 4. Decode at runtime with Codama's parseInstruction(root, instruction), which returns the instruction, its arguments and its named accounts (@codama/dynamic-parsers).
 5. Map capabilities: curated maps for P0, keyword rules for the rest (admin, authority, oracle, withdraw guard, pause, fee, weight, market). Every mapped capability carries its confidence.
+6. Build the authority map for the capability preview: for each instruction, which stored authority field its signer is tied to (relations or has_one, fixed address, PDA seeds), plus the discriminator. Mark the IDL verified only if it is the on-chain IDL account, its authority equals the upgrade authority, and its hash is pinned.
 Fallback: if a conversion fails, a small built-in Anchor decoder (8-byte discriminator plus Borsh arguments) handles that program. Anything still unknown is reported as Unknown, never as safe.
 48-hour timeline
 Nine milestones run back to back, each closed by its gate. The one hard checkpoint is hour 24: the engine must catch both demo scenarios on localnet before the extension wires in the real engine.
@@ -199,24 +217,27 @@ Goal: findings with evidence, in exactly the shape of the example API response.
     4. session.dependency, session.partial_execution, ordering outcomes
     5. tx.foreign_fee_payer, and intent.label_mismatch only when a label exists, such as a memo
 • Capability diff: granted powers ranked by damage, revoked powers by defensive loss, recovery paths through the upgrade authority, using rubric capability-risk-v1 from the example.
-• Risk rollup: the summary takes the highest severity among the claims.
+• Alert level: the report takes the highest level any claim reaches, under rubric alert-levels-v1 (Graded alerts). L4 only from Fact claims of the scam-rule list: system.assign_takeover, token.owner_takeover, wallet.sweep, and each of them behind a durable nonce.
+• Capability preview (graph/preview): for each authority the session grants, list the instructions it unlocks from the authority map, ranked by damage; fall back to simulate-and-diff and to the old authority's Helius history, labeled Conditional; Unknown for the rest.
 • Report: zod schema, canonical JSON, sha256 digest.
-Gates: G3, where every rule has passing positive and negative cases. G4, where the schema validates, every reference resolves, counts match, ranks follow the rubric, no Fact lacks evidence and no Derived claim lacks a ruleId.
+Gates: G3, where every rule has passing positive and negative cases, and no benign fixture from any program reaches L4. G4, where the schema validates, every reference resolves, counts match, ranks follow the rubric, no Fact lacks evidence and no Derived claim lacks a ruleId.
 M3 · Core IDLs and capability maps (hours 16–21)
 Goal: every P0 program in section 3 is loaded and verified; P1 if time allows.
 • pnpm idls:build: fetch, pin, convert, then write the registry (program ID to root, source and hash).
 • Curated maps for System, SPL Token, Token-2022 (with its extensions), the loader, Squads, and Drift (only for the replay).
 • Keyword rules for the rest, labeled low confidence.
-Gate: G5. Every program ID is an executable account, every IDL hash matches the manifest, every curated capability names an instruction that exists, and each P0 IDL decodes at least 3 real fixtures.
+• Authority maps for Drift (for the replay preview) and the demo program, built from their IDLs and reviewed by hand once.
+Gate: G5. Every program ID is an executable account, every IDL hash matches the manifest, every curated capability names an instruction that exists, each P0 IDL decodes at least 3 real fixtures, and every authority-map entry names a real instruction and a real account constraint.
 M4 · State, simulation, localnet scenarios (hours 21–24)
 Goal: end day 1 with the CLI flagging both demo scenarios on a live local validator.
 • RPC layer with timeouts, retries with backoff, and a per-session cache.
 • Reads: multisig, proposal, vault transaction, nonce, program data, and mints with their Token-2022 extensions.
 • simulateTransaction with sigVerify: false, post-state for listed accounts and inner instructions. Keep the simulated balance changes so the report can show "what simulation shows".
 • Localnet: solana-test-validator cloning Squads v4 and its two config accounts from mainnet (Squads quickstart), plus the demo program from packages/scenarios/programs.
+• Demo program: a real open-source Anchor program with admin-gated instructions and an on-chain IDL, dumped from mainnet with solana program dump and deployed under our keys, with its IDL published from the script (no Anchor CLI). Pick it in M0 and record why; if publishing the IDL fails, pin the IDL from its repo and label it unverified.
 • Admin scenario (pnpm scenario:admin-local): deploy the demo program; a council of 3 members, threshold 2, time lock 0; the Squads vault set as the program's upgrade authority; an outsider-funded nonce account on Member A's key; and a proposal whose memo says "Q4 fee update" while its vault transaction calls the loader's SetAuthority to give the upgrade authority to the attacker.
 • User scenario (pnpm scenario:trap-local): a Token-2022 mint "$SHINY" with a permanent delegate and a freeze authority held by the creator, and a partially signed "buy" transaction in which the user pays 1 SOL and the seller sends 50,000 $SHINY.
-Gate: G6. kelvara analyze returns critical for the admin approval (inner SetAuthority, durable nonce, outsider funder, zero time lock) and high for the trap purchase (permanent delegate, freeze authority), each with the "simulation shows" line. Then the attacks really run: executing the proposal changes the program's upgrade authority, and the creator pulls the bought $SHINY back with the permanent delegate.
+Gate: G6. kelvara analyze returns critical for the admin approval (inner SetAuthority, durable nonce, outsider funder, zero time lock) and L2 Warning for the trap purchase (permanent delegate, freeze authority), each with the "simulation shows" line. Then the attacks really run: executing the proposal changes the program's upgrade authority, and the creator pulls the bought $SHINY back with the permanent delegate.
 Day 2: the extension and the real test (M5–M8)
 Day 2 wraps the engine in the paid extension and turns both stories into a demo you can record.
 M5 · Extension: capture, hold, decide (hours 24–32)
@@ -226,15 +247,16 @@ Goal: a real signing request is held, analyzed, then blocked or passed, and on B
 • Hook. Catch wallet-standard:register-wallet and wallet-standard:app-ready before the app does. Wrap solana:signTransaction and solana:signAndSendTransaction; show a notice for solana:signMessage. Wrap legacy providers and trap late injection with property setters and a MutationObserver.
 • Bridge. A random per-page channel id and strict message shapes. Nothing from the page is trusted beyond the transaction bytes and the wallet name.
 • Service worker. Runs core on the session and picks the endpoint from the wallet's chain: Helius mainnet for solana:mainnet, Helius devnet for solana:devnet, localhost:8899 for localnet. No key set means the request is held and the report says so: fail closed.
-• Report UI. Risk header, ranked capabilities, claims that open their evidence, and the message hash. Block rejects with code 4001; Sign anyway forwards the original call and bytes; low risk passes with a small notice.
+• Report UI. Alert level, risk header, the capability preview, ranked capabilities, claims that open their evidence, and the message hash. Behavior per level: L4 rejects with code 4001 without opening the wallet and shows the report with no Sign anyway; L3 holds with Block as default and hold-to-confirm Sign anyway; L2 holds with both buttons; L1 passes with a small notice; L0 passes silently. Block rejects with 4001; Sign anyway forwards the original call and bytes.
 • Fail closed. A 90-second timeout, a removed iframe or an engine error all mean blocked.
 • License. An Ed25519-signed key (email, plan, expiry) verified offline against a bundled public key. Without one, the user sees risk level and top finding only.
 • Test dApp. A static page with a fixture wallet that implements both Wallet Standard paths and a legacy provider, signs with a throwaway key, and counts its calls.
-Gate: G7, run in headless Chromium through Playwright's bundled chromium channel, which can load extensions headless (Playwright). A malicious batch shows Critical, and Block leaves the wallet's call count at 0. Sign anyway calls it once with identical bytes. A benign transfer shows no modal. Timeout and iframe removal both block. Both Wallet Standard paths and the legacy provider are caught. A page that forges an approval message gets a rejection and the wallet is never called.
+Gate: G7, run in headless Chromium through Playwright's bundled chromium channel, which can load extensions headless (Playwright). An L4 sweep is rejected with no Sign anyway and a wallet call count of 0. An L3 batch is held, and Block leaves the call count at 0. Sign anyway calls it once with identical bytes. A benign transfer shows no modal. Timeout and iframe removal both block. Both Wallet Standard paths and the legacy provider are caught. A page that forges an approval message gets a rejection and the wallet is never called.
 Real-wallet check (not a gate, logged in PROGRESS.md): in the Kelvara wallet browser on devnet, a request from Solflare shows our report before Solflare opens, and Block means Solflare never opens. You do the Solflare side.
 M6 · Real-test assets (hours 32–38)
 Goal: both demo stories run from scripts on devnet, every transaction in them is real, and the scanner comparison is recorded.
 • Devnet scenarios. pnpm scenario:admin-devnet and pnpm scenario:trap-devnet do the same as the localnet versions on devnet, using the real Squads v4 devnet program. Each serves its attacker page on localhost (the "Ops Portal" and the "$SHINY launch" page) and writes the keys you import into Solflare.
+• Sweep scenario (pnpm scenario:sweep-devnet): a "claim airdrop" page that asks the wallet to sign a transaction moving all of its devnet SOL and tokens to one address. It is the L4 example for the closing shot and for G7.
 • Scanner comparison. In a separate browser profile with Phantom (Blockaid-powered) in testnet mode on devnet, run both scenarios up to Phantom's confirmation screen and screenshot what it shows. Record it in PROGRESS.md; DEMO.md and the pitch use only what was observed. Never approve in Phantom.
 • Drift replay. kelvara replay <sig1> <sig2> fetches both transactions over Helius, stores raw bytes and sha256 as fixtures, and analyzes them as one session. The extension's Replay tab runs the same flow for the 10-second opening shot.
 • Delegation test. On SolSub's allowances view in the Kelvara wallet browser, grant and then revoke an allowance. The report must name the delegate, the token and the amount, and the revoke must show as a revoked power. Store both transactions as fixtures once you have signed them; if SolSub has no devnet, this runs on mainnet with a tiny amount only after you approve it in NEEDS_HUMAN.md.
@@ -270,7 +292,7 @@ Every fixture decodes; at least 95% of instructions named; 1,000 fuzz inputs, no
 G3 Rules
 Each rule fires when it should, and only then
 pnpm test:rules
-Positive and negative cases pass for every ruleId
+Positive and negative cases pass for every ruleId; no benign fixture reaches L4
 G4 Contract
 Reports match the API contract
 pnpm test:contract
@@ -286,7 +308,7 @@ Admin approval critical and trap purchase high, with the required claims; then t
 G7 Extension
 The browser path blocks before the wallet
 pnpm test:e2e
-Block, pass, timeout, tamper and hook-path cases pass headless
+L4 auto-block, L3/L2 hold, L1/L0 pass, timeout, tamper and hook-path cases pass headless
 G8 Real test
 Drift's real attack transactions are flagged, and both devnet scenarios run
 pnpm test:replay
@@ -326,22 +348,22 @@ Scene
 On screen
 0:00–0:10
 Hook
-Drift's two real transactions in the Replay tab: "April 2026: $285M left Drift. No exploit, and no tokens moved when they signed."
+Drift's two real transactions in the Replay tab: "April 2026: $285M left Drift. No exploit, and no tokens moved when they signed." The preview lists what the new admin could call, from Drift's verified IDL.
 0:10–0:45
 Admin: blocked
-Member A clicks Approve on "Q4 fee update" in the Ops Portal. Kelvara holds it before Solflare opens. Critical: "Hands control of program 7Xk… to an unknown key", durable nonce funded by an outsider, "Simulation: 0 tokens move". Open one claim to show the decoded inner instruction. Block.
+Member A clicks Approve on "Q4 fee update" in the Ops Portal. Kelvara holds it before Solflare opens. L3 Critical: "Hands control of program 7Xk… to an unknown key", durable nonce funded by an outsider, "Simulation: 0 tokens move". The preview: "can deploy any code", then the program's admin instructions by name. Open one claim to show the decoded inner instruction. Block.
 0:45–1:00
 Admin: without Kelvara
 Extension off. Members A and B approve, the attacker executes, and the devnet explorer shows the new upgrade authority.
 1:00–1:35
 User: blocked
-On the $SHINY page, Buy. Simulation line: "you pay 1 SOL, you get 50,000 $SHINY". Kelvara: High, "the creator can take these tokens back anytime, and can freeze them". Block.
+On the $SHINY page, Buy. Simulation line: "you pay 1 SOL, you get 50,000 $SHINY". Kelvara: L2 Warning, "the creator can take these tokens back anytime, and can freeze them". Block.
 1:35–1:50
 User: without Kelvara
 Extension off. The purchase goes through; the creator runs one command and the 50,000 $SHINY leave the buyer's wallet.
 1:50–2:00
 Close
-A plain SOL transfer passes with a small notice. "Simulation shows what moves. Kelvara shows what you give away."
+A wallet-drainer sweep is blocked at L4 before the wallet opens; a plain SOL transfer passes with a small notice. "Simulation shows what moves. Kelvara shows what you give away."
 Recording notes
 • Run pnpm scenario:admin-devnet --reset and pnpm scenario:trap-devnet --reset before each take for fresh accounts and nonces.
 • Record in the Kelvara wallet browser (tools/browser/launch.sh) with Solflare on devnet, after the real-wallet check in M5 has passed.
