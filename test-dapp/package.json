@@ -10,6 +10,6 @@
     "serve": "node scripts/serve.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:e2e": "node ../tools/selfcheck/src/pending.mjs G7 M5"
+    "test:e2e": "pnpm --filter @kelvara/selfcheck test:e2e"
   }
 }

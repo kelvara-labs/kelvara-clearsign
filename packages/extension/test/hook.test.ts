@@ -111,12 +111,12 @@ describe("Wallet Standard", () => {
     expect(app.length).toBe(1);
     expect(app[0]).not.toBe(w);
     const tx = wireTx(3);
-    await signFeature(app[0]).signTransaction({ transaction: tx, chain: "solana:devnet" });
+    await signFeature(app[0]).signTransaction({ transaction: tx, chain: "solana:devnet", account: { address: "HH7x3VCwrHQKWHLy11TNd6zd3AL1VSzD2nLsAGgUaZez" } });
     expect(w.calls.length).toBe(1);
     expect(Array.from(w.calls[0]!)).toEqual(Array.from(tx));
     const m = r.sent[0] as AnalyzeMessage;
     expect(m.type).toBe(SW_ANALYZE);
-    expect(m.request).toMatchObject({ method: "solana:signTransaction", wallet: "Fixture Wallet", chain: "solana:devnet", txs: [b64encode(tx)] });
+    expect(m.request).toMatchObject({ method: "solana:signTransaction", wallet: "Fixture Wallet", account: "HH7x3VCwrHQKWHLy11TNd6zd3AL1VSzD2nLsAGgUaZez", chain: "solana:devnet", txs: [b64encode(tx)] });
     expect(m.url).toBe("https://dapp.example/");
   });
 
@@ -133,6 +133,20 @@ describe("Wallet Standard", () => {
     await expect(sas.signAndSendTransaction({ transaction: wireTx(), chain: "solana:devnet" })).rejects.toEqual(rejected);
     expect(w.calls.length).toBe(0);
     expect(r.sent.map((m) => (m as AnalyzeMessage).request.method)).toEqual(["solana:signTransaction", "solana:signAndSendTransaction"]);
+  });
+
+  it("account is reported only when every input names the same address", async () => {
+    const r = rig(block);
+    const app = startApp(r.win);
+    registerWallet(r.win, new FixtureWallet());
+    const A = "HH7x3VCwrHQKWHLy11TNd6zd3AL1VSzD2nLsAGgUaZez";
+    const B = "EZwZ2ZSo4E42DFwuvk4HuGUFCnkKom9e7ex7EBuCBd7o";
+    const sign = signFeature(app[0]).signTransaction as (...i: unknown[]) => Promise<unknown>;
+    await expect(sign({ transaction: wireTx(), account: { address: A } }, { transaction: wireTx(2), account: { address: B } })).rejects.toEqual(rejected);
+    await expect(sign({ transaction: wireTx(), account: { address: A } }, { transaction: wireTx(2) })).rejects.toEqual(rejected);
+    await expect(sign({ transaction: wireTx(), account: { address: 42 } })).rejects.toEqual(rejected);
+    await expect(sign({ transaction: wireTx(), account: { address: A } }, { transaction: wireTx(2), account: { address: A } })).rejects.toEqual(rejected);
+    expect(r.sent.map((m) => (m as AnalyzeMessage).request.account)).toEqual([null, null, null, A]);
   });
 
   it("forwards our private copy: mutating the page's array during the hold changes nothing", async () => {
@@ -240,7 +254,26 @@ describe("legacy providers", () => {
     const s = (r.win as Record<string, unknown>).solana as typeof provider;
     await expect(s.signTransaction(new FakeTx(wireTx()))).rejects.toEqual(rejected);
     expect(calls.length).toBe(0);
-    expect((r.sent[0] as AnalyzeMessage).request).toMatchObject({ method: "legacy:signTransaction", wallet: "Phantom", chain: null });
+    expect((r.sent[0] as AnalyzeMessage).request).toMatchObject({ method: "legacy:signTransaction", wallet: "Phantom", account: null, chain: null });
+  });
+
+  it("reports the connected account from publicKey (toBase58 or raw bytes) as a hint; junk is null", async () => {
+    const r = rig(block);
+    const { provider } = legacyProvider("isPhantom");
+    (provider as Record<string, unknown>).publicKey = { toBase58: () => "HH7x3VCwrHQKWHLy11TNd6zd3AL1VSzD2nLsAGgUaZez" };
+    (r.win as Record<string, unknown>).solana = provider;
+    const s = (r.win as Record<string, unknown>).solana as typeof provider;
+    await expect(s.signTransaction(new FakeTx(wireTx()))).rejects.toEqual(rejected);
+    expect((r.sent[0] as AnalyzeMessage).request.account).toBe("HH7x3VCwrHQKWHLy11TNd6zd3AL1VSzD2nLsAGgUaZez");
+    (provider as Record<string, unknown>).publicKey = new Uint8Array(32);
+    await expect(s.signTransaction(new FakeTx(wireTx()))).rejects.toEqual(rejected);
+    expect((r.sent[1] as AnalyzeMessage).request.account).toBe("11111111111111111111111111111111");
+    (provider as Record<string, unknown>).publicKey = { toBase58: () => "not an address!" };
+    await expect(s.signTransaction(new FakeTx(wireTx()))).rejects.toEqual(rejected);
+    expect((r.sent[2] as AnalyzeMessage).request.account).toBeNull();
+    (provider as Record<string, unknown>).publicKey = { toBase58: () => { throw new Error("x"); } };
+    await expect(s.signTransaction(new FakeTx(wireTx()))).rejects.toEqual(rejected);
+    expect((r.sent[3] as AnalyzeMessage).request.account).toBeNull();
   });
 
   it("window.phantom.solana, solflare and backpack are caught, before and after the hook", async () => {

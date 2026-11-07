@@ -123,7 +123,7 @@ describe("message hash (match on a Ledger)", () => {
 describe("stub engine through decide()", () => {
   it("holds at L2 with an Unknown claim and the message hash; never claims safe", async () => {
     const wire = b64encode(messageToWireTx(new Uint8Array([1, 0, 0, 0])));
-    const req = { v: 1, kind: "sign", id: "0".repeat(32), method: "solana:signTransaction", wallet: "W", chain: "solana:localnet", txs: [wire] } as const;
+    const req = { v: 1, kind: "sign", id: "0".repeat(32), method: "solana:signTransaction", wallet: "W", account: null, chain: "solana:localnet", txs: [wire] } as const;
     const out = await decide(req as never, { network: "mainnet", passThrough: false }, stubEngine);
     expect(out).toMatchObject({ allow: false, hold: true, level: 2 });
     expect(out.report?.claims.map((c) => c.kind)).toEqual(["Unknown"]);
@@ -153,7 +153,7 @@ describe("bridge: held requests go to the report UI", () => {
     );
     win.dispatchEvent(
       new CustomEvent(requestEventName(bridge.channel), {
-        detail: JSON.stringify({ v: 1, kind: "sign", id: reqId, method: "solana:signTransaction", wallet: "W", chain: null, txs: ["AQID"] })
+        detail: JSON.stringify({ v: 1, kind: "sign", id: reqId, method: "solana:signTransaction", wallet: "W", account: null, chain: null, txs: ["AQID"] })
       })
     );
     const allow = await decided;

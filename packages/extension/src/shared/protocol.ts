@@ -13,7 +13,7 @@
 //      an exact key set; anything else is dropped.
 //   3. Request ids are random, so a decision can only answer a request the hook made.
 //   Nothing from the page is trusted beyond the transaction bytes and the wallet name;
-//   the chain is a validated hint, the URL is read by the bridge itself.
+//   the chain and the connected account are validated hints, the URL is read by the bridge itself.
 
 import { validateReportView, type ReportView } from "./report-view.js";
 
@@ -52,6 +52,9 @@ export interface SignRequest {
   id: string;
   method: SignMethod;
   wallet: string;
+  /** Connected account as the wallet/page reports it (base58), or null. A hint for the engine's
+   * wallet-bound rules only: the worker uses it only when it is a required signer of the request. */
+  account: string | null;
   chain: Chain | null;
   txs: string[]; // base64 wire transactions
 }
@@ -120,6 +123,13 @@ function isWalletName(x: unknown): x is string {
   return typeof x === "string" && x.length > 0 && x.length <= MAX_WALLET_NAME;
 }
 
+const ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+/** A base58 Solana address (32 to 44 characters). */
+export function isAddress(x: unknown): x is string {
+  return typeof x === "string" && ADDRESS_RE.test(x);
+}
+
 export function isChain(x: unknown): x is Chain {
   return typeof x === "string" && (CHAINS as readonly string[]).includes(x);
 }
@@ -131,10 +141,11 @@ function isTxB64(x: unknown): x is string {
 
 export function validateSignRequest(o: unknown): SignRequest | null {
   if (!isPlainObject(o)) return null;
-  if (!hasExactKeys(o, ["v", "kind", "id", "method", "wallet", "chain", "txs"])) return null;
+  if (!hasExactKeys(o, ["v", "kind", "id", "method", "wallet", "account", "chain", "txs"])) return null;
   if (o.v !== PROTOCOL_VERSION || o.kind !== "sign" || !isId(o.id)) return null;
   if (typeof o.method !== "string" || !(SIGN_METHODS as readonly string[]).includes(o.method)) return null;
   if (!isWalletName(o.wallet)) return null;
+  if (!(o.account === null || isAddress(o.account))) return null;
   if (!(o.chain === null || isChain(o.chain))) return null;
   if (!Array.isArray(o.txs) || o.txs.length < 1 || o.txs.length > MAX_TXS || !o.txs.every(isTxB64)) return null;
   return o as unknown as SignRequest;

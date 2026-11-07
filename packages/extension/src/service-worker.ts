@@ -9,7 +9,7 @@ import {
   validateSignRequest,
   type WorkerVerdict
 } from "./shared/protocol.js";
-import { stubEngine } from "./sw/engine-stub.js";
+import { realEngine } from "./sw/engine.js";
 import { decide } from "./sw/policy.js";
 import { SETTINGS_KEYS, loadSettings, readSettings } from "./sw/settings.js";
 
@@ -67,7 +67,7 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   const req = validateSignRequest(msg.request);
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
   const loaded = await loadSettings((keys) => chrome.storage.local.get(keys));
-  const verdict = loaded.ok ? await decide(req, loaded.settings, stubEngine) : blocked(loaded.reason);
+  const verdict = loaded.ok ? await decide(req, loaded.settings, realEngine) : blocked(loaded.reason);
   await appendLog({
     ts: Date.now(),
     id: req.id,

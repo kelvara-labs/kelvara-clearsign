@@ -6,7 +6,7 @@ import type { EngineLike } from "../src/sw/engine-stub.js";
 import { decide } from "../src/sw/policy.js";
 
 const id = "0123456789abcdef0123456789abcdef";
-const sign = { v: 1, kind: "sign", id, method: "solana:signTransaction", wallet: "W", chain: null, txs: ["AQID"] };
+const sign = { v: 1, kind: "sign", id, method: "solana:signTransaction", wallet: "W", account: null, chain: null, txs: ["AQID"] };
 
 describe("strict message shapes", () => {
   it("accepts the exact sign shape and rejects anything else", () => {

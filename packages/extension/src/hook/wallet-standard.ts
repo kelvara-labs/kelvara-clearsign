@@ -9,6 +9,18 @@ import type { NoticeMethod, SignMethod } from "../shared/protocol.js";
 import { cleanWalletName, rejection, type Guard } from "./guard.js";
 import { pristine, type HookWindow, type Pristine } from "./pristine.js";
 
+/** The one account every input names (input.account.address), else null. Only a hint: never throws. */
+export function inputAccount(p: Pristine, inputs: readonly unknown[]): string | null {
+  let out: string | null = null;
+  for (const i of inputs) {
+    const account = typeof i === "object" && i !== null ? safeGet(p, i, "account") : undefined;
+    const address = typeof account === "object" && account !== null ? safeGet(p, account, "address") : undefined;
+    if (typeof address !== "string" || (out !== null && out !== address)) return null;
+    out = address;
+  }
+  return out;
+}
+
 export const REGISTER_EVENT = "wallet-standard:register-wallet";
 export const APP_READY_EVENT = "wallet-standard:app-ready";
 
@@ -84,7 +96,7 @@ export function installWalletStandardHook(win: HookWindow, guard: Guard): Wallet
         throw rejection(); // cannot see the bytes: fail closed
       }
       if (snaps.length === 0) throw rejection();
-      const allow = await guard.hold(method, walletName, chain, snaps);
+      const allow = await guard.hold(method, walletName, chain, snaps, inputAccount(p, inputs));
       if (!allow) throw rejection();
       // Forward the exact bytes we analyzed: our private copies, not the page's arrays.
       const forwarded = inputs.map((i, k) => ({ ...(i as object), transaction: snaps[k] }));

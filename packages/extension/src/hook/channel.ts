@@ -17,6 +17,7 @@ import { pristine, type HookWindow } from "./pristine.js";
 export interface HoldRequest {
   method: SignMethod;
   wallet: string;
+  account: string | null;
   chain: Chain | null;
   txs: string[];
 }

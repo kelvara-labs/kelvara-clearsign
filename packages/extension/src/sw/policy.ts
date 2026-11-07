@@ -4,6 +4,7 @@ import type { SignRequest, WorkerVerdict } from "../shared/protocol.js";
 import { validateReportView, type ReportView } from "../shared/report-view.js";
 import { pickEndpoint, type Network } from "./endpoint.js";
 import type { EngineLike } from "./engine-stub.js";
+import { EngineFailure } from "./engine-failure.js";
 import { limitReport } from "../license/limit.js";
 import { verifyLicense } from "../license/verify.js";
 
@@ -64,11 +65,12 @@ export async function decide(
   let level: 0 | 1 | 2 | 3 | 4;
   let report: ReportView | null;
   try {
-    const { level: l, ...view } = await engine.analyze(req, endpoint);
+    const { level: l, ...view } = await engine.analyze(req, endpoint, hashes);
     level = l;
     report = validateReportView({ ...view, messageHashes: hashes, limited: false });
-  } catch {
-    return failure("engine error");
+  } catch (e) {
+    // Only our own fixed-text failures are shown; anything else could carry an endpoint URL.
+    return failure(e instanceof EngineFailure ? e.message : "engine error");
   }
   if (![0, 1, 2, 3, 4].includes(level)) return failure("engine error: no alert level");
   if (!report) return failure("engine error: report failed validation");
