@@ -27,7 +27,10 @@
     "localnet:check": "pnpm --filter @kelvara/scenarios localnet:check",
     "localnet:down": "pnpm --filter @kelvara/scenarios localnet:down",
     "scenario:admin-local": "pnpm --filter @kelvara/scenarios scenario:admin-local",
-    "scenario:admin-local:attack": "pnpm --filter @kelvara/scenarios scenario:admin-local:attack"
+    "scenario:admin-local:attack": "pnpm --filter @kelvara/scenarios scenario:admin-local:attack",
+    "scenario:trap-local": "pnpm --filter @kelvara/scenarios scenario:trap-local",
+    "scenario:trap-local:attack": "pnpm --filter @kelvara/scenarios scenario:trap-local:attack",
+    "scenario:e2e": "pnpm --filter @kelvara/scenarios test:e2e"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
