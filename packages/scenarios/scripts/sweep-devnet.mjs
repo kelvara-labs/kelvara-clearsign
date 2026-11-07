@@ -22,7 +22,8 @@
 // fresh blockhash per click and asks Wallet Standard signTransaction (never send).
 // Attack: the user signs the emitted bytes (rebuilt if the blockhash expired or balances moved) and submits; the
 // script fails unless the user is left with 0 lamports and the collector holds every token. The executed tx is
-// stored as fixtures/tx/devnet/sweep/<sig>.json with "e2e": "l4-sweep", then the collector burns the tokens,
+// stored as fixtures/tx/devnet/sweep/<sig>.json with "e2e": "l4-sweep" (skipped with --no-fixture, for demo
+// takes, so a recording never changes the golden file), then the collector burns the tokens,
 // closes its ATAs and returns every lamport to the payer. Net cost per run: ~4 fees (~0.00002 devnet SOL);
 // the two mints' rent (~0.003 SOL) is paid once.
 import { createHash } from 'node:crypto';
@@ -329,16 +330,17 @@ export async function serve() {
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
-  const unknown = args.filter((a) => !['--attack', '--attack-only', '--no-serve', '--serve-only'].includes(a));
+  const unknown = args.filter((a) => !['--attack', '--attack-only', '--no-serve', '--serve-only', '--no-fixture'].includes(a));
   try {
     if (unknown.length) throw new Error('unknown options: ' + unknown.join(' '));
-    if (args.includes('--attack-only')) await attack();
+    const fixture = !args.includes('--no-fixture');
+    if (args.includes('--attack-only')) await attack({ fixture });
     else {
       if (!args.includes('--serve-only')) {
         if (existsSync(join(OUT, 'attack.json')) && existsSync(join(OUT, 'scenario.json'))) renameSync(OUT, `${OUT}-archive-${Date.now()}`);
         await setup();
       }
-      if (args.includes('--attack')) await attack();
+      if (args.includes('--attack')) await attack({ fixture });
       else if (!args.includes('--no-serve')) await serve();
     }
   } catch (e) {
