@@ -7,6 +7,15 @@ import { test } from 'node:test';
 import { run } from '../scripts/devnet-scenario.mjs';
 import { PKG } from '../scripts/lib/devnet.mjs';
 
+// S11: everything the run moved comes back; a run costs fees plus unreclaimable rent (mint, Squads accounts).
+const MAX_COST = { admin: 15_000_000, trap: 10_000_000 };
+function assertRecycled(kind, result) {
+  assert.deepEqual(result.recycle.skipped, []);
+  const cost = result.payer.before - result.payer.after;
+  console.log(`[${kind}-devnet] measured payer cost this run: ${cost / 1e9} SOL`);
+  assert.ok(cost < MAX_COST[kind], `${kind} run cost ${cost / 1e9} SOL`);
+}
+
 test('admin-devnet: real Squads nonce approval and upgrade authority takeover', { timeout: 15 * 60_000 }, async () => {
   const result = await run('admin', ['--reset', '--attack']);
   const s = JSON.parse(readFileSync(join(PKG, '.devnet/admin/scenario.json')));
@@ -18,6 +27,7 @@ test('admin-devnet: real Squads nonce approval and upgrade authority takeover', 
   assert.equal(s.approval.simulation.err, null);
   assert.equal(s.approval.simulation.lamportsDelta[s.vault], 0);
   assert.equal(result.upgradeAuthorityAfter, s.attacker);
+  assertRecycled('admin', result);
 });
 
 test('trap-devnet: purchase then delegate reclaims and freezes without buyer', { timeout: 5 * 60_000 }, async () => {
@@ -30,4 +40,5 @@ test('trap-devnet: purchase then delegate reclaims and freezes without buyer', {
   assert.equal(result.userAmountAfterBuy, s.buy.amount);
   assert.equal(result.userAmountAfterPull, '0');
   assert.equal(result.userAccountState, 'Frozen');
+  assertRecycled('trap', result);
 });
