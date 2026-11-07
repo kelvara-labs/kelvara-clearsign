@@ -252,13 +252,6 @@ export function checkPassThroughUnwritable(srcFiles) {
   return result(f, `passThrough read only by ${[...PASS_THROUGH_READERS].join(", ")}; nothing writes it`);
 }
 
-// Product license: the extension verifies offline against the public key in config/.
-export function checkLicenseKeyEmbedded(bundle, publicKey) {
-  if (!publicKey) return { status: "FAIL", detail: "config/license-public-key.txt missing", findings: [] };
-  for (const [, text] of textFiles(bundle)) if (text.includes(publicKey)) return { status: "PASS", detail: "license public key embedded", findings: [] };
-  return { status: "FAIL", detail: "license public key from config/license-public-key.txt not found in bundle", findings: [] };
-}
-
 // Dependency licenses, read offline from node_modules. No AGPL, BUSL or MPL in core or extension.
 const FORBIDDEN_LICENSE = /\b(AGPL|BUSL|BSL-1\.1|MPL|SSPL|GPL)/i;
 function licenseOf(pkg) {

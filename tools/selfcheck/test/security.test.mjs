@@ -8,12 +8,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { readZip, writeZip } from "../src/zip.mjs";
 import {
-  checkHosts, validateInertEntries, checkNoSecrets, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded,
+  checkHosts, validateInertEntries, checkNoSecrets, checkNoRemoteCode, checkPermissions,
   checkDependencyLicenses, licenseForbidden, checkContentScriptsOffline, secretVariants,
   checkNoPageControl, checkPassThroughUnwritable
 } from "../src/security-checks.mjs";
 
-const PK = "96kkANgM8egAtbFSa81PHfjNFajQNo77dpTcno2xmM1s";
 const FAKE_KEY = "0f0e0d0c-1111-4222-8333-444455556666";
 const bundle = (files) => new Map(Object.entries(files).map(([k, v]) => [k, Buffer.from(v)]));
 const goodManifest = {
@@ -23,7 +22,7 @@ const goodManifest = {
 };
 const clean = () => bundle({
   "manifest.json": JSON.stringify(goodManifest),
-  "service-worker.js": `const u="https://mainnet.helius-rpc.com/?api-key="+k;fetch("http://localhost:8899");const PK="${PK}";`,
+  "service-worker.js": `const u="https://mainnet.helius-rpc.com/?api-key="+k;fetch("http://localhost:8899");`,
   "ui.js": `document.createElementNS("http://www.w3.org/2000/svg","svg");if(window.top!==self)console.info(n.wallet,e.network)`,
   "hook.js": `window.postMessage({t:1},"*")`
 });
@@ -33,7 +32,6 @@ test("clean bundle passes every check", () => {
   assert.equal(checkHosts(b).status, "PASS");
   assert.equal(checkNoRemoteCode(b, goodManifest).status, "PASS");
   assert.equal(checkPermissions(goodManifest).status, "PASS");
-  assert.equal(checkLicenseKeyEmbedded(b, PK).status, "PASS");
   assert.equal(checkNoSecrets(b, [FAKE_KEY]).status, "PASS");
   assert.equal(checkContentScriptsOffline(b, goodManifest).status, "PASS");
 });
@@ -113,10 +111,6 @@ test("permissions: extra permissions and hosts fail", () => {
   assert.equal(checkPermissions({ ...goodManifest, content_scripts: [{ matches: ["http://*/*"], js: ["hook.js"] }] }).status, "FAIL");
   assert.equal(checkPermissions({ ...goodManifest, externally_connectable: { matches: ["<all_urls>"] } }).status, "FAIL");
   assert.equal(checkPermissions(null).status, "FAIL");
-});
-
-test("license key must be embedded", () => {
-  assert.equal(checkLicenseKeyEmbedded(bundle({ "a.js": "x" }), PK).status, "FAIL");
 });
 
 test("license expressions", () => {

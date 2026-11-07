@@ -4,14 +4,14 @@
 //   L3 admin: held, Block is the default; Block -> 4001 and count 0;
 //             Sign anyway needs hold-to-confirm and then calls the wallet once with identical bytes.
 //   L2 trap:  held with both buttons; Block -> 4001 and count 0.
-//   Benign:   no modal; the wallet is called once with identical bytes.
+//   Benign L0/L1: full modal; held until Continue or Block, wallet never called before Continue.
 // Levels L2-L4 run on LIVE LOCALNET scenarios in their pre-execution state (coordinator, V10): admin-local,
 // trap-local, sweep-local from scenarios S12 (+ S12b l4-sweep-ata via --with-ata-sweep), served by e2e.mjs; the extension's network is localnet and the test
 // wallet presents the scenario's signer (SignArgs.account). Benign keeps a real mainnet fixture: its level does not
 // depend on chain state.
 import {
-  armSignAnyway, calls, CASES_MISSING, expect, expectRejected, hasRealEngine, hasReportUi, heliusKey, holdSignAnyway, localCase, openDapp,
-  pending, reportLevel, SEL, settleOrModal, startSign, test, txCase, waitForModal, within, type Ext, type LocalRole
+  armContinue, armSignAnyway, calls, CASES_MISSING, expect, expectRejected, hasRealEngine, hasReportUi, heliusKey, holdSignAnyway, localCase, openDapp,
+  pending, reportLevel, SEL, startSign, test, txCase, waitForModal, within, type Ext, type LocalRole
 } from "./support.js";
 
 async function needLocal(role: LocalRole) {
@@ -109,17 +109,35 @@ test("L2 trap purchase (localnet) is held with both buttons; Block leaves the wa
 });
 
 for (const path of ["ws-app-ready", "legacy"] as const) {
-  test(`${path}: benign transfer shows no modal and reaches the wallet once with identical bytes`, async ({ ext }) => {
-    const c = needBenign();
-    const page = await openDapp(ext, c.network);
-    const p = startSign(page, { path, txs: [c.tx], chain: c.chain });
-    const first = await settleOrModal(ext, p, 45_000);
-    expect(first, "benign request still pending after 45 s").not.toBe("timeout");
-    expect(first !== "timeout" && "modal" in first, "benign request showed a modal").toBe(false);
-    expect(await waitForModal(ext, 1_000), "benign request showed a modal").toBeNull();
-    expect((first as { result: unknown }).result, "benign request was blocked").toMatchObject({ ok: true });
-    const log = await calls(page);
-    expect(log.count).toBe(1);
-    expect(log.calls[0]!.received).toEqual([c.tx]);
-  });
+  for (const decision of ["continue", "block"] as const) {
+    test(`${path}: benign transfer is held with a full L0/L1 modal; ${decision} decides wallet forwarding`, async ({ ext }) => {
+      const c = needBenign();
+      const page = await openDapp(ext, c.network);
+      const p = startSign(page, { path, txs: [c.tx], chain: c.chain });
+      const m = await modalOrFail(ext, "benign report");
+      expect(await reportLevel(m), "harmless level must not be raised to force a hold").toMatch(/^L[01]$/);
+      await expect(m.locator("[data-kelvara-limited]")).toHaveCount(0);
+      expect(await m.locator("[data-kelvara-hash]").count(), "full report must include message hashes").toBeGreaterThan(0);
+      await expect(m.locator(SEL.continue)).toHaveText("Continue to wallet");
+      await expect(m.locator(SEL.signAnyway)).toHaveCount(0);
+      expect(await m.locator(SEL.block).first().evaluate(el => el === el.ownerDocument.activeElement), "Block must have default focus").toBe(true);
+      expect(await within(p, 1_000), "benign request settled without a decision").toBe("pending");
+      expect((await calls(page)).count).toBe(0);
+      if (decision === "block") {
+        await m.locator(SEL.block).first().click();
+        expectRejected(await within(p, 10_000), "benign Block");
+        expect((await calls(page)).count).toBe(0);
+      } else {
+        await armContinue(m);
+        await m.locator(SEL.continue).evaluate(el => (el as HTMLButtonElement).click());
+        expect(await within(p, 500), "untrusted Continue forwarded the request").toBe("pending");
+        expect((await calls(page)).count).toBe(0);
+        await m.locator(SEL.continue).first().click();
+        expect(await within(p, 15_000), "Continue did not forward benign request").toMatchObject({ ok: true });
+        const log = await calls(page);
+        expect(log.count).toBe(1);
+        expect(log.calls[0]!.received).toEqual([c.tx]);
+      }
+    });
+  }
 }
