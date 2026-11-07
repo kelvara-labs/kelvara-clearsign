@@ -384,7 +384,7 @@ When
 What you do
 Why
 Before hour 0
-Provide a machine with Node 22 and internet access to npm, GitHub and Solana RPC; allow installing Rust, the Agave CLI and Anchor
+Provide a machine with Node 22 and internet access to npm, GitHub and Helius; allow installing Rust, the Agave CLI and Anchor
 Toolchain for M0
 Before hour 0
 Generate the license-signing keypair offline; give the agent only the public key
