@@ -1,7 +1,24 @@
 {
   "schema": "kelvara.fixture.manifest/v1",
-  "count": 88,
+  "count": 89,
   "fixtures": [
+    {
+      "path": "tx/devnet/sweep/4YR1FAkJN1YfDoZJmbQjJeMnQyqt9SRQYfmKT6gg2QQLqMzrKskTYrT86xxceT4AZcnszQdEaQU9n656vahMCrsR.json",
+      "signature": "4YR1FAkJN1YfDoZJmbQjJeMnQyqt9SRQYfmKT6gg2QQLqMzrKskTYrT86xxceT4AZcnszQdEaQU9n656vahMCrsR",
+      "slot": 519713994,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "f3c70d4dd992f8d9f60e355949e2d4c03ef68f8e338e8febfaa7877a4ef3b040",
+      "network": "devnet",
+      "label": "scenario:sweep-devnet: \"claim airdrop\" sweep, the user's 2 token balances, both ATAs' rent and every lamport but the fee to EZwZ2ZSo4E42DFwuvk4HuGUFCnkKom9e7ex7EBuCBd7o (not a signer); executed on devnet",
+      "tags": [
+        "scenario",
+        "sweep"
+      ],
+      "e2e": "l4-sweep"
+    },
     {
       "path": "tx/drift-replay/2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H.json",
       "signature": "2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H",

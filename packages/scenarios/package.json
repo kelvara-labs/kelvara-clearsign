@@ -28,6 +28,8 @@
     "scenario:admin-devnet": "node scripts/admin-devnet.mjs",
     "scenario:admin-devnet:attack": "node scripts/admin-devnet.mjs --attack-only",
     "scenario:trap-devnet": "node scripts/trap-devnet.mjs",
-    "scenario:trap-devnet:attack": "node scripts/trap-devnet.mjs --attack-only"
+    "scenario:trap-devnet:attack": "node scripts/trap-devnet.mjs --attack-only",
+    "scenario:sweep-devnet": "node scripts/sweep-devnet.mjs",
+    "scenario:sweep-devnet:attack": "node scripts/sweep-devnet.mjs --attack-only"
   }
 }
