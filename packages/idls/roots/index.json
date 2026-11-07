@@ -1,0 +1,32 @@
+[
+  {
+    "name": "system",
+    "programId": "11111111111111111111111111111111",
+    "decoder": "codama",
+    "instructions": 14
+  },
+  {
+    "name": "token",
+    "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+    "decoder": "codama",
+    "instructions": 28
+  },
+  {
+    "name": "token-2022",
+    "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+    "decoder": "codama",
+    "instructions": 100
+  },
+  {
+    "name": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "decoder": "codama",
+    "instructions": 31
+  },
+  {
+    "name": "drift-v2",
+    "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+    "decoder": "codama",
+    "instructions": 241
+  }
+]

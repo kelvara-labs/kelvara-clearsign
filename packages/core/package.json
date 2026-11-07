@@ -15,6 +15,9 @@
     "test:determinism": "node ../../tools/selfcheck/src/pending.mjs G9 M7"
   },
   "dependencies": {
+    "@codama/dynamic-parsers": "1.4.2",
+    "@codama/nodes": "1.11.0",
+    "@codama/visitors-core": "1.11.0",
     "@solana/kit": "8.5.0"
   },
   "devDependencies": {
