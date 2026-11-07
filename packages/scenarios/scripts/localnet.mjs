@@ -18,7 +18,7 @@
 //  5. Writes .localnet/state.json (addresses, IDL status, clone provenance) for the scenario scripts.
 import { execFileSync, spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { closeSync, existsSync, mkdirSync, openSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { closeSync, existsSync, mkdirSync, openSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createConnection } from 'node:net';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -188,10 +188,109 @@ function ourPid() {
   }
 }
 
+// ---------- validators started by our scripts in any checkout ----------
+// A validator is "ours" (started by localnet.mjs in some checkout) only when all hold:
+//  - its argv[0] is solana-test-validator,
+//  - its --ledger is <checkout>/packages/scenarios/.localnet/ledger,
+//  - <that .localnet>/validator.pid names exactly this pid (written by startValidator at spawn).
+// Anything else on our ports is never touched.
+const LEDGER_SUFFIX = join('packages', 'scenarios', '.localnet', 'ledger');
+export function parseValidatorCmdline(raw) {
+  const argv = raw.split('\0').filter(Boolean);
+  if (!argv.length || !/(^|\/)solana-test-validator$/.test(argv[0])) return null;
+  const opt = (name, dflt) => {
+    const i = argv.indexOf(name);
+    return i >= 0 && i + 1 < argv.length ? argv[i + 1] : dflt;
+  };
+  return { ledger: opt('--ledger', null), rpcPort: Number(opt('--rpc-port', 8899)), faucetPort: Number(opt('--faucet-port', 9900)) };
+}
+
+// procRoot is a parameter so the offline test can feed a fake /proc.
+export function findScriptValidators({ procRoot = '/proc', ports = [RPC_PORT, FAUCET_PORT] } = {}) {
+  const found = [];
+  let entries = [];
+  try {
+    entries = readdirSync(procRoot).filter((d) => /^\d+$/.test(d));
+  } catch {
+    return found;
+  }
+  for (const d of entries) {
+    let v;
+    try {
+      v = parseValidatorCmdline(readFileSync(join(procRoot, d, 'cmdline'), 'utf8'));
+    } catch {
+      continue;
+    }
+    if (!v || !v.ledger || !(ports.includes(v.rpcPort) || ports.includes(v.faucetPort))) continue;
+    const pid = Number(d);
+    const ledger = resolve(v.ledger);
+    const scriptStarted = ledger.endsWith(`/${LEDGER_SUFFIX}`);
+    const localnetDir = dirname(ledger);
+    const pidfile = join(localnetDir, 'validator.pid');
+    let pidfileMatches = false;
+    try {
+      pidfileMatches = Number(readFileSync(pidfile, 'utf8')) === pid;
+    } catch {
+      // no pid file
+    }
+    found.push({
+      pid,
+      ledger,
+      localnetDir,
+      pidfile,
+      checkout: scriptStarted ? resolve(localnetDir, '..', '..', '..') : null,
+      mine: ledger === resolve(LEDGER),
+      ours: scriptStarted && pidfileMatches,
+      rpcPort: v.rpcPort,
+      faucetPort: v.faucetPort
+    });
+  }
+  return found;
+}
+
+// A validator on our ports started by localnet.mjs in ANOTHER checkout, or null.
+export function foreignValidator(opts) {
+  return findScriptValidators(opts).find((v) => v.ours && !v.mine) ?? null;
+}
+
+// Stop another checkout's validator so this checkout can own the ports. Removes its pid file and its ledger
+// (the ledger is --reset on every `up`, so nothing is lost; leaving it would orphan it) and writes a note there
+// saying who took over. Re-verifies the pid -> cmdline -> pid-file chain right before each signal.
+async function takeOver(v) {
+  const still = () => findScriptValidators({ ports: [v.rpcPort, v.faucetPort] }).find((x) => x.pid === v.pid && x.ours && !x.mine);
+  if (!still()) return;
+  log(`TAKEOVER: validator pid ${v.pid} on 127.0.0.1:${v.rpcPort} belongs to checkout ${v.checkout}; stopping it`);
+  process.kill(v.pid, 'SIGTERM');
+  for (let i = 0; i < 40 && still(); i++) await sleep(250);
+  if (still()) process.kill(v.pid, 'SIGKILL');
+  for (let i = 0; i < 20 && still(); i++) await sleep(250);
+  rmSync(v.pidfile, { force: true });
+  rmSync(v.ledger, { recursive: true, force: true });
+  try {
+    writeFileSync(
+      join(v.localnetDir, 'taken-over.json'),
+      JSON.stringify({ at: new Date().toISOString(), pid: v.pid, by: resolve(REPO), note: 'run localnet:up here to own the localnet again' }, null, 2) + '\n'
+    );
+  } catch {
+    // the note is best effort
+  }
+  log(`TAKEOVER: stopped pid ${v.pid}, removed its pid file and ledger ${v.ledger}`);
+}
+
+function describeOwner() {
+  const all = findScriptValidators();
+  if (!all.length) return 'no solana-test-validator started by our scripts is on these ports';
+  return all
+    .map((v) => `pid ${v.pid} ${v.mine ? 'owned by this checkout' : v.ours ? `owned by checkout ${v.checkout}` : `not started by our scripts (ledger ${v.ledger})`}`)
+    .join('; ');
+}
+
 export async function down() {
   const pid = ourPid();
   if (!pid) {
     log('no localnet of ours is running');
+    const f = foreignValidator();
+    if (f) log(`validator pid ${f.pid} on 127.0.0.1:${f.rpcPort} belongs to checkout ${f.checkout}; left running (localnet:up here takes it over)`);
     rmSync(PIDFILE, { force: true });
     return;
   }
@@ -204,12 +303,15 @@ export async function down() {
 
 async function startValidator(manifest, keys) {
   await down();
+  const foreign = foreignValidator();
+  if (foreign) await takeOver(foreign);
   for (const port of [RPC_PORT, FAUCET_PORT]) {
     // A just-stopped validator can hold its sockets for a few seconds after the pid is gone.
     for (let i = 0; i < 40 && (await portOpen(port)); i++) await sleep(250);
-    if (await portOpen(port)) throw new Error(`127.0.0.1:${port} is held by another process; set KELVARA_LOCALNET_PORT / KELVARA_LOCALNET_FAUCET_PORT`);
+    if (await portOpen(port)) throw new Error(`127.0.0.1:${port} is held by another process (${describeOwner()}); set KELVARA_LOCALNET_PORT / KELVARA_LOCALNET_FAUCET_PORT`);
   }
   mkdirSync(DIR, { recursive: true });
+  rmSync(join(DIR, 'taken-over.json'), { force: true });
   const args = [
     '--ledger', LEDGER,
     '--reset',
@@ -364,7 +466,12 @@ function pinnedIdl(reason) {
 
 // ---------- check ----------
 export async function check({ quiet = false } = {}) {
+  const foreign = foreignValidator();
+  if (foreign && !ourPid()) {
+    throw new Error(`the validator on 127.0.0.1:${foreign.rpcPort} (pid ${foreign.pid}) belongs to checkout ${foreign.checkout}, not this one; localnet:up here takes it over`);
+  }
   if (!existsSync(STATE)) throw new Error('no .localnet/state.json; run localnet:up');
+  if (!ourPid()) throw new Error(`no validator of this checkout is running (${describeOwner()}); run localnet:up`);
   const state = JSON.parse(readFileSync(STATE, 'utf8'));
   const rpc = localRpc(state.rpcUrl);
   const fails = [];
