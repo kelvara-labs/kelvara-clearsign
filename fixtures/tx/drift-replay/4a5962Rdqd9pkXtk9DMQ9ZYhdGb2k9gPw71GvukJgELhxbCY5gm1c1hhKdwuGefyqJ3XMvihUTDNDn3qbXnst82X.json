@@ -1,0 +1,207 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "4a5962Rdqd9pkXtk9DMQ9ZYhdGb2k9gPw71GvukJgELhxbCY5gm1c1hhKdwuGefyqJ3XMvihUTDNDn3qbXnst82X",
+  "slot": 410344059,
+  "blockTime": 1775059539,
+  "fetchedAt": "2026-11-07T07:49:08.010Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "drift-v2",
+    "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+    "priority": "P0",
+    "name": "Drift v2"
+  },
+  "encoding": "base64",
+  "transaction": "AbKSC40qQoXwOWXHU4lESnIo3614BYV2Rzm/laa5Xl08oB2RKsV0Ht+QV256xJRTYv0aTvmMZaC3Paq/0mx6NQwBAAcR714n4JYVRqrUZ0mswJLgPBqMfBGH6IfMJF25zyvKmpk3Qqd6qmokSEyAB3O2tTEymi+UuR1iHqUEbSe38r0ekDD4jeXv2zpBdConBZYEcxjL/LDqRz7cyUxQZwDKk1BpMt52PakHDEc9R6R5uPFrCVY4oLbBvO0EB4B85TfRmodKPu9LA8gqcVmeoHoW7kvPbc4xNX2EYLKsG9TDqYYMnUsw9xXayNQtL1unwDI+rGu1A8lUiR6EmA5cQKxvcujkVF+jDqO8PzwpZtqLbD3++NOrfaV8oCMqVOSgJk//w8KciLY3mNy39oOXyW0+GeDoJCAjo63BtI0utyn/xlL/XLmcJetLruTJPiplcc+0hP9b9GDMyb+g64iI0AHuuKII3t7GvhPsCowFAGKlbUEmFjGAkWEmdb4sT0L0yuy01O4AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJX+vn0qPw30gfXPB8AbWTRYeActDbxTH3haal8MXBZnCVTbvp7JYMmKeik/4hM2lm/hgNFRrkuBeVYfiYVKU/bgriL9SNN7rYBVQNOZzaMp1LwUL4t0rvBtuR7/glSirgRnuYYFztnJMC385rU3Ts8t0jV0MNieA+A3GwptrNowBqfVFxksXFEhjMlMPUrxf1ja7gibof1E49vZigAAAAAG3fbh12Whk9nL4UbO63msHLSF7V9bN5E6jPWFfv8AqeYl1e7JIFU3brV3OLSgF7X+BvSzx+v2TXgl7Ut4L9VeBgwLBw0JAw4ECwAPChB36sSALF4PMMkgoQcAQEIPAEBCDwALECcAABAnAAAQJwAAECcAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAARGVmYXVsdCBNYXJrZXQgTmFtZSAgICAgICAgICAgICAMAwAECBA4Eic9m9MshQBAY1K/xgEADAMABAYQOBInPZvTLIUAQGNSv8YBAAwDAAQBEDgSJz2b0yyFAEBjUr/GAQAMAwAEAhA4Eic9m9MshQBAY1K/xgEADAMABAUQOBInPZvTLIUAQGNSv8YBAA==",
+  "sha256": "154db68f75b1a486ed7daa369a5c4e1237e02a5fc9c572b2c639acdf694f070d",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      3000010000,
+      6291840,
+      6291840,
+      0,
+      7795213,
+      6291840,
+      6291851,
+      0,
+      6291840,
+      0,
+      1,
+      23218560,
+      49151453,
+      1461600,
+      122682224343,
+      1009200,
+      5597652284
+    ],
+    "postBalances": [
+      2989634600,
+      6291840,
+      6291840,
+      2039280,
+      7795213,
+      6291840,
+      6291851,
+      6291840,
+      6291840,
+      2039280,
+      1,
+      23218560,
+      49151453,
+      1461600,
+      122682224343,
+      1009200,
+      5597652284
+    ],
+    "innerInstructions": [
+      {
+        "index": 0,
+        "instructions": [
+          {
+            "programIdIndex": 10,
+            "accounts": [
+              0,
+              7
+            ],
+            "data": "11115hLrEPdSJSGU1L4aS5uccmSx4bU7G5akgMXENMGyWPhRSs5ZPYjBk7ugbeHos9dUQM",
+            "stackHeight": 2
+          },
+          {
+            "programIdIndex": 10,
+            "accounts": [
+              0,
+              9
+            ],
+            "data": "11119os1e9qSs2u7TsThXqkBSRVFxhmYaFKFZ1waB2X7armDmvK3p5GmLdUxYdg3h7QSrL",
+            "stackHeight": 2
+          },
+          {
+            "programIdIndex": 10,
+            "accounts": [
+              0,
+              3
+            ],
+            "data": "11119os1e9qSs2u7TsThXqkBSRVFxhmYaFKFZ1waB2X7armDmvK3p5GmLdUxYdg3h7QSrL",
+            "stackHeight": 2
+          },
+          {
+            "programIdIndex": 16,
+            "accounts": [
+              9,
+              13
+            ],
+            "data": "6MRu38YnL5vcv7RZumBgENzLV3QPrmMFPfkMigEDLbpHu",
+            "stackHeight": 2
+          },
+          {
+            "programIdIndex": 16,
+            "accounts": [
+              3,
+              13
+            ],
+            "data": "6MRu38YnL5vcv7RZumBgENzLV3QPrmMFPfkMigEDLbpHu",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: InitializeSpotMarket",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]",
+      "Program log: Instruction: InitializeAccount3",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4188 of 1162773 compute units",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA invoke [2]",
+      "Program log: Instruction: InitializeAccount3",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA consumed 4188 of 1156060 compute units",
+      "Program TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA success",
+      "Program log: initializing spot market 63",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 63983 of 1200000 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: UpdateWithdrawGuardThreshold",
+      "Program log: updating spot market withdraw guard threshold 19",
+      "Program log: spot_market.withdraw_guard_threshold: 5000000000 -> 500000000000000",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 5792 of 1136017 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: UpdateWithdrawGuardThreshold",
+      "Program log: updating spot market withdraw guard threshold 0",
+      "Program log: spot_market.withdraw_guard_threshold: 25000000000000 -> 500000000000000",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 5841 of 1130225 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: UpdateWithdrawGuardThreshold",
+      "Program log: updating spot market withdraw guard threshold 27",
+      "Program log: spot_market.withdraw_guard_threshold: 10000000000 -> 500000000000000",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 5815 of 1124384 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: UpdateWithdrawGuardThreshold",
+      "Program log: updating spot market withdraw guard threshold 17",
+      "Program log: spot_market.withdraw_guard_threshold: 5000000000000 -> 500000000000000",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 5841 of 1118569 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [1]",
+      "Program log: Instruction: UpdateWithdrawGuardThreshold",
+      "Program log: updating spot market withdraw guard threshold 4",
+      "Program log: spot_market.withdraw_guard_threshold: 200000000000 -> 500000000000000",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 5815 of 1112728 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [
+      {
+        "accountIndex": 3,
+        "mint": "G84LEhbNMR1yYbHgHbnNYNSK8mpTKcazh5jcW5yMPQKo",
+        "uiTokenAmount": {
+          "uiAmount": null,
+          "decimals": 9,
+          "amount": "0",
+          "uiAmountString": "0"
+        },
+        "owner": "JCNCMFXo5M5qwUPg2Utu1u6YWp3MbygxqBsBeXXJfrw",
+        "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+      },
+      {
+        "accountIndex": 9,
+        "mint": "G84LEhbNMR1yYbHgHbnNYNSK8mpTKcazh5jcW5yMPQKo",
+        "uiTokenAmount": {
+          "uiAmount": null,
+          "decimals": 9,
+          "amount": "0",
+          "uiAmountString": "0"
+        },
+        "owner": "JCNCMFXo5M5qwUPg2Utu1u6YWp3MbygxqBsBeXXJfrw",
+        "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+      }
+    ],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 93087,
+    "costUnits": 98528
+  },
+  "label": "Drift post-takeover: new admin's first admin call (initialize_spot_market)",
+  "role": "post-takeover-admin-call",
+  "reference": "helius-labs/watchtower scripts/check-drift-replay.mjs",
+  "attackStep": true,
+  "inG8": false
+}

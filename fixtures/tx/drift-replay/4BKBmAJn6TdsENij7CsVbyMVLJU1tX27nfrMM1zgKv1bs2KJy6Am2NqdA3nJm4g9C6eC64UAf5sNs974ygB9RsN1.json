@@ -1,0 +1,99 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "4BKBmAJn6TdsENij7CsVbyMVLJU1tX27nfrMM1zgKv1bs2KJy6Am2NqdA3nJm4g9C6eC64UAf5sNs974ygB9RsN1",
+  "slot": 410344009,
+  "blockTime": 1775059519,
+  "fetchedAt": "2026-11-07T07:49:07.972Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "priority": "P0",
+    "name": "Squads v4"
+  },
+  "encoding": "base64",
+  "transaction": "AZ7x68WfdgL92E6FOpudAaUd22P0MgIu9+VyvApksJRx0iZ6AS0HZ+wxpqsiuV437NZP3uL6EINL5gJK1Udi6QoBAAYLUUkEz7FfLaJjygMX5cDGGgvNfu9lTnGt5EUq42wAKo1KPu9LA8gqcVmeoHoW7kvPbc4xNX2EYLKsG9TDqYYMnZBPyJU9z8nztReYk+4S/JxEXK2ImpV9Yc+428wXL2pPzJDOxGOxYgUeKqXn+B9ykwj35IqmqnNj79y+Fl67ZQH8076t9/m/97Bb74GUNE6z/PJdKB9WR+buAYgPE8T4NQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE9qeIs7eYan3uJJdRDfdKOm+7rHHKIhq+mqnybJuqBkU8jIOHbEcooVIeOwm6I7YyvlYnAX8S5nsUFsORx0VgwlU276eyWDJinopP+ITNpZv4YDRUa5LgXlWH4mFSlP2BoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6gGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqUAAAM4akCj91T+pyjf3uPgYecSepeQVNwg7z9tO/Usf8OuYAwUDAwoABAQAAAAJAwYABAmQJaSIvNgq+AAJBwYEBwACAQgIwgihV5mkGas=",
+  "sha256": "6f92d4cebca8968b1f375f82d56418da4a7b6ff6097051abf8dacae2167c4e60",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      16326033,
+      7795213,
+      51000000,
+      1447680,
+      4718880,
+      1,
+      2958000,
+      2623920,
+      49151453,
+      2141440,
+      42706560
+    ],
+    "postBalances": [
+      16321033,
+      7795213,
+      51000000,
+      1447680,
+      4718880,
+      1,
+      2958000,
+      2623920,
+      49151453,
+      2141440,
+      42706560
+    ],
+    "innerInstructions": [
+      {
+        "index": 2,
+        "instructions": [
+          {
+            "programIdIndex": 8,
+            "accounts": [
+              2,
+              1
+            ],
+            "data": "92xxaYiShjsmLGJqsyPJtMWDcXxXyHLPntKuNv1qpc7vRWWHnYqM1Sp",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: ProposalApprove",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 10353 of 402850 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: VaultTransactionExecute",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH invoke [2]",
+      "Program log: Instruction: UpdateAdmin",
+      "Program log: admin: AiLGdNitMjv8n5HMS7HAdV2kaeJZZFd4jdfn5xp1PKrW -> H7PiGqqUaanBovwKgEtreJbKmQe6dbq6VTrw6guy7ZgL",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH consumed 36950 of 371938 compute units",
+      "Program dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 58770 of 392497 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 69273,
+    "costUnits": 73490
+  },
+  "label": "Drift attack 2/2: approve and execute (AdvanceNonceAccount, proposalApprove, vaultTransactionExecute, UpdateAdmin)",
+  "role": "approve-and-execute",
+  "reference": "BlockSec, Drift Protocol incident analysis",
+  "attackStep": true
+}

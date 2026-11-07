@@ -1,0 +1,71 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "3hEgNemRGwBChCqJQt3e6gLDH7Y3TQHQEQA8xhnKjj8EcsJVDaqymvHb1p9DVtVKuLsNCe742swQGeR9x7ddJGa5",
+  "slot": 466434982,
+  "blockTime": 1794037925,
+  "fetchedAt": "2026-11-07T07:52:12.487Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "memo",
+    "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+    "priority": "P1",
+    "name": "Memo"
+  },
+  "encoding": "base64",
+  "transaction": "AYa7WyoPad59yFXjnfZeuMl/UCuOalY4xWWJ3MGHLkuxkwMkaAX0XveU9boAd5phLn7UnQcvnDvO0holHLH7hQKAAQAEBy0yvXY/MUt8k6YGdDQHG9CBIrDmSo43VAWgxEQEAZAJBpzt68hhjZU/5xDBiKNudu78WdO3yV39MiVeuXIAaBAsv2BTgKXzuzFL2ORhSoiJx2lvD7QjHLbCTAN071iCOAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAFSlNamSkhBk0k6HFg2jh8fDW13bySu4HkH6hAQQVEjQan1RcZLFaO4IqEX3PSl4jPA1wxRbIas0TYBi6pQAAAOh/SZMG1IT5KmQTFcKgl7ucd9UasBfvu5HmZBZKmeHkFAwMCBgAEBAAAAAQABQLA1AEABAAJAwAAAAAAAAAABQEAAXADAgABDAIAAABAQg8AAAAAAAA=",
+  "sha256": "00c865a70b7bf755c920b7a69e9fcf495a14c79a14a747652d8548b8add7a22d",
+  "version": 0,
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      406821962,
+      19419690241,
+      1056640,
+      1,
+      1,
+      523015235,
+      42706560
+    ],
+    "postBalances": [
+      405816962,
+      19420690241,
+      1056640,
+      1,
+      1,
+      523015235,
+      42706560
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+      "Program log: Signed by 43SDq5Ti6P5JsRVVPc2AcFHQgQnbHgVvxu9E376AU83r",
+      "Program log: Memo (len 1): \"p\"",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 15177 of 119550 compute units",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 15777,
+    "costUnits": 17428
+  },
+  "discriminator": "70"
+}

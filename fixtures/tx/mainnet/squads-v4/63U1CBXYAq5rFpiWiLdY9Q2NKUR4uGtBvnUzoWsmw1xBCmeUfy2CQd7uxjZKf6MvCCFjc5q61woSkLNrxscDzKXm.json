@@ -1,0 +1,89 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "63U1CBXYAq5rFpiWiLdY9Q2NKUR4uGtBvnUzoWsmw1xBCmeUfy2CQd7uxjZKf6MvCCFjc5q61woSkLNrxscDzKXm",
+  "slot": 466434020,
+  "blockTime": 1794037719,
+  "fetchedAt": "2026-11-07T07:49:07.885Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "priority": "P0",
+    "name": "Squads v4"
+  },
+  "encoding": "base64",
+  "transaction": "Afw2EdjC49Zls2FzbJhuKZkc36+IuTx6IJs7CiplehtsYW7PbzqlaND1xg3MbrwEw1zSSo/7U25NROUACXUwuQiAAQAEB7RPLAyK67zBN5RFgE1SNi02vAfzkBb/2SMVxSN4lREqv5cbWRCLW4WgT7CT8eIbTj/UxMj0h90JuVdSdp8N2MOFJV1ZN4Mft094N+lwUQIgL11P88/pUeEZ3yA4zbDWJwMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qAWq/3NX1K1JEapI3nn84CKQFgn0/l4/RgdUFZ4A8Nw6iDyKDM9WkMuCKmATk8pXBVgPbf4f3kw99qYxvpRfFK4FAwAJA1HDAAAAAAAAAwAFAoA4AQAEAgABDAIAAACghgEAAAAAAAUFBgIAAAQR3DxJ4B5sT58JAAAAAAAAAAAFAwYAAgmQJaSIvNgq+AAA",
+  "sha256": "2a331324959d9571d6dd888ab6bc3505b8efe0e5fd633900b381305e8cedad26",
+  "version": 0,
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 9001,
+    "preBalances": [
+      100466109,
+      690880,
+      0,
+      1,
+      1,
+      12171440,
+      3500120
+    ],
+    "postBalances": [
+      97400548,
+      790880,
+      2956560,
+      1,
+      1,
+      12171440,
+      3500120
+    ],
+    "innerInstructions": [
+      {
+        "index": 3,
+        "instructions": [
+          {
+            "programIdIndex": 4,
+            "accounts": [
+              0,
+              2
+            ],
+            "data": "1111bHTnkuN534DFtyXegKmPVSS2cGJRjaizguj2Xz7zDJKr24qRUhqHRhxmJWDgoyfX5",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: ProposalCreate",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 13467 of 79550 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: ProposalApprove",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 8910 of 66083 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 22827,
+    "costUnits": 24820
+  },
+  "discriminator": "dc3c49e01e6c4f9f"
+}

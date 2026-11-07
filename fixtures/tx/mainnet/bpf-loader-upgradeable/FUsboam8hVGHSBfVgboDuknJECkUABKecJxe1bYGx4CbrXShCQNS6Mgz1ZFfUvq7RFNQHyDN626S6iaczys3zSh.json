@@ -1,0 +1,73 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "FUsboam8hVGHSBfVgboDuknJECkUABKecJxe1bYGx4CbrXShCQNS6Mgz1ZFfUvq7RFNQHyDN626S6iaczys3zSh",
+  "slot": 338708586,
+  "blockTime": 1746731297,
+  "fetchedAt": "2026-11-07T07:54:42.835Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "bpf-loader-upgradeable",
+    "programId": "BPFLoaderUpgradeab1e11111111111111111111111",
+    "priority": "P0",
+    "name": "Upgradeable loader"
+  },
+  "encoding": "base64",
+  "transaction": "AQx8y8WFULYoMGxUKuo+kpg++LxkXOnUXoY0CPvn06/3iz27aSlpMggPjdyOwNMgIVVcdACShgVnEKZzl9CgWgYBAAIFC328Srj2p6o0xox2pVERyFHF7oAl6OuOqmRrRz4G3HMFMHrWRUu8Xh5OkgWSU6GLuMiGjFimMS7IajnmIk43OzKAWUEc3EeOAeKJ5f+ilYng/dXz5frT/9QFGgJrwjuyAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACqPaRToihsOIQFT73Y64rAMK5PRbBJNLAU3oQBIAAAN2BQwiRvqCjJBJ2yCAsGznfsFX2tsYXbPs+ogAyRM/TAQQEAgEDAAgGAAAA02B7AA==",
+  "sha256": "e9db19d4678168a3b6eae9c101300b43a80c4cfaf3fa1618ba67f271cde5a22b",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      96698822252,
+      1141440,
+      16705204080,
+      1,
+      1
+    ],
+    "postBalances": [
+      40422240852,
+      1141440,
+      72981780480,
+      1,
+      1
+    ],
+    "innerInstructions": [
+      {
+        "index": 0,
+        "instructions": [
+          {
+            "programIdIndex": 3,
+            "accounts": [
+              0,
+              2
+            ],
+            "data": "3Bxs4R1bTKuA5y9Z",
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "logMessages": [
+      "Program BPFLoaderUpgradeab1e11111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Extended ProgramData account by 8085715 bytes",
+      "Program BPFLoaderUpgradeab1e11111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 2520
+  },
+  "discriminator": "06000000d3607b00"
+}

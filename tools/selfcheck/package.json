@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test:replay": "node src/pending.mjs G8 M6",
-    "test:security": "node src/pending.mjs G10 M7"
+    "test": "node --test test/",
+    "test:replay": "node --test test/replay.test.mjs && node src/replay.mjs",
+    "test:security": "node --test test/security.test.mjs && node src/security.mjs",
+    "helius:probe": "node src/helius-probe.mjs"
   }
 }
