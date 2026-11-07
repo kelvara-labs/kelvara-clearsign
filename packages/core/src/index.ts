@@ -1,5 +1,5 @@
 // @kelvara/core public API. This file is a contract: announce changes to @all before merging.
-export const ENGINE_VERSION = "0.1.0";
+export { ENGINE_VERSION } from "./version.js";
 
 export { createSquadsDecoder, decodeSquadsMessage, SQUADS_V4_PROGRAM, type SquadsMessage, type SquadsAccount } from "./decode/squads.js";
 
@@ -64,3 +64,54 @@ export {
   type DecodedAccount,
   type DecodeStatus
 } from "./decode/index.js";
+
+// M2 / E6: report contract (evidence ledger, claim builder, zod schema, canonical JSON, sha256 digest).
+// Rubrics alert-levels-v1 and capability-risk-v1 are part of the contract.
+export {
+  ReportBuilder,
+  EvidenceLedger,
+  ReportError,
+  reportSessionFrom,
+  validateReport,
+  reportDigest,
+  compareCapabilities,
+  canonicalJson,
+  canonicalDigest,
+  toJsonValue,
+  CanonicalJsonError,
+  ReportSchema,
+  ClaimSchema,
+  EvidenceSchema,
+  CapabilitySchema,
+  PreviewEntrySchema,
+  REPORT_SCHEMA_VERSION,
+  EVIDENCE_TYPES,
+  CLAIM_SCOPES,
+  ALERT_LEVELS,
+  ALERT_LEVELS_V1,
+  CLAIM_KINDS,
+  CAPABILITY_RISK_V1,
+  CAPABILITY_CLASSES,
+  capabilityScore,
+  levelAllowed,
+  levelValue,
+  maxLevel,
+  type Report,
+  type Claim,
+  type ClaimKind,
+  type ClaimScope,
+  type Evidence,
+  type EvidenceType,
+  type Capability,
+  type CapabilityClass,
+  type PreviewEntry,
+  type AlertLevel,
+  type AlertAction,
+  type JsonValue,
+  type EvidenceInput,
+  type ClaimInput,
+  type CapabilityInput,
+  type PreviewInput,
+  type ReportSessionInput,
+  type ValidationResult
+} from "./report/index.js";
