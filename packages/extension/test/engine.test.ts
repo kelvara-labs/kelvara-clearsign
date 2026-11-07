@@ -95,7 +95,13 @@ describe("real engine in decide()", () => {
     expect(v).toMatchObject({ allow: false, hold: true, level: 2 });
     expect(v.report!.messageHashes).toEqual(await messageHashes([squads.transaction], nodeSha256));
     expect(v.report!.limited).toBe(false);
-    expect(v.report!.claims.map((c) => c.text).join(" ")).toMatch(/Rule lifetime.durable_nonce, L2/);
+    expect(v.report!.claims.find((c) => c.rule === "lifetime.durable_nonce")).toMatchObject({ level: "L2", title: "The transaction does not expire" });
+    // Evidence explorer: the nonce claim opens the decoded AdvanceNonceAccount instruction with its IDL path.
+    const nonce = v.report!.claims.find((c) => c.rule === "lifetime.durable_nonce")!;
+    const ix = v.report!.evidence.filter((e) => nonce.evidenceIds.includes(e.id) && e.type === "instruction");
+    expect(ix.length).toBeGreaterThan(0);
+    expect(ix[0]).toMatchObject({ tx: 0, path: "0", idl: "packages/idls/roots/system.json" });
+    expect(ix[0]!.fields.map((f) => f.key)).toEqual(expect.arrayContaining(["name"]));
     expect(rpc.calls.length).toBeGreaterThan(0);
     expect(JSON.stringify(v)).not.toContain("SECRET");
   });

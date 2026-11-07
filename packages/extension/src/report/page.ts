@@ -2,7 +2,7 @@
 // the bridge with the per-report secret and a MessagePort, renders it as text only, and
 // answers { allow } on the port. Contract for G7: test-dapp/e2e/README.md.
 import { validateWorkerVerdict, type WorkerVerdict } from "../shared/protocol.js";
-import { rankedCapabilities, type ReportView } from "../shared/report-view.js";
+import { rankedCapabilities, type Claim, type EvidenceItem, type ReportView } from "../shared/report-view.js";
 import { buttonsFor, HoldGesture, LEVEL_NAMES, reportMode, statusLine, VisibilityGate } from "./model.js";
 
 type Kids = (Node | string | null | false)[];
@@ -15,6 +15,41 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string,
 
 function section(title: string, ...kids: Kids): HTMLElement {
   return el("section", {}, el("h2", {}, title), ...kids);
+}
+
+/** Evidence explorer row: where the evidence sits in the request and what was decoded or read. */
+function evidenceCard(e: EvidenceItem): HTMLElement {
+  const rows: [string, string][] = [];
+  if (e.tx !== null) rows.push(["Transaction", String(e.tx)]); // 0-based, as in the engine's statements
+  if (e.path !== null) rows.push(["Instruction path", e.path]);
+  if (e.address !== null) rows.push(["Address", e.address]);
+  if (e.idl !== null) rows.push(["IDL", e.idl]);
+  const label = e.type === "instruction" ? "Decoded arguments and accounts" : e.type === "account" ? "Account snapshot" : "Data";
+  return el(
+    "details",
+    { class: "evidence", "data-evidence": e.id, "data-evidence-type": e.type },
+    el("summary", {}, el("code", {}, e.id), ` ${e.type} from ${e.source}: ${e.summary}`),
+    rows.length ? el("dl", { class: "where" }, ...rows.flatMap(([k, v]) => [el("dt", {}, k), el("dd", {}, el("code", {}, v))])) : null,
+    e.fields.length
+      ? el("div", { class: "fields" }, el("h3", {}, label), el("dl", {}, ...e.fields.flatMap((f) => [el("dt", {}, f.key), el("dd", {}, el("code", {}, f.value))])))
+      : null
+  );
+}
+
+function claimCard(c: Claim, evidence: Map<string, EvidenceItem>): HTMLElement {
+  const items = c.evidenceIds.map((id) => evidence.get(id)).filter((e): e is EvidenceItem => !!e);
+  const card = el(
+    "details",
+    { class: "claim", "data-claim": c.id },
+    el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), c.level ? el("span", { class: "claim-level" }, c.level) : null, " ", el("strong", { class: "claim-title" }, c.title)),
+    el("p", { class: "claim-text" }, c.text),
+    c.advice ? el("p", { class: "advice" }, c.advice) : null,
+    items.length ? el("div", { class: "explorer" }, ...items.map(evidenceCard)) : el("p", { class: "muted" }, "No evidence attached."),
+    c.moreEvidence ? el("p", { class: "muted" }, `and ${c.moreEvidence} more evidence item(s)`) : null,
+    el("p", { class: "muted" }, el("code", {}, c.rule ? `${c.id} · ${c.rule}` : c.id))
+  );
+  if (c.rule) card.setAttribute("data-rule", c.rule);
+  return card;
 }
 
 function renderReport(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
@@ -53,20 +88,8 @@ function renderReport(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
     );
   }
   if (r.claims.length) {
-    out.push(
-      section(
-        r.limited ? "Top finding" : "Claims (open for evidence)",
-        ...r.claims.map((c) =>
-          el(
-            "details",
-            { class: "claim", "data-claim": c.id },
-            el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), ` ${c.text}`),
-            c.evidence.length ? el("ul", {}, ...c.evidence.map((e) => el("li", {}, e))) : el("p", { class: "muted" }, "No evidence attached."),
-            el("p", { class: "muted" }, el("code", {}, c.id))
-          )
-        )
-      )
-    );
+    const byId = new Map(r.evidence.map((e) => [e.id, e]));
+    out.push(section(r.limited ? "Top finding" : "Claims (open for evidence)", ...r.claims.map((c) => claimCard(c, byId))));
   }
   if (r.messageHashes.length) {
     out.push(

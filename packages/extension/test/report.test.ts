@@ -23,7 +23,8 @@ const view: ReportView = {
     { rank: 1, change: "granted", authority: "upgrade authority of X", holder: "Attacker111", risk: "critical" }
   ],
   preview: [{ authority: "upgrade authority of X", confidence: "verified", can: [{ name: "can deploy any code", detail: "" }] }],
-  claims: [{ id: "c1", kind: "Fact", text: "t", evidence: ["e1"] }],
+  claims: [{ id: "c1", kind: "Fact", level: "L3", rule: "authority.transfer", title: "T", text: "t", advice: "a", evidenceIds: ["e1"], moreEvidence: 0 }],
+  evidence: [{ id: "e1", type: "instruction", source: "message", summary: "secret sauce evidence", tx: 0, path: "0", address: null, idl: null, fields: [{ key: "args.x", value: "1" }] }],
   messageHashes: ["11111111111111111111111111111111"],
   limited: false
 };

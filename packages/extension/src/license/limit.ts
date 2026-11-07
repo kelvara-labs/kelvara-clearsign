@@ -10,7 +10,7 @@ export const LIMITED_SUMMARY =
 export function limitReport(r: ReportView): ReportView {
   const topCap = rankedCapabilities(r)[0];
   // Top finding: the most dangerous capability change; with none, the first claim without its evidence.
-  const topClaim = !topCap && r.claims[0] ? [{ ...r.claims[0], evidence: [] }] : [];
+  const topClaim = !topCap && r.claims[0] ? [{ ...r.claims[0], evidenceIds: [], moreEvidence: 0 }] : [];
   return {
     title: r.title,
     summary: LIMITED_SUMMARY,
@@ -19,6 +19,7 @@ export function limitReport(r: ReportView): ReportView {
     capabilities: topCap ? [topCap] : [],
     preview: [],
     claims: topClaim,
+    evidence: [],
     messageHashes: r.messageHashes,
     limited: true
   };
