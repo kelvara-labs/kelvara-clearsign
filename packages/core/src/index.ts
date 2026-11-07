@@ -192,3 +192,23 @@ export {
   type ReportSessionInput,
   type ValidationResult
 } from "./report/index.js";
+
+// M2 / E7: rules (durable nonce, outsider-staged nonce, Squads approve/execute, threshold, time lock,
+// unknown proposal, config changes). Rules are synchronous; read state first and pass it as RuleState.
+export {
+  runRules,
+  RULES,
+  RULE_IDS,
+  describeConfigAction,
+  proposalViews,
+  vaultInstructions,
+  durableNonceUse,
+  type RunRulesInput,
+  type Rule,
+  type RuleContext,
+  type RuleState,
+  type NonceFacts,
+  type ProposalView,
+  type MultisigView,
+  type DurableNonceUse
+} from "./rules/index.js";
