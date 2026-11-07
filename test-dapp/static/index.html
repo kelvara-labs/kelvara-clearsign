@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kelvara Test dApp</title>
+    <style>
+      :root { color-scheme: light dark; font: 14px/1.4 system-ui, sans-serif; }
+      body { margin: 0 auto; max-width: 760px; padding: 16px; }
+      h1 { font-size: 18px; }
+      table { border-collapse: collapse; }
+      td, th { padding: 2px 10px 2px 0; text-align: left; }
+      #call-count { font-size: 28px; font-weight: 700; }
+      textarea { width: 100%; min-height: 80px; font: 12px ui-monospace, monospace; }
+      pre { background: rgba(127,127,127,.12); padding: 8px; overflow-x: auto; font-size: 12px; }
+      .row { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Kelvara SignGuard test dApp</h1>
+    <p>Fixture wallet with a throwaway key made on page load. It signs, never submits, and counts every call.</p>
+    <p>Address: <code id="address">…</code></p>
+
+    <p>Wallet calls: <span id="call-count" data-count="0">0</span> · messages: <span id="message-count">0</span></p>
+    <table>
+      <tr><th>Path</th><th>Discovery</th><th>Calls</th></tr>
+      <tr><td>Wallet Standard, register-wallet</td><td id="found-ws-register">…</td><td id="count-ws-register">0</td></tr>
+      <tr><td>Wallet Standard, app-ready</td><td id="found-ws-app-ready">…</td><td id="count-ws-app-ready">0</td></tr>
+      <tr><td>Legacy window.solana</td><td id="found-legacy">…</td><td id="count-legacy">0</td></tr>
+    </table>
+
+    <h2>Sign fixture transactions</h2>
+    <textarea id="tx-input" placeholder="base64 wire transactions, separated by whitespace"></textarea>
+    <div class="row">
+      <select id="path-input">
+        <option value="ws-register">Wallet Standard (register-wallet)</option>
+        <option value="ws-app-ready">Wallet Standard (app-ready)</option>
+        <option value="legacy">Legacy provider</option>
+      </select>
+      <select id="method-input">
+        <option value="signTransaction">signTransaction</option>
+        <option value="signAndSendTransaction">signAndSendTransaction (not sent)</option>
+        <option value="signAllTransactions">signAllTransactions (legacy)</option>
+      </select>
+      <button id="sign-btn">Sign</button>
+      <button id="forge-btn">Sign + forge approval</button>
+      <button id="msg-btn">Sign message</button>
+      <button id="reset-btn">Reset counter</button>
+    </div>
+    <pre id="result"></pre>
+    <pre id="call-log"></pre>
+    <script src="app.js"></script>
+  </body>
+</html>
