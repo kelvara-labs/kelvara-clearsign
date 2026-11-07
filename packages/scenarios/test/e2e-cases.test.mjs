@@ -43,4 +43,12 @@ test('e2e cases: agreed shape, one case per role, signer = fee payer, no key mat
   assert.doesNotMatch(JSON.stringify(out), /secret|keyFiles|\.keys\//i);
   assert.throws(() => buildCases({ admin, trap: { ...trap, rpcUrl: 'http://127.0.0.1:1' }, sweep }, { admin: sweepWire, trap: sweepWire, sweep: sweepWire }), /different RPCs/);
   assert.throws(() => buildCases({ admin, trap, sweep }, { admin: '', trap: sweepWire, sweep: sweepWire }), /not a wire tx/);
+
+  // Opt-in realistic sweep case (engine E16): only with withAtaSweep, and only when the setup emitted it.
+  const wires = { admin: sweepWire, trap: sweepWire, sweep: sweepWire, sweepAta: sweepWire };
+  assert.deepEqual(buildCases({ admin, trap, sweep }, wires, 'T').cases.map((c) => c.role), ROLES);
+  assert.throws(() => buildCases({ admin, trap, sweep }, wires, 'T', { withAtaSweep: true }), /no ataSweep/);
+  const ataSweep = { file: 'packages/scenarios/.localnet/sweep/sweep-ata.unsigned.b64', feePayer: user, recentBlockhash, lastValidBlockHeight: 9 };
+  const extra = buildCases({ admin, trap, sweep: { ...sweep, ataSweep } }, wires, 'T', { withAtaSweep: true }).cases.at(-1);
+  assert.deepEqual([extra.role, extra.expectLevel, extra.signer, extra.file], ['l4-sweep-ata', 'L4', user, ataSweep.file]);
 });

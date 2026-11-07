@@ -15,7 +15,9 @@
 //  3. One legacy tx, fee payer and only signer the user (buildSweep plain): per mint TransferChecked(all) into the
 //     collector's ATA, then System Transfer of every lamport but the fee to the collector, which never signs.
 //     The user's ATAs stay open at 0 (their rent is the ATAs', not the wallet's). This is the exact shape the
-//     engine's wallet.sweep rule proves; the S9 devnet shape (CreateIdempotent + CloseAccount) is not matched. -> .localnet/sweep/sweep.unsigned.b64 + scenario.json.
+//     engine's wallet.sweep rule proves today.
+//     Also emitted: the realistic S9 devnet shape (CreateIdempotent + TransferChecked + CloseAccount per mint) to a
+//     second collector without ATAs, from the same pre-state -> sweep-ata.unsigned.b64 (L4 once engine E16 lands). -> .localnet/sweep/sweep.unsigned.b64 + scenario.json.
 // Attack: the user signs the emitted bytes (rebuilt if the blockhash expired) and submits; fails unless the user
 // ends with 0 lamports and the collector holds every token.
 import { execFileSync } from 'node:child_process';
@@ -54,8 +56,32 @@ async function tokenAmount(rpc, ata) {
 }
 
 /** The sweep for the last setup, rebuilt from current balances on a fresh blockhash (unsigned wire). */
-export async function freshSweep(s, rpc = localRpc(s.rpcUrl)) {
-  return currentSweep(rpc, { user: s.user, collector: s.collector, mints: s.tokens.map((t) => ({ mint: t.mint, decimals: t.decimals })), plain: true });
+export async function freshSweep(s, rpc = localRpc(s.rpcUrl), { ata = false } = {}) {
+  const mints = s.tokens.map((t) => ({ mint: t.mint, decimals: t.decimals }));
+  if (ata) return currentSweep(rpc, { user: s.user, collector: s.ataSweep.collector, mints });
+  return currentSweep(rpc, { user: s.user, collector: s.collector, mints, plain: true });
+}
+
+// Simulates an unsigned sweep and fails unless the user ends at 0 (or exactly the fee) and the collector holds
+// every token. `closesUserAtas`: the realistic shape also closes the user's ATAs.
+async function simulateSweep(rpc, sw, user, collector, closesUserAtas) {
+  const watched = [user, collector, ...sw.tokens.flatMap((t) => [ataAddress(user, t.mint), ataAddress(collector, t.mint)])];
+  const sim = await rpc.call('simulateTransaction', [
+    sw.wire.toString('base64'),
+    { encoding: 'base64', sigVerify: false, replaceRecentBlockhash: false, commitment: 'confirmed', accounts: { encoding: 'base64', addresses: watched } }
+  ]);
+  if (sim.value.err) throw new Error(`sweep simulation failed: ${JSON.stringify(sim.value.err)} ${JSON.stringify(sim.value.logs)}`);
+  const post = sim.value.accounts;
+  const userPost = post[0]?.lamports ?? 0;
+  if (userPost !== 0 && userPost !== sw.fee) throw new Error(`simulation leaves the user ${userPost} lamports (fee ${sw.fee})`);
+  sw.tokens.forEach((t, i) => {
+    const acc = post[3 + 2 * i];
+    const got = acc ? parseTokenAccount(Buffer.from(acc.data[0], 'base64')).amount : null;
+    const userAta = post[2 + 2 * i];
+    const userAtaOk = closesUserAtas ? !userAta || userAta.lamports === 0 : userAta !== null;
+    if (got !== t.amount || !userAtaOk) throw new Error(`simulation: token ${t.mint} not fully swept (${got})`);
+  });
+  return { err: null, unitsConsumed: sim.value.unitsConsumed, userLamportsPost: userPost };
 }
 
 export async function setup(context = {}) {
@@ -68,10 +94,13 @@ export async function setup(context = {}) {
   mkdirSync(RUN_KEYS, { recursive: true, mode: 0o700 });
   keygen(join(KEYS, 'sweep-minter.json'), false);
   keygen(join(KEYS, 'sweep-collector.json'), false);
+  keygen(join(KEYS, 'sweep-collector-ata.json'), false);
   keygen(join(RUN_KEYS, 'user.json'), true);
   for (const m of MINTS) keygen(join(RUN_KEYS, `${m.key}.json`), true);
   const minter = readKeypair(join(KEYS, 'sweep-minter.json'));
   const collector = readKeypair(join(KEYS, 'sweep-collector.json'));
+  // The realistic (S9 devnet) shape needs a collector with no ATAs for these mints: the sweep creates them.
+  const ataCollector = readKeypair(join(KEYS, 'sweep-collector-ata.json'));
   const user = readKeypair(join(RUN_KEYS, 'user.json'));
   const mints = MINTS.map((m) => ({ ...m, kp: readKeypair(join(RUN_KEYS, `${m.key}.json`)) })).map((m) => ({ ...m, mint: m.kp.publicKey }));
 
@@ -96,23 +125,15 @@ export async function setup(context = {}) {
 
   const sw = await currentSweep(rpc, { user: user.publicKey, collector: collector.publicKey, mints, plain: true });
   if (sw.tokens.length !== mints.length) throw new Error(`user holds ${sw.tokens.length} of ${mints.length} airdrop tokens`);
-  const watched = [user.publicKey, collector.publicKey, ...sw.tokens.flatMap((t) => [ataAddress(user.publicKey, t.mint), ataAddress(collector.publicKey, t.mint)])];
-  const sim = await rpc.call('simulateTransaction', [
-    sw.wire.toString('base64'),
-    { encoding: 'base64', sigVerify: false, replaceRecentBlockhash: false, commitment: 'confirmed', accounts: { encoding: 'base64', addresses: watched } }
-  ]);
-  if (sim.value.err) throw new Error(`sweep simulation failed: ${JSON.stringify(sim.value.err)} ${JSON.stringify(sim.value.logs)}`);
-  const post = sim.value.accounts;
-  const userPost = post[0]?.lamports ?? 0;
-  if (userPost !== 0 && userPost !== sw.fee) throw new Error(`simulation leaves the user ${userPost} lamports (fee ${sw.fee})`);
-  sw.tokens.forEach((t, i) => {
-    const acc = post[3 + 2 * i];
-    const got = acc ? parseTokenAccount(Buffer.from(acc.data[0], 'base64')).amount : null;
-    if (got !== t.amount || post[2 + 2 * i] === null) throw new Error(`simulation: token ${t.mint} not fully swept (${got})`);
-  });
+  const simulation = await simulateSweep(rpc, sw, user.publicKey, collector.publicKey, false);
+  // Same user, same pre-state: the realistic shape (per mint CreateIdempotent + TransferChecked + CloseAccount, then
+  // all but fee and ATA rent), as the devnet "Claim airdrop" page asks. Offered as an extra case for engine E16.
+  const ata = await currentSweep(rpc, { user: user.publicKey, collector: ataCollector.publicKey, mints });
+  const ataSimulation = await simulateSweep(rpc, ata, user.publicKey, ataCollector.publicKey, true);
 
   mkdirSync(OUT, { recursive: true });
   writeFileSync(join(OUT, 'sweep.unsigned.b64'), sw.wire.toString('base64') + '\n');
+  writeFileSync(join(OUT, 'sweep-ata.unsigned.b64'), ata.wire.toString('base64') + '\n');
   const scenario = {
     scenario: 'sweep-local',
     createdAt: new Date().toISOString(),
@@ -136,13 +157,32 @@ export async function setup(context = {}) {
         ...sw.tokens.map(() => 'Token-2022 TransferChecked all -> collector ATA (pre-created by the attacker)'),
         'System Transfer all remaining lamports user -> collector'
       ],
-      simulation: { err: null, unitsConsumed: sim.value.unitsConsumed, userLamportsPost: userPost }
+      simulation
+    },
+    ataSweep: {
+      file: 'packages/scenarios/.localnet/sweep/sweep-ata.unsigned.b64',
+      collector: ataCollector.publicKey,
+      recentBlockhash: ata.recentBlockhash,
+      lastValidBlockHeight: ata.lastValidBlockHeight,
+      feePayer: user.publicKey,
+      signers: ata.compiled.signers,
+      lamports: ata.lamports,
+      fee: ata.fee,
+      ataRent: ata.ataRent,
+      solToCollector: ata.sol,
+      instructions: [
+        ...ata.tokens.flatMap(() => ['ATA CreateIdempotent(collector) paid by user', 'Token-2022 TransferChecked all -> collector', 'Token-2022 CloseAccount user ATA, rent -> collector']),
+        'System Transfer all remaining lamports user -> collector'
+      ],
+      simulation: ataSimulation,
+      note: 'realistic S9 devnet shape; L4 only once engine E16 lands'
     },
     expect: { rule: 'wallet.sweep', level: 'L4' },
-    keyFiles: { user: '.keys/localnet/sweep-run/user.json', collector: '.keys/localnet/sweep-collector.json', minter: '.keys/localnet/sweep-minter.json' }
+    keyFiles: { user: '.keys/localnet/sweep-run/user.json', collector: '.keys/localnet/sweep-collector.json', ataCollector: '.keys/localnet/sweep-collector-ata.json', minter: '.keys/localnet/sweep-minter.json' }
   };
   writeFileSync(join(OUT, 'scenario.json'), JSON.stringify(scenario, null, 2) + '\n');
   log(`sweep tx (unsigned, ${sw.wire.length} bytes) -> ${scenario.sweep.file}`);
+  log(`realistic sweep (ATA create + close, ${ata.wire.length} bytes, collector ${ataCollector.publicKey}) -> ${scenario.ataSweep.file}`);
   log(`expected: wallet.sweep L4 (all ${sw.lamports / 1e9} SOL and ${sw.tokens.length} tokens -> ${collector.publicKey}, not a signer); analyze with --wallet ${user.publicKey}`);
   return scenario;
 }
