@@ -1,0 +1,995 @@
+{
+  "schema": "kelvara.fixture.rules/v1",
+  "network": "mainnet",
+  "source": "Helius mainnet RPC via packages/core/scripts/record-rule-fixtures.ts",
+  "recordedAt": "2026-11-07T11:29:33.600Z",
+  "transactions": [
+    {
+      "signature": "2M85hTDgpEmPYrL42D1Eov28nZb6EUjFqkZouV2Ms9A9MDk4pe3csNFGYSmXEqmg9DADS8CidEbXwvbeqHBF8bY4",
+      "slot": 466428962,
+      "blockTime": 1794036636,
+      "why": "configTransactionCreate + proposalCreate + proposalApprove: a member proposes and votes on a config change",
+      "transaction": "AUNemPdHxiiGzopeoG0I8kixjmig87fSmveGY7dQ85Dg1LHubVQFbPzbOU3RGVAvDDoWIfFdqigwdPY7dXh8xQmAAQACBrRPLAyK67zBN5RFgE1SNi02vAfzkBb/2SMVxSN4lREqBar/c1fUrUkRqkjeefzgIpAWCfT+Xj9GB1QVngDw3DreT+vqGnU8ButD/02OY6chFLOdB3aQ5xfcVmYWMwFxvPDGALo0c5djwxGuNsoODv6N84jBkmIWMqKpSjLkkJEfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qKHPQFhBiAJ5cFrGqf3tXrg9jNr8WNECBdvunVjunTY2AwUFAQMAAAQvm+xX5IlLUScBAAAAAP+/N/fBWaH/Q8iA53NhNv/4O0zXpPUoRTGlN+1Y28pzAQAFBQECAAAEEdw8SeAebE+fCAAAAAAAAAAABQMBAAIJkCWkiLzYKvgAAA=="
+    },
+    {
+      "signature": "3mWtuFvETetm3WcacJ7WgCtALYeiXiQWv9FP9BMnaeY3LqvUc4uvmKuZPS2XgshhH64QJvbheXsssPSQcKXTo9nf",
+      "slot": 466429769,
+      "blockTime": 1794036808,
+      "why": "configTransactionExecute alone: the config actions are not in the transaction",
+      "transaction": "AYpsIzh6XaGEh89uT64f9EJKqvCMeli2RWc6zROEZLTMp5K6JfejgBYMUnpWChdud07Zn9L9B5EyeIKHK//x7AiAAQAECKgwD/TSGzuoyMJZcevszyPy/0om9s51lVE+w4CExg28v5cbWRCLW4WgT7CT8eIbTj/UxMj0h90JuVdSdp8N2MMFqv9zV9StSRGqSN55/OAikBYJ9P5eP0YHVBWeAPDcOt5P6+oadTwG60P/TY5jpyEUs50HdpDnF9xWZhYzAXG8AwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaBxM5H4iNouLFVXsiHrwku/H77tmyj9S+/aNSsnLeo8MYAujRzl2PDEa42yg4O/o3ziMGSYhYyoqlKMuSQkR9tCPe806gp/GY9+Jy2bswXfrzm5gDIU52vr8B3EL5APAQEAAUCtnEAAAQACQNQwwAAAAAAAAUCAAEMAgAAAKCGAQAAAAAABgYCAAMHAAUIcpL0vfyMJCgA"
+    },
+    {
+      "signature": "63aqAhgvL6QGqouKjrUSaeUMtfAxM6EcyQ5GyzvB4pXWjbYHQDRx2wWZNysmoWZSuYjgwx5Y5dRiG8qMLQRSdmLM",
+      "slot": 466493212,
+      "blockTime": 1794050400,
+      "why": "multisigCreateV2 + config create, two approvals and execute in one transaction",
+      "transaction": "BPxQDkinyF8JMGk8FpmA0EmJH1hMFuI/igFl08tFvjOobPBpe+1yWXvwODsAAol3fRRS6s/CWt1oxgGi5r8MUQLXhNCM2bMJa90/vvxzDsPn+W4DJ1h1Ij026474pqk+mdCPRMr7z9Vo3E62nUcrUq+f56EHKl3P2pzQwW3qGdcAUFocWcn8Az6Hiiz4mPBeUktXtaGlfhZDjt3UN3R3+JXBAQP2nLX3BwTjtyYfjFJGZ5/kGaPPnjdZZSuxSWVeCUGKwXj9TgIHEYr+yIiibN6AVGbufv67I175V7/UCvnqHZzLYhUGiCNBE98ksQ29UynW0SV3Cr0GKsDZuc0PbgiABAEDDWwB9h/8nk06ZTdbXI1LYz+k1EI/b7YW6KGtkUNrp8cHofwRmV+sxzzahwztAguO0XxGUKd+ZBRrocdIEpDpR8mlqlG9XOHSSsAB9pnHXMMvZlP11xWzi87QcJGCgurbXiC5ZUTOIdqaItxwYFci+7uArlWdNACM0d08fSNBh7SWKVIETPq+ZiLNG+/GoEvNjuKGaVSzDkPF0FfSK6KScuA+k9cyxEgkJ5DS27UxpAq9GfFsVeMTLP9Sd63J1pOrWoV3RMf9BS51n7deCuwEsnymbJjy1sjpxCjjKfAVi8UBq5pEUi0/dz7Ys3l3GOMtSXOXhIPr5cR0xj20tpI6q5quZ/sp5gqlBA1sD4E+idSjBgd/x5zehTWzYvD85mNXGN1vqN3GwSIN2EtywVXb8TRaWLm0dgGpid0YM3Hn/ITQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qJsauf6XL7JmHF5tDBmzlf/XIIUr9uPjgF2ovoZiGM9NIfX7YJALfGKENtC34akuDF/4D5gvoBnQmy2HiqrrVvkICwYMBQcDAAqoATLdx10o9YvpAAIAAwAAAKWqUb1c4dJKwAH2mcdcwy9mU/XXFbOLztBwkYKC6tteB6H8EZlfrMc82ocM7QILjtF8RlCnfmQUa6HHSBKQ6UfJB8HKT68kRZvT/k3EQUU6zvUaYAv41xgEkUdomD0tSVGXAgAAAAABbAH2H/yeTTplN1tcjUtjP6TUQj9vthbooa2RQ2unxwcBDAAAAHsibiI6IkZ1c2UifQsFBwQCAAqgAZvsV+SJS1EnAQAAAATHpIg+lcwIkvIfkpATNhu/3FYzq8YGnAeMju7t0VbjEgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADh9QUAAAAAAQEAAABsAfYf/J5NOmU3W1yNS2M/pNRCP2+2FuihrZFDa6fHBwEAAABsAfYf/J5NOmU3W1yNS2M/pNRCP2+2FuihrZFDa6fHBwALBQcIAgAKEdw8SeAebE+fAQAAAAAAAAAACwMHAggJkCWkiLzYKvgACwMHAQgJkCWkiLzYKvgACwcHAggEAAoGCHKS9L38jCQoCwUHCAQACghQy1Q1l3C7ugoCAAkMAgAAAPCSkAAAAAAAAA=="
+    },
+    {
+      "signature": "H7jKsHbL4kxFQBosukVPJHsa5j913n83yP8tcS9KeSp6ssVbCq6rvGwFRmpEkwu29itRn12Qs5gWaQnGPmGZG3E",
+      "slot": 466468171,
+      "blockTime": 1794045033,
+      "why": "benign proposalApprove on a durable nonce",
+      "transaction": "AQ3l2atbLFGwDI6WPk35PDOH9jXP34hBZTnA+XJYmdvwMrqhgFMCA46lDW29bim4O1pb4eh1jKJ3oyFCSUF6jA2AAQAEB/bt5c+DdTXfpEbG7aEHZJZTuGVU7m7dX7rH2H5Zknb7c4jAI8/UBKNOZLsaDpV5mEvz3LVCwwgXiAI7gdHjVb7MTklNmh7bZH71rys2pBJu+NbZYtVkGgDQgu0ntfmP0QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qLODR+nqp5nN/9X4CKlaziekSxa+h3A1E5i9dfflKtsCOESHVuu4vmbEjiyKB+0oSVPfbfn699OX9NieK6K+Hq0CAwMBBAAEBAAAAAUDBgACCZAlpIi82Cr4AAA="
+    },
+    {
+      "signature": "37bMKsFcZpvDz8cZiziCnqjEngoFAjKcGJGvG6xKKzXpbmNZz6Dcy9bRrBZ4YY3aQA5AszPy7gcDCLBQAK2hNoYY",
+      "slot": 466468292,
+      "blockTime": 1794045059,
+      "why": "benign vaultTransactionExecute on a durable nonce",
+      "transaction": "AWm4CfXM7NVBUk3Hh3Iou9/pi6ndJrzGKHXcleLrEEAbzHGAyHsleX3Jpc+F1iVMl/TNYZXbJq32hvSDcZrRVwWAAQAIEPbt5c+DdTXfpEbG7aEHZJZTuGVU7m7dX7rH2H5Zknb7c4jAI8/UBKNOZLsaDpV5mEvz3LVCwwgXiAI7gdHjVb7MTklNmh7bZH71rys2pBJu+NbZYtVkGgDQgu0ntfmP0SweeY0YWoqEZMU4srCDdeV/0e4XgUaf15lQyVNzwe+e5Np34XslwLBkObqLSxTxZ4jJzUV2OwRowJ13fwbTq7Gmjo+CtkG8GTJEnA/uH6hpsQH87g48kqFswqWIRILPnWWvdkf223xHLRWWLf5RN8kamlNuNhW3klIqdjfGxc10ul0fHuWAzDr7TEAtWnmjOsLOsVudRhbB6pCBEAoca8MAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAan1RcZLFaO4IqEX3PSl4jPA1wxRbIas0TYBi6pQAAABoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6izg0fp6qeZzf/V+AipWs4npEsWvodwNROYvXX35SrbAl/NJmCT5NywcqCIdLkBpnV7xd8DHjI60RqMDRqLmYRSAqj2kU6IobDiEBU+92OuKwDCuT0WwSTSwFN6EASAAAAGp9UXGSxcUSGMyUw9SvF/WNruCJuh/UTj29mKAAAAAAan1RcYx3TJKFZjmGkdXraLXrijm0ttXHNVWyEAAAAAPYGK8ww4EpXS/1jvNZyE58WRE0CbL72beAnXD2q5Lj8CCAMBCQAEBAAAAAoMCwIMAAMEBQYHDQ4PCMIIoVeZpBmrAA=="
+    },
+    {
+      "signature": "49BwdDv6smvBRXTPxb7Pn8twNRFGoN39brQxdQHDjKDn4wUdFdptERUrb5PGN4cBifmrtvc8GsQWri5LhtYyiCsT",
+      "slot": 466467503,
+      "blockTime": 1794044890,
+      "why": "vaultTransactionCreate + proposalCreate on a durable nonce, no vote",
+      "transaction": "AZ0c0eKxJh7lyLrpm4SQdlnz+lqa3Al1AV6sY8UK/ddRGw8mahLdU6wCRESUKhrUvLz4Qs/GN+V4QsaD2aZBQAKAAQADCHPyKaDhBOPiOg7pqjJbfUpNucJY5Vm1ue7sfvSv59doGvFyD/jl0kSgeHvnn6QCXEVlW0Tqvx04nHMWxUw1gU2zg0fp6qeZzf/V+AipWs4npEsWvodwNROYvXX35SrbAl/NJmCT5NywcqCIdLkBpnV7xd8DHjI60RqMDRqLmYRSzE5JTZoe22R+9a8rNqQSbvjW2WLVZBoA0ILtJ7X5j9EAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAan1RcZLFaO4IqEX3PSl4jPA1wxRbIas0TYBi6pQAAABoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6jxYeqkZzm9MH3I0ZrKwx9GnOZVNLqvFDBvks4lvT0DkwMFAwEGAAQEAAAABwUCAwAABaQCMPpOqNDi2tMAABUBAAABAQQILB55jRhaioRkxTiysIN15X/R7heBRp/XmVDJU3PB757k2nfheyXAsGQ5uotLFPFniMnNRXY7BGjAnXd/BtOrsaaOj4K2QbwZMkScD+4fqGmxAfzuDjySoWzCpYhEgs+dZa92R/bbfEctFZYt/lE3yRqaU242FbeSUip2N8bFzXS6XR8e5YDMOvtMQC1aeaM6ws6xW51GFsHqkIEQChxrwwKo9pFOiKGw4hAVPvdjrisAwrk9FsEk0sBTehAEgAAABqfVFxksXFEhjMlMPUrxf1ja7gibof1E49vZigAAAAAGp9UXGMd0yShWY5hpHV62i164o5tLbVxzVVshAAAAAAEFBwECAwQGBwAEAAMAAAAAAAcFAgQAAAUR3DxJ4B5sT58UAAAAAAAAAAAA"
+    }
+  ],
+  "observed": {
+    "2pB8stGiWkiLbYnULRtEYsRZqtmvVMSLHh4WE42xULqz": {
+      "kind": "nonce",
+      "account": {
+        "address": "2pB8stGiWkiLbYnULRtEYsRZqtmvVMSLHh4WE42xULqz",
+        "lamports": "1056640",
+        "version": "current",
+        "state": "initialized",
+        "authority": "8oc4CJRvgy5W9JjZD3pPHpJnuVbxwEuBZpEMBsCSNaej",
+        "nonce": "5s7vCw8HU6bG4T4Cbdd92W3fFuxEeGiqqjxKzCTigMD",
+        "lamportsPerSignature": "5000"
+      },
+      "origin": {
+        "address": "2pB8stGiWkiLbYnULRtEYsRZqtmvVMSLHh4WE42xULqz",
+        "signature": "KxGsqKDDZyp3RVaogUD1Q7TxSSZZE28AimDX1hpZonaW4CLcPB8cQtMctrcjFis4h7nYttjiqzfmXHCr5NCQVrJ",
+        "slot": 449490330,
+        "blockTime": 1790109958,
+        "complete": true,
+        "funder": "DYVBxgugdDa4u8JwTdeescdPLLGZKv3x5AT1fMXH48Gi",
+        "method": "createAccount",
+        "feePayer": "DYVBxgugdDa4u8JwTdeescdPLLGZKv3x5AT1fMXH48Gi"
+      }
+    },
+    "8mzq2ny2okgYyyZ4QHK991vtZAzDxyfgH4HpFuMx1XjK": {
+      "kind": "nonce",
+      "account": {
+        "address": "8mzq2ny2okgYyyZ4QHK991vtZAzDxyfgH4HpFuMx1XjK",
+        "lamports": "1056640",
+        "version": "current",
+        "state": "initialized",
+        "authority": "Hcuh7UNk6xcd7QzFRwMcEuA9kUs9mk4kJzGxEqQ1kCDY",
+        "nonce": "3ed27xFZcSQqkhZ7BRNgneGbPCaMHdq64bZREZ78GpJ2",
+        "lamportsPerSignature": "5000"
+      },
+      "origin": {
+        "address": "8mzq2ny2okgYyyZ4QHK991vtZAzDxyfgH4HpFuMx1XjK",
+        "signature": "42XdwXZN2PxCbArVXLHxZLERK9dDE3Edv9wQ6rDEGBxLDmAJGTvQocazPMPXtjgHHVCCGVVfYs2CiL43fHA9oK6B",
+        "slot": 449491003,
+        "blockTime": 1790110140,
+        "complete": true,
+        "funder": "DYVBxgugdDa4u8JwTdeescdPLLGZKv3x5AT1fMXH48Gi",
+        "method": "createAccount",
+        "feePayer": "DYVBxgugdDa4u8JwTdeescdPLLGZKv3x5AT1fMXH48Gi"
+      }
+    },
+    "CYs9k3denBsAPbcPKpTPKgVTpHESsv8uDr9LVDoUpAxR": {
+      "kind": "multisig",
+      "threshold": 2,
+      "timeLock": 0
+    },
+    "D5k5qaB24323hpp5NbVWgADNoXdPudEtPU3nFEEaDBKw": {
+      "kind": "multisig",
+      "threshold": 2,
+      "timeLock": 0
+    },
+    "P8GeoSTWBPv6AEzaEb2CaiAzEdcHt5NmsV6nxRjyCA5": {
+      "kind": "multisig",
+      "threshold": 2,
+      "timeLock": 0
+    },
+    "CjouFPf4i7FKHiNCgadBR5vLtUZjWYdwPy7yd5PDrtbH": {
+      "kind": "proposal",
+      "status": "CjouFPf4i7FKHiNCgadBR5vLtUZjWYdwPy7yd5PDrtbH: account does not exist"
+    },
+    "EkXQckd2o4WDfkncfmEcsrVJpBsBqABugbmWHuZgZKpt": {
+      "kind": "proposal",
+      "status": "Executed"
+    },
+    "FxpC8cgYh4aepTQH3TGe8mB4DYzBVEKqkbedZZ4ax8hh": {
+      "kind": "proposal",
+      "status": "Executed"
+    }
+  },
+  "calls": [
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "2pB8stGiWkiLbYnULRtEYsRZqtmvVMSLHh4WE42xULqz"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495854,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 1056640,
+            "data": [
+              "AQAAAAEAAABz8img4QTj4joO6aoyW31KTbnCWOVZtbnu7H70r+fXaAE+/kbmCBUZESB2EcjQq1Dk7dwY+Ur2330pFvJ/ewM4iBMAAAAAAAA=",
+              "base64"
+            ],
+            "owner": "11111111111111111111111111111111",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 80
+          }
+        ]
+      }
+    },
+    {
+      "method": "getSignaturesForAddress",
+      "params": [
+        "2pB8stGiWkiLbYnULRtEYsRZqtmvVMSLHh4WE42xULqz",
+        {
+          "limit": 1000,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": [
+        {
+          "signature": "29oumUQySmBmZyrYhwLYnfs3dAcS91c5pYbCrZVebfxJSf9tcofU6P9QEvNhCahTmPom6mskEdPChNFMwT7xNDQm",
+          "slot": 466467621,
+          "err": null,
+          "memo": null,
+          "blockTime": 1794044915,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 197
+        },
+        {
+          "signature": "49BwdDv6smvBRXTPxb7Pn8twNRFGoN39brQxdQHDjKDn4wUdFdptERUrb5PGN4cBifmrtvc8GsQWri5LhtYyiCsT",
+          "slot": 466467503,
+          "err": null,
+          "memo": null,
+          "blockTime": 1794044890,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 205
+        },
+        {
+          "signature": "GB7LFg26LFZeR5m4pYKjcv4UASxJMEbFSsVSVmJzoTCku9hJqKA9tbYA9EarnyxZLrTKrknot6TkGgxjWZzFdTM",
+          "slot": 455448904,
+          "err": null,
+          "memo": null,
+          "blockTime": 1791677593,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 519
+        },
+        {
+          "signature": "5q7JAP137QpuVpGZrMsGUJwP3G2rwUv6XspffLChJeJmtgp8AawuuCCozzDeDoc4ABdooo6CZYW51c81debge1di",
+          "slot": 455448823,
+          "err": null,
+          "memo": null,
+          "blockTime": 1791677575,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 233
+        },
+        {
+          "signature": "2vuAek3PkMEBBr6CTbGU9oCjhRzZ5ADPYo11HSVLbXnHnqjiV1vJEnTRLmcD6ow16yvzwnRatG43krkb69Rc6Kuz",
+          "slot": 451268309,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584927,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 10
+        },
+        {
+          "signature": "3A118xCuX7qt5ph8cLjZibYog1HyQ6kycQRCKgfcYv46NjQCfm6AtohnCooMcRh1TQy1ZUshVD46SqdbGwmGrrgz",
+          "slot": 451268206,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584900,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1012
+        },
+        {
+          "signature": "3TCT2Q6TqzN1vXFKw7yRJbaERSahCbQQYrjhEEKnNpdDzdTi3gVuTKiXuzbLHiGC5CybYkxQuSm1BQDuyEYXL89",
+          "slot": 451267072,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584598,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 791
+        },
+        {
+          "signature": "4eZsHAbPgowvAws54C1x3awRtAP4pNQZCXKYePHT7R6eXpANZkogpTPthPRz6WQoLEFyfxDb8YFKAXRopydzqSic",
+          "slot": 451266992,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584577,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1427
+        },
+        {
+          "signature": "TuHoc1EHKx4UEt7CG3GBNnPbey1v7rWYTSQC6RSnDyckK7HmbtWa61ZuNfQaYQGGCuoVPEQqxduzvnkP7fSrVex",
+          "slot": 451266888,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584548,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 793
+        },
+        {
+          "signature": "2FW8KgpZuoMUzpZeJG4WP2xiAGV8h4dHCcqjiEFZpmgf3vzCSfkktNkJZA3kZ9vW8wYUPzvoiPq1xr36VoDBNqFz",
+          "slot": 451266664,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584488,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 187
+        },
+        {
+          "signature": "46NEYV9XNqQbf721bGaa8tmkmUP9PPDZiDGBQpUjBUn17sDSTfGrAAx1eE41UyRSbSuPBhs9SYNPBydCDm8ZrAk2",
+          "slot": 450144956,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790283861,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 499
+        },
+        {
+          "signature": "2Gg7A7sYiRTY2LD9Ps7nWFMYAU13Y2kRbyZL3Q5GJB8s8kSTRhjrKqjVmfzBewsTPq3R92MERjS5wdm7JUNnpEH6",
+          "slot": 450144820,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790283823,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 279
+        },
+        {
+          "signature": "3THN7xvfPTCouqhxci6mfMNWCb35AQ9jni6tR1LLGvaxsVjkuaA9dcJR9boAddYzgTErjvMBqpBD3NkUPFerBoBB",
+          "slot": 450143431,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790283453,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 588
+        },
+        {
+          "signature": "3QWxbVX7jkw2VLZkWJFB2kikLn947WsFcwQ37Jz9sQ4F7XwX2r4mi53BDssgw1jrZtdfNfwoEh1zRVJbcwJE6PWa",
+          "slot": 450143365,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790283435,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 143
+        },
+        {
+          "signature": "2JuXiuvp7T1hEMf4B2keaBq56Ud4LHQJgAKm19kMS1GrGhWdTgaNqQ6TMqpv14k6BWeQHo9XkXTms21VvG1nKRtv",
+          "slot": 449646350,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151394,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 122
+        },
+        {
+          "signature": "4K4wLd4gcAQz2pfErg2Rvbd5vyRABcwBa53B3wv7iiBu8TiAB1Knp8AVkw3Z36Sf1YawK2ofSYFf1zChLFCNBMoB",
+          "slot": 449646281,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151375,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 22
+        },
+        {
+          "signature": "4c1pKXKKHWWubCxpsrky1V4z2NkRQUgBZAC3ytvZjXWyaEEE5WGBkhKZ9ZjoMghZPKbZgpsRXGGp2yhbKskPR8Gm",
+          "slot": 449646207,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151356,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 581
+        },
+        {
+          "signature": "3xE3acjn3n19ZviB8FPj9LcJNY3Wq5mM6fD9mvpG58rRaxFinxk7mert55GZPDrxMbSctPNFsgQbqpycYJFBwdBc",
+          "slot": 449646120,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151333,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 56
+        },
+        {
+          "signature": "2XQYjLEXDkAXSX8SdCCWcwYSQjmHuPoQMQ9pwLjWvqaViz7JUjrCGQGn79aTZwDDDCNiKEXZD8cEiGt5x7AkqTjF",
+          "slot": 449490755,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110073,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 763
+        },
+        {
+          "signature": "64vsBwrFh6SQCUZqtjTKHJfLetUxRdzjoHvXrCWZD9mPfwTwfAb5ntrLinohjdSJy2E28cD5v8T2spXxBVyKzWNq",
+          "slot": 449490677,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110052,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 206
+        },
+        {
+          "signature": "2nPFG2tqyH8DYZJ8XmwuvhFwQc9r8euju3EZyCZkhhBSad5p3ntBZeGCqKzeBV3hzWvYhmP5aLySEBknChUVERBw",
+          "slot": 449490526,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110012,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 318
+        },
+        {
+          "signature": "2nRN2mZvUB97d387omodkbBWCGNbBbnGWfyhasJc4grkPWxiC4WCanAuFPSzF88k4RMk3D47ooX4SRRkdX8Gs9dX",
+          "slot": 449490454,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790109992,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 981
+        },
+        {
+          "signature": "KxGsqKDDZyp3RVaogUD1Q7TxSSZZE28AimDX1hpZonaW4CLcPB8cQtMctrcjFis4h7nYttjiqzfmXHCr5NCQVrJ",
+          "slot": 449490330,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790109958,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 44
+        }
+      ]
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "KxGsqKDDZyp3RVaogUD1Q7TxSSZZE28AimDX1hpZonaW4CLcPB8cQtMctrcjFis4h7nYttjiqzfmXHCr5NCQVrJ",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "KxGsqKDDZyp3RVaogUD1Q7TxSSZZE28AimDX1hpZonaW4CLcPB8cQtMctrcjFis4h7nYttjiqzfmXHCr5NCQVrJ",
+            "4dJ1JTwiit1jhsZtTre4qmveio8KvSMr2xxVNUBsTadVc8Jz3o1iCd7J7YqJKJgXxAjztGeBLbNkCvyN4jD9u7Y6"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 2,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 3
+            },
+            "accountKeys": [
+              "DYVBxgugdDa4u8JwTdeescdPLLGZKv3x5AT1fMXH48Gi",
+              "2pB8stGiWkiLbYnULRtEYsRZqtmvVMSLHh4WE42xULqz",
+              "11111111111111111111111111111111",
+              "SysvarRecentB1ockHashes11111111111111111111",
+              "SysvarRent111111111111111111111111111111111"
+            ],
+            "recentBlockhash": "Cbhcde3pcdPjGQ4eCNHLtwYLdi55jXTusJ4xDo3bxUfa",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "11115hbAECwiHbsqbbhfPs4hXqJxuSvSeaXPpMijnghJc3xuxLggFKvXjwdW4WuJWbc2Nb",
+                "stackHeight": 1
+              },
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  1,
+                  3,
+                  4
+                ],
+                "data": "3eGCCAfFLXBpLb8U3M5z3DCK617xTCzmSfyprZg4pPGXQerfq",
+                "stackHeight": 1
+              }
+            ],
+            "addressTableLookups": []
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 10000,
+          "preBalances": [
+            11052716441,
+            0,
+            1,
+            42706560,
+            1009200
+          ],
+          "postBalances": [
+            11051649801,
+            1056640,
+            1,
+            42706560,
+            1009200
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success",
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 300,
+          "costUnits": 2370
+        },
+        "version": 0,
+        "slot": 449490330,
+        "transactionIndex": 44,
+        "blockTime": 1790109958
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "8mzq2ny2okgYyyZ4QHK991vtZAzDxyfgH4HpFuMx1XjK"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495857,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 1056640,
+            "data": [
+              "AQAAAAEAAAD27eXPg3U136RGxu2hB2SWU7hlVO5u3V+6x9h+WZJ2+ydal0iAg14vaDwOBZB1OYZ75+4zYlJRK4EyH8ShFGt/iBMAAAAAAAA=",
+              "base64"
+            ],
+            "owner": "11111111111111111111111111111111",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 80
+          }
+        ]
+      }
+    },
+    {
+      "method": "getSignaturesForAddress",
+      "params": [
+        "8mzq2ny2okgYyyZ4QHK991vtZAzDxyfgH4HpFuMx1XjK",
+        {
+          "limit": 1000,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": [
+        {
+          "signature": "37bMKsFcZpvDz8cZiziCnqjEngoFAjKcGJGvG6xKKzXpbmNZz6Dcy9bRrBZ4YY3aQA5AszPy7gcDCLBQAK2hNoYY",
+          "slot": 466468292,
+          "err": null,
+          "memo": null,
+          "blockTime": 1794045059,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 224
+        },
+        {
+          "signature": "H7jKsHbL4kxFQBosukVPJHsa5j913n83yP8tcS9KeSp6ssVbCq6rvGwFRmpEkwu29itRn12Qs5gWaQnGPmGZG3E",
+          "slot": 466468171,
+          "err": null,
+          "memo": null,
+          "blockTime": 1794045033,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 125
+        },
+        {
+          "signature": "38ezi3uhkPwwk22BnrP4DMDZKQN6ZXYd5Ckmb2xtKPmqKgE3RAHJtwWqarigder4xdvWNPvdgU2v9roY9umxZoMM",
+          "slot": 455449532,
+          "err": null,
+          "memo": null,
+          "blockTime": 1791677731,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 894
+        },
+        {
+          "signature": "21ZDtP4WyhaQHQWnkTducqaCtGD8F1VUjTp37hUy6iGDyg8hiA8npvLUN6JxBidWVqiSa2FFzkKw5kMcKxGDnWcW",
+          "slot": 455449444,
+          "err": null,
+          "memo": null,
+          "blockTime": 1791677710,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1341
+        },
+        {
+          "signature": "5fQqGykA7HGxtrwMPwN7tkqNvrNCcpwjhU23zyJLkpLp7fRzyVS9RxyZBhLydJRYmhJaoSpiUoaoG8RbJw2o5uGn",
+          "slot": 451267824,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584799,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 461
+        },
+        {
+          "signature": "2LLYGs5s5tiRQEke76gZcSWCjqawDeRyxY3mmUzQ58y5L4VnnRagEfUbTZWcH4bVGuB5maKypbYneEcjdGobmfKV",
+          "slot": 451267743,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584778,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 868
+        },
+        {
+          "signature": "5skJT8hJJBgkNwcAj2ucaDEMdMkKEe5ayq18PuAXNvXLsFYuXXKWHXErtVhUVTtNeC8bRRHC65srXP9DPrW1ZniD",
+          "slot": 451267606,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584741,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 327
+        },
+        {
+          "signature": "3SHaaYiFARoWmPtncPYYcFQdAmHdSotcbnLMT2c5gQWqfHVZkNeAsthfs4YWMXvZP2372cJCUoMrt6LkDhQuJMT8",
+          "slot": 451267510,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584715,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 740
+        },
+        {
+          "signature": "ZJNfiq1zdyUgDq2TXFUM6JSn1FB22cVwh68yBCFPSi7kE7TD4nnLtsQf8yPLH965NdpfrL3nTWtmaevYs7Djczd",
+          "slot": 451267417,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584690,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 369
+        },
+        {
+          "signature": "5HLyQ4nLpETSucwUSYfdYorgxhM4zK4PAebWVV7PyF3Mc1Xn51hBDpT1oZ2xpJFip1JXNmwNCc2gUphw11GX5pxH",
+          "slot": 451267335,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790584668,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 563
+        },
+        {
+          "signature": "L7WcycGGVguFuwKPmL2ibHm3BX1uU6eMeGRhV9T6xji2VKwNNayBKHkMxkiRcWDWWRcsB9mjFfAACNR49Y4rAqk",
+          "slot": 450146184,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790284190,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 882
+        },
+        {
+          "signature": "2MyBLpYqiwvjb1vmAYqwNfcpXVNDVh2ZDpaMbASonxT1yFVhoTUUWDdnA1NngqmaJYjKvumLQfKb8Z49M7EirYuG",
+          "slot": 450146000,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790284140,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 602
+        },
+        {
+          "signature": "4dNRMd8qNNfnmWBwXFyjEmZHxcfT8UFmvh5ctnfvyUaiCGDRFNWQxgtLbKSoxsozEYubRZCeTioZHBZDvzFujVbE",
+          "slot": 450145793,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790284085,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1160
+        },
+        {
+          "signature": "2H7RMaKSuBtNfU1QDpYNrz6NGKacYQfc9zvGFtKh3SemyswAvWBzceQ3mvsv3damuS6y1bhYeGhkGFJ6S8yMturi",
+          "slot": 450145725,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790284067,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1055
+        },
+        {
+          "signature": "3v8RST3CYqDKKz1uyxGX9ELuhrGFVqrbtKm5YSW3BFyjyDxsS7LmR4Lfcf5evfjrpA5UjAZPGWxVAswBBxEn16jb",
+          "slot": 449646825,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151520,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 369
+        },
+        {
+          "signature": "6QzdNwAP3Mbp4kxMeGtBNF5NVkpatr4xYrt7G5HM7ja6Hd7c7ZDUvTZjtQHvZ4ZU6BRdsqbCpo1ZzhUK2TZULja",
+          "slot": 449646736,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151496,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 616
+        },
+        {
+          "signature": "5uoYPW7naeV98odho5jWkqn9pgLmffbNeFk4DSRsSJdycMfYm2k6SVpsUtinhutPSkLKjpq2nV9SsEfaqsMvHfXD",
+          "slot": 449646663,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151476,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1263
+        },
+        {
+          "signature": "3djsyJFya7rfqWKXn1H31tUQrjokBgG18UB3P1qSVd9TAAa9RybcFutxiTpgLqN2MQ4txFXY1fNDvx6ZKLBokhpn",
+          "slot": 449646580,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790151455,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1031
+        },
+        {
+          "signature": "5qev21d1zcrXceUKoYEzBpwc2VKXzZ6VGA9AaFWSp7S3E4rqyc4qzKAoQxk2QQ3sfB7awf7qmzSqc8orMb4Pbtfw",
+          "slot": 449491327,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110225,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1003
+        },
+        {
+          "signature": "3VfunR84QGtTJEH8yn9pQe8trVtbhjVQDCykBmAdQ8oa58gmHVERyNwSv8RQ2mtAegWe7ceThwv1Egn4eXq77zHK",
+          "slot": 449491264,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110209,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 309
+        },
+        {
+          "signature": "4VShTuAUQwENXRKiamV7d4RVGC9c8fR5Px2V1URXP6rsiR3mk5ERioK8n2bXbPKH4WLCG66DzfcqGwb7edSdw9YM",
+          "slot": 449491147,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110178,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 11
+        },
+        {
+          "signature": "CirAD7tuPWBQWEDsoDNYGxwjrg7ASSE8icZLJjmFcnVPM8Hsa98cSnnT9c2Lc4VRTKqKyZBDKwG8J8AUbd29Q14",
+          "slot": 449491081,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110161,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 111
+        },
+        {
+          "signature": "42XdwXZN2PxCbArVXLHxZLERK9dDE3Edv9wQ6rDEGBxLDmAJGTvQocazPMPXtjgHHVCCGVVfYs2CiL43fHA9oK6B",
+          "slot": 449491003,
+          "err": null,
+          "memo": null,
+          "blockTime": 1790110140,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 883
+        }
+      ]
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "42XdwXZN2PxCbArVXLHxZLERK9dDE3Edv9wQ6rDEGBxLDmAJGTvQocazPMPXtjgHHVCCGVVfYs2CiL43fHA9oK6B",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "42XdwXZN2PxCbArVXLHxZLERK9dDE3Edv9wQ6rDEGBxLDmAJGTvQocazPMPXtjgHHVCCGVVfYs2CiL43fHA9oK6B",
+            "4fnNiime31K8RKCFosEb4jkepdDcVpE4Huuyc53N9kAkhyYozeaTwNGYXtd7ryrorvKk7MktxCN89G1gAjr1uzZB"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 2,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 3
+            },
+            "accountKeys": [
+              "DYVBxgugdDa4u8JwTdeescdPLLGZKv3x5AT1fMXH48Gi",
+              "8mzq2ny2okgYyyZ4QHK991vtZAzDxyfgH4HpFuMx1XjK",
+              "11111111111111111111111111111111",
+              "SysvarRecentB1ockHashes11111111111111111111",
+              "SysvarRent111111111111111111111111111111111"
+            ],
+            "recentBlockhash": "BTSSDwXwK7sQpNawANpubEpiLVbrAfU9LEnNWnY9FyYY",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "11115hbAECwiHbsqbbhfPs4hXqJxuSvSeaXPpMijnghJc3xuxLggFKvXjwdW4WuJWbc2Nb",
+                "stackHeight": 1
+              },
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  1,
+                  3,
+                  4
+                ],
+                "data": "3eGCCKUYySMmA181AKCEjS5rJxCop3z2dWUzRJr7RSEiz2UEe",
+                "stackHeight": 1
+              }
+            ],
+            "addressTableLookups": []
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 10000,
+          "preBalances": [
+            11051649801,
+            0,
+            1,
+            42706560,
+            1009200
+          ],
+          "postBalances": [
+            11050583161,
+            1056640,
+            1,
+            42706560,
+            1009200
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success",
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 300,
+          "costUnits": 2370
+        },
+        "version": 0,
+        "slot": 449491003,
+        "transactionIndex": 883,
+        "blockTime": 1790110140
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "CYs9k3denBsAPbcPKpTPKgVTpHESsv8uDr9LVDoUpAxR"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495869,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 1823720,
+            "data": [
+              "4HR5ukShT+wguWVEziHamiLccGBXIvu7gK5VnTQAjNHdPH0jQYe0lgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAAAAFsAfYf/J5NOmU3W1yNS2M/pNRCP2+2FuihrZFDa6fHB/8DAAAAofwRmV+sxzzahwztAguO0XxGUKd+ZBRrocdIEpDpR8kHpapRvVzh0krAAfaZx1zDL2ZT9dcVs4vO0HCRgoLq214HwcpPryRFm9P+TcRBRTrO9RpgC/jXGASRR2iYPS1JUZcC",
+              "base64"
+            ],
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 231
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "D5k5qaB24323hpp5NbVWgADNoXdPudEtPU3nFEEaDBKw"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495870,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 2498640,
+            "data": [
+              "4HR5ukShT+yWsSa4PudFvxjKelG9cp+i4+vb7UTvcqD5mqX3cx5zCwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAFAAAAAAAAAAAAAAAAAAAAAD8AwAAAHPyKaDhBOPiOg7pqjJbfUpNucJY5Vm1ue7sfvSv59doB6J9LxMuZJ/5kBRUgt3VMRX6bq7KyByd1szfHa6/7GgVB/bt5c+DdTXfpEbG7aEHZJZTuGVU7m7dX7rH2H5Zknb7BwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "base64"
+            ],
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 231
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "P8GeoSTWBPv6AEzaEb2CaiAzEdcHt5NmsV6nxRjyCA5"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495871,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 3500120,
+            "data": [
+              "4HR5ukShT+wN1xPCylkc183ucfvja80CbKas73hPussMajJFqkxyTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAACQAAAAAAAAAIAAAAAAAAAAD+BAAAAD+stxb/aMDNXJi2f6+b1nirRT0KMmbrrwzyPcBSwLc2B6gwD/TSGzuoyMJZcevszyPy/0om9s51lVE+w4CExg28B7RPLAyK67zBN5RFgE1SNi02vAfzkBb/2SMVxSN4lREqB/+/N/fBWaH/Q8iA53NhNv/4O0zXpPUoRTGlN+1Y28pzAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "base64"
+            ],
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 561
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "CjouFPf4i7FKHiNCgadBR5vLtUZjWYdwPy7yd5PDrtbH"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495877,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          null
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "EkXQckd2o4WDfkncfmEcsrVJpBsBqABugbmWHuZgZKpt"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495878,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 2468880,
+            "data": [
+              "Gl69u3SINSGzg0fp6qeZzf/V+AipWs4npEsWvodwNROYvXX35SrbAhQAAAAAAAAABYP07moAAAAA/wIAAABz8img4QTj4joO6aoyW31KTbnCWOVZtbnu7H70r+fXaPbt5c+DdTXfpEbG7aEHZJZTuGVU7m7dX7rH2H5Zknb7AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "base64"
+            ],
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 358
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "FxpC8cgYh4aepTQH3TGe8mB4DYzBVEKqkbedZZ4ax8hh"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466495879,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 2468880,
+            "data": [
+              "Gl69u3SINSEFqv9zV9StSRGqSN55/OAikBYJ9P5eP0YHVBWeAPDcOggAAAAAAAAABUjU7moAAAAA/wIAAACoMA/00hs7qMjCWXHr7M8j8v9KJvbOdZVRPsOAhMYNvLRPLAyK67zBN5RFgE1SNi02vAfzkBb/2SMVxSN4lREqAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "base64"
+            ],
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 358
+          }
+        ]
+      }
+    }
+  ]
+}

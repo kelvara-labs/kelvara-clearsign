@@ -1,0 +1,8 @@
+{
+  "2M85hTDgpEmPYrL42D1Eov28nZb6EUjFqkZouV2Ms9A9MDk4pe3csNFGYSmXEqmg9DADS8CidEbXwvbeqHBF8bY4": "configTransactionCreate + proposalCreate + proposalApprove: a member proposes and votes on a config change",
+  "3mWtuFvETetm3WcacJ7WgCtALYeiXiQWv9FP9BMnaeY3LqvUc4uvmKuZPS2XgshhH64QJvbheXsssPSQcKXTo9nf": "configTransactionExecute alone: the config actions are not in the transaction",
+  "63aqAhgvL6QGqouKjrUSaeUMtfAxM6EcyQ5GyzvB4pXWjbYHQDRx2wWZNysmoWZSuYjgwx5Y5dRiG8qMLQRSdmLM": "multisigCreateV2 + config create, two approvals and execute in one transaction",
+  "H7jKsHbL4kxFQBosukVPJHsa5j913n83yP8tcS9KeSp6ssVbCq6rvGwFRmpEkwu29itRn12Qs5gWaQnGPmGZG3E": "benign proposalApprove on a durable nonce",
+  "37bMKsFcZpvDz8cZiziCnqjEngoFAjKcGJGvG6xKKzXpbmNZz6Dcy9bRrBZ4YY3aQA5AszPy7gcDCLBQAK2hNoYY": "benign vaultTransactionExecute on a durable nonce",
+  "49BwdDv6smvBRXTPxb7Pn8twNRFGoN39brQxdQHDjKDn4wUdFdptERUrb5PGN4cBifmrtvc8GsQWri5LhtYyiCsT": "vaultTransactionCreate + proposalCreate on a durable nonce, no vote"
+}
