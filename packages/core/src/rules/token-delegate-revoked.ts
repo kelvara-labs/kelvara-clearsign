@@ -12,7 +12,7 @@ export const tokenDelegateRevokedRule: Rule = {
       const evidence=[instructionEvidence(ctx,txIndex,ix)];
       if(acc)evidence.push(accountEvidence(ctx,target));
       const id=ctx.report.addClaim({kind:"Fact",ruleId:this.id,level:"L1",statement:`Revoke removes delegate ${acc?.delegate ?? "(not read)"} from ${target}${acc ? `; previous allowance ${acc.delegatedAmount} base units` : ""}.`,evidenceIds:evidence});
-      ctx.report.addCapability({direction:"revoked",capability:"token.delegate",class:acc && acc.delegatedAmount>=((1n<<64n)-1n)*99n/100n?"fund_movement":"bounded_spend",holder:acc?.delegate??null,target,claimId:id});
+      ctx.report.addCapability({direction:"revoked",capability:"token.delegate",class:acc && acc.delegatedAmount>=((1n<<64n)-1n)*99n/100n?"fund_movement":"bounded_spend",holder:acc?.delegate??null,target,claimId:id,programId:ix.programAddress});
     }});
   }
 };

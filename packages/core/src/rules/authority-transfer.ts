@@ -64,8 +64,10 @@ export const authorityTransferRule: Rule = {
         }
         for (const t of transactions) ctx.claims.set(`controlGrant:${t}`, id);
       }
-      if (next) ctx.report.addCapability({ direction: "granted", capability, class: cls, holder: next, target, claimId: id });
-      if (old) ctx.report.addCapability({ direction: "revoked", capability, class: cls, holder: old, target, claimId: id });
+      // Loader targets are ProgramData/Buffer accounts: the graph resolves their program from state.
+      const programId = ix.programAddress === UPGRADEABLE_LOADER_PROGRAM ? null : ix.programAddress;
+      if (next) ctx.report.addCapability({ direction: "granted", capability, class: cls, holder: next, target, claimId: id, programId });
+      if (old) ctx.report.addCapability({ direction: "revoked", capability, class: cls, holder: old, target, claimId: id, programId });
     }
   }
 };

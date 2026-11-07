@@ -1,9 +1,9 @@
 // E7 / G3: no fixture from any program reaches L4, every report validates (G4 checks), and every
-// ruleId implemented so far fires on at least one real session and stays silent on at least one.
+// ruleId implemented so far (rules plus the E11 capability graph: preview, recovery paths) fires on at least one real session and stays silent on at least one.
 // Transactions that use lookup tables are resolved with the runtime's own meta.loadedAddresses.
 import { beforeAll, expect, it } from "vitest";
 import type { Address } from "@solana/kit";
-import { accountFromRpc, parseTransaction, RULE_IDS, type ResolvedAccount, type RuleState, type Session, type SessionTransaction } from "../src/index.js";
+import { accountFromRpc, parseTransaction, ALL_RULE_IDS as RULE_IDS, type ResolvedAccount, type RuleState, type Session, type SessionTransaction } from "../src/index.js";
 import { poisonManifest, requestCase } from "./address-helpers.js";
 const devnet = poisonManifest.cases.find((c) => c.kind === "poisoning" && c.network === "devnet")!;
 import { analysisTiming, analyze, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";

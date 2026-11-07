@@ -104,7 +104,12 @@ export interface CapabilityInput {
   holder: string | null;
   target: string | null;
   claimId: string;
+  /** Program that enforces the power (for the capability preview and recovery paths). Not in the report. */
+  programId?: string | null;
 }
+
+/** A capability as added, before ranking, with the program it belongs to. */
+export type CapabilityRecord = Omit<Capability, "rank"> & { programId: string | null };
 
 export interface PreviewInput {
   authority: string | null;
@@ -137,6 +142,7 @@ export class ReportBuilder {
   private readonly claims: Claim[] = [];
   private readonly claimById = new Map<string, Claim>();
   private readonly caps: Omit<Capability, "rank">[] = [];
+  private readonly capPrograms = new Map<string, string | null>();
   private readonly previews: PreviewInput[] = [];
   private simulation: Report["simulation"] = { status: "not_run", summary: "Simulation was not run.", evidenceIds: [] };
 
@@ -203,8 +209,15 @@ export class ReportBuilder {
   addCapability(input: CapabilityInput): string {
     if (!this.claimById.has(input.claimId)) throw new ReportError(`capability claim ${input.claimId} does not resolve`);
     const id = `k${this.caps.length + 1}`;
-    this.caps.push({ id, ...input, score: capabilityScore(input.class) });
+    const { programId = null, ...rest } = input;
+    this.caps.push({ id, ...rest, score: capabilityScore(input.class) });
+    this.capPrograms.set(id, programId);
     return id;
+  }
+
+  /** Capabilities added so far, in insertion order (unranked). */
+  listCapabilities(): readonly CapabilityRecord[] {
+    return this.caps.map((c) => ({ ...c, programId: this.capPrograms.get(c.id) ?? null }));
   }
 
   addPreview(input: PreviewInput): string {

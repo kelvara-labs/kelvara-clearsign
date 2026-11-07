@@ -33,6 +33,12 @@ export interface RuleState {
   squads?: Record<string, SquadsAccount>;
   /** Wallet transfer history (readAddressRuleState) for the address rules; must be for `wallet`. */
   history?: import("../state/history.js").WalletHistory;
+  /** Program accounts (readProgram) by program id: upgrade authority and ProgramData for the graph. */
+  programs?: Record<string, import("../state/reads.js").ProgramState>;
+  /** Old-authority history (readAuthorityHistory) by `${programId}:${authority}`, for the preview fallback. */
+  authorityHistory?: Record<string, import("../state/authority-history.js").AuthorityHistory>;
+  /** Simulation results by transaction index, for the preview's simulate-and-diff fallback. */
+  simulations?: Record<number, import("../simulate/index.js").SimulationResult>;
 }
 
 export interface RuleContext {

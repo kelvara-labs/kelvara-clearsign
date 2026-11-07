@@ -205,6 +205,7 @@ export {
   type EvidenceInput,
   type ClaimInput,
   type CapabilityInput,
+  type CapabilityRecord,
   type PreviewInput,
   type ReportSessionInput,
   type ValidationResult
@@ -222,6 +223,7 @@ export {
   runRules,
   RULES,
   RULE_IDS,
+  ALL_RULE_IDS,
   describeConfigAction,
   proposalViews,
   vaultInstructions,
@@ -235,3 +237,28 @@ export {
   type MultisigView,
   type DurableNonceUse
 } from "./rules/index.js";
+
+// M2 / E11: capability graph. Authority maps from IDLs, capability preview (map, then simulate-and-diff
+// and old-authority history as Conditional, else Unknown) and recovery paths through the upgrade
+// authority. runRules runs it after the rules; pass `authorityMaps` and RuleState.programs/simulations/
+// authorityHistory to feed it.
+export {
+  buildAuthorityMap,
+  classifyInstruction,
+  describeInstruction,
+  addCapabilityPreviews,
+  addRecoveryPaths,
+  runCapabilityGraph,
+  capabilityProgram,
+  GRAPH_RULE_IDS,
+  PREVIEW_RULE_ID,
+  RECOVERY_RULE_ID,
+  TOKEN_TAGS,
+  type AuthorityMap,
+  type AuthorityMapEntry,
+  type AuthorityTie,
+  type AuthorityTieKind,
+  type BuildAuthorityMapOptions,
+  type CapabilityGraphOptions
+} from "./graph/index.js";
+export { readAuthorityHistory, authorityCallsOfTransaction, type AuthorityHistory, type AuthorityCall, type ReadAuthorityHistoryOptions } from "./state/authority-history.js";
