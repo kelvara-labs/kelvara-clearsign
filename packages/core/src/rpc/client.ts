@@ -11,6 +11,11 @@ export const HELIUS_RPC_HOSTS: Readonly<Record<"mainnet" | "devnet", string>> = 
   devnet: "devnet.helius-rpc.com"
 };
 export const LOCALNET_RPC_URL = "http://localhost:8899";
+/** Literal RPC URL prefixes (G10: every network target is a literal string in the bundle; only the key is appended). */
+export const HELIUS_RPC_URL_PREFIXES: Readonly<Record<"mainnet" | "devnet", string>> = {
+  mainnet: "https://mainnet.helius-rpc.com/?api-key=",
+  devnet: "https://devnet.helius-rpc.com/?api-key="
+};
 
 /** Default rate caps (requests per second). Mainnet may never exceed MAINNET_MAX_RPS. */
 export const MAINNET_MAX_RPS = 8;
@@ -65,7 +70,7 @@ export function rpcUrlFor(network: RpcNetwork, heliusApiKey?: string): string {
   if (network === "localnet") return LOCALNET_RPC_URL;
   const key = (heliusApiKey ?? "").trim();
   if (!key) throw new RpcError("refused", "rpcUrlFor", `no Helius API key for ${network}`);
-  return `https://${HELIUS_RPC_HOSTS[network]}/?api-key=${encodeURIComponent(key)}`;
+  return HELIUS_RPC_URL_PREFIXES[network] + encodeURIComponent(key);
 }
 
 /** Which network an endpoint belongs to, or null when it is not Helius or localnet (refused). */

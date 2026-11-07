@@ -53,6 +53,7 @@ export {
   MAINNET_MAX_RPS,
   DEFAULT_RPS,
   HELIUS_RPC_HOSTS,
+  HELIUS_RPC_URL_PREFIXES,
   LOCALNET_RPC_URL,
   createRpcAccountReader,
   accountFromRpc,
@@ -267,3 +268,17 @@ export { readAuthorityHistory, authorityCallsOfTransaction, type AuthorityHistor
 // M4 / E14: one-call analysis (state reads, simulation, rules, capability graph, "what simulation shows").
 // Online with an RpcClient (Helius or localnet); offline without one. Used by the CLI and the extension.
 export { analyzeSession, addSimulationSummary, squadsTransactionPda, type AnalyzeOptions, type AnalyzeResult, type ReadNote } from "./analyze/index.js";
+
+// M7 / E15: default explanations: a fixed template for every ruleId (no AI; the on-device AI layer is cut).
+export {
+  EXPLAIN_VERSION,
+  RULE_TEMPLATES,
+  FALLBACK_TEMPLATE,
+  KIND_LEADS,
+  templateFor,
+  explainClaim,
+  explainReport,
+  type RuleTemplate,
+  type ClaimExplanation,
+  type ReportExplanation
+} from "./explain/index.js";
