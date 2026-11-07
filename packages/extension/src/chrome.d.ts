@@ -11,6 +11,10 @@ declare namespace chrome {
     }
     function sendMessage(message: unknown): Promise<unknown>;
     function getURL(path: string): string;
+    function openOptionsPage(): Promise<void>;
+    const onInstalled: {
+      addListener(cb: (details: { reason: string }) => void): void;
+    };
     const onMessage: {
       addListener(
         cb: (message: unknown, sender: MessageSender, sendResponse: (response?: unknown) => void) => boolean | void
@@ -21,6 +25,7 @@ declare namespace chrome {
     interface StorageArea {
       get(keys?: string | string[] | null): Promise<Record<string, unknown>>;
       set(items: Record<string, unknown>): Promise<void>;
+      remove(keys: string | string[]): Promise<void>;
     }
     const local: StorageArea;
   }

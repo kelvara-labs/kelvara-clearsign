@@ -58,6 +58,15 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   return verdict;
 }
 
+// First install with no key: open the options page so the user can add one.
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason !== "install") return;
+  chrome.storage.local
+    .get([...SETTINGS_KEYS])
+    .then((raw) => (readSettings(raw).heliusApiKey ? undefined : chrome.runtime.openOptionsPage()))
+    .catch(() => {});
+});
+
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
   // Only our own content scripts, inside a tab.
   if (sender.id !== chrome.runtime.id || !sender.tab) return false;

@@ -58,7 +58,7 @@ describe("service worker policy", () => {
 
   it("no Helius key: held and blocked, and says so", async () => {
     const v = await decide(req, { ...s, heliusApiKey: "" }, engine(0));
-    expect(v).toEqual({ allow: false, level: null, reason: "no Helius API key set in options" });
+    expect(v).toEqual({ allow: false, level: null, reason: expect.stringContaining("no Helius API key set: request held and blocked") });
   });
   it("levels: L0/L1 pass, L4 block, L2/L3 block without a report UI, ask the UI when present", async () => {
     expect((await decide(req, s, engine(0))).allow).toBe(true);

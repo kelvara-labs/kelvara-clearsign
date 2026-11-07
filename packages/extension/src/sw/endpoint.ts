@@ -26,7 +26,7 @@ export function pickEndpoint(chain: Chain | null, configured: Network, heliusKey
   if (!network) return { ok: false, reason: `unsupported chain ${chain}` };
   if (network === "localnet") return { ok: true, network, url: LOCALNET_RPC };
   const key = (heliusKey ?? "").trim();
-  if (!key) return { ok: false, reason: "no Helius API key set in options" };
+  if (!key) return { ok: false, reason: "no Helius API key set: request held and blocked. Add a key in Kelvara SignGuard options" };
   return { ok: true, network, url: `${HELIUS_RPC[network]}?api-key=${encodeURIComponent(key)}` };
 }
 
