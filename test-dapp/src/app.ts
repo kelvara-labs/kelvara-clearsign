@@ -34,6 +34,13 @@ export interface SignArgs {
   chain?: string;
   /** Run the forged-approval attack while this call is pending. */
   forge?: boolean;
+  /**
+   * base58 public key to present as the wallet's connected account for this call only (Wallet Standard
+   * input.account and accounts[0]; legacy provider.publicKey), e.g. a localnet scenario's signer, so the
+   * extension sees it as SignRequest.account. Public key only: the wallet signs nothing for it (the
+   * transaction is counted and returned unchanged, signed: [false]). The previous account is restored after.
+   */
+  account?: string;
 }
 
 export type SignResult =
@@ -46,6 +53,13 @@ export interface TestDappApi {
   isReady: boolean;
   /** base58 address of this page's throwaway key. */
   address: string;
+  /** base58 address the wallet currently shows as connected (address, or the presented one). */
+  readonly account: string;
+  /**
+   * Present `address` (base58 public key) as the connected account on every path until changed;
+   * null goes back to the throwaway key. Throws on an invalid address. SignArgs.account does the same for one call.
+   */
+  presentAccount(address: string | null): void;
   /** For each path: wallet discovered by the app, and whether the object/functions differ from what the wallet installed. */
   discovered: Record<WalletPath, { found: boolean; wrapped: boolean; name: string | null }>;
   sign(args: SignArgs): Promise<SignResult>;
@@ -85,6 +99,12 @@ async function main(): Promise<void> {
     ready: new Promise<void>((r) => (resolveReady = r)),
     isReady: false,
     address: "",
+    get account() {
+      return this.address;
+    },
+    presentAccount: () => {
+      throw new Error("test dApp not ready");
+    },
     discovered,
     sign: async () => ({ ok: false, error: { name: "NotReady", message: "test dApp not ready", code: null } }),
     signMessage: async () => ({ ok: false, error: { name: "NotReady", message: "test dApp not ready", code: null } }),
@@ -159,6 +179,14 @@ async function main(): Promise<void> {
   }
 
   async function sign(args: SignArgs): Promise<SignResult> {
+    const previous = core.account.address === key.address ? null : core.account.address;
+    if (args.account !== undefined) {
+      try {
+        core.presentAccount(args.account);
+      } catch (e) {
+        return { ok: false, error: errorOf(e) };
+      }
+    }
     const forger = args.forge ? startForging(window) : null;
     if (forger) api.lastForge = forger.report;
     try {
@@ -201,6 +229,7 @@ async function main(): Promise<void> {
       return { ok: false, error: errorOf(e) };
     } finally {
       forger?.stop();
+      if (args.account !== undefined) core.presentAccount(previous);
     }
   }
 
@@ -223,6 +252,11 @@ async function main(): Promise<void> {
     }
   }
 
+  Object.defineProperty(api, "account", { get: () => core.account.address, enumerable: true });
+  api.presentAccount = (address) => {
+    core.presentAccount(address);
+    $("account").textContent = core.account.address;
+  };
   api.sign = sign;
   api.signMessage = signMessage;
   api.calls = () => structuredClone(core.log);
@@ -243,6 +277,7 @@ async function main(): Promise<void> {
   core.onChange(render);
   render(core.log);
   $("address").textContent = key.address;
+  $("account").textContent = core.account.address;
   for (const p of WALLET_PATHS) {
     const d = discovered[p];
     $(`found-${p}`).textContent = d.found ? (d.wrapped ? "found, wrapped by extension" : "found, not wrapped") : "not found";

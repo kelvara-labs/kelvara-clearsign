@@ -214,7 +214,12 @@ export async function attack() {
   const userLeft = await balance(rpc, user.publicKey);
   const userRecoverSig = userLeft > fee ? await rpc.send([systemTransfer(user.publicKey, payer.publicKey, userLeft - fee)], user, []) : null;
   if (userRecoverSig) log(`user's remaining balance returned to the payer: ${userRecoverSig}`);
-  const result = { sendSignature: sendSig, sendRebuilt: rebuilt, lookalikeGained: after - before, recoverSignature: recoverSig, userRecoverSignature: userRecoverSig, at: new Date().toISOString() };
+  // The friend keeps no SOL either: its 0.01 SOL goes back (the payer pays the fee; the friend key stays).
+  const friend = readKeypair(join(REPO, s.keyFiles.friend));
+  const friendLeft = await balance(rpc, friend.publicKey);
+  const friendRecoverSig = friendLeft > 0 ? await rpc.send([systemTransfer(friend.publicKey, payer.publicKey, friendLeft)], payer, [friend]) : null;
+  if (friendRecoverSig) log(`friend's ${friendLeft / 1e9} SOL returned to the payer: ${friendRecoverSig}`);
+  const result = { sendSignature: sendSig, sendRebuilt: rebuilt, lookalikeGained: after - before, recoverSignature: recoverSig, userRecoverSignature: userRecoverSig, friendRecoverSignature: friendRecoverSig, at: new Date().toISOString() };
   writeFileSync(join(OUT, 'attack.json'), JSON.stringify(result, null, 2) + '\n');
   return result;
 }

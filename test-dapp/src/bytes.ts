@@ -22,6 +22,26 @@ export function b58encode(bytes: Uint8Array): string {
   return out;
 }
 
+/** base58 to bytes; throws on a character outside the alphabet. */
+export function b58decode(str: string): Uint8Array {
+  const bytes: number[] = [];
+  for (const ch of str) {
+    let carry = B58.indexOf(ch);
+    if (carry < 0) throw new Error(`invalid base58 character ${JSON.stringify(ch)}`);
+    for (let j = 0; j < bytes.length; j++) {
+      carry += bytes[j]! * 58;
+      bytes[j] = carry & 0xff;
+      carry >>= 8;
+    }
+    while (carry) {
+      bytes.push(carry & 0xff);
+      carry >>= 8;
+    }
+  }
+  for (let i = 0; i < str.length && str[i] === "1"; i++) bytes.push(0);
+  return Uint8Array.from(bytes.reverse());
+}
+
 export function b64encode(bytes: Uint8Array): string {
   let s = "";
   for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
