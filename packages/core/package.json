@@ -10,7 +10,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "test:decode": "vitest run test/ingest.test.ts test/decode-*.test.ts",
-    "test:rules": "vitest run test/rules-*.test.ts && node ../../tools/selfcheck/src/pending.mjs G3 M2",
+    "test:rules": "vitest run test/rules-*.test.ts",
     "test:contract": "vitest run test/report-*.test.ts",
     "test:determinism": "node ../../tools/selfcheck/src/pending.mjs G9 M7",
     "fixtures:decode-spike": "node scripts/fetch-decode-spike.mjs",

@@ -17,6 +17,7 @@ import type { RpcClient } from "../rpc/client.js";
 import { createRpcAccountReader, type RpcAccountReader } from "../rpc/methods.js";
 import { readAddressRuleState } from "../rules/address-history.js";
 import { runRules } from "../rules/index.js";
+import { lamportsText, tokenText } from "../util/amounts.js";
 import { readTokenRuleState } from "../rules/read-token-state.js";
 import type { RuleState } from "../rules/types.js";
 import { simulateSessionTransaction, type SimulationResult } from "../simulate/index.js";
@@ -114,22 +115,6 @@ function rulesPass(session: Session, decoded: DecodedInstruction[][], opts: Anal
   runRules({ session, decoded, decoder: opts.decoder, report, state, authorityMaps: opts.authorityMaps });
   return report;
 }
-
-const lamportsText = (l: bigint): string => {
-  const neg = l < 0n;
-  const a = neg ? -l : l;
-  const whole = a / 1_000_000_000n;
-  const frac = (a % 1_000_000_000n).toString().padStart(9, "0").replace(/0+$/, "");
-  return `${neg ? "-" : "+"}${whole}${frac ? "." + frac : ""} SOL`;
-};
-const tokenText = (amount: bigint, decimals: number | null): string => {
-  const neg = amount < 0n;
-  const a = neg ? -amount : amount;
-  if (decimals === null || decimals === 0) return `${neg ? "-" : "+"}${a}${decimals === null ? " (raw units)" : ""}`;
-  const p = 10n ** BigInt(decimals);
-  const frac = (a % p).toString().padStart(decimals, "0").replace(/0+$/, "");
-  return `${neg ? "-" : "+"}${a / p}${frac ? "." + frac : ""}`;
-};
 
 /** Short, factual "what simulation shows" line per transaction, each backed by a simulation evidence. */
 export function addSimulationSummary(report: ReportBuilder, sims: Record<number, SimulationResult>, txCount: number): void {
