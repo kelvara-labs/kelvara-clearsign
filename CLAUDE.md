@@ -2,7 +2,8 @@
 
 ## Mission
 Build the MVP in PLAN.md within 48 hours. Optimize for a green `pnpm selfcheck`
-and a working Drift demo, not for feature count.
+and the two demo stories (Squads upgrade hijack, Token-2022 trap token), not for
+feature count.
 
 This repo is built by a team of agents run by Orca orchestration: one coordinator
 and four workers, each worker in its own git worktree and branch. Find your role
@@ -16,7 +17,7 @@ Only the owner edits a path. Need a change elsewhere? Ask its owner by Orca mess
 | coordinator | `main` | PLAN.md, CLAUDE.md, PROGRESS.md, NEEDS_HUMAN.md, root config (package.json, pnpm-workspace.yaml, tsconfig*, esbuild config), all merges | M0, M8 |
 | engine | `team/engine` | packages/core, packages/idls, packages/cli | M1, M2, M3, core half of M4 |
 | extension | `team/extension` | packages/extension, test-dapp | M5, extension half of M7 |
-| scenarios | `team/scenarios` | packages/scenarios, programs/helix-perps, fixtures, DEMO.md | localnet half of M4, M6, demo assets for M8 |
+| scenarios | `team/scenarios` | packages/scenarios (incl. programs/), fixtures, DEMO.md, tools/browser | localnet scenarios in M4, M6, demo assets for M8 |
 | verifier | `team/verifier` | tools/selfcheck, SELFCHECK.md, e2e specs under test-dapp/e2e | gate runner from M0 on; runs and reports every gate |
 
 Shared files with special rules:
@@ -33,7 +34,7 @@ Shared files with special rules:
 2. Engine, scenarios and verifier start right after M0.
 3. Extension starts after M0 on capture, hold and decide (hook, bridge, shadow-root UI,
    fail-closed timer) against a stub of the engine API. It wires in the real engine only
-   after the hour-24 checkpoint: the engine catches the Drift pattern on localnet (G6).
+   after the hour-24 checkpoint: the engine catches both demo scenarios on localnet (G6).
 4. Coordinator merges worker branches into `main` after each closed task group, rebasing
    workers when the engine contract changes.
 

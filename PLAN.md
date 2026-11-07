@@ -2,20 +2,24 @@ Kelvara SignGuard — 48-Hour MVP Build Plan
 Nov 6, 2026 · @Andrzej
 This plan lets a coding agent build and verify the Kelvara SignGuard MVP in 48 hours: a paid Chrome extension that holds every Solana signing request until it has shown, with evidence, what that signature authorizes.
 Goal and definition of done
-In 48 agent-hours, ship a Chrome extension that catches every Solana signing request in the page, analyzes the exact bytes against Helius RPC, and blocks a Drift-style admin takeover with an evidence-backed report. Done means the self-check scoreboard is green and the demo runs end to end on devnet.
+In 48 agent-hours, ship a Chrome extension that catches every Solana signing request in the page, analyzes the exact bytes against Helius RPC, and stops the signatures that simulation-based scanners pass: ones that move no tokens now but hand over power for later. The 2-minute demo shows two of them, one for protocol admins and one for everyday users. Done means the self-check scoreboard is green and both demo stories run end to end on devnet.
+The thesis
+Blockaid-style scanners mostly simulate a transaction and show what moves right now: balances, approvals, known-bad addresses. SignGuard reads what a signature authorizes: who gains control of what, and when it can be used. Its findings are the cases where simulation says "0 tokens move" or "normal swap" and the transaction is still dangerous. Before the pitch claims that scanners miss a scenario, M6 checks it in a Blockaid-powered wallet (Phantom) and records what it showed. The pitch claims only what was observed.
 What ships
 • Chrome extension (Manifest V3). Hooks Wallet Standard wallets and the legacy Phantom, Solflare and Backpack providers. Holds signTransaction, signAllTransactions, signAndSendTransaction and sendTransaction until the user chooses Block or Sign anyway.
-• Analysis engine. Decodes System, SPL Token, Token-2022, the upgradeable loader, Squads v4 (including the transaction inside a proposal) and the core protocol IDLs. Applies durable-nonce, authority and multi-transaction rules, ranks granted and revoked capabilities by risk, and emits claims labeled Fact, Derived, Conditional or Unknown, each tied to evidence.
-• Report UI. Risk summary, ranked capability changes, claims that open their evidence, and the message hash to match on a Ledger.
+• Analysis engine. Decodes System, SPL Token, Token-2022 (including mint extensions), the upgradeable loader and Squads v4 (including the transaction inside a proposal). Applies durable-nonce, authority, Token-2022 and multi-transaction rules, ranks granted and revoked capabilities by risk, and emits claims labeled Fact, Derived, Conditional or Unknown, each tied to evidence.
+• Report UI. Risk summary, ranked capability changes, a "what simulation shows" line next to "what you actually authorize", claims that open their evidence, and the message hash to match on a Ledger.
 • License gate. An offline-verified signed license key unlocks the full report; without one, the user sees the risk level and top finding.
-• Scenario kit. Localnet scripts that recreate the Drift pattern with the real Squads v4 program, a devnet setup for the video, and a replay of Drift's two real attack transactions.
+• Scenario kit. Two scenarios, each on localnet and devnet: the Squads upgrade hijack (admins) and the Token-2022 trap token (users). Plus a replay of Drift's two real attack transactions for the opening shot.
 • Self-check. One command, pnpm selfcheck, runs ten gates and writes a scoreboard.
 Definition of done
 [ ] pnpm selfcheck passes all ten gates from a clean clone
-[ ] Drift replay: both real attack transactions rated critical, with durable-nonce, Squads approve-and-execute and UpdateAdmin claims
-[ ] Localnet reenactment: the extension stops the malicious pre-sign before the wallet is ever called (Playwright)
-[ ] Benign requests (SOL transfer, token transfer, swap) pass with a low rating and a small notice, no modal
-[ ] The localnet report matches the example JSON contract: schema valid, every claim and evidence reference resolves
+[ ] Admin story: approving the "Q4 fee update" proposal is rated critical, with the inner SetAuthority on the program's upgrade authority, the durable nonce and its outsider funder, and "simulation: 0 tokens move"
+[ ] User story: buying the trap token is rated high, naming the permanent delegate and freeze authority, while simulation shows a normal purchase
+[ ] Both stories: the extension stops the request before the wallet is ever called (Playwright), and the attack really works when the extension is off
+[ ] Drift replay: both real attack transactions rated critical
+[ ] Benign requests (SOL transfer, token transfer, swap of a plain SPL token) pass with a low rating and a small notice, no modal
+[ ] The report matches the example JSON contract: schema valid, every claim and evidence reference resolves
 [ ] The same input produces a byte-identical report
 [ ] DEMO.md lets you rebuild the devnet video setup in under 15 minutes
 Rules that cannot bend
@@ -69,11 +73,11 @@ kelvara-signguard/
     extension/         MV3: hook, bridge, service worker, report UI, license
     cli/               kelvara analyze | replay
     scenarios/         localnet + devnet scripts (dev-only dependencies)
-  programs/helix-perps/  small Anchor demo protocol with admin-only instructions
+  packages/scenarios/programs/  prebuilt demo program (.so), the upgrade target; no Anchor
   test-dapp/           static page + fixture wallet for end-to-end tests
   fixtures/            real transaction bytes + golden reports
   tools/selfcheck/     gate runner + scoreboard
-Stack: Node 22, pnpm workspaces, TypeScript (strict), @solana/kit for transactions and RPC, Codama's dynamic parsers for IDL decoding, zod for the report schema, @noble/hashes and @noble/ed25519, esbuild with four entry points, vitest and Playwright. Localnet uses solana-test-validator; the demo program uses Anchor.
+Stack: Node 22, pnpm workspaces, TypeScript (strict), @solana/kit for transactions and RPC, Codama's dynamic parsers for IDL decoding, zod for the report schema, @noble/hashes and @noble/ed25519, esbuild with four entry points, vitest and Playwright. Localnet uses solana-test-validator; there is no Anchor program.
 Core programs and IDLs
 Seven P0 programs cover the demo and the most common admin takeover paths; P1 and P2 add breadth if time allows. Every program ID below is re-checked on-chain by gate G5 before anything ships. IDLs come from three places: official Codama clients for native programs, Anchor IDL accounts read over Helius RPC, and pinned commits of each protocol's open-source repo.
 Priority
@@ -112,10 +116,10 @@ dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH
 Anchor IDL, pinned
 Curated: admin-only instructions
 P0
-Helix Perps (demo)
-Set by the scenario deploy
-Generated by anchor build
-Derived from IDL account relations, then reviewed
+Demo program (upgrade target)
+Set by the scenario deploy (a prebuilt program, no Anchor)
+None; only its upgrade authority matters
+Loader-level: upgrade, set authority, close
 P1
 Compute Budget
 ComputeBudget111111111111111111111111111111
@@ -159,14 +163,14 @@ How each IDL is processed (pnpm idls:build)
 5. Map capabilities: curated maps for P0, keyword rules for the rest (admin, authority, oracle, withdraw guard, pause, fee, weight, market). Every mapped capability carries its confidence.
 Fallback: if a conversion fails, a small built-in Anchor decoder (8-byte discriminator plus Borsh arguments) handles that program. Anything still unknown is reported as Unknown, never as safe.
 48-hour timeline
-Nine milestones run back to back, each closed by its gate. The one hard checkpoint is hour 24: the engine must catch the Drift pattern on localnet before extension work starts.
+Nine milestones run back to back, each closed by its gate. The one hard checkpoint is hour 24: the engine must catch both demo scenarios on localnet before the extension wires in the real engine.
 Bars are drawn to scale in agent-hours. If a milestone runs 50% over, the agent cuts from the cut list instead of pushing the checkpoint.
 Day 1: the engine (M0–M4)
-Day 1 builds and proves the engine with no browser involved. By hour 24 the CLI must flag the Drift pattern on a live local validator.
+Day 1 builds and proves the engine with no browser involved. By hour 24 the CLI must flag the upgrade hijack and the trap token on a live local validator.
 M0 · Bootstrap and toolchain (hours 0–2)
 Goal: an empty but green pipeline, so every later task lands in a checked repo.
 • Create the pnpm monorepo and packages from the repo layout: TypeScript strict, vitest, esbuild, eslint.
-• Install Playwright's bundled Chromium, the Agave CLI (solana-test-validator) and Anchor. Anchor gets 60 minutes; if it fails, switch to Plan B (Risks) and log it.
+• Install Playwright's bundled Chromium and the Agave CLI (solana-test-validator, solana program dump and deploy). No Anchor.
 • Write CLAUDE.md from section 9, plus PROGRESS.md, NEEDS_HUMAN.md and LICENSES.md.
 • Build tools/selfcheck with all ten gates registered. A gate with nothing built yet reports PENDING, never PASS.
 • Check that localnet, Helius devnet and Helius mainnet respond with the key from .env; record which methods and Helius APIs work on each, and the plan's rate limits.
@@ -190,6 +194,8 @@ Goal: findings with evidence, in exactly the shape of the example API response.
     1. lifetime.durable_nonce and nonce.staged_by_outsider (the nonce account's oldest transaction names its funder)
     2. squads.approve_and_execute, squads.threshold_met_in_session, squads.zero_timelock_execution, squads.unknown_proposal, Squads config changes
     3. authority.transfer (SPL SetAuthority, loader authority, protocol admin changes), token.delegate_granted (exact delegate and amount; unlimited or near-max allowance ranks high), token.delegate_revoked, Token-2022 permanent delegate
+    3b. Token-2022 trap rules on any mint the user receives or buys: token2022.permanent_delegate (the creator can move or burn the user's balance), token.freeze_authority (the creator can freeze it), token2022.transfer_hook (a program runs on every transfer), token2022.default_frozen and token2022.non_transferable. Read the mint and its extensions with getAccountInfo; never trust the dApp's label.
+    3c. sim.power_without_value: when simulation shows no balance change (or only the expected purchase) but the session grants a capability, say so in plain words. This is the line the demo points at.
     4. session.dependency, session.partial_execution, ordering outcomes
     5. tx.foreign_fee_payer, and intent.label_mismatch only when a label exists, such as a memo
 • Capability diff: granted powers ranked by damage, revoked powers by defensive loss, recovery paths through the upgrade authority, using rubric capability-risk-v1 from the example.
@@ -199,19 +205,20 @@ Gates: G3, where every rule has passing positive and negative cases. G4, where t
 M3 · Core IDLs and capability maps (hours 16–21)
 Goal: every P0 program in section 3 is loaded and verified; P1 if time allows.
 • pnpm idls:build: fetch, pin, convert, then write the registry (program ID to root, source and hash).
-• Curated maps for System, SPL Token, Token-2022, the loader, Squads and Drift. Derive the Helix map from IDL relations, then review it.
+• Curated maps for System, SPL Token, Token-2022 (with its extensions), the loader, Squads, and Drift (only for the replay).
 • Keyword rules for the rest, labeled low confidence.
 Gate: G5. Every program ID is an executable account, every IDL hash matches the manifest, every curated capability names an instruction that exists, and each P0 IDL decodes at least 3 real fixtures.
-M4 · State, simulation, localnet scenario (hours 21–24)
-Goal: end day 1 with the CLI flagging the Drift pattern on a live local validator.
+M4 · State, simulation, localnet scenarios (hours 21–24)
+Goal: end day 1 with the CLI flagging both demo scenarios on a live local validator.
 • RPC layer with timeouts, retries with backoff, and a per-session cache.
-• Reads: multisig, proposal, vault transaction, nonce, program data, and protocol state decoded with IDL account types.
-• simulateTransaction with sigVerify: false, post-state for listed accounts and inner instructions. Diff decoded fields such as admin.
-• Localnet: solana-test-validator cloning Squads v4 and its two config accounts from mainnet (Squads quickstart), plus Helix Perps.
-• Scenario script: 5 members, threshold 2, time lock 0, the vault set as Helix admin, nonce accounts on two members' keys funded by an outsider, and the two pre-signed transactions.
-Gate: G6. kelvara analyze on the pair returns critical with the durable-nonce, approve-and-execute, admin-change and capability claims. Executing the pair then really changes Helix's admin on-chain.
+• Reads: multisig, proposal, vault transaction, nonce, program data, and mints with their Token-2022 extensions.
+• simulateTransaction with sigVerify: false, post-state for listed accounts and inner instructions. Keep the simulated balance changes so the report can show "what simulation shows".
+• Localnet: solana-test-validator cloning Squads v4 and its two config accounts from mainnet (Squads quickstart), plus the demo program from packages/scenarios/programs.
+• Admin scenario (pnpm scenario:admin-local): deploy the demo program; a council of 3 members, threshold 2, time lock 0; the Squads vault set as the program's upgrade authority; an outsider-funded nonce account on Member A's key; and a proposal whose memo says "Q4 fee update" while its vault transaction calls the loader's SetAuthority to give the upgrade authority to the attacker.
+• User scenario (pnpm scenario:trap-local): a Token-2022 mint "$SHINY" with a permanent delegate and a freeze authority held by the creator, and a partially signed "buy" transaction in which the user pays 1 SOL and the seller sends 50,000 $SHINY.
+Gate: G6. kelvara analyze returns critical for the admin approval (inner SetAuthority, durable nonce, outsider funder, zero time lock) and high for the trap purchase (permanent delegate, freeze authority), each with the "simulation shows" line. Then the attacks really run: executing the proposal changes the program's upgrade authority, and the creator pulls the bought $SHINY back with the permanent delegate.
 Day 2: the extension and the real test (M5–M8)
-Day 2 wraps the engine in the paid extension and turns the Drift story into a demo you can record.
+Day 2 wraps the engine in the paid extension and turns both stories into a demo you can record.
 M5 · Extension: capture, hold, decide (hours 24–32)
 Goal: a real signing request is held, analyzed, then blocked or passed, and on Block the wallet is never called.
 • Start from sol-sign-preview (Building blocks, item 1): port its hook and capture code to TypeScript and apply the listed fixes. Extension work on capture, hold and decide can start right after M0 against a stub of the engine API; only wiring the real engine waits for the hour-24 checkpoint.
@@ -226,12 +233,12 @@ Goal: a real signing request is held, analyzed, then blocked or passed, and on B
 Gate: G7, run in headless Chromium through Playwright's bundled chromium channel, which can load extensions headless (Playwright). A malicious batch shows Critical, and Block leaves the wallet's call count at 0. Sign anyway calls it once with identical bytes. A benign transfer shows no modal. Timeout and iframe removal both block. Both Wallet Standard paths and the legacy provider are caught. A page that forges an approval message gets a rejection and the wallet is never called.
 Real-wallet check (not a gate, logged in PROGRESS.md): in the Kelvara wallet browser on devnet, a request from Solflare shows our report before Solflare opens, and Block means Solflare never opens. You do the Solflare side.
 M6 · Real-test assets (hours 32–38)
-Goal: both demo stories run from scripts, and every transaction in them is real.
-• Drift replay. kelvara replay <sig1> <sig2> fetches both transactions with getTransaction, stores raw bytes and sha256 as fixtures, and analyzes them as one session. The extension's Replay tab runs the same flow for the video. Historical account state can't be read over RPC, so replay relies on the transactions and their execution record. The first transaction creates the proposal, and execution in the same transaction as the second approval proves the time lock was zero.
-• Localnet reenactment. pnpm scenario:drift-local builds the council, stages the nonces, has the fake "Helix Ops" page request the pre-sign, and runs the analyzer. Then it executes the pair and checks that the admin changed.
+Goal: both demo stories run from scripts on devnet, every transaction in them is real, and the scanner comparison is recorded.
+• Devnet scenarios. pnpm scenario:admin-devnet and pnpm scenario:trap-devnet do the same as the localnet versions on devnet, using the real Squads v4 devnet program. Each serves its attacker page on localhost (the "Ops Portal" and the "$SHINY launch" page) and writes the keys you import into Solflare.
+• Scanner comparison. In a separate browser profile with Phantom (Blockaid-powered) in testnet mode on devnet, run both scenarios up to Phantom's confirmation screen and screenshot what it shows. Record it in PROGRESS.md; DEMO.md and the pitch use only what was observed. Never approve in Phantom.
+• Drift replay. kelvara replay <sig1> <sig2> fetches both transactions over Helius, stores raw bytes and sha256 as fixtures, and analyzes them as one session. The extension's Replay tab runs the same flow for the 10-second opening shot.
 • Delegation test. On SolSub's allowances view in the Kelvara wallet browser, grant and then revoke an allowance. The report must name the delegate, the token and the amount, and the revoke must show as a revoked power. Store both transactions as fixtures once you have signed them; if SolSub has no devnet, this runs on mainnet with a tiny amount only after you approve it in NEEDS_HUMAN.md.
-• Devnet video setup. pnpm scenario:drift-devnet deploys Helix, creates the multisig on the real Squads v4 devnet program, stages nonces, serves the attacker page on localhost, and writes the member keys you import into your wallet. It also checks whether Squads' open-source multisig-verifier can point at devnet, for an on-screen Squads approval.
-Gate: G8. The replay session is critical with durable-nonce, approve-and-execute and UpdateAdmin claims, and the localnet scenario passes end to end.
+Gate: G8. The Drift replay session is critical with durable-nonce, approve-and-execute and UpdateAdmin claims, and both devnet scenarios pass end to end from their scripts.
 M7 · Explanations, evidence UI, hardening (hours 38–44)
 Goal: the report reads well, proves every sentence, and leaks nothing.
 • Templates for every ruleId. These are the default explanation.
@@ -245,7 +252,7 @@ Goal: anyone can rebuild the demo from the repo.
 • README.md, a known-limitations list and dist/kelvara-signguard.zip.
 • A final run from a clean clone, git clean -xfd && pnpm install && pnpm selfcheck, then commit SELFCHECK.md.
 Gate: all ten gates PASS from the clean clone.
-Cut list if behind schedule, top first: on-device AI; P2 IDLs; P1 IDLs except Jupiter; the devnet script (keep localnet); partial-execution scenarios; the license gate (keep a stub). Never cut G4, G6, G7 or G8.
+Cut list if behind schedule, top first: on-device AI; P1 and P2 IDLs; the SolSub delegation test; the Replay tab (keep the CLI replay and G8); trap rules beyond permanent delegate and freeze authority; partial-execution scenarios; the license gate (keep a stub). Never cut G4, G6, G7 or G8, or either demo scenario.
 Self-check system
 One command, pnpm selfcheck, runs ten gates in order and writes SELFCHECK.md. The agent may not close a milestone until that milestone's gates pass.
 Gate
@@ -273,17 +280,17 @@ IDLs and program IDs are real and pinned
 pnpm test:registry
 Program IDs executable; hashes match; curated maps name real instructions; each P0 IDL decodes 3 or more fixtures
 G6 Localnet
-The Drift pattern is caught, and the attack really works
+Both demo scenarios are caught, and both attacks really work
 pnpm test:localnet
-Critical with the required claims, then execution changes the admin
+Admin approval critical and trap purchase high, with the required claims; then the upgrade authority changes and the creator pulls the tokens back
 G7 Extension
 The browser path blocks before the wallet
 pnpm test:e2e
 Block, pass, timeout, tamper and hook-path cases pass headless
 G8 Real test
-Drift's real attack transactions are flagged
+Drift's real attack transactions are flagged, and both devnet scenarios run
 pnpm test:replay
-Critical, with durable-nonce, approve-and-execute and UpdateAdmin claims
+Drift replay critical with durable-nonce, approve-and-execute and UpdateAdmin claims; both devnet scripts pass
 G9 Determinism
 Same input, same report; AI can't add claims
 pnpm test:determinism
@@ -304,40 +311,41 @@ How the agent uses it
 • A flaky test is a bug: fix it, never rerun until green.
 • Golden reports change only with a reason written in PROGRESS.md.
 • G5 and G8 use cached real fixtures by default and live RPC with --live. Both modes must pass at M8.
-The real test and the pitch video
-The video rests on two real tests: Drift's actual attack transactions, and a live reenactment on devnet with the real Squads v4 program and a real wallet. Nothing on screen is mocked.
-Test 1: Drift, replayed from mainnet history. BlockSec published both attack transactions (BlockSec):
+The real tests and the pitch video
+The video shows two live stories on devnet with a real wallet, opened by one real mainnet replay. Nothing on screen is mocked.
+Opening: Drift, replayed from mainnet history. BlockSec published both attack transactions (BlockSec):
 • Create and approve: 2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H
 • Approve and execute: 4BKBmAJn6TdsENij7CsVbyMVLJU1tX27nfrMM1zgKv1bs2KJy6Am2NqdA3nJm4g9C6eC64UAf5sNs974ygB9RsN1. BlockSec lists its steps as AdvanceNonceAccount, proposalApprove, vaultTransactionExecute, then UpdateAdmin.
-• After the takeover (optional third fixture, from Watchtower's Drift replay check): the new admin's first admin call, initialize_spot_market, 4a5962Rdqd9pkXtk9DMQ9ZYhdGb2k9gPw71GvukJgELhxbCY5gm1c1hhKdwuGefyqJ3XMvihUTDNDn3qbXnst82X. It shows what the stolen admin was used for; it is not part of G8.
-The agent fetches both with getTransaction over Helius RPC, and G8 checks that the decoded steps match. Helius keeps full history; the raw bytes are then cached as fixtures, so tests run offline. The extension gets a Replay tab, using the user's Helius key, that runs the same engine as kelvara replay.
-Test 2: live reenactment on devnet. Squads v4 is already deployed on devnet (Squads quickstart). pnpm scenario:drift-devnet creates a council of five keys you control, with threshold 2 and time lock 0. It makes the vault the Helix Perps admin and has an outsider key stage nonce accounts on Members A and C. Finally it serves a fake "Helix Ops Portal" on localhost that asks a member to pre-sign a "Q4 fee update". If Squads' open-source multisig-verifier can point at devnet, a member also approves the malicious proposal there, so the video shows Kelvara inside a real Squads flow.
-Shot list (about 2 minutes)
+• After the takeover (optional third fixture, from Watchtower's Drift replay check): the new admin's first admin call, initialize_spot_market, 4a5962Rdqd9pkXtk9DMQ9ZYhdGb2k9gPw71GvukJgELhxbCY5gm1c1hhKdwuGefyqJ3XMvihUTDNDn3qbXnst82X. Not part of G8.
+The agent fetches them with getTransaction over Helius; the raw bytes are cached as fixtures, so tests run offline.
+Story 1, protocol admins: the Squads upgrade hijack. A council of three on the real Squads v4 devnet program, threshold 2, time lock 0, controls the upgrade authority of a deployed program. A fake "Ops Portal" asks Member A to approve the "Q4 fee update" proposal, using a durable nonce an outsider funded. Inside the proposal, the vault transaction hands the program's upgrade authority to the attacker. Simulating the approval moves nothing, which is why it looks safe.
+Story 2, everyday users: the Token-2022 trap token. A "$SHINY launch" page sells 50,000 $SHINY for 1 SOL. Simulation shows exactly that: a normal purchase. The mint has a permanent delegate and a freeze authority held by the creator, so after the sale the creator can take the tokens back or freeze them.
+Shot list (2 minutes)
 Time
 Scene
 On screen
 0:00–0:10
 Hook
-"April 1, 2026: $285M left Drift. No bug. Two signatures."
-0:10–0:35
-Replay
-Paste Drift's two real signatures into the Replay tab. Critical: durable nonce, approve and execute, UpdateAdmin to the attacker.
-0:35–1:05
-Live block
-Member A clicks "Sign Q4 fee update". Kelvara holds it before the wallet opens: admin handover, nonce staged by an outsider, ranked capabilities. Block.
-1:05–1:20
-Proof
-Open a claim: instruction, decoded arguments, IDL path, account state.
-1:20–1:45
-Without Kelvara
-Extension off. Members A and C sign; the attacker executes; the devnet explorer shows Helix's admin changed.
-1:45–2:00
-Normal use
-A plain transfer passes with a small notice. Close on "Know what you sign."
+Drift's two real transactions in the Replay tab: "April 2026: $285M left Drift. No exploit, and no tokens moved when they signed."
+0:10–0:45
+Admin: blocked
+Member A clicks Approve on "Q4 fee update" in the Ops Portal. Kelvara holds it before Solflare opens. Critical: "Hands control of program 7Xk… to an unknown key", durable nonce funded by an outsider, "Simulation: 0 tokens move". Open one claim to show the decoded inner instruction. Block.
+0:45–1:00
+Admin: without Kelvara
+Extension off. Members A and B approve, the attacker executes, and the devnet explorer shows the new upgrade authority.
+1:00–1:35
+User: blocked
+On the $SHINY page, Buy. Simulation line: "you pay 1 SOL, you get 50,000 $SHINY". Kelvara: High, "the creator can take these tokens back anytime, and can freeze them". Block.
+1:35–1:50
+User: without Kelvara
+Extension off. The purchase goes through; the creator runs one command and the 50,000 $SHINY leave the buyer's wallet.
+1:50–2:00
+Close
+A plain SOL transfer passes with a small notice. "Simulation shows what moves. Kelvara shows what you give away."
 Recording notes
-• Run pnpm scenario:drift-devnet --reset before each take for a fresh multisig and fresh nonces.
+• Run pnpm scenario:admin-devnet --reset and pnpm scenario:trap-devnet --reset before each take for fresh accounts and nonces.
 • Record in the Kelvara wallet browser (tools/browser/launch.sh) with Solflare on devnet, after the real-wallet check in M5 has passed.
-• Label the replay as real mainnet transactions and the reenactment as devnet. Saying exactly what is real is part of the pitch.
+• Label the Drift replay as real mainnet transactions and both stories as devnet. Name a scanner only if the M6 comparison showed it passing that scenario.
 Harness rules
 Superseded: the live rules are in CLAUDE.md (Orca team version). The single-agent text below is kept for reference.
 Paste this into CLAUDE.md at the repo root. It turns the plan into a loop the agent can run unattended and audit as it goes.
@@ -384,19 +392,19 @@ When
 What you do
 Why
 Before hour 0
-Provide a machine with Node 22 and internet access to npm, GitHub and Helius; allow installing Rust, the Agave CLI and Anchor
+Provide a machine with Node 22 and internet access to npm, GitHub and Helius; allow installing Rust and the Agave CLI
 Toolchain for M0
 Before hour 0
 Generate the license-signing keypair offline; give the agent only the public key
 Paid license gate (M5); the private key never enters the repo
 By hour 6
 Put your Helius API key in .env as HELIUS_API_KEY (never in chat or a commit)
-Drift replay fixtures (M1, M6)
+All mainnet and devnet calls, including the Drift replay fixtures (M1, M6)
 By hour 32
-Fund a devnet keypair with about 5 SOL (estimate: program deploy plus accounts) and save it as .keys/devnet-payer.json
-Deploying Helix and creating accounts on devnet (M6)
+Fund a devnet keypair with about 5 SOL (estimate: program deploy, multisig, mint and accounts) and save it as .keys/devnet-payer.json
+Deploying the demo program, the Squads council and the $SHINY mint on devnet (M6)
 By hour 40
-In the Kelvara wallet browser, unlock Solflare, switch it to devnet and import the Member A and C keys the script writes; approve the SolSub grant and revoke by hand
+In the Kelvara wallet browser, unlock Solflare, switch it to devnet and import Member A's key and the buyer key the scripts write; approve the SolSub grant and revoke by hand. Separately, install Phantom in a fresh profile for the scanner comparison
 A hand check of the hooks with a real wallet before recording
 Hours 44–48
 Review SELFCHECK.md, then record with DEMO.md
@@ -409,15 +417,15 @@ Fallback
 A real wallet slips past the hooks
 G7 passes with the fixture wallet, but a hand test with Backpack, Solflare or Phantom shows no modal
 sol-sign-preview already catches Solflare, Phantom, Backpack and OKX on real dApps, so start from it and keep its diagnostics popup to see which path a wallet used. If one wallet still slips, record with a verified wallet and list the gap. Nonce Kit documents the same limit: wallets that sign through unhooked methods bypass it silently (Nonce Kit).
-Anchor fails in the harness
-anchor build still failing after 60 minutes
-Plan B demo, no custom program: the vault holds a token's mint authority and the Squads config, and the attack takes those instead of a protocol admin.
+Squads devnet setup fails
+scenario:admin-devnet errors on the Squads v4 devnet program
+Record Story 1 on localnet with cloned Squads v4 instead, and say so on screen.
 Codama can't convert an IDL
 The M1 spike throws
 The built-in Anchor decoder for that program; Unknown for anything left.
 No RPC history for Drift's transactions
 getTransaction returns null
-Check the key and the Helius plan's history limit; the bytes are cached once fetched. Without them, the localnet and devnet reenactments carry the video.
+Check the key and the Helius plan's history limit; the bytes are cached once fetched. Without them, the video opens on Story 1 instead.
 Helius rate limits or credits run out
 429 responses
 Backoff and per-session caching; all tests run on localnet or cached fixtures; Watchtower scans only the Drift window, since Parsed Events scans cost credits.
