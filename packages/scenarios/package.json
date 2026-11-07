@@ -13,6 +13,9 @@
     "fixtures:verify": "node scripts/fixtures-verify.mjs",
     "localnet:up": "node scripts/localnet.mjs up",
     "localnet:check": "node scripts/localnet.mjs check",
-    "localnet:down": "node scripts/localnet.mjs down"
+    "localnet:down": "node scripts/localnet.mjs down",
+    "test": "node --test test/",
+    "scenario:admin-local": "node scripts/admin-local.mjs",
+    "scenario:admin-local:attack": "node scripts/admin-local.mjs --attack-only"
   }
 }
