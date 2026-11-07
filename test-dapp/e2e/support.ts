@@ -334,8 +334,19 @@ export async function reportLevel(frame: Frame): Promise<string | null> {
   return frame.locator(SEL.level).first().getAttribute("data-kelvara-level");
 }
 
+/**
+ * Bring Sign anyway into view like a user would (a long report puts it below the fold) and wait until the
+ * anti-clickjacking gate arms it (data-armed="true": fully visible and unobscured for its minimum time).
+ */
+export async function armSignAnyway(frame: Frame): Promise<void> {
+  const btn = frame.locator(SEL.signAnyway).first();
+  await btn.scrollIntoViewIfNeeded();
+  await expect(btn, "Sign anyway never armed while fully in view (visibility gate)").toHaveAttribute("data-armed", "true", { timeout: 5_000 });
+}
+
 /** Hold-to-confirm: press Sign anyway for its data-hold-ms (+ margin), then release. */
 export async function holdSignAnyway(ext: Ext, frame: Frame): Promise<void> {
+  await armSignAnyway(frame);
   const btn = frame.locator(SEL.signAnyway).first();
   const holdMs = Number((await btn.getAttribute("data-hold-ms")) ?? "0");
   expect(holdMs, "L3 Sign anyway must declare data-hold-ms (hold to confirm)").toBeGreaterThan(0);

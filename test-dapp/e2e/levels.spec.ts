@@ -9,7 +9,7 @@
 // wallet presents the scenario's signer (SignArgs.account). Benign keeps a real mainnet fixture: its level does not
 // depend on chain state.
 import {
-  calls, CASES_MISSING, expect, expectRejected, hasRealEngine, hasReportUi, heliusKey, holdSignAnyway, localCase, openDapp,
+  armSignAnyway, calls, CASES_MISSING, expect, expectRejected, hasRealEngine, hasReportUi, heliusKey, holdSignAnyway, localCase, openDapp,
   pending, reportLevel, SEL, settleOrModal, startSign, test, txCase, waitForModal, within, type Ext, type LocalRole
 } from "./support.js";
 
@@ -76,7 +76,8 @@ for (const path of ["ws-register", "legacy"] as const) {
     const p = startSign(page, { path, txs: [c.tx], chain: c.chain, legacyArg: "bytes", account: c.signer });
     const m = await modalOrFail(ext, "L3 report");
     expect(await reportLevel(m)).toBe("L3");
-    // A plain click is not a deliberate second step.
+    // A plain click on the armed button is not a deliberate second step.
+    await armSignAnyway(m);
     await m.locator(SEL.signAnyway).first().click();
     expect(await within(p, 1_500), "a plain click on Sign anyway signed an L3 request").toBe("pending");
     expect((await calls(page)).count).toBe(0);
