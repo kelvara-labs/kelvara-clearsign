@@ -24,7 +24,8 @@ const view: ReportView = {
   ],
   preview: [{ authority: "upgrade authority of X", confidence: "verified", can: [{ name: "can deploy any code", detail: "" }] }],
   claims: [{ id: "c1", kind: "Fact", text: "t", evidence: ["e1"] }],
-  messageHashes: ["11111111111111111111111111111111"]
+  messageHashes: ["11111111111111111111111111111111"],
+  limited: false
 };
 
 describe("per-level behavior (PLAN M5)", () => {

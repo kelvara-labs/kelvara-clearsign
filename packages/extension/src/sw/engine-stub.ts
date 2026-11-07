@@ -1,13 +1,13 @@
 // Stub of the engine API until the hour-24 checkpoint (PLAN M5): the real
 // @kelvara/core analysis replaces analyze() when it lands on main, mapped into the
 // same EngineReport (the report UI's view without the message hashes, which the
-// worker computes itself from the bytes it was given).
+// worker computes itself from the bytes it was given, and without the license flag).
 // The stub never claims a transaction is safe: it reports L2 so the request is held.
 import type { SignRequest } from "../shared/protocol.js";
 import type { ReportView } from "../shared/report-view.js";
 import type { Endpoint } from "./endpoint.js";
 
-export type EngineReport = Omit<ReportView, "messageHashes"> & { level: 0 | 1 | 2 | 3 | 4 };
+export type EngineReport = Omit<ReportView, "messageHashes" | "limited"> & { level: 0 | 1 | 2 | 3 | 4 };
 
 export interface EngineLike {
   analyze(req: SignRequest, endpoint: Extract<Endpoint, { ok: true }>): Promise<EngineReport>;
