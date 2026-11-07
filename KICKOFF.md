@@ -1,7 +1,8 @@
 # Kickoff with Orca
 
 ## Before you start
-1. In Orca: Settings → Experimental → enable Orchestration.
+1. In Orca: Settings → Experimental → enable Orchestration. In Settings → Orchestration, set
+   Nested worker depth to 1 and keep Auto-close finished workers on.
 2. Add this folder (`~/MLH Hackaton/kelvara-signguard`) to Orca as a repo.
 3. Check the runtime: `orca-ide status --json` (on Linux the CLI is `orca-ide`; plain `orca` is the GNOME screen reader).
 4. Open a Claude Code agent on `main` in this repo. That agent is the coordinator.
@@ -9,7 +10,9 @@
 ## Coordinator prompt
 Paste this into the coordinator:
 
-> You are the coordinator. Execute PLAN.md under the rules in CLAUDE.md.
+> You are the coordinator. Execute PLAN.md under the rules in CLAUDE.md. Use the Orca
+> orchestration skill for every run, task, dispatch and inbox step; the commands below are
+> examples, and the skill wins if they differ. Workers never dispatch workers.
 >
 > 1. Do M0 yourself on `main`, commit it, and confirm `pnpm selfcheck` runs and prints
 >    all ten gates.
