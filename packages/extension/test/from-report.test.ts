@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { beforeAll, describe, expect, it } from "vitest";
-import { ReportBuilder, ingestSession, reportDigest, reportSessionFrom, type Report, type Session } from "../../core/src/index.js";
+import { ReportBuilder, ingestSession, reportDigest, reportSessionFrom, type Report, type Session } from "@kelvara/core";
 import { limitReport } from "../src/license/limit.js";
 import { validateWorkerVerdict, type SignRequest } from "../src/shared/protocol.js";
 import { validateReportView } from "../src/shared/report-view.js";
