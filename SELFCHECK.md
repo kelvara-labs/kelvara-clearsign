@@ -1,3 +1,28 @@
+# V8 combined X9 readiness verification
+
+Merged `main` first without local changes: combined candidate `ee8822750c73f41dbcda17d35ca55e74bb706449` contains X9 `03b0f12` (via main `741ded5`) and readiness fix `b3f45fd`. No extension-owned paths were edited. X9 retains the L2 stub until G6; its `@kelvara/core` workspace dependency is not integration evidence.
+
+`hasRealEngine()` delegates to TypeScript AST inspection: only demonstrated direct `decide(..., stubEngine)` wiring to the fixed L2 literal adapter defers engine cases. Non-stub, mixed, indirect and unknown wiring runs assertions; unreadable or malformed source fails. Regression tests cover dependency-plus-stub versus real wiring, import aliases, misleading comments, unused stub imports, adapter integration/spreads, replaced adapters, bypassed decision calls, invalid syntax and adapter setup code. The last four cases were added in `9669129`; the implementation and earlier regression cases are in `b3f45fd`.
+
+```text
+pnpm selfcheck --only G7   2026-11-07T13:47:50Z  candidate ee88227 (clean at launch)
+G7  e2e       PENDING  100.1s  15 PASS / 0 FAIL / 7 engine-wiring PENDING
+
+pnpm selfcheck --fast      2026-11-07T13:48:30Z  candidate 9669129 (clean)
+G1  build     PASS      25.9s
+G2  decode    PASS       7.4s  97.83%, 1000/1000 fuzz
+G3  rules     PENDING    3.8s  remaining M2 rules
+G4  contract  PASS       2.4s
+```
+
+Both selfcheck commands exited 0; the G7 subcommand's 78 denotes documented PENDING, not an actual test failure. G7 launched from clean `ee88227`; while it ran, only its regression self-test was extended and committed as `9669129`, with no browser, extension or readiness implementation changes. `pnpm --filter @kelvara/selfcheck test` passed 35/35 with the added cases and `pnpm lint` passed. G5/G6/G8/G9/G10 were not rerun in V8 and are not certified by this report; in particular G6 has not authorized integration and G7 is not PASS.
+
+Extension candidate coordination was attempted directly but Orca rejected routing to dispatch `ctx_07832f5e5e70` because its latest dispatch `ctx_341a6741322d` is not this worker's helper. Coordinator was notified (`msg_5e9b1683401e`) of that limitation and the exact existing X9 candidate used; no additional extension change was required for this readiness fix.
+
+**V8 scoped outcome: succeeded with G7 honestly PENDING. V7's actual engine-owned core-suite timeout remains unresolved; V8 did not rerun that suite or declare the failure fixed.** G7's successful stub-path cases also do not certify real-engine behavior or eliminate earlier intermittent failures.
+
+---
+
 # V7 independent verification
 
 Verified clean `main` / `team/verifier` commit `95f9971982756a99bbbd6d6157120141ff60d9ba` after merging main (fast-forward, no local changes). Main still pointed to `95f9971` at the end of the baseline run.
