@@ -73,6 +73,11 @@ prompt, and keep working on anything unblocked while you wait.
 ## Hard rules (all roles)
 - Network: Helius only (RPC and APIs) for mainnet and devnet; localnet for local tests.
   No other RPC providers, scanning services, price feeds, analytics, telemetry or remote AI.
+- Env file: `.env` exists only in the main checkout, not in worktrees. Load it from
+  `$(git rev-parse --path-format=absolute --git-common-dir)/../.env`, which resolves to the
+  main checkout from any worktree. Never copy it into a worktree or print its contents.
+- License: the extension verifies licenses against the Ed25519 public key in
+  `config/license-public-key.txt`. The private key is the human's and never enters the repo.
 - Helius key: read HELIUS_API_KEY from `.env` (tools, scenarios, CLI) or from the extension's
   options storage. Never print it, log it, commit it, put it in a fixture or a report, or
   bake it into the release zip. Redact `api-key=` from every URL before logging.
