@@ -146,7 +146,7 @@ describe("Wallet Standard", () => {
     const p = signFeature(app[0]).signTransaction({ transaction: tx });
     await Promise.resolve();
     tx.fill(9);
-    release({ allow: true, level: 0, reason: "ok" });
+    release({ allow: true, hold: false, level: 0, reason: "ok", report: null });
     await p;
     expect(Array.from(w.calls[0]!)).toEqual(orig);
   });
@@ -251,7 +251,7 @@ describe("legacy providers", () => {
     const { installHook } = await import("../src/hook/install.js");
     const sent: unknown[] = [];
     installBridge(win, {
-      sendToWorker: async (m) => (sent.push(m), { allow: false, level: 4, reason: "x" }),
+      sendToWorker: async (m) => (sent.push(m), { allow: false, hold: false, level: 4, reason: "x", report: null }),
       url: () => "https://x/",
       topFrame: true,
       getRandomValues: (a) => webcrypto.getRandomValues(a)
@@ -279,7 +279,7 @@ describe("legacy providers", () => {
     const p = s.signTransaction(tx);
     await Promise.resolve();
     tx.bytes = wireTx(2);
-    release({ allow: true, level: 0, reason: "ok" });
+    release({ allow: true, hold: false, level: 0, reason: "ok", report: null });
     await expect(p).rejects.toEqual(rejected);
     expect(calls.length).toBe(0);
 

@@ -21,6 +21,9 @@ declare namespace chrome {
       ): void;
     };
   }
+  namespace tabs {
+    function create(props: { url: string; active?: boolean }): Promise<unknown>;
+  }
   namespace storage {
     interface StorageArea {
       get(keys?: string | string[] | null): Promise<Record<string, unknown>>;

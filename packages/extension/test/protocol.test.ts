@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { b58decode, messageToWireTx, txToBytes } from "../src/shared/codec.js";
+import { b58decode, b64encode, messageToWireTx, txToBytes } from "../src/shared/codec.js";
 import { parseDecision, parseHandshake, parseHookMessage, validateWorkerVerdict } from "../src/shared/protocol.js";
 import { pickEndpoint, redactUrl } from "../src/sw/endpoint.js";
 import type { EngineLike } from "../src/sw/engine-stub.js";
@@ -25,9 +25,17 @@ describe("strict message shapes", () => {
     expect(parseDecision(JSON.stringify({ v: 1, kind: "decision", id, allow: 1 }))).toBeNull();
     expect(parseHandshake(JSON.stringify({ v: 1, channel: id }))).toBe(id);
     expect(parseHandshake(JSON.stringify({ v: 1, channel: id.toUpperCase() }))).toBeNull();
-    expect(validateWorkerVerdict({ allow: true, level: 0, reason: "" })).not.toBeNull();
-    expect(validateWorkerVerdict({ allow: true, level: 5, reason: "" })).toBeNull();
-    expect(validateWorkerVerdict({ allow: "yes", level: 0, reason: "" })).toBeNull();
+    const v = { allow: true, hold: false, level: 0, reason: "", report: null };
+    expect(validateWorkerVerdict(v)).not.toBeNull();
+    expect(validateWorkerVerdict({ allow: true, level: 0, reason: "" })).toBeNull();
+    expect(validateWorkerVerdict({ ...v, level: 5 })).toBeNull();
+    expect(validateWorkerVerdict({ ...v, allow: "yes" })).toBeNull();
+    // hold only at L2/L3 and never together with allow; L4 never allows
+    expect(validateWorkerVerdict({ ...v, allow: false, hold: true, level: 3 })).not.toBeNull();
+    expect(validateWorkerVerdict({ ...v, allow: false, hold: true, level: 4 })).toBeNull();
+    expect(validateWorkerVerdict({ ...v, allow: true, hold: true, level: 2 })).toBeNull();
+    expect(validateWorkerVerdict({ ...v, allow: true, level: 4 })).toBeNull();
+    expect(validateWorkerVerdict({ ...v, report: { title: "x" } })).toBeNull();
   });
 });
 
@@ -52,21 +60,29 @@ describe("codec", () => {
 });
 
 describe("service worker policy", () => {
-  const req = parseHookMessage(JSON.stringify({ ...sign, chain: "solana:devnet" }))! as never;
-  const engine = (level: 0 | 1 | 2 | 3 | 4): EngineLike => ({ analyze: async () => ({ level, title: `L${level}` }) });
+  // A wire transaction: 1 empty signature + a (minimal) legacy message.
+  const wire = b64encode(messageToWireTx(new Uint8Array([1, 0, 0, 0])));
+  const req = parseHookMessage(JSON.stringify({ ...sign, chain: "solana:devnet", txs: [wire] }))! as never;
+  const view = { summary: "", simulation: null, authorizes: null, capabilities: [], preview: [], claims: [] };
+  const engine = (level: 0 | 1 | 2 | 3 | 4): EngineLike => ({ analyze: async () => ({ level, title: `L${level}`, ...view }) });
   const s = { heliusApiKey: "k", network: "mainnet" as const, passThrough: false };
 
   it("no Helius key: held and blocked, and says so", async () => {
     const v = await decide(req, { ...s, heliusApiKey: "" }, engine(0));
-    expect(v).toEqual({ allow: false, level: null, reason: expect.stringContaining("no Helius API key set: request held and blocked") });
+    expect(v).toMatchObject({ allow: false, hold: false, level: null, reason: expect.stringContaining("no Helius API key set: request held and blocked") });
+    expect(v.report?.title).toMatch(/^Blocked/);
   });
-  it("levels: L0/L1 pass, L4 block, L2/L3 block without a report UI, ask the UI when present", async () => {
-    expect((await decide(req, s, engine(0))).allow).toBe(true);
-    expect((await decide(req, s, engine(1))).allow).toBe(true);
-    expect((await decide(req, s, engine(4))).allow).toBe(false);
-    expect((await decide(req, s, engine(3))).allow).toBe(false);
-    expect((await decide(req, s, engine(2), async () => true)).allow).toBe(true);
-    expect((await decide(req, s, engine(4), async () => true)).allow).toBe(false);
+  it("levels: L0/L1 pass, L4 block, L2/L3 held for the user (never allowed by the worker)", async () => {
+    const pick = (v: { allow: boolean; hold: boolean }) => [v.allow, v.hold];
+    expect(pick(await decide(req, s, engine(0)))).toEqual([true, false]);
+    expect(pick(await decide(req, s, engine(1)))).toEqual([true, false]);
+    expect(pick(await decide(req, s, engine(2)))).toEqual([false, true]);
+    expect(pick(await decide(req, s, engine(3)))).toEqual([false, true]);
+    expect(pick(await decide(req, s, engine(4)))).toEqual([false, false]);
+  });
+  it("an engine report that fails validation blocks", async () => {
+    const bad: EngineLike = { analyze: async () => ({ ...view, level: 0, title: "x".repeat(500) }) };
+    expect(await decide(req, s, bad)).toMatchObject({ allow: false, hold: false, level: null });
   });
   it("engine error blocks", async () => {
     const bad: EngineLike = { analyze: async () => Promise.reject(new Error("boom")) };

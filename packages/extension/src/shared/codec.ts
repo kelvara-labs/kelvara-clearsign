@@ -98,3 +98,39 @@ export function messageToWireTx(message: Uint8Array): Uint8Array {
   out.set(message, 1 + 64 * numSigs);
   return out;
 }
+
+export function b58encode(bytes: Uint8Array): string {
+  const digits: number[] = [0];
+  for (const byte of bytes) {
+    let carry = byte;
+    for (let j = 0; j < digits.length; j++) {
+      carry += digits[j]! << 8;
+      digits[j] = carry % 58;
+      carry = (carry / 58) | 0;
+    }
+    while (carry) {
+      digits.push(carry % 58);
+      carry = (carry / 58) | 0;
+    }
+  }
+  let out = "";
+  for (let i = 0; i < bytes.length && bytes[i] === 0; i++) out += "1";
+  const value = digits.length === 1 && digits[0] === 0 ? [] : digits;
+  for (let i = value.length - 1; i >= 0; i--) out += B58[value[i]!];
+  return out;
+}
+
+/** The signed message of a wire transaction: skip the compact-u16 signature count and the signatures. */
+export function wireMessage(wire: Uint8Array): Uint8Array {
+  let n = 0;
+  let i = 0;
+  for (let shift = 0; ; shift += 7) {
+    if (i >= wire.length || i > 2) throw new Error("bad signature count");
+    const b = wire[i++]!;
+    n |= (b & 0x7f) << shift;
+    if (!(b & 0x80)) break;
+  }
+  const start = i + 64 * n;
+  if (n < 1 || start >= wire.length) throw new Error("transaction has no message");
+  return wire.subarray(start);
+}
