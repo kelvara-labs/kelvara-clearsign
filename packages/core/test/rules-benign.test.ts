@@ -1,12 +1,15 @@
 // E7 / G3: no fixture from any program reaches L4, every report validates (G4 checks), and every
 // ruleId implemented so far (rules plus the E11 capability graph: preview, recovery paths) fires on at least one real session and stays silent on at least one.
 // Transactions that use lookup tables are resolved with the runtime's own meta.loadedAddresses.
+import { existsSync } from "node:fs";
+import path from "node:path";
 import { beforeAll, expect, it } from "vitest";
 import type { Address } from "@solana/kit";
 import { accountFromRpc, parseTransaction, ALL_RULE_IDS as RULE_IDS, type ResolvedAccount, type RuleState, type Session, type SessionTransaction } from "../src/index.js";
 import { poisonManifest, requestCase } from "./address-helpers.js";
 const devnet = poisonManifest.cases.find((c) => c.kind === "poisoning" && c.network === "devnet")!;
-import { analysisTiming, analyze, analyzedState, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
+import { analysisTiming, analyze, analyzedState, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, root, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
+import { s9SweepCase } from "./sweep-helpers.js";
 
 /** A one-transaction session resolved from the runtime's loaded addresses (real RPC meta). */
 function sessionFromRuntime(base64: string, loaded: { writable: string[]; readonly: string[] }): Session {
@@ -55,6 +58,15 @@ beforeAll(async () => {
   for (const name of ["admin-local", "trap-local"] as const) {
     const a = await analyzedState(name);
     poisonSessions.push({ name: `${name} analyzed (simulated)`, session: await sessionOf(a.rec.inputs.transactions), state: a.state });
+  }
+  // E16: the realistic sweep shape is an attack (L4): the S9 devnet request with its pre-execution simulation,
+  // and S12's two localnet shapes through analyzeSession (recorded real RPC, --inventory).
+  const s9 = await s9SweepCase();
+  poisonSessions.push({ name: "S9 devnet sweep request (simulated)", session: s9.session, state: s9.state, expectedL4: true });
+  for (const name of ["sweep-local", "sweep-ata-local"] as const) {
+    if (!existsSync(path.join(root, `packages/core/test/fixtures/analyze/${name}.json`))) continue;
+    const a = await analyzedState(name);
+    poisonSessions.push({ name: `${name} analyzed (simulated)`, session: await sessionOf(a.rec.inputs.transactions), state: a.state, expectedL4: true });
   }
 }, 20_000);
 

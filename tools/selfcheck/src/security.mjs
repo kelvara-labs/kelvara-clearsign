@@ -37,6 +37,9 @@ const findManifest = (bundle) => {
   if (!name) return null;
   try { return JSON.parse(bundle.get(name).toString("utf8")); } catch { return { manifest_version: "unparseable" }; }
 };
+// Audited inert host strings (V10): exact string + file + reason; see tools/selfcheck/inert-hosts.json.
+const INERT_PATH = path.join(ROOT, "tools/selfcheck/inert-hosts.json");
+const inert = existsSync(INERT_PATH) ? JSON.parse(readFileSync(INERT_PATH, "utf8")).entries ?? [] : [];
 const asCheck = (name, r, summary) => (r.status === "PASS" ? pass(name, r.detail, summary) : fail(name, r.detail));
 
 const checks = [];
@@ -72,7 +75,7 @@ if (existsSync(EXT_SRC)) {
 function bundleChecks(bundle, label) {
   const manifest = findManifest(bundle);
   const n = (c) => `${c} [${label}]`;
-  checks.push(asCheck(n("hosts"), checkHosts(bundle), "hosts ok"));
+  checks.push(asCheck(n("hosts"), checkHosts(bundle, inert), "hosts ok"));
   checks.push(asCheck(n("no eval/remote code"), checkNoRemoteCode(bundle, manifest), "no eval"));
   checks.push(asCheck(n("permissions"), checkPermissions(manifest), "min perms"));
   checks.push(asCheck(n("content scripts offline"), checkContentScriptsOffline(bundle, manifest), "cs offline"));

@@ -17,7 +17,7 @@ export default defineConfig({
   retries: 0,
   forbidOnly: true,
   fullyParallel: true,
-  workers: Number(process.env.E2E_WORKERS ?? "4"),
+  workers: Number(process.env.E2E_WORKERS ?? "1"), // 1 by default: 12 GB host, V10 run was OOM-killed at 4
   reporter: [["list"], ["json", { outputFile: process.env.E2E_JSON ?? path.join(here, "logs/e2e-report.json") }]],
   // No traces, screenshots or videos: they could capture storage or URLs with the key.
   use: { trace: "off", screenshot: "off", video: "off" },

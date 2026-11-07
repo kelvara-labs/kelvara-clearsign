@@ -4,7 +4,10 @@
 //    (proposal Active, nothing executed);
 //  - localnet, trap-local: the seller-signed $SHINY buy (packages/scenarios/.localnet/trap), wallet = user;
 //  - mainnet over Helius: the Drift replay session (fixtures/tx/drift-replay), simulation off (landed txs).
-// Usage: pnpm --filter @kelvara/core fixtures:analyze   (needs scenario:admin-local + scenario:trap-local on a
+//  - localnet, sweep-local / sweep-ata-local (E16): S12's two unsigned sweeps of one fresh user (plain shape and
+//    the realistic ATA create + close shape), wallet = user, inventory on.
+// Usage: pnpm --filter @kelvara/core fixtures:analyze [name...]   (no names = all; KELVARA_LOCALNET_RPC sends the
+// localnet calls to a private validator, e.g. http://127.0.0.1:18899, instead of the shared one; needs scenario:admin-local + scenario:trap-local on a
 // running localnet; KELVARA_LOCALNET_DIR overrides the scenario dir; HELIUS_API_KEY from the main checkout's .env).
 // Only method, params and result are stored; the file is scanned for the key before writing.
 import { execSync } from "node:child_process";
@@ -22,9 +25,9 @@ const outDir = path.join(root, "packages/core/test/fixtures/analyze");
 const json = (p: string): any => JSON.parse(readFileSync(path.isAbsolute(p) ? p : path.join(root, p), "utf8"));
 
 interface Call { method: string; params: unknown; result: unknown }
-function recordingFetch(calls: Call[]): typeof fetch {
+function recordingFetch(calls: Call[], redirect?: string): typeof fetch {
   return async (input, init) => {
-    const res = await fetch(input, init);
+    const res = await fetch(redirect ?? input, init);
     const body = JSON.parse(String(init?.body)) as { method: string; params: unknown };
     const text = await res.text();
     try {
@@ -43,9 +46,12 @@ const authorityMaps = [
   buildAuthorityMap(json("packages/scenarios/programs/marginfi_v2.idl.json"), { source: "packages/scenarios/programs/marginfi_v2.idl.json", verified: false })
 ];
 
-async function record(name: string, network: RpcNetwork, transactions: string[], opts: { wallet?: string; simulate?: boolean }, extra: Record<string, unknown>) {
+const only = process.argv.slice(2);
+const want = (n: string) => !only.length || only.includes(n);
+async function record(name: string, network: RpcNetwork, transactions: string[], opts: { wallet?: string; simulate?: boolean; inventory?: boolean }, extra: Record<string, unknown>) {
   const calls: Call[] = [];
-  const rpc = createRpcClient({ url: rpcUrlFor(network, network === "localnet" ? undefined : key), fetch: recordingFetch(calls) });
+  const redirect = network === "localnet" ? process.env.KELVARA_LOCALNET_RPC : undefined;
+  const rpc = createRpcClient({ url: rpcUrlFor(network, network === "localnet" ? undefined : key), fetch: recordingFetch(calls, redirect) });
   const session = await ingestSession(transactions.map((base64) => ({ base64, kind: "wire" as const })), { reader: createRpcAccountReader(rpc) });
   const { report, reads } = await analyzeSession(session, { decoder, squadsAccounts, authorityMaps, rpc, ...opts });
   const failed = reads.filter((r) => !r.ok);
@@ -65,14 +71,24 @@ async function record(name: string, network: RpcNetwork, transactions: string[],
   console.log(`${name}: ${report.alert.level}, ${calls.length} calls -> ${path.relative(root, path.join(outDir, `${name}.json`))}`);
 }
 
+if (want("admin-local")) {
 const admin = json(path.join(local, "admin/scenario.json"));
 await record("admin-local", "localnet", [readFileSync(path.join(local, "admin/approval.unsigned.b64"), "utf8").trim()], {}, {
   multisig: admin.multisig, proposal: admin.proposal, vaultTransaction: admin.vaultTransaction, demoProgram: json(path.join(local, "state.json")).demo.programId,
   programData: admin.programData, attacker: admin.attacker, nonce: admin.nonce
 });
+}
+if (want("trap-local")) {
 const trap = json(path.join(local, "trap/scenario.json"));
 await record("trap-local", "localnet", [readFileSync(path.join(local, "trap/buy.partial.b64"), "utf8").trim()], { wallet: trap.user }, {
   mint: trap.token?.mint ?? trap.token, creator: trap.creator, seller: trap.seller, user: trap.user
 });
+}
 const sigs = ["2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H", "4BKBmAJn6TdsENij7CsVbyMVLJU1tX27nfrMM1zgKv1bs2KJy6Am2NqdA3nJm4g9C6eC64UAf5sNs974ygB9RsN1"];
-await record("drift-replay-mainnet", "mainnet", sigs.map((s) => json(`fixtures/tx/drift-replay/${s}.json`).transaction), { simulate: false }, { signatures: sigs });
+if (want("drift-replay-mainnet")) await record("drift-replay-mainnet", "mainnet", sigs.map((s) => json(`fixtures/tx/drift-replay/${s}.json`).transaction), { simulate: false }, { signatures: sigs });
+if (want("sweep-local") || want("sweep-ata-local")) {
+  const sweep = json(path.join(local, "sweep/scenario.json"));
+  const extra = { user: sweep.user, collector: sweep.collector, ataCollector: sweep.ataSweep.collector, tokens: sweep.tokens, fee: sweep.sweep.fee, ataRent: sweep.ataSweep.ataRent };
+  if (want("sweep-local")) await record("sweep-local", "localnet", [readFileSync(path.join(local, "sweep/sweep.unsigned.b64"), "utf8").trim()], { wallet: sweep.user, inventory: true }, extra);
+  if (want("sweep-ata-local")) await record("sweep-ata-local", "localnet", [readFileSync(path.join(local, "sweep/sweep-ata.unsigned.b64"), "utf8").trim()], { wallet: sweep.user, inventory: true }, extra);
+}

@@ -1,3 +1,56 @@
+# V10 G7 level cases on live localnet + G10 sink-aware host check
+
+**G7 e2e: PASS (22 PASS / 0 FAIL / 0 PENDING)**. **G10 security: PENDING**, and only on `no API key in zip`: the release zip is built at M8. Every other G10 check PASSes, including hosts. Run on a fresh detached worktree of `team/verifier` b21794d (= main 565b024 + V10). The worktree was added from the main checkout so `.env` resolves; `pnpm install --frozen-lockfile`; `git status` was clean after the runs.
+
+```text
+b21794d fresh wt  E2E_WORKERS=1 pnpm selfcheck --only G1,G7   G1 PASS 32.0s | G7 PASS 199.6s  22 passed (2.8m)
+b21794d fresh     pnpm selfcheck --only G1,G10                G1 PASS 39.0s | G10 PENDING 2.5s  waiting on no API key in zip
+                  G10 hosts [unpacked]: only Helius and localhost reach 48 network sink(s); 18 audited inert string occurrence(s)
+                  security self-tests 22/22
+```
+
+## G7: level cases on live localnet (coordinator decision)
+
+When executed fixtures are re-analyzed on today's chain, they no longer show the state before execution. So L2–L4 now run against scenarios S12's `scenario:e2e-cases --serve`. `tools/selfcheck/src/e2e.mjs` starts it on :8784 and waits for l3-admin, l2-trap and l4-sweep. A missing script makes those cases PENDING. A failing server FAILs G7 (owner: scenarios). The extension runs on localnet, and the test wallet presents the case's signer (`SignArgs.account`, X6b), so wallet-bound rules fire.
+
+- L4 sweep-local: rejected with 4001 and no user action, report L4, no Sign anyway, wallet count 0.
+- L3 admin-local (durable-nonce approval): held, Block is the focused default, Block gives 4001 and count 0. Sign anyway on ws-register and legacy: a plain click on the armed button does not sign, a hold forwards once with identical bytes.
+- L2 trap-local: held with Block and Sign anyway, and Block gives 4001 and count 0.
+- Benign stays on the real mainnet System-transfer fixture: no modal, forwarded once with identical bytes.
+- The fixture manifest bug is fixed: `txCase` reads `{fixtures:[...]}` (and still reads a bare array).
+- Sign anyway is scrolled into view and must arm (`data-armed="true"`, the anti-clickjacking gate) before any click.
+- Playwright `workers` now defaults to 1 (the previous V10 session was OOM-killed on the 12 GB host). `E2E_WORKERS` overrides it.
+
+## G10: hosts as network targets, not strings
+
+- `tools/selfcheck/src/host-sinks.mjs` flags a host when it reaches a network sink: fetch, XMLHttpRequest.open, WebSocket, EventSource, importScripts, sendBeacon, `new URL` passed to those, or src/href set at runtime. It follows the bundle's aliases of those sinks. A foreign host at a sink FAILs, even if the string is allowlisted.
+- `tools/selfcheck/inert-hosts.json` is the audited allowlist: exact string + bundle file + one-line reason, with no wildcards, and a self-test checks that it is well formed. It has 12 entries:
+  - @solana/errors help text (sola.na, developer.mozilla.org ×2, the WebCrypto Ed25519 issue on github.com)
+  - the zod IPv6 parse template `http://[${e}]`
+  - zod `$schema` ids (json-schema.org ×3)
+  - the marginfi IDL docs link
+  - IDL registry `source` fields (github.com ×3)
+- An inert string in no entry still FAILs.
+- The core's dynamic `https://${e}` host is gone from the bundle (engine now uses literal Helius hosts).
+- Runtime layer in G7 (`support.ts` networkGuard): every request in the browser context is recorded and routed, service worker included, and WebSocket/EventSource constructors in the service worker are wrapped. Any host other than `*.helius-rpc.com`, 127.0.0.1 or localhost is aborted and FAILs the case. The 22-case run recorded none.
+
+## Mutants (all FAIL as required)
+
+| Mutant | Layer | Result |
+|---|---|---|
+| `fetch("https://evil.example/x")` appended to dist service-worker.js | static | G10 FAIL: evil.example not in inert-hosts.json; reaches fetch() |
+| Allowlisted `https://sola.na/web3invariant` passed to fetch | static | G10 FAIL: sola.na reaches a sink (allowlist does not apply) |
+| Unlisted inert string `https://docs.example.org/help` | static | G10 FAIL: not in inert-hosts.json |
+| Real bundle: 18 allowlisted inert occurrences | static | hosts PASS (the inert strings are allowed) |
+| `KELVARA_E2E_NET_MUTANT=1`: service worker fetches and opens a WebSocket to evil.invalid | runtime | G7 FAIL: `sw GET https://evil.invalid/mutant, sw WebSocket wss://evil.invalid/mutant`, exit 1 |
+
+Note: the static taint tracking is name-based, so it over-approximates. A tracked variable whose minified name matches a sink argument elsewhere is flagged. That errs toward FAIL, never toward PASS.
+
+## Remains
+
+- G10 `no API key in zip`: PENDING until `dist/kelvara-signguard.zip` exists (M8).
+- The localnet was taken for this run (no validator was running beforehand), then stopped.
+
 # V4 G8 replay: Drift critical (cached and live), both devnet scenario scripts pass live
 
 **G8 replay: PASS** in both modes. Cached on a fresh clone of `main` e249d4d (E14 + S6 merged) and on `team/verifier` b3d604c. **Live (`--live`)** on a fresh detached worktree of b3d604c (main e249d4d + this runner change; `pnpm install --frozen-lockfile && pnpm build` exit 0): Drift replay over Helius mainnet plus both devnet scenarios executed on chain.

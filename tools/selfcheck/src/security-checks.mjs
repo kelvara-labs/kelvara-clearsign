@@ -3,6 +3,7 @@
 import { existsSync, readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { Buffer } from "node:buffer";
+import { findSinkTargets, findHtmlSinkTargets } from "./host-sinks.mjs";
 
 // Hosts the extension may name. PLAN.md: Helius RPC and APIs, plus localhost for localnet.
 export const ALLOWED_HOSTS = new Set([
@@ -48,30 +49,71 @@ const result = (findings, okDetail) => findings.length
   ? { status: "FAIL", detail: findings.slice(0, 5).join("; ") + (findings.length > 5 ? ` (+${findings.length - 5} more)` : ""), findings }
   : { status: "PASS", detail: okDetail, findings };
 
-export function checkHosts(bundle) {
+// Inert strings (V10): a non-Helius host may appear in the bundle only as an audited entry of
+// tools/selfcheck/inert-hosts.json: { string (exact occurrence), file (bundle file), reason (one line) }. No wildcards,
+// no patterns. The allowlist never covers a network target: any host that reaches a sink (host-sinks.mjs) FAILs.
+export function validateInertEntries(entries) {
+  const bad = [];
+  for (const [i, e] of (entries ?? []).entries()) {
+    const where = `inert-hosts.json entry ${i}`;
+    if (!e || typeof e.string !== "string" || typeof e.file !== "string" || typeof e.reason !== "string") { bad.push(`${where}: needs string, file, reason`); continue; }
+    if (!e.reason.trim() || e.reason.includes("\n")) bad.push(`${where}: reason must be one non-empty line`);
+    if (/[*?]|^\/.*\/$/.test(e.file) || e.string.includes("*")) bad.push(`${where}: wildcards are not allowed`);
+    if (e.string.length < 8) bad.push(`${where}: string too short to be an exact occurrence`);
+  }
+  return bad;
+}
+const fileMatches = (name, file) => name === file || name.endsWith(`/${file}`);
+const isJs = (name) => /\.(m?js|cjs)$/i.test(name);
+const dynamicOk = (auth) => DYNAMIC_HOST_OK.test(auth);
+
+/** Host strings in a file: [{ host, str, dynamic }] (str = the exact occurrence an allowlist entry must equal). */
+function hostOccurrences(text) {
+  const out = [];
+  for (const m of text.matchAll(URL_RE)) {
+    const u = m[0].replace(/[.,;]+$/, "");
+    if (NAMESPACE_URIS.some((re) => re.test(u))) continue;
+    const auth = u.replace(/^[a-z]+:\/\//i, "").split(/[/?#]/)[0].replace(/^[^@]*@/, "");
+    if (auth.includes("${")) { if (!dynamicOk(auth)) out.push({ host: auth, str: u, dynamic: true }); continue; }
+    const h = hostOf(u);
+    if (h && ALLOWED_HOSTS.has(h)) continue;
+    out.push({ host: h ?? auth, str: u, dynamic: false });
+  }
+  for (const m of text.matchAll(BARE_DOMAIN)) {
+    const h = m[1].toLowerCase();
+    if (ALLOWED_HOSTS.has(h) || h === "www.w3.org" || looksLikeCode(h)) continue;
+    const tail = text.slice(m.index + m[1].length).match(/^[^\s"'`<>)\\,]*/)[0];
+    out.push({ host: h, str: m[1] + tail, dynamic: false });
+  }
+  return out;
+}
+
+export function checkHosts(bundle, inert = []) {
   const bad = new Map();
+  const flag = (key, msg) => { if (!bad.has(key)) bad.set(key, msg); };
+  for (const msg of validateInertEntries(inert)) flag(msg, msg);
+  const used = new Set();
+  let sinks = 0, allowed = 0;
   for (const [name, raw] of textFiles(bundle)) {
     const text = /(^|\/)manifest\.json$/.test(name) ? manifestForHostScan(raw) : raw;
-    for (const m of text.matchAll(URL_RE)) {
-      const u = m[0].replace(/[.,;]+$/, "");
-      if (NAMESPACE_URIS.some((re) => re.test(u))) continue;
-      const auth = u.replace(/^[a-z]+:\/\//i, "").split(/[/?#]/)[0].replace(/^[^@]*@/, "");
-      if (auth.includes("${")) {
-        if (!DYNAMIC_HOST_OK.test(auth)) bad.set(auth, bad.get(auth) ?? `dynamic host ${auth} in ${name}`);
-        continue;
-      }
-      const h = hostOf(u);
-      if (!h) { if (auth) bad.set(auth, bad.get(auth) ?? `unparseable host ${auth} in ${name}`); continue; }
-      if (ALLOWED_HOSTS.has(h)) continue;
-      bad.set(h, bad.get(h) ?? `${h} in ${name}`);
+    // 1. Every non-Helius host string needs an audited inert entry.
+    for (const o of hostOccurrences(text)) {
+      const entry = inert.findIndex((e) => e && e.string === o.str && fileMatches(name, e.file));
+      if (entry >= 0) { used.add(entry); allowed++; continue; }
+      flag(`${o.str}|${name}`, o.dynamic ? `dynamic host ${o.host} in ${name} ("${o.str}")` : `${o.host} in ${name} ("${o.str}" not in inert-hosts.json)`);
     }
-    for (const m of text.matchAll(BARE_DOMAIN)) {
-      const h = m[1].toLowerCase();
-      if (ALLOWED_HOSTS.has(h) || h === "www.w3.org" || looksLikeCode(h)) continue;
-      bad.set(h, bad.get(h) ?? `${h} in ${name}`);
+    // 2. Network targets: nothing but Helius/localhost may reach a sink, allowlisted or not.
+    const targets = isJs(name) ? findSinkTargets(text, name) : /\.html?$/i.test(name) ? findHtmlSinkTargets(text) : [];
+    sinks += targets.length;
+    for (const t of targets) for (const h of t.hosts) {
+      if (h.dynamic ? dynamicOk(h.host) : ALLOWED_HOSTS.has(h.host)) continue;
+      if (NAMESPACE_URIS.some((re) => re.test(h.url))) continue;
+      flag(`sink|${h.host}|${name}`, `${h.dynamic ? "dynamic host " : ""}${h.host} reaches ${t.sink} in ${name}:${t.line} (network target; inert allowlist does not apply)`);
     }
   }
-  return result([...bad.values()], "only Helius and localhost");
+  const unused = inert.map((e, i) => (used.has(i) ? null : e?.string)).filter(Boolean);
+  const note = unused.length ? `; ${unused.length} inert entr${unused.length === 1 ? "y" : "ies"} not seen (stale?)` : "";
+  return result([...bad.values()], `only Helius and localhost reach ${sinks} network sink(s); ${allowed} audited inert string occurrence(s)${note}`);
 }
 
 const FORBIDDEN_FILES = [/(^|\/)\.env(\.|$)/, /\.keypair\.json$/, /(^|\/)\.keys\//, /(^|\/)id\.json$/, /\.pem$/];
