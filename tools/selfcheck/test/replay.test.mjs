@@ -4,9 +4,9 @@ import assert from "node:assert/strict";
 import { evaluateReplay, parseReportOutput, findLevel } from "../src/replay-checks.mjs";
 
 const claims = [
-  { id: "c1", ruleId: "durable-nonce-approval", kind: "Derived" },
-  { id: "c2", ruleId: "squads-approve-and-execute", kind: "Derived" },
-  { id: "c3", ruleId: "authority-handoff", kind: "Fact", instruction: "UpdateAdmin" }
+  { id: "c1", ruleId: "lifetime.durable_nonce", kind: "Derived" },
+  { id: "c2", ruleId: "squads.approve_and_execute", kind: "Derived" },
+  { id: "c3", ruleId: "authority.transfer", kind: "Derived", statement: "Drift v2 updateAdmin hands admin to a new key" }
 ];
 
 test("critical report with all three claims passes", () => {
@@ -32,6 +32,24 @@ test("each missing claim is named", () => {
   assert.match(r.detail, /missing claim UpdateAdmin/);
   assert.equal(evaluateReplay(null).status, "FAIL");
   assert.equal(evaluateReplay({ claims }).status, "FAIL");
+});
+
+test("ruleIds are matched exactly, not by keyword", () => {
+  const loose = [
+    { id: "x1", ruleId: "durable-nonce-approval", statement: "durable nonce" },
+    { id: "x2", ruleId: "squads-approve-and-execute" },
+    { id: "x3", ruleId: "authority-handoff", instruction: "UpdateAdmin" }
+  ];
+  const r = evaluateReplay({ level: "critical", claims: loose });
+  assert.equal(r.status, "FAIL");
+  assert.match(r.detail, /missing claim durable-nonce \(lifetime\.durable_nonce\)/);
+});
+
+test("authority.transfer must name updateAdmin", () => {
+  const other = [claims[0], claims[1], { id: "c4", ruleId: "authority.transfer", statement: "upgrade authority moved" }];
+  const r = evaluateReplay({ level: "critical", claims: other });
+  assert.equal(r.status, "FAIL");
+  assert.match(r.detail, /authority\.transfer does not name/);
 });
 
 test("report JSON after log lines is parsed", () => {
