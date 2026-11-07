@@ -16,3 +16,4 @@ Every dependency, its license, and where it is used. Nothing under AGPL, BUSL or
 | @solana/kit (and its @solana/* packages) | 8.5.0 | MIT | packages/core (ingest) |
 | @sqds/multisig (Squads v4 SDK) | 2.1.4 (to install in M4) | MIT per npm package.json; source repo Squads-Protocol/v4 is AGPL-3.0, so treated as AGPL-tainted | packages/scenarios only (scenario scripts); never packages/core or packages/extension |
 | marginfi v2 program binary + on-chain IDL (mainnet dump) | ProgramData slot 465361726, sha256 1c4c84ae… | Apache-2.0 (mrgnlabs/marginfi-v2) | packages/scenarios/programs (localnet demo target only, not shipped) |
+| @playwright/test (+ playwright, playwright-core) and its bundled Chromium | 1.63.0 (Chromium build 1243) | Apache-2.0 | dev only: tools/selfcheck devDependency, G7 specs in test-dapp/e2e; not bundled |
