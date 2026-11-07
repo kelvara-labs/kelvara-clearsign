@@ -4,6 +4,7 @@ import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { redactUrl, type IngestInput, type RpcClient } from "@kelvara/core";
 
 export const FIXTURE_SCHEMA = "kelvara.fixture.tx/v1";
@@ -119,7 +120,7 @@ export function writeTxFixture(dir: string, f: TxFixture): string {
   return file;
 }
 
-/** HELIUS_API_KEY from the environment, else from the main checkout's .env (works from any worktree). */
+/** HELIUS_API_KEY from the environment, main checkout, or a local origin's main checkout. */
 export function heliusKey(root: string): string | undefined {
   if (process.env.HELIUS_API_KEY) return process.env.HELIUS_API_KEY;
   const candidates: string[] = [];
@@ -130,6 +131,16 @@ export function heliusKey(root: string): string | undefined {
     /* not a git checkout */
   }
   candidates.push(path.join(root, ".env"));
+  try {
+    const origin = execFileSync("git", ["config", "--get", "remote.origin.url"], { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    const local = origin.startsWith("file://") ? fileURLToPath(origin) : origin;
+    if (path.isAbsolute(local) && existsSync(local)) {
+      const common = execFileSync("git", ["rev-parse", "--path-format=absolute", "--git-common-dir"], { cwd: local, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+      candidates.push(path.join(path.dirname(common), ".env"));
+    }
+  } catch {
+    /* no usable local origin; never contact remote origins */
+  }
   for (const file of candidates) {
     if (!existsSync(file)) continue;
     for (const line of readFileSync(file, "utf8").split("\n")) {
