@@ -32,6 +32,10 @@
     "scenario:trap-local:attack": "pnpm --filter @kelvara/scenarios scenario:trap-local:attack",
     "scenario:e2e": "pnpm --filter @kelvara/scenarios test:e2e",
     "scenario:poison-devnet": "pnpm --filter @kelvara/scenarios scenario:poison-devnet",
+    "scenario:admin-devnet": "pnpm --filter @kelvara/scenarios scenario:admin-devnet",
+    "scenario:admin-devnet:attack": "pnpm --filter @kelvara/scenarios scenario:admin-devnet:attack",
+    "scenario:trap-devnet": "pnpm --filter @kelvara/scenarios scenario:trap-devnet",
+    "scenario:trap-devnet:attack": "pnpm --filter @kelvara/scenarios scenario:trap-devnet:attack",
     "fixtures:poison": "pnpm --filter @kelvara/scenarios fixtures:poison"
   },
   "devDependencies": {
