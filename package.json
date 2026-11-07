@@ -38,6 +38,9 @@
     "scenario:trap-devnet:attack": "pnpm --filter @kelvara/scenarios scenario:trap-devnet:attack",
     "scenario:sweep-devnet": "pnpm --filter @kelvara/scenarios scenario:sweep-devnet",
     "scenario:sweep-devnet:attack": "pnpm --filter @kelvara/scenarios scenario:sweep-devnet:attack",
+    "scenario:sweep-local": "pnpm --filter @kelvara/scenarios scenario:sweep-local",
+    "scenario:sweep-local:attack": "pnpm --filter @kelvara/scenarios scenario:sweep-local:attack",
+    "scenario:e2e-cases": "pnpm --filter @kelvara/scenarios scenario:e2e-cases",
     "fixtures:poison": "pnpm --filter @kelvara/scenarios fixtures:poison"
   },
   "devDependencies": {
