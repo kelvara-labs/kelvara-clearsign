@@ -9,6 +9,15 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "idls:build": "node ../../tools/selfcheck/src/pending.mjs idls:build M3",
-    "test:registry": "node ../../tools/selfcheck/src/pending.mjs G5 M3"
+    "test:registry": "node ../../tools/selfcheck/src/pending.mjs G5 M3",
+    "idls:fetch": "node scripts/fetch-idls.mjs",
+    "idls:roots": "node scripts/build-roots.mjs"
+  },
+  "dependencies": {
+    "@solana/kit": "8.5.0"
+  },
+  "devDependencies": {
+    "@codama/nodes": "1.11.0",
+    "@codama/nodes-from-anchor": "1.5.6"
   }
 }

@@ -36,3 +36,18 @@ export {
   type AccountInfo,
   type RecordedAccount
 } from "./state/index.js";
+
+// M1 / E2: decode (Codama parseInstruction first, built-in Anchor decoder as fallback; Unknown is never safe).
+export {
+  createDecoder,
+  createAnchorFallbackDecoder,
+  anchorInstructionDiscriminator,
+  type Decoder,
+  type AnchorFallbackDecoder,
+  type AnchorDecoded,
+  type ProgramEntry,
+  type AnchorIdlJson,
+  type DecodedInstruction,
+  type DecodedAccount,
+  type DecodeStatus
+} from "./decode/index.js";
