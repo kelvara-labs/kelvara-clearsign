@@ -5,16 +5,17 @@
 //   packages/cli/package.json "bin.kelvara"            -> node <bin> replay --json [--live] <sig1> <sig2>
 //       prints the session report as JSON on stdout; cached fixtures by default, Helius with --live.
 //   packages/scenarios/package.json "scenario:admin-devnet", "scenario:trap-devnet"
-//       run with KELVARA_CHECK=1: headless end to end on devnet, exit 0 only if the attack was caught
-//       and executed as scripted. Devnet needs live RPC and keys, so they run only with --live
-//       (KELVARA_LIVE=1); in cached mode they are reported as SKIP and do not block.
+//       must exist. With --live (KELVARA_LIVE=1) each runs headless end to end on devnet through
+//       packages/scenarios/e2e-devnet/demo-devnet.test.mjs (--reset --attack plus on-chain assertions),
+//       spending devnet SOL. In cached mode they are reported as SKIP and do not block: devnet has no
+//       cached form, and PLAN.md requires both modes only at M8.
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { ROOT, finish, pass, fail, pending, makeRedactor } from "./lib.mjs";
 import { createHash } from "node:crypto";
 import { Buffer } from "node:buffer";
-import { DRIFT_SIGNATURES, evaluateReplay, parseReportOutput, checkTxFixture } from "./replay-checks.mjs";
+import { DRIFT_SIGNATURES, evaluateReplay, parseReportOutput, checkTxFixture, devnetCommand, evaluateDevnetRun, DEVNET_TEST_FILE } from "./replay-checks.mjs";
 
 const live = process.env.KELVARA_LIVE === "1" || process.argv.includes("--live");
 const redact = makeRedactor();
@@ -56,16 +57,24 @@ if (!bin) {
   }
 }
 
-// 2. Devnet scenarios.
+// 2. Devnet scenarios: cached mode reports SKIP (no live RPC, no devnet SOL spent); --live runs each one end to end.
 const scen = readJson("packages/scenarios/package.json")?.scripts ?? {};
+const hasDevnetTest = existsSync(path.join(ROOT, "packages/scenarios", DEVNET_TEST_FILE));
 for (const s of ["scenario:admin-devnet", "scenario:trap-devnet"]) {
+  const short = s.split(":")[1];
   if (!scen[s]) { checks.push(pending(s, "script not defined in packages/scenarios")); continue; }
-  if (!live) { checks.push({ name: s, status: "SKIP", detail: "devnet runs only with --live", summary: `${s.split(":")[1]} skipped (cached)` }); continue; }
-  const r = spawnSync("pnpm", ["--filter", "@kelvara/scenarios", "run", s], {
-    cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20, timeout: 10 * 60_000, env: { ...process.env, KELVARA_CHECK: "1" }
+  if (!live) { checks.push({ name: s, status: "SKIP", detail: "devnet runs only with --live", summary: `${short} skipped (cached)` }); continue; }
+  if (!hasDevnetTest) { checks.push(fail(s, `packages/scenarios/${DEVNET_TEST_FILE} missing`)); continue; }
+  const { cmd, args, cwdRel } = devnetCommand(s);
+  const t0 = Date.now();
+  const r = spawnSync(cmd, args, {
+    cwd: path.join(ROOT, cwdRel), encoding: "utf8", maxBuffer: 64 << 20, timeout: 20 * 60_000, env: { ...process.env, KELVARA_CHECK: "1" }
   });
-  process.stdout.write(redact(r.stdout ?? "") + redact(r.stderr ?? ""));
-  checks.push(r.status === 0 ? pass(s, "ok", `${s.split(":")[1]} ok`) : fail(s, `exit ${r.status ?? r.signal}: ${firstLines(r.stdout + r.stderr)}`));
+  const out = (r.stdout ?? "") + (r.stderr ?? "");
+  process.stdout.write(redact(out));
+  const ev = evaluateDevnetRun(r.status ?? -1, out);
+  const secs = ((Date.now() - t0) / 1000).toFixed(0);
+  checks.push(ev.status === "PASS" ? pass(s, `${ev.detail} (${secs}s)`, `${short} ok (live)`) : fail(s, `${ev.detail}: ${firstLines(out)}`));
 }
 
 finish("G8", checks);
