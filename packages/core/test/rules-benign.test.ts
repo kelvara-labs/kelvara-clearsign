@@ -3,8 +3,8 @@
 // Transactions that use lookup tables are resolved with the runtime's own meta.loadedAddresses.
 import { expect, it } from "vitest";
 import type { Address } from "@solana/kit";
-import { parseTransaction, RULE_IDS, type ResolvedAccount, type Session, type SessionTransaction } from "../src/index.js";
-import { analyze, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
+import { accountFromRpc, parseTransaction, RULE_IDS, type ResolvedAccount, type Session, type SessionTransaction } from "../src/index.js";
+import { analyze, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
 
 /** A one-transaction session resolved from the runtime's loaded addresses (real RPC meta). */
 function sessionFromRuntime(base64: string, loaded: { writable: string[]; readonly: string[] }): Session {
@@ -43,7 +43,7 @@ function sessionFromRuntime(base64: string, loaded: { writable: string[]; readon
 it("G3: no fixture reaches L4; every implemented ruleId has a positive and a negative real session", async () => {
   const MAIN = recording("mainnet.json");
   const LOCAL = recording("localnet.json");
-  const sessions: { name: string; session: Session; state?: Parameters<typeof analyze>[1] }[] = [];
+  const sessions: { name: string; session: Session; state?: Parameters<typeof analyze>[1]; expectedL4?: boolean }[] = [];
   for (const f of manifestFixtures()) {
     const usesTables = !!f.loaded && f.loaded.writable.length + f.loaded.readonly.length > 0;
     sessions.push({ name: f.path, session: usesTables ? sessionFromRuntime(f.base64, f.loaded!) : await sessionOf([f.base64]) });
@@ -60,11 +60,16 @@ it("G3: no fixture reaches L4; every implemented ruleId has a positive and a neg
     state: await stateFrom(LOCAL, { nonces: [LOCAL.inputs.nonce], squads: [LOCAL.inputs.multisig, LOCAL.inputs.proposal, LOCAL.inputs.vaultTransaction] })
   });
 
+  // Executed attack fixtures have explicit expectations; all prior corpus expectations stay intact.
+  for (const f of json("packages/core/test/fixtures/rules/e8-localnet.json").cases) {
+    sessions.push({name:f.name,session:await sessionOf([f.transaction]),expectedL4:["owner-takeover","close-authority-takeover","assign-takeover","sweep"].includes(f.name),state:{wallet:f.wallet,accounts:Object.fromEntries(Object.entries(f.accounts).map(([a,r])=>[a,accountFromRpc(a,r as Parameters<typeof accountFromRpc>[1])])),fees:{0:BigInt(f.fee)},walletInventory:f.inventory?{complete:true,tokenAccounts:f.inventory.map((a:{pubkey:string})=>a.pubkey)}:undefined}});
+  }
   const fired = new Map<string, number>(RULE_IDS.map((id) => [id, 0]));
   const levels = new Map<string, number>();
   for (const s of sessions) {
     const r = analyze(s.session, s.state); // throws on any G4 problem
-    expect(r.alert.level, s.name).not.toBe("L4");
+    if(s.expectedL4) expect(r.alert.level,s.name).toBe("L4");
+    else expect(r.alert.level, s.name).not.toBe("L4");
     levels.set(r.alert.level, (levels.get(r.alert.level) ?? 0) + 1);
     for (const id of new Set(r.claims.map((c) => c.ruleId).filter((x): x is string => !!x))) {
       expect(RULE_IDS, `${s.name}: claim from unregistered ruleId ${id}`).toContain(id);
@@ -77,4 +82,4 @@ it("G3: no fixture reaches L4; every implemented ruleId has a positive and a neg
     expect(count, `${id} never fires`).toBeGreaterThan(0);
     expect(count, `${id} fires everywhere`).toBeLessThan(sessions.length);
   }
-});
+}, 20_000);

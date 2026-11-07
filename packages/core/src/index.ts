@@ -196,6 +196,7 @@ export {
 // M2 / E7: rules (durable nonce, outsider-staged nonce, Squads approve/execute, threshold, time lock,
 // unknown proposal, config changes). Rules are synchronous; read state first and pass it as RuleState.
 export {
+  readTokenRuleState,
   runRules,
   RULES,
   RULE_IDS,

@@ -102,7 +102,7 @@ export async function stateFrom(
   want: { nonces?: string[]; squads?: string[] }
 ): Promise<RuleState> {
   const { rpc, reader } = replay(rec as Recording);
-  const state: Required<RuleState> = { nonces: {}, squads: {} };
+  const state: RuleState & Required<Pick<RuleState, "nonces" | "squads">> = { nonces: {}, squads: {} };
   for (const n of want.nonces ?? []) {
     state.nonces[n] = { account: await readNonceAccount(reader, n), origin: await findAccountOrigin(rpc, n, { maxPages: 3 }), source: rec.network === "mainnet" ? "helius" : "rpc" };
   }
