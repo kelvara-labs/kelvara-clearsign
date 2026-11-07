@@ -172,7 +172,7 @@ describe("service worker: MVP full reports require no license", () => {
     for (const level of [0, 1, 2, 3, 4] as const) {
       for (const licenseKey of [undefined, "invalid", settings.licenseKey]) {
         const v = await decide(req, { ...settings, licenseKey }, engineAt(level));
-        expect(v).toMatchObject({ level, allow: level < 2, hold: level === 2 || level === 3 });
+        expect(v).toMatchObject({ level, allow: false, hold: level < 4 });
         expect(v.report?.limited).toBe(false);
         expect(v.report?.summary).toBe(full.summary);
         expect(v.report?.evidence).toEqual(full.evidence);

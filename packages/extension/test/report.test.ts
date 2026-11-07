@@ -40,15 +40,14 @@ describe("per-level behavior (PLAN M5)", () => {
     expect(buttonsFor(v(3, { hold: true }))).toEqual({ block: "Block", signAnyway: { holdMs: HOLD_MS }, modal: true });
     expect(buttonsFor(v(2, { hold: true }))).toEqual({ block: "Block", signAnyway: { holdMs: null }, modal: true });
   });
-  it("L1 small non-modal notice, L0 and pass-through silent", () => {
-    expect(reportMode(v(1, { allow: true }))).toBe("notice");
-    expect(buttonsFor(v(1, { allow: true })).modal).toBe(false);
-    expect(reportMode(v(0, { allow: true }))).toBe("silent");
-    expect(reportMode(v(null, { allow: true }))).toBe("silent");
+  it.each([0, 1] as const)("L%s shows full held modal review", (level) => {
+    expect(reportMode(v(level, { hold: true }))).toBe("hold");
+    expect(buttonsFor(v(level, { hold: true }))).toEqual({ block: "Block", signAnyway: { holdMs: null }, modal: true });
+    expect(reportMode(v(level, { allow: true }))).toBe("info");
   });
-  it("a held flag above L3 or below L2 is never a hold", () => {
+  it("L4 and null cannot be held", () => {
     expect(reportMode(v(4, { hold: true }))).toBe("info");
-    expect(reportMode(v(1, { hold: true }))).toBe("info");
+    expect(reportMode(v(null, { hold: true }))).toBe("info");
   });
 });
 
@@ -174,6 +173,24 @@ describe("bridge: held requests go to the report UI", () => {
     expect((await run(v(3, { hold: true }))).allow).toBe(false);
     expect((await run(v(3, { hold: true }), async () => Promise.reject(new Error("frame gone")))).allow).toBe(false);
   });
+  it.each([0, 1] as const)("L%s never resolves before Continue and times out closed", async (level) => {
+    vi.useFakeTimers();
+    try {
+      let approve!: (answer: boolean) => void;
+      const completed = vi.fn();
+      const pending = run(v(level, { hold: true }), () => new Promise<boolean>((resolve) => { approve = resolve; }));
+      void pending.then(completed);
+      await vi.advanceTimersByTimeAsync(89_999);
+      expect(completed).not.toHaveBeenCalled();
+      await vi.advanceTimersByTimeAsync(2);
+      expect((await pending).allow).toBe(false);
+      approve(true); // late approval cannot reopen a rejected request
+      await vi.advanceTimersByTimeAsync(1);
+      expect(completed).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
   it("L4 is rejected at once and the report is shown; a UI saying allow cannot change it", async () => {
     const show = vi.fn(async () => true);
     const r = await run(v(4, { report: view }), show);
@@ -181,12 +198,13 @@ describe("bridge: held requests go to the report UI", () => {
     expect(show).toHaveBeenCalledTimes(1);
     expect(r.sent.some((m) => (m as { type: string }).type === SW_DECIDED)).toBe(false);
   });
-  it("L1 passes with a notice; L0 passes silently", async () => {
-    const show = vi.fn(async () => false);
-    expect((await run(v(1, { allow: true }), show)).allow).toBe(true);
-    expect(show).toHaveBeenCalledTimes(1);
-    const silent = vi.fn(async () => false);
-    expect((await run(v(0, { allow: true }), silent)).allow).toBe(true);
-    expect(silent).not.toHaveBeenCalled();
+  it.each([0, 1] as const)("L%s waits for Continue, Block or UI failure", async (level) => {
+    const show = vi.fn(async () => true);
+    expect((await run(v(level, { hold: true, report: view }), show)).allow).toBe(true);
+    expect(show).toHaveBeenCalledWith(expect.objectContaining({ level, hold: true }), 91000);
+    expect((await run(v(level, { hold: true }), async () => false)).allow).toBe(false);
+    expect((await run(v(level, { hold: true }))).allow).toBe(false);
+    expect((await run(v(level, { hold: true }), async () => { throw Error("UI failed"); })).allow).toBe(false);
+    expect((await run(v(level, { allow: true }), show)).allow).toBe(false);
   });
 });

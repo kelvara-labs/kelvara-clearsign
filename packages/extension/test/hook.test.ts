@@ -160,7 +160,7 @@ describe("Wallet Standard", () => {
     const p = signFeature(app[0]).signTransaction({ transaction: tx });
     await Promise.resolve();
     tx.fill(9);
-    release({ allow: true, hold: false, level: 0, reason: "ok", report: null });
+    release({ allow: false, hold: true, level: 0, reason: "ok", report: null });
     await p;
     expect(Array.from(w.calls[0]!)).toEqual(orig);
   });
@@ -312,7 +312,7 @@ describe("legacy providers", () => {
     const p = s.signTransaction(tx);
     await Promise.resolve();
     tx.bytes = wireTx(2);
-    release({ allow: true, hold: false, level: 0, reason: "ok", report: null });
+    release({ allow: false, hold: true, level: 0, reason: "ok", report: null });
     await expect(p).rejects.toEqual(rejected);
     expect(calls.length).toBe(0);
 

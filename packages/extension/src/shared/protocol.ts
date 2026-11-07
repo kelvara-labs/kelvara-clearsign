@@ -213,7 +213,7 @@ export interface DecidedMessage {
 
 /**
  * Worker -> bridge. allow: pass to the wallet now. hold: ask the user in the report UI
- * (only L2/L3, never with allow). Neither: blocked (4001). report: what the UI shows.
+ * (only L0..L3, never with allow). Neither: blocked (4001). report: what the UI shows.
  */
 export interface WorkerVerdict {
   allow: boolean;
@@ -227,7 +227,7 @@ export function validateWorkerVerdict(x: unknown): WorkerVerdict | null {
   if (!isPlainObject(x) || !hasExactKeys(x, ["allow", "hold", "level", "reason", "report"])) return null;
   if (typeof x.allow !== "boolean" || typeof x.hold !== "boolean" || typeof x.reason !== "string" || x.reason.length > 2000) return null;
   if (!(x.level === null || (typeof x.level === "number" && [0, 1, 2, 3, 4].includes(x.level)))) return null;
-  if (x.hold && (x.allow || (x.level !== 2 && x.level !== 3))) return null;
+  if (x.hold && (x.allow || (x.level === null || x.level === 4))) return null;
   // L4 never passes, whatever the worker says.
   if (x.allow && x.level === 4) return null;
   if (!(x.report === null || validateReportView(x.report))) return null;

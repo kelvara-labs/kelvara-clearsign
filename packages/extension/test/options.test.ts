@@ -16,6 +16,7 @@ function fakeFetch(status: number, body: unknown, seen: string[] = []): FetchLik
 
 describe("settings", () => {
   it("defaults to mainnet and drops malformed keys (held, never spliced into a URL)", () => {
+    expect(readSettings({ passThrough: true }).passThrough).toBe(false);
     expect(readSettings({})).toEqual({ heliusApiKey: undefined, network: "mainnet", passThrough: false });
     expect(readSettings({ network: "testnet", heliusApiKey: "x&y=1" }).heliusApiKey).toBeUndefined();
     expect(readSettings({ heliusApiKey: "https://mainnet.helius-rpc.com/?api-key=" + KEY }).heliusApiKey).toBeUndefined();

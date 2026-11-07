@@ -10,7 +10,7 @@ import { EngineFailure } from "./engine-failure.js";
 export interface Settings {
   heliusApiKey?: string;
   network: Network;
-  /** Dev aid from sol-sign-preview: skip the hold; the wallet's own prompt still shows. */
+  /** Retired setting, ignored even when present in old storage. */
   passThrough: boolean;
   /** Raw license string as stored; verified offline on every request (expiry included). */
   licenseKey?: string;
@@ -45,7 +45,6 @@ export async function decide(
   engine: EngineLike,
   sha256: Sha256 = webSha256
 ): Promise<WorkerVerdict> {
-  if (settings.passThrough) return { allow: true, hold: false, level: null, reason: "pass-through mode", report: null };
   let hashes: string[];
   try {
     hashes = await messageHashes(req.txs, sha256);
@@ -81,7 +80,6 @@ export async function decide(
   if (!report) return failure("engine error: report failed validation");
   // MVP: full reports are available without a license.
   const reason = report.title;
-  if (level === 0 || level === 1) return { allow: true, hold: false, level, reason, report };
   if (level === 4) return { allow: false, hold: false, level, reason, report };
   return { allow: false, hold: true, level, reason, report };
 }
