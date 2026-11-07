@@ -7,7 +7,8 @@ export const CLAIM_KINDS = ["Fact", "Derived", "Conditional", "Unknown"] as cons
 export type ClaimKind = (typeof CLAIM_KINDS)[number];
 export const RISKS = ["critical", "high", "medium", "low", "unknown"] as const;
 export type Risk = (typeof RISKS)[number];
-export const CONFIDENCES = ["verified", "lower", "conditional", "unknown"] as const;
+// "observed": seen in the program's history, not from an IDL (engine preview confidence).
+export const CONFIDENCES = ["verified", "lower", "observed", "conditional", "unknown"] as const;
 export type Confidence = (typeof CONFIDENCES)[number];
 
 export interface CapabilityChange {
