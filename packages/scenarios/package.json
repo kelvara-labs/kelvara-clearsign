@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test:localnet": "node ../../tools/selfcheck/src/pending.mjs G6 M4",
+    "test:localnet": "node scripts/test-localnet.mjs",
     "fixtures:fetch": "node scripts/fixtures-fetch.mjs",
     "fixtures:verify": "node scripts/fixtures-verify.mjs",
     "localnet:up": "node scripts/localnet.mjs up",
