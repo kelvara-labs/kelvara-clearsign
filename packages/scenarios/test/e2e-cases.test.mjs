@@ -52,3 +52,48 @@ test('e2e cases: agreed shape, one case per role, signer = fee payer, no key mat
   const extra = buildCases({ admin, trap, sweep: { ...sweep, ataSweep } }, wires, 'T', { withAtaSweep: true }).cases.at(-1);
   assert.deepEqual([extra.role, extra.expectLevel, extra.signer, extra.file], ['l4-sweep-ata', 'L4', user, ataSweep.file]);
 });
+
+test('saved cases reject expiry without rewriting bytes or losing the seller signature', async () => {
+  const { checkSavedCase } = await import('../scripts/e2e-cases.mjs');
+  const c = { role: 'l2-trap', tx: 'unchanged partially signed bytes', recentBlockhash: 'expired' };
+  const original = { ...c };
+  const calls = [];
+  await assert.rejects(checkSavedCase(c, { call: async (...args) => { calls.push(args); return { value: false }; } }), (e) => {
+    assert.match(e.message, /STALE.*blockhash/);
+    assert.deepEqual(e.diagnostics.blockhash, { value: false });
+    return true;
+  });
+  assert.deepEqual(c, original);
+  assert.deepEqual(calls, [['isBlockhashValid', ['expired', { commitment: 'confirmed' }]]]);
+});
+
+test('saved durable nonce bypasses recent-blockhash expiry but rejects failed simulation with exact error and logs', async () => {
+  const { checkSavedCase } = await import('../scripts/e2e-cases.mjs');
+  const c = { role: 'l3-admin', tx: 'nonce bytes', durableNonce: 'nonce account' };
+  const response = { value: { err: { InstructionError: [0, 'InvalidArgument'] }, logs: ['nonce already advanced'] } };
+  await assert.rejects(checkSavedCase(c, { call: async (method, params) => {
+    assert.equal(method, 'simulateTransaction');
+    assert.equal(params[0], c.tx);
+    assert.equal(params[1].replaceRecentBlockhash, false);
+    assert.equal(params[1].sigVerify, false);
+    return response;
+  } }), (e) => {
+    assert.match(e.message, /cannot simulate.*InstructionError/);
+    assert.deepEqual(e.diagnostics.simulation, response);
+    return true;
+  });
+});
+
+test('usable saved cases retain their exact bytes and simulation evidence', async () => {
+  const { checkSavedCase } = await import('../scripts/e2e-cases.mjs');
+  const c = { role: 'l4-sweep-ata', tx: 'saved bytes', recentBlockhash: 'valid' };
+  const methods = [];
+  const result = await checkSavedCase(c, { call: async (method, params) => {
+    methods.push(method);
+    if (method === 'isBlockhashValid') return { value: true };
+    assert.equal(params[0], 'saved bytes');
+    return { value: { err: null, logs: [] } };
+  } });
+  assert.deepEqual(methods, ['isBlockhashValid', 'simulateTransaction']);
+  assert.equal(result.simulation.value.err, null);
+});
