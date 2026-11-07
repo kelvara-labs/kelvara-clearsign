@@ -38,7 +38,7 @@ export class FixtureStandardWallet {
   readonly #core: FixtureWalletCore;
   readonly #path: WalletPath;
   readonly #name: string;
-  readonly #account: WsAccount;
+  #account: WsAccount | null = null;
   #connected = false;
   readonly #listeners = new Set<(props: unknown) => void>();
 
@@ -46,12 +46,19 @@ export class FixtureStandardWallet {
     this.#core = core;
     this.#path = path;
     this.#name = path === "ws-register" ? "Kelvara Fixture (register)" : "Kelvara Fixture (app-ready)";
-    this.#account = Object.freeze({
-      address: core.key.address,
-      publicKey: core.key.publicKey.slice(),
-      chains: SOLANA_CHAINS,
-      features: ["solana:signTransaction", "solana:signAndSendTransaction", "solana:signMessage"]
-    });
+  }
+
+  /** The core's current account (throwaway key or a presented address), one frozen object per address. */
+  get #current(): WsAccount {
+    const a = this.#core.account;
+    if (this.#account?.address !== a.address)
+      this.#account = Object.freeze({
+        address: a.address,
+        publicKey: a.publicKey.slice(),
+        chains: SOLANA_CHAINS,
+        features: ["solana:signTransaction", "solana:signAndSendTransaction", "solana:signMessage"]
+      });
+    return this.#account;
   }
 
   get version() {
@@ -67,7 +74,7 @@ export class FixtureStandardWallet {
     return SOLANA_CHAINS;
   }
   get accounts(): readonly WsAccount[] {
-    return this.#connected ? [this.#account] : [];
+    return this.#connected ? [this.#current] : [];
   }
 
   get features() {
@@ -156,12 +163,16 @@ function legacyReturn(input: unknown, signed: Uint8Array): LegacyTx {
 
 /** Legacy injected provider, installed as window.solana and window.phantom.solana. */
 export function makeLegacyProvider(core: FixtureWalletCore) {
-  const pub = core.key.publicKey.slice();
-  const publicKey = Object.freeze({
-    toBase58: () => core.key.address,
-    toString: () => core.key.address,
-    toBytes: () => pub.slice()
-  });
+  // web3.js PublicKey-like view of the core's current account (throwaway key or a presented address).
+  let cached: { address: string; key: Readonly<{ toBase58(): string; toString(): string; toBytes(): Uint8Array }> } | null = null;
+  const current = () => {
+    const a = core.account;
+    if (cached?.address !== a.address) {
+      const pub = a.publicKey.slice();
+      cached = { address: a.address, key: Object.freeze({ toBase58: () => a.address, toString: () => a.address, toBytes: () => pub.slice() }) };
+    }
+    return cached.key;
+  };
   let connected = false;
   const provider = {
     isKelvaraFixture: true,
@@ -170,11 +181,11 @@ export function makeLegacyProvider(core: FixtureWalletCore) {
       return connected;
     },
     get publicKey() {
-      return connected ? publicKey : null;
+      return connected ? current() : null;
     },
     async connect() {
       connected = true;
-      return { publicKey };
+      return { publicKey: current() };
     },
     async disconnect() {
       connected = false;
@@ -189,11 +200,11 @@ export function makeLegacyProvider(core: FixtureWalletCore) {
     },
     async signAndSendTransaction(tx: LegacyTx) {
       const [signed] = await core.signTransactions("legacy", "legacy:signAndSendTransaction", [legacyBytes(tx)]);
-      return { signature: b58encode(firstSignature(signed!)), publicKey };
+      return { signature: b58encode(firstSignature(signed!)), publicKey: current() };
     },
     async signMessage(message: Uint8Array) {
       const signature = await core.signMessage("legacy", "legacy:signMessage", message);
-      return { signature, publicKey };
+      return { signature, publicKey: current() };
     }
   };
   return provider;
