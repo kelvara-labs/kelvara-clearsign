@@ -23,6 +23,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { mainCheckout } from './lib/devnet.mjs';
 import { heliusDevnet } from './lib/helius.mjs';
 import { lookalike } from './lib/poison.mjs';
 import { systemTransfer } from './lib/token2022.mjs';
@@ -43,10 +44,6 @@ export const GRIND = { prefix: 3, suffix: 2 };
 
 const log = (...a) => console.log('[poison-devnet]', ...a);
 
-function mainCheckout() {
-  const common = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: REPO, encoding: 'utf8' }).trim();
-  return resolve(common, '..');
-}
 
 function keygen(path) {
   if (existsSync(path)) return;

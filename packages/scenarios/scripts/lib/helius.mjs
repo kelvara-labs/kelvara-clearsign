@@ -1,35 +1,16 @@
 // Helius mainnet JSON-RPC client for scenario tools. Helius only; the key comes from the main checkout's .env
 // (or HELIUS_API_KEY) and is never logged: every error message is passed through redact().
 /* global fetch, AbortSignal, setTimeout */
-import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { mainCheckout } from './main-checkout.mjs';
 
 export const redact = (s) => String(s).replace(/api-key=[^&\s"]*/gi, 'api-key=REDACTED');
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export function loadHeliusKey(repoRoot) {
   if (process.env.HELIUS_API_KEY) return process.env.HELIUS_API_KEY;
-  const common = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], {
-    cwd: repoRoot,
-    encoding: 'utf8'
-  }).trim();
-  let envPath = resolve(common, '..', '.env');
-  if (!existsSync(envPath)) {
-    // A plain `git clone` of a local checkout (e.g. a clean-clone gate run) has its own .git: follow origin when it
-    // is a local directory, to that repo's main checkout.
-    let origin = '';
-    try {
-      origin = execFileSync('git', ['config', '--get', 'remote.origin.url'], { cwd: repoRoot, encoding: 'utf8' }).trim();
-    } catch {
-      // no origin
-    }
-    const local = origin.startsWith('file://') ? origin.slice(7) : origin;
-    if (local.startsWith('/') && existsSync(local)) {
-      const originCommon = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: local, encoding: 'utf8' }).trim();
-      envPath = resolve(originCommon, '..', '.env');
-    }
-  }
+  const envPath = resolve(mainCheckout(repoRoot, '.env'), '.env');
   if (!existsSync(envPath)) throw new Error('no .env in the main checkout; set HELIUS_API_KEY there');
   for (const line of readFileSync(envPath, 'utf8').split('\n')) {
     const m = /^\s*HELIUS_API_KEY\s*=\s*"?([^"\s#]+)"?/.exec(line);
