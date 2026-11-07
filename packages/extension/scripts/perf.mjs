@@ -61,6 +61,9 @@ async function loadEngine() {
     alias: { "json-stable-stringify": path.join(repo, "config/esbuild-shims/json-stable-stringify.mjs") },
     logLevel: "error"
   });
+  // A chrome-extension:// service worker is a secure context. Node leaves isSecureContext undefined, and
+  // @solana/kit's browser build then refuses crypto.subtle (PDA derivation), which skips the Squads reads.
+  globalThis.isSecureContext ??= true;
   const mod = await import(pathToFileURL(out).href);
   rmSync(dir, { recursive: true, force: true });
   return mod;
@@ -124,18 +127,21 @@ async function main() {
     }
     const times = [];
     let level = null;
+    let rules = null;
     let error = null;
     for (let i = 0; i < runs; i++) {
       const s = performance.now();
       try {
-        level = (await engine.analyze(req, endpoint, hashes)).level;
+        const r = await engine.analyze(req, endpoint, hashes);
+        level = r.level;
+        rules = r.claims.map((c) => `${c.rule ?? c.id}:${c.level ?? "-"}`).join(", ");
       } catch (e) {
         error = e instanceof Error ? e.message : "error"; // EngineFailure texts are fixed strings
       }
       times.push(performance.now() - s);
     }
     samples.push(...times);
-    perCase.push({ case: c.name, level: level === null ? null : `L${level}`, error, p50: round(pct(times, 50)), max: round(Math.max(...times)) });
+    perCase.push({ case: c.name, level: level === null ? null : `L${level}`, rules, error, p50: round(pct(times, 50)), max: round(Math.max(...times)) });
   }
   const budgetMs = mode === "helius" ? 3000 : 1500;
   const p95 = pct(samples, 95);
