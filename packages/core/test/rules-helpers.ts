@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { RootNode } from "@codama/nodes";
 import {
+  analyzeSession,
   createDecoder,
   createRpcAccountReader,
   createRpcClient,
@@ -121,3 +122,14 @@ export async function stateFrom(
   return state;
 }
 export const rulesRecording = json<Pick<Recording, "network" | "calls"> & { observed: Record<string, any> }>("packages/core/test/fixtures/rules/mainnet-squads.json");
+
+export type AnalyzeRecording = Recording & { inputs: { transactions: string[]; wallet?: string; [k: string]: any } };
+export const analyzeRecording = (name: string): AnalyzeRecording => json<AnalyzeRecording>(`packages/core/test/fixtures/analyze/${name}.json`);
+
+/** analyzeSession over a recorded real RPC run (fixtures/analyze): its report and the state it read, simulations included. */
+export async function analyzedState(name: "admin-local" | "trap-local"): Promise<{ report: Report; state: RuleState; rec: AnalyzeRecording }> {
+  const r = analyzeRecording(name);
+  const { rpc } = replay(r);
+  const out = await analyzeSession(await sessionOf(r.inputs.transactions), { decoder, squadsAccounts, rpc, ...(r.inputs.wallet ? { wallet: r.inputs.wallet } : {}) });
+  return { report: out.report, state: out.state, rec: r };
+}

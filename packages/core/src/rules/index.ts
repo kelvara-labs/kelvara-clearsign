@@ -1,4 +1,5 @@
 // Rules (M2): one file per rule, run in this order; later rules may depend on earlier claims.
+// E10: transaction-level and session-level rules run last: they read the claims and capabilities above.
 // E7: durable nonce, outsider-staged nonce and Squads approve/execute/threshold/time lock/unknown/config.
 import { token2022PermanentDelegateRule } from "./token2022-permanent-delegate.js";
 import { tokenFreezeAuthorityRule } from "./token-freeze-authority.js";
@@ -19,6 +20,12 @@ import { squadsConfigChangeRule } from "./squads-config-change.js";
 import { squadsThresholdMetRule } from "./squads-threshold-met-in-session.js";
 import { squadsUnknownProposalRule } from "./squads-unknown-proposal.js";
 import { squadsZeroTimelockRule } from "./squads-zero-timelock-execution.js";
+import { txForeignFeePayerRule } from "./tx-foreign-fee-payer.js";
+import { sessionDependencyRule } from "./session-dependency.js";
+import { sessionOrderingRule } from "./session-ordering.js";
+import { sessionPartialExecutionRule } from "./session-partial-execution.js";
+import { intentLabelMismatchRule } from "./intent-label-mismatch.js";
+import { simPowerWithoutValueRule } from "./sim-power-without-value.js";
 import type { Decoder } from "../decode/decoder.js";
 import { GRAPH_RULE_IDS, runCapabilityGraph } from "../graph/preview.js";
 import type { AuthorityMap } from "../graph/authority-map.js";
@@ -46,7 +53,13 @@ export const RULES: readonly Rule[] = [
   systemAssignTakeoverRule,
   tokenOwnerTakeoverRule,
   walletSweepRule,
-  addressHistoryRule
+  addressHistoryRule,
+  txForeignFeePayerRule,
+  sessionDependencyRule,
+  sessionOrderingRule,
+  sessionPartialExecutionRule,
+  intentLabelMismatchRule,
+  simPowerWithoutValueRule
 ];
 
 /** Every ruleId a claim may carry: the rules' plus the capability graph's (preview, recovery paths). */
@@ -81,4 +94,5 @@ export { readAddressRuleState, requestTransfers, assessRecipient, type RequestTr
 export { describeConfigAction } from "./squads-config-change.js";
 export { proposalViews, vaultInstructions, type ProposalView, type MultisigView } from "./squads-session.js";
 export { durableNonceUse, type DurableNonceUse } from "./common.js";
+export { outsideGrants, sharedAccounts, type OutsideGrant, type SharedAccount } from "./session-links.js";
 export type { Rule, RuleContext, RuleState, NonceFacts } from "./types.js";

@@ -6,7 +6,7 @@ import type { Address } from "@solana/kit";
 import { accountFromRpc, parseTransaction, ALL_RULE_IDS as RULE_IDS, type ResolvedAccount, type RuleState, type Session, type SessionTransaction } from "../src/index.js";
 import { poisonManifest, requestCase } from "./address-helpers.js";
 const devnet = poisonManifest.cases.find((c) => c.kind === "poisoning" && c.network === "devnet")!;
-import { analysisTiming, analyze, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
+import { analysisTiming, analyze, analyzedState, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
 
 /** A one-transaction session resolved from the runtime's loaded addresses (real RPC meta). */
 function sessionFromRuntime(base64: string, loaded: { writable: string[]; readonly: string[] }): Session {
@@ -51,6 +51,11 @@ beforeAll(async () => {
   poisonSessions.push({ name: "poison devnet send", ...(await requestCase(devnet, { maxTransactions: 10 })), expectedL4: true });
   poisonSessions.push({ name: "poison devnet send, payment not read", ...(await requestCase(devnet, { maxTransactions: 0 })) });
   for (const c of poisonManifest.cases.filter((x) => x.kind === "first-send")) poisonSessions.push({ name: `first-send ${c.id}`, ...(await requestCase(c, { maxTransactions: 10 })) });
+  // E10: the G6 stories with the state analyzeSession reads over recorded localnet RPC, simulations included.
+  for (const name of ["admin-local", "trap-local"] as const) {
+    const a = await analyzedState(name);
+    poisonSessions.push({ name: `${name} analyzed (simulated)`, session: await sessionOf(a.rec.inputs.transactions), state: a.state });
+  }
 }, 20_000);
 
 it("G3: no fixture reaches L4; every implemented ruleId has a positive and a negative real session", async () => {
@@ -68,6 +73,11 @@ it("G3: no fixture reaches L4; every implemented ruleId has a positive and a neg
     session: await sessionOf([driftTx(DRIFT_1), driftTx(DRIFT_2)]),
     state: await stateFrom(MAIN, { nonces: [MAIN.inputs.nonce], squads: [MAIN.inputs.multisig] })
   });
+  // E10: the Drift pair in reverse order (execute before creation) and a real fee-sponsored mainnet transfer.
+  sessions.push({ name: "drift session reversed", session: await sessionOf([driftTx(DRIFT_2), driftTx(DRIFT_1)]) });
+  const sponsored = manifestFixtures().find((f) => f.path.includes("/memo/2TiSETW"))!;
+  const sponsoredSession = await sessionOf([sponsored.base64]);
+  sessions.push({ name: "sponsored fee, wallet = co-signer", session: sponsoredSession, state: { wallet: sponsoredSession.transactions[0]!.accounts[1]!.address! } });
   sessions.push({
     name: "admin-local approval + localnet state",
     session: await sessionOf([LOCAL.inputs.approval.wireBase64]),
