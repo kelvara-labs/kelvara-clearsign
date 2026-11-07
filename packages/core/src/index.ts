@@ -30,7 +30,7 @@ export {
   type Session
 } from "./ingest/index.js";
 
-// Account reads are injected; the Helius adapter implements AccountReader in M4.
+// Account reads are injected; the Helius adapter (createRpcAccountReader) implements AccountReader.
 export {
   createFixtureAccountReader,
   createCachingAccountReader,
@@ -38,6 +38,83 @@ export {
   type AccountInfo,
   type RecordedAccount
 } from "./state/index.js";
+
+// M4 / E13: RPC (Helius or localhost:8899 only; timeouts, backoff with Retry-After, mainnet <= 8 rps,
+// per-session cache), state reads (nonce + funder, program data, mints with Token-2022 extensions,
+// Squads accounts) and simulateTransaction with balance and authority changes.
+export {
+  createRpcClient,
+  rpcUrlFor,
+  networkOfUrl,
+  redactUrl,
+  parseRetryAfter,
+  RpcError,
+  ALLOWED_METHODS,
+  MAINNET_MAX_RPS,
+  DEFAULT_RPS,
+  HELIUS_RPC_HOSTS,
+  LOCALNET_RPC_URL,
+  createRpcAccountReader,
+  accountFromRpc,
+  getSignaturesForAddress,
+  getJsonTransaction,
+  type RpcClient,
+  type RpcClientOptions,
+  type RpcStats,
+  type RpcNetwork,
+  type RpcErrorCode,
+  type RpcAccountReader,
+  type RpcAccount,
+  type SignatureInfo,
+  type RpcJsonTransaction,
+  type Commitment
+} from "./rpc/index.js";
+export {
+  decodeNonceAccount,
+  decodeLoaderState,
+  decodeMint,
+  decodeTokenAccount,
+  readNonceAccount,
+  findOldestSignature,
+  findAccountOrigin,
+  fundingFromTransaction,
+  readProgram,
+  readMint,
+  readMints,
+  readSquadsAccount,
+  StateReadError,
+  SYSTEM_PROGRAM,
+  TOKEN_PROGRAM,
+  TOKEN_2022_PROGRAM,
+  TOKEN_2022_EXTENSION_NAMES,
+  NONCE_ACCOUNT_LENGTH,
+  PROGRAM_DATA_HEADER_LENGTH,
+  type NonceAccount,
+  type NonceState,
+  type LoaderState,
+  type MintInfo,
+  type MintState,
+  type TokenExtension,
+  type TokenAccountInfo,
+  type OldestSignature,
+  type AccountOrigin,
+  type FundingMethod,
+  type ProgramState,
+  type StateReadErrorCode,
+  type SquadsAccountDecoder
+} from "./state/index.js";
+export {
+  simulateTransaction,
+  simulateSessionTransaction,
+  wireTransactionBytes,
+  MAX_SIMULATED_ACCOUNTS,
+  type SimulationResult,
+  type SimulateOptions,
+  type SimulatedInnerInstruction,
+  type SolBalanceChange,
+  type TokenBalanceChange,
+  type StateChange
+} from "./simulate/index.js";
 
 // M1 / E2: decode (Codama parseInstruction first, built-in Anchor decoder as fallback; Unknown is never safe).
 // M1 / E4: hand-written decoders for the upgradeable loader and Memo (decoder: "builtin").

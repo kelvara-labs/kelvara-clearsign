@@ -13,7 +13,8 @@
     "test:rules": "node ../../tools/selfcheck/src/pending.mjs G3 M2",
     "test:contract": "vitest run test/report-*.test.ts",
     "test:determinism": "node ../../tools/selfcheck/src/pending.mjs G9 M7",
-    "fixtures:decode-spike": "node scripts/fetch-decode-spike.mjs"
+    "fixtures:decode-spike": "node scripts/fetch-decode-spike.mjs",
+    "fixtures:state": "esbuild scripts/record-state-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-state-fixtures.mjs && node dist/scripts/record-state-fixtures.mjs"
   },
   "dependencies": {
     "@codama/dynamic-parsers": "1.4.2",

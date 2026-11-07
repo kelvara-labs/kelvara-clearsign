@@ -1,0 +1,554 @@
+{
+  "schema": "kelvara.fixture.rpc/v1",
+  "network": "mainnet",
+  "source": "Helius mainnet RPC via packages/core/scripts/record-state-fixtures.ts",
+  "recordedAt": "2026-11-07T11:12:27.242Z",
+  "inputs": {
+    "PYUSD": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+    "USDC": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    "DRIFT": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+    "SQUADS": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "driftAttackTx": "2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H",
+    "nonce": "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC",
+    "multisig": "2LW6PSEjp81xSEttWwXDB6Etb1eKdhYPbFEojYbyhx88"
+  },
+  "observed": {
+    "mints": [
+      {
+        "address": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+        "program": "token-2022",
+        "mintAuthority": "AxJkHRY3puoofyj7Pn512M1SGBgWroXMkEdNPQypkzbu",
+        "supply": "732277950967417",
+        "decimals": 6,
+        "isInitialized": true,
+        "freezeAuthority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+        "extensions": [
+          {
+            "type": 3,
+            "name": "mintCloseAuthority",
+            "fields": {
+              "closeAuthority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk"
+            },
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b"
+          },
+          {
+            "type": 12,
+            "name": "permanentDelegate",
+            "fields": {
+              "delegate": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk"
+            },
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b"
+          },
+          {
+            "type": 1,
+            "name": "transferFeeConfig",
+            "fields": {
+              "authority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+              "withdrawWithheldAuthority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+              "withheldAmount": "0",
+              "olderTransferFee": {
+                "epoch": "605",
+                "maximumFee": "0",
+                "basisPoints": 0
+              },
+              "newerTransferFee": {
+                "epoch": "605",
+                "maximumFee": "0",
+                "basisPoints": 0
+              }
+            },
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b00000000000000005d02000000000000000000000000000000005d0200000000000000000000000000000000"
+          },
+          {
+            "type": 4,
+            "name": "confidentialTransferMint",
+            "fields": {},
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "type": 16,
+            "name": "confidentialTransferFeeConfig",
+            "fields": {},
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b1c37e6433b7304dd82737ae40d9b8bf3c49f5b0e6c49a8d53328b3e506901c570100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "type": 14,
+            "name": "transferHook",
+            "fields": {
+              "authority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+              "programId": null
+            },
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          {
+            "type": 18,
+            "name": "metadataPointer",
+            "fields": {
+              "authority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+              "address": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo"
+            },
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b1792483b6c8a2a87b7471d814f9591f9395c840a9ce3d9f4d5ba7d3a4b8a749e"
+          },
+          {
+            "type": 19,
+            "name": "tokenMetadata",
+            "fields": {
+              "updateAuthority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+              "mint": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+              "name": "PayPal USD",
+              "symbol": "PYUSD",
+              "uri": "https://token-metadata.paxos.com/pyusd_metadata/prod/solana/pyusd_metadata.json",
+              "additionalMetadata": []
+            },
+            "raw": "17853261ef6ab8532a67f053865aad31293fcf07cf120ab5b9a15706548dc02b1792483b6c8a2a87b7471d814f9591f9395c840a9ce3d9f4d5ba7d3a4b8a749e0a00000050617950616c205553440500000050595553444f00000068747470733a2f2f746f6b656e2d6d657461646174612e7061786f732e636f6d2f70797573645f6d657461646174612f70726f642f736f6c616e612f70797573645f6d657461646174612e6a736f6e00000000"
+          }
+        ],
+        "permanentDelegate": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+        "transferHook": {
+          "authority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+          "programId": null
+        },
+        "defaultAccountState": null,
+        "nonTransferable": false,
+        "mintCloseAuthority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+        "transferFee": {
+          "authority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+          "withdrawAuthority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+          "newerBasisPoints": 0,
+          "newerMaximumFee": "0",
+          "newerEpoch": "605",
+          "olderBasisPoints": 0,
+          "olderMaximumFee": "0"
+        },
+        "pausable": null,
+        "metadata": {
+          "updateAuthority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+          "name": "PayPal USD",
+          "symbol": "PYUSD",
+          "uri": "https://token-metadata.paxos.com/pyusd_metadata/prod/solana/pyusd_metadata.json"
+        },
+        "metadataPointer": {
+          "authority": "2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk",
+          "metadataAddress": "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo"
+        }
+      },
+      {
+        "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+        "program": "token",
+        "mintAuthority": "BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG",
+        "supply": "8797214536891837",
+        "decimals": 6,
+        "isInitialized": true,
+        "freezeAuthority": "7dGbd2QZcCKcTndnHcTL8q7SMVXAkp688NTQYwrRCrar",
+        "extensions": [],
+        "permanentDelegate": null,
+        "transferHook": null,
+        "defaultAccountState": null,
+        "nonTransferable": false,
+        "mintCloseAuthority": null,
+        "transferFee": null,
+        "pausable": null,
+        "metadata": null,
+        "metadataPointer": null
+      }
+    ],
+    "drift": {
+      "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+      "executable": true,
+      "loader": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "programData": "7dLgmtcTavcguNoynVimF9ZNVb13FvhXVRfj2HyrDGaP",
+      "deploySlot": "429731225",
+      "upgradeAuthority": "8jj7zJgdr5bDndc7evM74FMGwzLPmd4u4QxNzFi1BMai",
+      "upgradeable": true
+    },
+    "squadsProgram": {
+      "program": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "executable": true,
+      "loader": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "programData": "Fy3YMJCvwbAXUgUM5b91ucUVA3jYzwWLHL3MwBqKsh8n",
+      "deploySlot": "302582236",
+      "upgradeAuthority": null,
+      "upgradeable": false
+    },
+    "nonceState": {
+      "address": "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC",
+      "lamports": "1447680",
+      "version": "current",
+      "state": "initialized",
+      "authority": "39JyWrdbVdRqjzw9yyEjxNtTbTKcTPLdtdCgbz7C7Aq8",
+      "nonce": "8B2KrCebm8MuxoRBrBigBBAZQeJvKzc3vFJWAGZsp9dw",
+      "lamportsPerSignature": "5000"
+    },
+    "origin": {
+      "address": "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC",
+      "signature": "LJuBqSWpfW6GSgWi2v64B6czZfd618ZXxPLBTQt2tSgF4hHCUgfYvUuAMxeSmfL4FnS8Wt9cKNaSK9YNke7kTz1",
+      "slot": 408444056,
+      "blockTime": 1774315326,
+      "complete": true,
+      "funder": "FMJnBkVpHj5JzN7w4XFysCwY931CYSYk1DsXzqNi7YPF",
+      "method": "createAccount",
+      "feePayer": "FMJnBkVpHj5JzN7w4XFysCwY931CYSYk1DsXzqNi7YPF"
+    },
+    "multisig": {
+      "threshold": 2,
+      "timeLock": 0
+    }
+  },
+  "calls": [
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+          "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466491071,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 2078412093,
+            "data": [
+              "AQAAAJPkMU4Y+uEbsZMeeiiX9ljfNXCarVZ7fbwaCVSmePpUee4kvwCaAgAGAQEAAAAXhTJh72q4Uypn8FOGWq0xKT/PB88SCrW5oVcGVI3AKwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQMAIAAXhTJh72q4Uypn8FOGWq0xKT/PB88SCrW5oVcGVI3AKwwAIAAXhTJh72q4Uypn8FOGWq0xKT/PB88SCrW5oVcGVI3AKwEAbAAXhTJh72q4Uypn8FOGWq0xKT/PB88SCrW5oVcGVI3AKxeFMmHvarhTKmfwU4ZarTEpP88HzxIKtbmhVwZUjcArAAAAAAAAAABdAgAAAAAAAAAAAAAAAAAAAABdAgAAAAAAAAAAAAAAAAAAAAAEAEEAF4UyYe9quFMqZ/BThlqtMSk/zwfPEgq1uaFXBlSNwCsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAIEAF4UyYe9quFMqZ/BThlqtMSk/zwfPEgq1uaFXBlSNwCscN+ZDO3ME3YJzeuQNm4vzxJ9bDmxJqNUzKLPlBpAcVwEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgBAABeFMmHvarhTKmfwU4ZarTEpP88HzxIKtbmhVwZUjcArAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASAEAAF4UyYe9quFMqZ/BThlqtMSk/zwfPEgq1uaFXBlSNwCsXkkg7bIoqh7dHHYFPlZH5OVyECpzj2fTVun06S4p0nhMArgAXhTJh72q4Uypn8FOGWq0xKT/PB88SCrW5oVcGVI3AKxeSSDtsiiqHt0cdgU+Vkfk5XIQKnOPZ9NW6fTpLinSeCgAAAFBheVBhbCBVU0QFAAAAUFlVU0RPAAAAaHR0cHM6Ly90b2tlbi1tZXRhZGF0YS5wYXhvcy5jb20vcHl1c2RfbWV0YWRhdGEvcHJvZC9zb2xhbmEvcHl1c2RfbWV0YWRhdGEuanNvbgAAAAA=",
+              "base64"
+            ],
+            "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 866
+          },
+          {
+            "lamports": 558855701447,
+            "data": [
+              "AQAAAJj+huiNm+Lqi8HMpIeLKYjCQPUrhCS/tA7Rot3LXhmbvf17HwVBHwAGAQEAAABicKqKWcWUBbRShshncubNEm6bil06OFNtN/e0FOi2Zw==",
+              "base64"
+            ],
+            "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 82
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466491071,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 49155476,
+            "data": [
+              "AgAAAGJ1ShjkdERyHHhh6Ow6UX2jfMElSaQtlMX8ie/NQdYc",
+              "base64"
+            ],
+            "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+            "executable": true,
+            "rentEpoch": 18446744073709552000,
+            "space": 36
+          }
+        ]
+      }
+    },
+    {
+      "method": "getAccountInfo",
+      "params": [
+        "7dLgmtcTavcguNoynVimF9ZNVb13FvhXVRfj2HyrDGaP",
+        {
+          "encoding": "base64",
+          "commitment": "confirmed",
+          "dataSlice": {
+            "offset": 0,
+            "length": 45
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466491072,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 46445764320,
+          "data": [
+            "AwAAAJktnRkAAAAAAXLz1AgI9xeBc3BTLZStzmuVu4U/ho8tA895TlJzZDej",
+            "base64"
+          ],
+          "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+          "executable": false,
+          "rentEpoch": 18446744073709552000,
+          "space": 6673114
+        }
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466491078,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 12171440,
+            "data": [
+              "AgAAAN5fA80UTvlZeDAEQujVsh/36bXCtTG7b/FG999tVB3T",
+              "base64"
+            ],
+            "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+            "executable": true,
+            "rentEpoch": 18446744073709552000,
+            "space": 36
+          }
+        ]
+      }
+    },
+    {
+      "method": "getAccountInfo",
+      "params": [
+        "Fy3YMJCvwbAXUgUM5b91ucUVA3jYzwWLHL3MwBqKsh8n",
+        {
+          "encoding": "base64",
+          "commitment": "confirmed",
+          "dataSlice": {
+            "offset": 0,
+            "length": 45
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466491079,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 10236299440,
+          "data": [
+            "AwAAANwJCRIAAAAAACXAp0kL9hD+atgJDWt/6AsoVsOtYXVpCiDgmBYHziFl",
+            "base64"
+          ],
+          "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+          "executable": false,
+          "rentEpoch": 18446744073709552000,
+          "space": 1470461
+        }
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466491079,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 1447680,
+            "data": [
+              "AQAAAAEAAAAf2FgStXheKQ+oF1Kv8HgcChmf4Ok/9XDqYxqlkBSly2qTHV6QCCy0TWCaMKoB8B+qSvntTfDaijf24k8lTPM2iBMAAAAAAAA=",
+              "base64"
+            ],
+            "owner": "11111111111111111111111111111111",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 80
+          }
+        ]
+      }
+    },
+    {
+      "method": "getSignaturesForAddress",
+      "params": [
+        "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC",
+        {
+          "limit": 1000,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": [
+        {
+          "signature": "2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H",
+          "slot": 410344005,
+          "err": null,
+          "memo": null,
+          "blockTime": 1775059518,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1118
+        },
+        {
+          "signature": "LJuBqSWpfW6GSgWi2v64B6czZfd618ZXxPLBTQt2tSgF4hHCUgfYvUuAMxeSmfL4FnS8Wt9cKNaSK9YNke7kTz1",
+          "slot": 408444056,
+          "err": null,
+          "memo": null,
+          "blockTime": 1774315326,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 1047
+        }
+      ]
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "LJuBqSWpfW6GSgWi2v64B6czZfd618ZXxPLBTQt2tSgF4hHCUgfYvUuAMxeSmfL4FnS8Wt9cKNaSK9YNke7kTz1",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "LJuBqSWpfW6GSgWi2v64B6czZfd618ZXxPLBTQt2tSgF4hHCUgfYvUuAMxeSmfL4FnS8Wt9cKNaSK9YNke7kTz1",
+            "UJhmfrgQ5G5aV1hdpYqJLfCW6zicJkdwerbjP4mNSqg8ZRzCA82aWDfdCAKXwSAaLEemUbZ9YDRRdyjbytkQYLs"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 2,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 3
+            },
+            "accountKeys": [
+              "FMJnBkVpHj5JzN7w4XFysCwY931CYSYk1DsXzqNi7YPF",
+              "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC",
+              "11111111111111111111111111111111",
+              "SysvarRecentB1ockHashes11111111111111111111",
+              "SysvarRent111111111111111111111111111111111"
+            ],
+            "recentBlockhash": "6Kgar3gBejdQ2iP59FhszUTPQyT6NhC6DRhbTiWuZjFx",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "11111C8S3NmV3fbPgfc4XnxQZ4bTtW3XEgQxTBMkMXXv6VwUVwkzXueR44DytDZPvyuq1",
+                "stackHeight": 1
+              },
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  1,
+                  3,
+                  4
+                ],
+                "data": "3eGCC4zxFqk21PnpNwnBdz7jSfgY7txV6C8GJtV39oPSAPSrE",
+                "stackHeight": 1
+              }
+            ]
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 10000,
+          "preBalances": [
+            98542320,
+            0,
+            1,
+            42706560,
+            1009200
+          ],
+          "postBalances": [
+            97084640,
+            1447680,
+            1,
+            42706560,
+            1009200
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success",
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 300,
+          "costUnits": 2370
+        },
+        "version": "legacy",
+        "slot": 408444056,
+        "transactionIndex": 1047,
+        "blockTime": 1774315326
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "2LW6PSEjp81xSEttWwXDB6Etb1eKdhYPbFEojYbyhx88"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466491087,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": [
+          {
+            "lamports": 2958000,
+            "data": [
+              "4HR5ukShT+z2Js+IbK6vyQ3h5AqFw+PvvD/3cZ/bItmprtSDwCyK84XjPEUEr5hsA2iRoVDPcSrn6dTT3fMcShB484loBLfiAgAAAAAACQAAAAAAAAAAAAAAAAAAAAEf2FgStXheKQ+oF1Kv8HgcChmf4Ok/9XDqYxqlkBSly/4FAAAAAJS5b6CyjjSE47iM7OLRtRBZxJZ2/wn+EEFk+W67HYAHH9hYErV4XikPqBdSr/B4HAoZn+DpP/Vw6mMapZAUpcsHUUkEz7FfLaJjygMX5cDGGgvNfu9lTnGt5EUq42wAKo0HYA4FInwukPYtK9XEfNcmDikTfE81X2ICbla5IhF3O+IH9+k7cGuC9qxOAHa5QEEXRav2cZX5EaLCrpq/vTq8fVkH",
+              "base64"
+            ],
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "executable": false,
+            "rentEpoch": 18446744073709552000,
+            "space": 297
+          }
+        ]
+      }
+    }
+  ]
+}

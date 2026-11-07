@@ -1,0 +1,765 @@
+{
+  "schema": "kelvara.fixture.rpc/v1",
+  "network": "localnet",
+  "source": "solana-test-validator after pnpm scenario:admin-local and scenario:trap-local, via packages/core/scripts/record-state-fixtures.ts",
+  "recordedAt": "2026-11-07T11:11:37.659Z",
+  "inputs": {
+    "shinyMint": "89uhHPoLA9jX4WSQLM53BnZHVFPMAWKsR4vKDPjkM4Q",
+    "trapCreator": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+    "nonce": "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB",
+    "nonceAuthority": "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+    "nonceFunder": "Er6o3ifG4K8V6vGq6zwsW3E7D7zHd6HBXFU5dagoNPFB",
+    "demoProgram": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+    "programData": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+    "upgradeAuthorityAfterAttack": "dtmpNZtcTx4PsHcwUXQC464wvZVgEgrkeT78rBA8qWf",
+    "multisig": "J6NEdcPwptQeLnAg1pELm6ny1U8hvqvuBd9oqnj3RQ3a",
+    "threshold": 2,
+    "timeLock": 0,
+    "members": {
+      "A": "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+      "B": "HkS1KszuJfrpLrSBnX7hi5uCgeMvMRu5nb3VaoUnwW9X",
+      "C": "DeAEd6ZzdeWAEv532Axz5KkdgzvEkvhS8S7RY7Ssjnz5"
+    },
+    "proposal": "GVEEEFxTaF8eDpooecpQHQDKjBwSwWm9vLfJzZqwQhZQ",
+    "vaultTransaction": "CXR3KPQpTXZVmyWKvRhqvw4JVh38MBRJNnPdE5JfNhM9",
+    "transfer": {
+      "wireBase64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAED8B9OioN3zBWux7lDCFshRicjE2fO9BDp/qXQh9lNOXC1j8zvR5fcTdIw/3eUYY1xk33JYmd7CqE+mUdRGzsWfwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVfd4UpMFNXP6DFn8Bhk49m2nBlhnXv/8szSgDoPKIc8BAgIAAQwCAAAAFc1bBwAAAAA=",
+      "from": "HALY3wRuC7221SvjBBi9jccLVawqKX5GoKGWQmVtH751",
+      "to": "DDjyL9YVM4T1vxAQraoraUtBwkA4oqjezXqyR6xBvqn6",
+      "lamports": "123456789"
+    },
+    "approval": {
+      "wireBase64": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAUI2TvFH2aKUtG8qtX+0+xhoIeuA2zZsyfL9oedvBlTDqS29s5SoIaaYIi88kw/4BK8q7dQYnnoj6me1p/KF8bvsuYahgm79oNDyIhBNpnA2I+MX91pBzrDCGRsw1TjJF1vBqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSN/faXoX/GkALN2FtmkwLNgGCuAGViaADjSM1aglwouDEGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qItIqBeQaJ5J0Xk2ylgWHk6ZLhQl5JrGEXcu3RDXPESlAwQDAQMABAQAAAAFAA1RNCBmZWUgdXBkYXRlBwMGAAIakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+      "accounts": [
+        "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+        "GVEEEFxTaF8eDpooecpQHQDKjBwSwWm9vLfJzZqwQhZQ",
+        "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB"
+      ]
+    }
+  },
+  "observed": {
+    "shiny": {
+      "address": "89uhHPoLA9jX4WSQLM53BnZHVFPMAWKsR4vKDPjkM4Q",
+      "program": "token-2022",
+      "mintAuthority": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+      "supply": "1000000000000",
+      "decimals": 6,
+      "isInitialized": true,
+      "freezeAuthority": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+      "extensions": [
+        {
+          "type": 12,
+          "name": "permanentDelegate",
+          "fields": {
+            "delegate": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6"
+          },
+          "raw": "1b5805e1130d65989f2a0d4de65434a17c9d448a712f7ca8a3416018f1dbb121"
+        },
+        {
+          "type": 18,
+          "name": "metadataPointer",
+          "fields": {
+            "authority": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+            "address": "89uhHPoLA9jX4WSQLM53BnZHVFPMAWKsR4vKDPjkM4Q"
+          },
+          "raw": "1b5805e1130d65989f2a0d4de65434a17c9d448a712f7ca8a3416018f1dbb12101d52379161ccdaaab2546c7f3103cc3f7a8761b03633ea4384d44a2d5ea47ad"
+        },
+        {
+          "type": 19,
+          "name": "tokenMetadata",
+          "fields": {
+            "updateAuthority": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+            "mint": "89uhHPoLA9jX4WSQLM53BnZHVFPMAWKsR4vKDPjkM4Q",
+            "name": "Shiny",
+            "symbol": "SHINY",
+            "uri": "",
+            "additionalMetadata": []
+          },
+          "raw": "1b5805e1130d65989f2a0d4de65434a17c9d448a712f7ca8a3416018f1dbb12101d52379161ccdaaab2546c7f3103cc3f7a8761b03633ea4384d44a2d5ea47ad050000005368696e79050000005348494e590000000000000000"
+        }
+      ],
+      "permanentDelegate": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+      "transferHook": null,
+      "defaultAccountState": null,
+      "nonTransferable": false,
+      "mintCloseAuthority": null,
+      "transferFee": null,
+      "pausable": null,
+      "metadata": {
+        "updateAuthority": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+        "name": "Shiny",
+        "symbol": "SHINY",
+        "uri": ""
+      },
+      "metadataPointer": {
+        "authority": "2qjrduBPhG3AsWWdhiqQxGLj4Tv6hTRCyPFneufxqQy6",
+        "metadataAddress": "89uhHPoLA9jX4WSQLM53BnZHVFPMAWKsR4vKDPjkM4Q"
+      }
+    },
+    "nonceState": {
+      "address": "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB",
+      "lamports": "1447680",
+      "version": "current",
+      "state": "initialized",
+      "authority": "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+      "nonce": "4iowgqpkZpi8RKuyv3Kq2GbhZtoMXy3hCfYz9SgEXnSD",
+      "lamportsPerSignature": "5000"
+    },
+    "origin": {
+      "address": "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB",
+      "signature": "4FiH2pqeagiZDtW4fkLeMAHgNpwmekAe4XdQCFjsucmkpEXqEC1FcWy8Dch6jm8NfiZELCzmAzVAAbNuSJNYYaDC",
+      "slot": 57,
+      "blockTime": 1794049613,
+      "complete": true,
+      "funder": "Er6o3ifG4K8V6vGq6zwsW3E7D7zHd6HBXFU5dagoNPFB",
+      "method": "createAccount",
+      "feePayer": "Er6o3ifG4K8V6vGq6zwsW3E7D7zHd6HBXFU5dagoNPFB"
+    },
+    "demo": {
+      "program": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+      "executable": true,
+      "loader": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "programData": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+      "deploySlot": "0",
+      "upgradeAuthority": "dtmpNZtcTx4PsHcwUXQC464wvZVgEgrkeT78rBA8qWf",
+      "upgradeable": true
+    },
+    "multisig": {
+      "threshold": 2,
+      "timeLock": 0
+    },
+    "proposal": {
+      "status": {
+        "__kind": "Executed",
+        "timestamp": "1794049615"
+      }
+    },
+    "vaultTransactionIndex": "1",
+    "transfer": {
+      "ok": true,
+      "solChanges": [
+        {
+          "address": "HALY3wRuC7221SvjBBi9jccLVawqKX5GoKGWQmVtH751",
+          "pre": "2000000000",
+          "post": "1876538211",
+          "delta": "-123461789"
+        },
+        {
+          "address": "DDjyL9YVM4T1vxAQraoraUtBwkA4oqjezXqyR6xBvqn6",
+          "pre": "0",
+          "post": "123456789",
+          "delta": "123456789"
+        }
+      ],
+      "blockhashReplaced": false
+    },
+    "approval": {
+      "ok": false,
+      "err": {
+        "InstructionError": [
+          2,
+          {
+            "Custom": 6008
+          }
+        ]
+      },
+      "blockhashReplaced": true
+    }
+  },
+  "calls": [
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "89uhHPoLA9jX4WSQLM53BnZHVFPMAWKsR4vKDPjkM4Q"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 750
+        },
+        "value": [
+          {
+            "data": [
+              "AQAAABtYBeETDWWYnyoNTeZUNKF8nUSKcS98qKNBYBjx27EhABCl1OgAAAAGAQEAAAAbWAXhEw1lmJ8qDU3mVDShfJ1EinEvfKijQWAY8duxIQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQwAIAAbWAXhEw1lmJ8qDU3mVDShfJ1EinEvfKijQWAY8duxIRIAQAAbWAXhEw1lmJ8qDU3mVDShfJ1EinEvfKijQWAY8duxIQHVI3kWHM2qqyVGx/MQPMP3qHYbA2M+pDhNRKLV6ketEwBaABtYBeETDWWYnyoNTeZUNKF8nUSKcS98qKNBYBjx27EhAdUjeRYczaqrJUbH8xA8w/eodhsDYz6kOE1EotXqR60FAAAAU2hpbnkFAAAAU0hJTlkAAAAAAAAAAA==",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 3424320,
+            "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+            "rentEpoch": 18446744073709552000,
+            "space": 364
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 750
+        },
+        "value": [
+          {
+            "data": [
+              "AQAAAAEAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpDdI89Ke7wPP+TBZ50Dt9h5My743rwor4WDYR8DKzRoqiBMAAAAAAAA=",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 1447680,
+            "owner": "11111111111111111111111111111111",
+            "rentEpoch": 18446744073709552000,
+            "space": 80
+          }
+        ]
+      }
+    },
+    {
+      "method": "getSignaturesForAddress",
+      "params": [
+        "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB",
+        {
+          "limit": 1000,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": [
+        {
+          "blockTime": 1794049614,
+          "confirmationStatus": "finalized",
+          "err": null,
+          "memo": "[13] Q4 fee update",
+          "signature": "3whnJGH5LN1bnE9hgnWDmLWFD4WfBtuBnJjZdc4QjU7hduGpTnDvvcFMXXYbN9rkp6tLPotEQEo3XPKmsB8eEQ8",
+          "slot": 59
+        },
+        {
+          "blockTime": 1794049613,
+          "confirmationStatus": "finalized",
+          "err": null,
+          "memo": null,
+          "signature": "4FiH2pqeagiZDtW4fkLeMAHgNpwmekAe4XdQCFjsucmkpEXqEC1FcWy8Dch6jm8NfiZELCzmAzVAAbNuSJNYYaDC",
+          "slot": 57
+        }
+      ]
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "4FiH2pqeagiZDtW4fkLeMAHgNpwmekAe4XdQCFjsucmkpEXqEC1FcWy8Dch6jm8NfiZELCzmAzVAAbNuSJNYYaDC",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "blockTime": 1794049613,
+        "meta": {
+          "computeUnitsConsumed": 300,
+          "costUnits": 2370,
+          "err": null,
+          "fee": 10000,
+          "innerInstructions": [],
+          "loadedAddresses": {
+            "readonly": [],
+            "writable": []
+          },
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success",
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "postBalances": [
+            9998542320,
+            1447680,
+            1,
+            42706560,
+            1009200
+          ],
+          "postTokenBalances": [],
+          "preBalances": [
+            10000000000,
+            0,
+            1,
+            42706560,
+            1009200
+          ],
+          "preTokenBalances": [],
+          "rewards": [],
+          "status": {
+            "Ok": null
+          }
+        },
+        "slot": 57,
+        "transaction": {
+          "message": {
+            "accountKeys": [
+              "Er6o3ifG4K8V6vGq6zwsW3E7D7zHd6HBXFU5dagoNPFB",
+              "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB",
+              "11111111111111111111111111111111",
+              "SysvarRecentB1ockHashes11111111111111111111",
+              "SysvarRent111111111111111111111111111111111"
+            ],
+            "header": {
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 3,
+              "numRequiredSignatures": 2
+            },
+            "instructions": [
+              {
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "11111C8S3NmV3fbPgfc4XnxQZ4bTtW3XEgQxTBMkMXXv6VwUVwkzXueR44DytDZPvyuq1",
+                "programIdIndex": 2,
+                "stackHeight": 1
+              },
+              {
+                "accounts": [
+                  1,
+                  3,
+                  4
+                ],
+                "data": "3eGCCHUdcYRoB5W1TtJwEoSTiqNP6DQ7dbJJLX71dkMjLR2yZ",
+                "programIdIndex": 2,
+                "stackHeight": 1
+              }
+            ],
+            "recentBlockhash": "HdW8WqCN1c9noRRt7Km1mbitWABzVSNB7Lhyey88fbZm"
+          },
+          "signatures": [
+            "4FiH2pqeagiZDtW4fkLeMAHgNpwmekAe4XdQCFjsucmkpEXqEC1FcWy8Dch6jm8NfiZELCzmAzVAAbNuSJNYYaDC",
+            "5FdB4wo6ABeKF4pic8nYaA2NxvfHtr3gRwHmkrYaXP9AktdSyTfDkmY7RGicWsrmRG69np8fsaNMvNuwScwgErCk"
+          ]
+        },
+        "version": "legacy"
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 750
+        },
+        "value": [
+          {
+            "data": [
+              "AgAAADKAWUEc3EeOAeKJ5f+ilYng/dXz5frT/9QFGgJrwjuy",
+              "base64"
+            ],
+            "executable": true,
+            "lamports": 1141440,
+            "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+            "rentEpoch": 0,
+            "space": 36
+          }
+        ]
+      }
+    },
+    {
+      "method": "getAccountInfo",
+      "params": [
+        "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+        {
+          "encoding": "base64",
+          "commitment": "confirmed",
+          "dataSlice": {
+            "offset": 0,
+            "length": 45
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 750
+        },
+        "value": {
+          "data": [
+            "AwAAAAAAAAAAAAAAAQlzct6LYtLs+q7OSxYpJDL82erhUjuPtS/SrDA88kQg",
+            "base64"
+          ],
+          "executable": false,
+          "lamports": 26924711280,
+          "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+          "rentEpoch": 18446744073709552000,
+          "space": 3868365
+        }
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "J6NEdcPwptQeLnAg1pELm6ny1U8hvqvuBd9oqnj3RQ3a"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 750
+        },
+        "value": [
+          {
+            "data": [
+              "4HR5ukShT+zV6tStulGBzsQL3l2VXCplr9mRgW4jOJRvN2WTCfvqfgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAAAAD8AwAAALvRLMmPYqtitfoehleayQfgLayi8fWBKpARRC6yiVuSB9k7xR9milLRvKrV/tPsYaCHrgNs2bMny/aHnbwZUw6kB/jbPVL+6Jmiqtuiw/s1RmXWcdZeSdf6L+rZkbfj4lEiBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 2498640,
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "rentEpoch": 18446744073709552000,
+            "space": 231
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "GVEEEFxTaF8eDpooecpQHQDKjBwSwWm9vLfJzZqwQhZQ"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 750
+        },
+        "value": [
+          {
+            "data": [
+              "Gl69u3SINSH99pehf8aQAs3YW2aTAs2AYK4AZWJoAONIzVqCXCi4MQEAAAAAAAAABU8G72oAAAAA/QIAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpPjbPVL+6Jmiqtuiw/s1RmXWcdZeSdf6L+rZkbfj4lEiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 3382560,
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "rentEpoch": 18446744073709552000,
+            "space": 358
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "CXR3KPQpTXZVmyWKvRhqvw4JVh38MBRJNnPdE5JfNhM9"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 750
+        },
+        "value": [
+          {
+            "data": [
+              "qPqiZFEOos/99pehf8aQAs3YW2aTAs2AYK4AZWJoAONIzVqCXCi4MbvRLMmPYqtitfoehleayQfgLayi8fWBKpARRC6yiVuSAQAAAAAAAAD/AP8AAAAAAQABBAAAAMDXRn1g/dJCk5HJWrkzska1+Ypqr+27w5mszC1E+Q7WMoBZQRzcR44B4onl/6KVieD91fPl+tP/1AUaAmvCO7IJc3Lei2LS7PquzksWKSQy/Nnq4VI7j7Uv0qwwPPJEIAKo9pFOiKGw4hAVPvdjrisAwrk9FsEk0sBTehAEgAAAAQAAAAMDAAAAAQACBAAAAAQAAAAAAAAA",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 2603040,
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "rentEpoch": 18446744073709552000,
+            "space": 246
+          }
+        ]
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "HALY3wRuC7221SvjBBi9jccLVawqKX5GoKGWQmVtH751",
+          "DDjyL9YVM4T1vxAQraoraUtBwkA4oqjezXqyR6xBvqn6"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 751
+        },
+        "value": [
+          {
+            "data": [
+              "",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 2000000000,
+            "owner": "11111111111111111111111111111111",
+            "rentEpoch": 18446744073709552000,
+            "space": 0
+          },
+          null
+        ]
+      }
+    },
+    {
+      "method": "simulateTransaction",
+      "params": [
+        "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAED8B9OioN3zBWux7lDCFshRicjE2fO9BDp/qXQh9lNOXC1j8zvR5fcTdIw/3eUYY1xk33JYmd7CqE+mUdRGzsWfwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVfd4UpMFNXP6DFn8Bhk49m2nBlhnXv/8szSgDoPKIc8BAgIAAQwCAAAAFc1bBwAAAAA=",
+        {
+          "encoding": "base64",
+          "sigVerify": false,
+          "replaceRecentBlockhash": false,
+          "commitment": "confirmed",
+          "innerInstructions": true,
+          "accounts": {
+            "encoding": "base64",
+            "addresses": [
+              "HALY3wRuC7221SvjBBi9jccLVawqKX5GoKGWQmVtH751",
+              "DDjyL9YVM4T1vxAQraoraUtBwkA4oqjezXqyR6xBvqn6"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 751
+        },
+        "value": {
+          "accounts": [
+            {
+              "data": [
+                "",
+                "base64"
+              ],
+              "executable": false,
+              "lamports": 1876538211,
+              "owner": "11111111111111111111111111111111",
+              "rentEpoch": 18446744073709552000,
+              "space": 0
+            },
+            {
+              "data": [
+                "",
+                "base64"
+              ],
+              "executable": false,
+              "lamports": 123456789,
+              "owner": "11111111111111111111111111111111",
+              "rentEpoch": 18446744073709552000,
+              "space": 0
+            }
+          ],
+          "err": null,
+          "innerInstructions": [],
+          "loadedAccountsDataSize": 142,
+          "logs": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "replacementBlockhash": null,
+          "returnData": null,
+          "unitsConsumed": 150
+        }
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+          "GVEEEFxTaF8eDpooecpQHQDKjBwSwWm9vLfJzZqwQhZQ",
+          "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 751
+        },
+        "value": [
+          {
+            "data": [
+              "",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 9999995000,
+            "owner": "11111111111111111111111111111111",
+            "rentEpoch": 18446744073709552000,
+            "space": 0
+          },
+          {
+            "data": [
+              "Gl69u3SINSH99pehf8aQAs3YW2aTAs2AYK4AZWJoAONIzVqCXCi4MQEAAAAAAAAABU8G72oAAAAA/QIAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpPjbPVL+6Jmiqtuiw/s1RmXWcdZeSdf6L+rZkbfj4lEiAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 3382560,
+            "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "rentEpoch": 18446744073709552000,
+            "space": 358
+          },
+          {
+            "data": [
+              "AQAAAAEAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpDdI89Ke7wPP+TBZ50Dt9h5My743rwor4WDYR8DKzRoqiBMAAAAAAAA=",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 1447680,
+            "owner": "11111111111111111111111111111111",
+            "rentEpoch": 18446744073709552000,
+            "space": 80
+          }
+        ]
+      }
+    },
+    {
+      "method": "simulateTransaction",
+      "params": [
+        "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAUI2TvFH2aKUtG8qtX+0+xhoIeuA2zZsyfL9oedvBlTDqS29s5SoIaaYIi88kw/4BK8q7dQYnnoj6me1p/KF8bvsuYahgm79oNDyIhBNpnA2I+MX91pBzrDCGRsw1TjJF1vBqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSN/faXoX/GkALN2FtmkwLNgGCuAGViaADjSM1aglwouDEGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qItIqBeQaJ5J0Xk2ylgWHk6ZLhQl5JrGEXcu3RDXPESlAwQDAQMABAQAAAAFAA1RNCBmZWUgdXBkYXRlBwMGAAIakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+        {
+          "encoding": "base64",
+          "sigVerify": false,
+          "replaceRecentBlockhash": false,
+          "commitment": "confirmed",
+          "innerInstructions": true,
+          "accounts": {
+            "encoding": "base64",
+            "addresses": [
+              "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+              "GVEEEFxTaF8eDpooecpQHQDKjBwSwWm9vLfJzZqwQhZQ",
+              "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 751
+        },
+        "value": {
+          "accounts": [
+            null,
+            null,
+            null
+          ],
+          "err": "BlockhashNotFound",
+          "innerInstructions": null,
+          "loadedAccountsDataSize": 0,
+          "logs": [],
+          "replacementBlockhash": null,
+          "returnData": null,
+          "unitsConsumed": 0
+        }
+      }
+    },
+    {
+      "method": "simulateTransaction",
+      "params": [
+        "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAUI2TvFH2aKUtG8qtX+0+xhoIeuA2zZsyfL9oedvBlTDqS29s5SoIaaYIi88kw/4BK8q7dQYnnoj6me1p/KF8bvsuYahgm79oNDyIhBNpnA2I+MX91pBzrDCGRsw1TjJF1vBqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSN/faXoX/GkALN2FtmkwLNgGCuAGViaADjSM1aglwouDEGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qItIqBeQaJ5J0Xk2ylgWHk6ZLhQl5JrGEXcu3RDXPESlAwQDAQMABAQAAAAFAA1RNCBmZWUgdXBkYXRlBwMGAAIakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+        {
+          "encoding": "base64",
+          "sigVerify": false,
+          "replaceRecentBlockhash": true,
+          "commitment": "confirmed",
+          "innerInstructions": true,
+          "accounts": {
+            "encoding": "base64",
+            "addresses": [
+              "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+              "GVEEEFxTaF8eDpooecpQHQDKjBwSwWm9vLfJzZqwQhZQ",
+              "DKDUh4DwR63Fiw5WxfhiGaCCWrTLp2ViHwho7CAppcKB"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 751
+        },
+        "value": {
+          "accounts": [
+            null,
+            null,
+            null
+          ],
+          "err": {
+            "InstructionError": [
+              2,
+              {
+                "Custom": 6008
+              }
+            ]
+          },
+          "innerInstructions": [],
+          "loadedAccountsDataSize": 1552564,
+          "logs": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success",
+            "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+            "Program log: Memo (len 13): \"Q4 fee update\"",
+            "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 6299 of 402850 compute units",
+            "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success",
+            "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+            "Program log: Instruction: ProposalApprove",
+            "Program log: AnchorError thrown in programs/squads_multisig_program/src/instructions/proposal_vote.rs:66. Error Code: InvalidProposalStatus. Error Number: 6008. Error Message: Invalid proposal status.",
+            "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 11005 of 396551 compute units",
+            "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf failed: custom program error: 0x1778"
+          ],
+          "replacementBlockhash": {
+            "blockhash": "6naX3h2XirofvaivcwKZMVVtsszofFJPGDHCQDMtGD82",
+            "lastValidBlockHeight": 901
+          },
+          "returnData": null,
+          "unitsConsumed": 17454
+        }
+      }
+    }
+  ]
+}
