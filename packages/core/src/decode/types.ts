@@ -54,7 +54,7 @@ export interface DecodedInstruction {
   programName: string | null;
   status: DecodeStatus;
   /** Which path produced the result. "none" for unknown. */
-  decoder: "codama" | "anchor-fallback" | "none";
+  decoder: "codama" | "anchor-fallback" | "builtin" | "none";
   /** camelCase instruction name; null when unknown. */
   name: string | null;
   /** Decoded arguments (u64 and wider as bigint). null when unknown. */
