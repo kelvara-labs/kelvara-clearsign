@@ -29,18 +29,18 @@ Then serve the page for the shot you are recording with `--serve-only` (shown pe
 
 ## Shot 1 (0:00–0:10): Hook, Drift's real transactions
 
-The Replay tab was cut (PLAN cut list, X7). Show the CLI replay instead, in a terminal next to the browser:
+The Replay tab was cut (PLAN cut list, X7). Show the CLI replay instead, in a terminal next to the browser. Replay exactly the two attack transactions that G8 checks (the approval with the updateAdmin proposal, then the approve-and-execute):
 
     node packages/cli/dist/kelvara.mjs replay \
       2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H \
-      4a5962Rdqd9pkXtk9DMQ9ZYhdGb2k9gPw71GvukJgELhxbCY5gm1c1hhKdwuGefyqJ3XMvihUTDNDn3qbXnst82X \
-      4BKBmAJn6TdsENij7CsVbyMVLJU1tX27nfrMM1zgKv1bs2KJy6Am2NqdA3nJm4g9C6eC64UAf5sNs974ygB9RsN1 2>&1 | head -24
+      4BKBmAJn6TdsENij7CsVbyMVLJU1tX27nfrMM1zgKv1bs2KJy6Am2NqdA3nJm4g9C6eC64UAf5sNs974ygB9RsN1 2>&1 | head -22
 
-This runs offline from `fixtures/tx/drift-replay/` (real mainnet transactions). Add `--live` to read current Helius mainnet state. The screen must show:
+This runs offline from `fixtures/tx/drift-replay/` (real mainnet transactions). Add `--live` to read current Helius mainnet state (offline, the nonce creators and the multisig are not read, so those claims are `Unknown`). Do not add the third fixture (`4a59…`): with three transactions the engine currently drops to L2 (engine bug, reported). The screen must show (2026-11-07 run):
 
-- `ALERT L2 Warning -> hold` (offline: the nonce creators and the multisig are not read, so those claims are `Unknown`)
-- `[L1 Fact] authority.transfer c1: Proposed updateAdmin protocol.admin on 5zpq7DvB6UdFFvpmBPspGPNfUGoBRRCE2HHg5u3gxcsN: AiLGdNitMjv8n5HMS7HAdV2kaeJZZFd4jdfn5xp1PKrW gives authority to H7PiGqqUaanBovwKgEtreJbKmQe6dbq6VTrw6guy7ZgL.`
-- `[L2 Fact] squads.approve_and_execute` (approve and execute in one session, on a durable nonce)
+- `ALERT L3 Critical -> hold_block_default`
+- `[L3 Fact] authority.transfer c1: Proposed updateAdmin protocol.admin on 5zpq7DvB6UdFFvpmBPspGPNfUGoBRRCE2HHg5u3gxcsN: AiLGdNitMjv8n5HMS7HAdV2kaeJZZFd4jdfn5xp1PKrW gives authority to H7PiGqqUaanBovwKgEtreJbKmQe6dbq6VTrw6guy7ZgL.`
+- `[L3 Fact] lifetime.durable_nonce` twice: transaction 0 on nonce `7s7s…tAeC` (proposalApprove) and transaction 1 on nonce `EmYE…hQnc` (proposalApprove, vaultTransactionExecute): "…so it does not expire: whoever holds the signed bytes can submit them at any later time."
+- `[L3 Fact] squads.approve_and_execute c6: This session approves proposal J1w1…xti8 on multisig 2LW6…hx88 (approved by 39Jy…7Aq8, 6UJb…u924) and executes its vault transaction 2QmM…DAwc in the same session: the vote and the action land together, on a durable nonce, so they can land at any time the holder chooses.`
 - `Preview (lower): H7Pi…7ZgL unlocks 136: settleExpiredMarket, initialize, initializeSpotMarket, …` (from Drift's IDL)
 
 On-screen label: **"Real mainnet transactions (Drift)"**. The "$285M" figure in PLAN's hook line comes from PLAN, not from our tools; use it only if you have checked the public source.
@@ -168,7 +168,7 @@ Put them in `packages/scenarios/demo-assets/` (create it; PNG at 1920×1080 unle
 
 | File | Content |
 |---|---|
-| `01-drift-replay.png` | Terminal: shot 1 replay output, the alert line, the authority.transfer claim and the 136-instruction preview |
+| `01-drift-replay.png` | Terminal: shot 1 replay output (two transactions), the L3 Critical alert line, the authority.transfer claim and the 136-instruction preview |
 | `02-admin-blocked.png` | Ops Portal with the SignGuard L3 report open, Block focused, Solflare not open |
 | `03-admin-claim-evidence.png` | The authority.transfer claim expanded with its evidence |
 | `04-admin-explorer.png` | Devnet explorer: demo program upgrade authority = attacker after the attack |
@@ -231,7 +231,7 @@ Without Kelvara: the purchase goes through and the buyer holds fifty thousand SH
 | `scenario:trap-devnet:attack` | buy landed, 50,000 SHINY pulled back, account frozen | 6.5 s |
 | `scenario:sweep-devnet:attack` | user at 0 SOL, no token accounts; collector returned everything | 4.8 s |
 | `scenario:poison-devnet` + analyze + `:attack` | L4 address.poisoning; 0.5 SOL send executed; funds returned | 5.9 s + 6.2 s |
-| `kelvara replay` (Drift, offline) | L2 Warning, updateAdmin to H7Pi…7ZgL, 136-instruction preview | |
+| `kelvara replay` (Drift pair 2HvM… + 4BKB…, offline) | L3 Critical (11 claims): authority.transfer (updateAdmin to H7Pi…7ZgL), durable_nonce x2, approve_and_execute; 136-instruction preview | |
 
 Payer 4.9104 SOL before, 4.9005 SOL after admin + trap + sweep (**0.0099 SOL** per full take), and 4.9204 SOL after poisoning, because its attack also returned 0.03 SOL left in the friend account by earlier runs. That sweep attack ran before `--no-fixture` existed and replaced the golden fixture; the change was reverted (not committed).
 
