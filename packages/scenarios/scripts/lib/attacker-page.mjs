@@ -7,11 +7,13 @@ import { readKeypair } from './tx.mjs';
 // Wallet Standard transports actual wire bytes, preserving seller signatures;
 // no CDN, browser dependency, RPC key, or wallet secret is served.
 export function attackerHtml(kind, expected) {
-  const title = kind === 'admin' ? 'Ops Portal' : '$SHINY launch';
+  const title = { admin: 'Ops Portal', trap: '$SHINY launch', sweep: 'Claim airdrop' }[kind];
+  const pitch = { admin: 'Council proposal: Q4 fee update', trap: 'Buy 50,000 SHINY for 1 devnet SOL', sweep: 'You are eligible for the season airdrop. Sign once to claim.' }[kind];
+  const button = { admin: 'Approve Q4 fee update', trap: 'Buy SHINY', sweep: 'Claim airdrop' }[kind];
   return `<!doctype html><html><meta charset="utf-8"><title>${title}</title>
 <style>body{font:18px system-ui;background:#101827;color:#edf5ff;max-width:700px;margin:12vh auto;padding:32px}button{font:inherit;padding:16px;background:#b4ff65;border:0;border-radius:8px}pre{white-space:pre-wrap;overflow-wrap:anywhere}</style>
-<h1>${title}</h1><p>Devnet demonstration</p><p>${kind === 'admin' ? 'Council proposal: Q4 fee update' : 'Buy 50,000 SHINY for 1 devnet SOL'}</p>
-<button id="sign">${kind === 'admin' ? 'Approve Q4 fee update' : 'Buy SHINY'}</button><pre id="status">Connect the imported devnet account.</pre>
+<h1>${title}</h1><p>Devnet demonstration</p><p>${pitch}</p>
+<button id="sign">${button}</button><pre id="status">Connect the imported devnet account.</pre>
 <script type="module">
 const wallets = [];
 const api = Object.freeze({register(...items){wallets.push(...items);return () => {};}});
@@ -36,7 +38,8 @@ document.querySelector('#sign').onclick = async () => {
 };
 </script></html>`;
 }
-export function serveAttacker(kind, ctx, scenario, { port = kind === 'admin' ? 8781 : 8782 } = {}) {
+export function serveAttacker(kind, ctx, scenario, { port = { admin: 8781, trap: 8782, sweep: 8783 }[kind] } = {}) {
+  if (!['admin', 'trap', 'sweep'].includes(kind)) throw new Error('unknown attacker page');
   const expected = kind === 'admin' ? scenario.members.A : scenario.user;
   const server = createServer(async (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
@@ -49,6 +52,8 @@ export function serveAttacker(kind, ctx, scenario, { port = kind === 'admin' ? 8
       if (req.url !== '/transaction') { res.writeHead(404); res.end('Not found'); return; }
       let wire;
       if (kind === 'admin') wire = readFileSync(join(ctx.out, 'approval.unsigned.b64'), 'utf8').trim();
+      // The sweep is rebuilt from the user's current balances on a fresh blockhash per click.
+      else if (kind === 'sweep') wire = ctx.sweepWire ? await ctx.sweepWire() : readFileSync(join(ctx.out, 'sweep.unsigned.b64'), 'utf8').trim();
       else {
         const { value: bh } = await ctx.rpc.call('getLatestBlockhash', [{ commitment: 'confirmed' }]);
         const seller = readKeypair(join(ctx.keys, 'trap-seller.json'));

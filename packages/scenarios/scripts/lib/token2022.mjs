@@ -85,6 +85,18 @@ export const transferChecked = (source, mint, destination, authority, amount, de
   keys: [meta(source, false, true), meta(mint, false, false), meta(destination, false, true), meta(authority, true, false)],
   data: Buffer.concat([u8(12), u64le(amount), u8(decimals)])
 });
+// BurnChecked (15): [account w, mint w, authority s]
+export const burnChecked = (account, mint, authority, amount, decimals) => ({
+  programId: TOKEN_2022,
+  keys: [meta(account, false, true), meta(mint, false, true), meta(authority, true, false)],
+  data: Buffer.concat([u8(15), u64le(amount), u8(decimals)])
+});
+// CloseAccount (9): [account w, destination w, owner s]; the balance must be 0, the rent goes to destination
+export const closeAccount = (account, destination, owner) => ({
+  programId: TOKEN_2022,
+  keys: [meta(account, false, true), meta(destination, false, true), meta(owner, true, false)],
+  data: u8(9)
+});
 // FreezeAccount (10): [account w, mint, freeze authority s]
 export const freezeAccount = (account, mint, authority) => ({
   programId: TOKEN_2022,

@@ -30,6 +30,18 @@ For the unprotected scripted purchase and theft:
 
 This verifies that the buyer receives 50,000 SHINY and that the creator removes all of it as permanent delegate and freezes the buyer account without the buyer's signature. Evidence is packages/scenarios/.devnet/trap/attack.json.
 
+## L4 example: "Claim airdrop" wallet sweep
+
+    pnpm --filter @kelvara/scenarios scenario:sweep-devnet
+
+Setup tops the user up to 0.05 devnet SOL and mints two airdrop tokens to it (the two Token-2022 mints are created once). Open http://localhost:8783 and import .keys/devnet/sweep-user.solflare.txt into Solflare. Click **Claim airdrop**. The page rebuilds the request from the user's current balances on every click: one transaction, signed by the user only, that moves both token balances, both token accounts' rent and every lamport but the fee to a collector address that does not sign. SignGuard must reject it at L4 (wallet.sweep) at once: the wallet never opens and there is no Sign anyway. packages/scenarios/.devnet/sweep/scenario.json records the addresses and a real simulation that leaves the user at 0 SOL.
+
+For the unprotected scripted sweep:
+
+    pnpm --filter @kelvara/scenarios scenario:sweep-devnet:attack
+
+This signs and submits the sweep, verifies the user is left with 0 lamports and no token accounts, stores the executed transaction as the `l4-sweep` e2e fixture under fixtures/tx/devnet/sweep/, then the collector burns the tokens, closes its accounts and returns every lamport to the payer. A run costs about 0.00002 devnet SOL in fees. Evidence is packages/scenarios/.devnet/sweep/attack.json. A new setup archives an executed one.
+
 ## Repeating and verification
 
 --reset creates fresh proposals/nonces or a fresh mint. Member A and buyer keys stay stable so wallet imports survive resets. Admin resets deploy a fresh small program and archive its old program key under .keys/devnet/archive/; abandoned accounts retain devnet rent. Each actor is topped up from the payer only as needed. No faucet or non-Helius provider is used.
@@ -38,7 +50,7 @@ This verifies that the buyer receives 50,000 SHINY and that the creator removes 
 
     pnpm --filter @kelvara/scenarios test
     cd packages/scenarios
-    node --test e2e-devnet/demo-devnet.test.mjs
+    node --test e2e-devnet/demo-devnet.test.mjs e2e-devnet/sweep-devnet.test.mjs
     cd ../..
     pnpm selfcheck --fast
 
