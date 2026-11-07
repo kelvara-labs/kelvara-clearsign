@@ -30,6 +30,9 @@
     "scenario:trap-devnet": "node scripts/trap-devnet.mjs",
     "scenario:trap-devnet:attack": "node scripts/trap-devnet.mjs --attack-only",
     "scenario:sweep-devnet": "node scripts/sweep-devnet.mjs",
-    "scenario:sweep-devnet:attack": "node scripts/sweep-devnet.mjs --attack-only"
+    "scenario:sweep-devnet:attack": "node scripts/sweep-devnet.mjs --attack-only",
+    "scenario:sweep-local": "node scripts/sweep-local.mjs",
+    "scenario:sweep-local:attack": "node scripts/sweep-local.mjs --attack-only",
+    "scenario:e2e-cases": "node scripts/e2e-cases.mjs"
   }
 }
