@@ -117,7 +117,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const status = el("p", { class: "status", role: "status" });
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
-  card.append(el("header", {}, el("small", { class: "brand" }, "Kelvara SignGuard"), badge), el("h1", { id: "title" }, r?.title ?? v.reason));
+  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard"), badge), el("h1", { id: "title" }, r?.title ?? v.reason));
   if (mode !== "notice") card.append(...renderReport(v, r));
   card.append(status);
 

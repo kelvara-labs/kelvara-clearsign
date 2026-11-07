@@ -1,6 +1,7 @@
 // Options page: Helius API key, default network, Test button.
 // The key lives only in chrome.storage.local; this page never logs or displays it.
 // All logic is in actions.ts; this file only wires the DOM.
+import { SETTINGS_KEYS, setupSummary } from "../sw/settings.js";
 import type { FetchLike } from "../sw/probe.js";
 import { loadView, removeKey, saveSettings, testConnection, type Outcome, type Store } from "./actions.js";
 
@@ -18,6 +19,14 @@ export async function mountOptions(): Promise<void> {
   const save = el<HTMLButtonElement>("save");
   const clear = el<HTMLButtonElement>("clear-key");
   const test = el<HTMLButtonElement>("test");
+  const reveal = el<HTMLButtonElement>("reveal-key");
+  reveal.addEventListener("click", () => {
+    const visible = keyInput.type === "password";
+    keyInput.type = visible ? "text" : "password";
+    reveal.textContent = visible ? "Hide" : "Show";
+    reveal.setAttribute("aria-label", visible ? "Hide API key" : "Show API key");
+    reveal.setAttribute("aria-pressed", String(visible));
+  });
   const store: Store = chrome.storage.local;
   const fetchFn = fetch.bind(globalThis) as unknown as FetchLike;
   const buttons = [save, clear, test];
@@ -32,6 +41,15 @@ export async function mountOptions(): Promise<void> {
     if (view.loaded) network.value = view.network;
     status.textContent = view.status;
     save.disabled = !view.loaded;
+    try {
+      const summary = setupSummary(await store.get([...SETTINGS_KEYS]));
+      const ready = view.loaded && summary.ready;
+      el("setup-indicator").dataset.ready = String(ready);
+      el("setup-label").textContent = !view.loaded ? "Settings unavailable. Requests remain blocked." : summary.bypassed ? "Guard bypassed. Reinstall the extension to reset settings." : ready ? "Ready to review · Your connection is configured" : "One step left · Add your Helius API key";
+    } catch {
+      el("setup-indicator").dataset.ready = "false";
+      el("setup-label").textContent = "Settings unavailable. Requests remain blocked.";
+    }
   };
   // One action at a time; any unexpected throw is shown, never swallowed.
   const run = (action: () => Promise<Outcome>) => async () => {

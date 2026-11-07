@@ -41,3 +41,10 @@ export async function loadSettings(get: (keys: string[]) => Promise<Record<strin
     return { ok: false, reason: "could not read extension settings: request blocked" };
   }
 }
+
+/** Public setup status for extension pages; never returns a stored key. */
+export function setupSummary(raw: Record<string, unknown>): { network: Network; ready: boolean; bypassed: boolean } {
+  const settings = readSettings(raw);
+  const bypassed = settings.passThrough;
+  return { network: settings.network, ready: !bypassed && (!!settings.heliusApiKey || settings.network === "localnet"), bypassed };
+}
