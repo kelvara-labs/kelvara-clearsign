@@ -9,7 +9,7 @@ import {
 } from "./shared/protocol.js";
 import { stubEngine } from "./sw/engine-stub.js";
 import { decide } from "./sw/policy.js";
-import { SETTINGS_KEYS, readSettings } from "./sw/settings.js";
+import { SETTINGS_KEYS, loadSettings, readSettings } from "./sw/settings.js";
 
 const LOG_KEY = "captureLog";
 const LOG_MAX = 100;
@@ -42,8 +42,8 @@ const blocked = (reason: string): WorkerVerdict => ({ allow: false, level: null,
 async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdict> {
   const req = validateSignRequest(msg.request);
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
-  const settings = readSettings(await chrome.storage.local.get([...SETTINGS_KEYS]));
-  const verdict = await decide(req, settings, stubEngine);
+  const loaded = await loadSettings((keys) => chrome.storage.local.get(keys));
+  const verdict = loaded.ok ? await decide(req, loaded.settings, stubEngine) : blocked(loaded.reason);
   await appendLog({
     ts: Date.now(),
     url: msg.url.slice(0, 512),
@@ -57,6 +57,19 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   });
   return verdict;
 }
+
+// First install with no key (or unreadable settings): open the options page so the user can fix it.
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason !== "install") return;
+  chrome.storage.local
+    .get([...SETTINGS_KEYS])
+    .then(
+      (raw) => !readSettings(raw).heliusApiKey,
+      () => true
+    )
+    .then((open) => (open ? chrome.runtime.openOptionsPage() : undefined))
+    .catch(() => {});
+});
 
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
   // Only our own content scripts, inside a tab.
