@@ -30,7 +30,9 @@
     "scenario:admin-local:attack": "pnpm --filter @kelvara/scenarios scenario:admin-local:attack",
     "scenario:trap-local": "pnpm --filter @kelvara/scenarios scenario:trap-local",
     "scenario:trap-local:attack": "pnpm --filter @kelvara/scenarios scenario:trap-local:attack",
-    "scenario:e2e": "pnpm --filter @kelvara/scenarios test:e2e"
+    "scenario:e2e": "pnpm --filter @kelvara/scenarios test:e2e",
+    "scenario:poison-devnet": "pnpm --filter @kelvara/scenarios scenario:poison-devnet",
+    "fixtures:poison": "pnpm --filter @kelvara/scenarios fixtures:poison"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
