@@ -1,9 +1,8 @@
 // Options page: Helius API key, default network, Test button.
 // The key lives only in chrome.storage.local; this page never logs or displays it.
-import { pickEndpoint } from "../sw/endpoint.js";
-import { probeEndpoint, type FetchLike } from "../sw/probe.js";
-import { readSettings } from "../sw/settings.js";
-import { keyForTest, keyStatus, planSave } from "./form.js";
+// All logic is in actions.ts; this file only wires the DOM.
+import type { FetchLike } from "../sw/probe.js";
+import { loadView, removeKey, saveSettings, testConnection, type Outcome, type Store } from "./actions.js";
 
 function el<T extends HTMLElement>(id: string): T {
   const e = document.getElementById(id);
@@ -19,50 +18,48 @@ export async function mountOptions(): Promise<void> {
   const save = el<HTMLButtonElement>("save");
   const clear = el<HTMLButtonElement>("clear-key");
   const test = el<HTMLButtonElement>("test");
+  const store: Store = chrome.storage.local;
+  const fetchFn = fetch.bind(globalThis) as unknown as FetchLike;
+  const buttons = [save, clear, test];
 
-  const show = (text: string, kind: "ok" | "err" | "info") => {
-    out.textContent = text;
-    out.dataset.kind = kind;
+  const show = (o: Pick<Outcome, "text" | "kind">) => {
+    out.textContent = o.text;
+    out.dataset.kind = o.kind;
   };
   const refresh = async () => {
-    const raw = await chrome.storage.local.get(["heliusApiKey", "network"]);
-    network.value = readSettings(raw).network;
-    status.textContent = keyStatus(raw.heliusApiKey);
-    return raw;
+    const view = await loadView(store);
+    // Settings unreadable: do not let Save overwrite the stored network with a default.
+    if (view.loaded) network.value = view.network;
+    status.textContent = view.status;
+    save.disabled = !view.loaded;
   };
-  await refresh();
-
-  save.addEventListener("click", async () => {
-    const plan = planSave({ keyField: keyInput.value, network: network.value });
-    if (!plan.ok) return show(plan.error, "err");
-    await chrome.storage.local.set(plan.patch);
-    keyInput.value = "";
-    await refresh();
-    show("Saved.", "ok");
-  });
-
-  clear.addEventListener("click", async () => {
-    await chrome.storage.local.remove("heliusApiKey");
-    keyInput.value = "";
-    await refresh();
-    show("Key removed. Signing requests on mainnet and devnet are now held and blocked.", "info");
-  });
-
-  test.addEventListener("click", async () => {
-    test.disabled = true;
-    show("Testing…", "info");
+  // One action at a time; any unexpected throw is shown, never swallowed.
+  const run = (action: () => Promise<Outcome>) => async () => {
+    for (const b of buttons) b.disabled = true;
+    let o: Outcome;
     try {
-      const raw = await chrome.storage.local.get(["heliusApiKey"]);
-      if (keyInput.value.trim() && !keyForTest(keyInput.value, undefined)) {
-        return show("that does not look like a Helius API key (letters, digits and dashes only)", "err");
-      }
-      const net = network.value === "devnet" || network.value === "localnet" ? network.value : "mainnet";
-      const chain = net === "mainnet" ? "solana:mainnet" : net === "devnet" ? "solana:devnet" : "solana:localnet";
-      const endpoint = pickEndpoint(chain, net, keyForTest(keyInput.value, raw.heliusApiKey));
-      const r = await probeEndpoint(endpoint, fetch.bind(globalThis) as unknown as FetchLike);
-      show(r.ms === null ? r.message : `${r.message} (${r.ms} ms)`, r.ok ? "ok" : "err");
-    } finally {
-      test.disabled = false;
+      o = await action();
+    } catch {
+      o = { text: "Something went wrong; nothing was confirmed. Reload this page and try again.", kind: "err", clearField: false };
     }
-  });
+    if (o.clearField) keyInput.value = "";
+    for (const b of buttons) b.disabled = false;
+    await refresh();
+    show(o);
+  };
+
+  for (const b of buttons) b.disabled = true;
+  await refresh();
+  clear.disabled = false;
+  test.disabled = false;
+
+  save.addEventListener("click", run(() => saveSettings(store, keyInput.value, network.value)));
+  clear.addEventListener("click", run(() => removeKey(store)));
+  test.addEventListener(
+    "click",
+    run(async () => {
+      show({ text: "Testing…", kind: "info" });
+      return testConnection(store, keyInput.value, network.value, fetchFn);
+    })
+  );
 }
