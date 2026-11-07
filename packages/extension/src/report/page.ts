@@ -38,7 +38,7 @@ function renderReport(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
   if (caps.length) {
     out.push(
       section(
-        "Capability changes, most dangerous first",
+        r.limited ? "Top finding" : "Capability changes, most dangerous first",
         el("ol", { class: "caps" }, ...caps.map((c) => el("li", { "data-risk": c.risk }, el("span", { class: "risk" }, c.risk), ` ${c.change === "granted" ? "Grants" : "Revokes"} ${c.authority} → `, el("code", {}, c.holder))))
       )
     );
@@ -55,7 +55,7 @@ function renderReport(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
   if (r.claims.length) {
     out.push(
       section(
-        "Claims (open for evidence)",
+        r.limited ? "Top finding" : "Claims (open for evidence)",
         ...r.claims.map((c) =>
           el(
             "details",
@@ -86,6 +86,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const levelText = v.level === null ? "Blocked · analysis unavailable" : `L${v.level} · ${LEVEL_NAMES[v.level]}`;
   const card = el("main", { role: mode === "notice" ? "status" : "alertdialog", "aria-labelledby": "title", class: `card mode-${mode}` });
   if (b.modal) card.setAttribute("data-kelvara-modal", "");
+  if (r?.limited) card.setAttribute("data-kelvara-limited", "");
   if (mode !== "notice") card.setAttribute("aria-modal", "true");
   const badge = el("span", { class: "level" }, levelText);
   if (v.level !== null) badge.setAttribute("data-kelvara-level", `L${v.level}`);

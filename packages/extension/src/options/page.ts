@@ -2,7 +2,7 @@
 // The key lives only in chrome.storage.local; this page never logs or displays it.
 // All logic is in actions.ts; this file only wires the DOM.
 import type { FetchLike } from "../sw/probe.js";
-import { loadView, removeKey, saveSettings, testConnection, type Outcome, type Store } from "./actions.js";
+import { licenseStatus, loadView, removeKey, removeLicense, saveLicense, saveSettings, testConnection, type Outcome, type Store } from "./actions.js";
 
 function el<T extends HTMLElement>(id: string): T {
   const e = document.getElementById(id);
@@ -18,6 +18,11 @@ export async function mountOptions(): Promise<void> {
   const save = el<HTMLButtonElement>("save");
   const clear = el<HTMLButtonElement>("clear-key");
   const test = el<HTMLButtonElement>("test");
+  const licenseInput = el<HTMLTextAreaElement>("license-key");
+  const licenseLine = el<HTMLElement>("license-status");
+  const licenseOut = el<HTMLElement>("license-result");
+  const saveLic = el<HTMLButtonElement>("save-license");
+  const clearLic = el<HTMLButtonElement>("clear-license");
   const store: Store = chrome.storage.local;
   const fetchFn = fetch.bind(globalThis) as unknown as FetchLike;
   const buttons = [save, clear, test];
@@ -52,6 +57,28 @@ export async function mountOptions(): Promise<void> {
   await refresh();
   clear.disabled = false;
   test.disabled = false;
+
+  // License: its own buttons, status and result line.
+  const refreshLicense = async () => {
+    licenseLine.textContent = await licenseStatus(store);
+  };
+  const runLicense = (action: () => Promise<Outcome>) => async () => {
+    saveLic.disabled = clearLic.disabled = true;
+    let o: Outcome;
+    try {
+      o = await action();
+    } catch {
+      o = { text: "Something went wrong; nothing was confirmed. Reload this page and try again.", kind: "err", clearField: false };
+    }
+    if (o.clearField) licenseInput.value = "";
+    saveLic.disabled = clearLic.disabled = false;
+    await refreshLicense();
+    licenseOut.textContent = o.text;
+    licenseOut.dataset.kind = o.kind;
+  };
+  await refreshLicense();
+  saveLic.addEventListener("click", runLicense(() => saveLicense(store, licenseInput.value)));
+  clearLic.addEventListener("click", runLicense(() => removeLicense(store)));
 
   save.addEventListener("click", run(() => saveSettings(store, keyInput.value, network.value)));
   clear.addEventListener("click", run(() => removeKey(store)));
