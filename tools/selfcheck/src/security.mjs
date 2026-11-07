@@ -42,6 +42,20 @@ const checks = [];
 const pk = existsSync(path.join(ROOT, "config/license-public-key.txt"))
   ? readFileSync(path.join(ROOT, "config/license-public-key.txt"), "utf8").trim() : null;
 
+// PENDING vs FAIL: a check for a feature that is not built yet reports PENDING with the reason; anything already
+// checkable (foreign hosts, eval, permissions, network in content scripts, a Helius key anywhere) FAILs at once.
+// The offline license check (X4) counts as built once packages/extension/src has a file whose path names "license".
+const EXT_SRC = path.join(ROOT, "packages/extension/src");
+const licenseFeatureBuilt = (() => {
+  if (!existsSync(EXT_SRC)) return false;
+  const walk = (d) => readdirSync(d).some((name) => {
+    const p = path.join(d, name);
+    return statSync(p).isDirectory() ? walk(p) : /licen[cs]e/i.test(path.relative(EXT_SRC, p));
+  });
+  return walk(EXT_SRC);
+})();
+const secrets = secretValues();
+
 function bundleChecks(bundle, label) {
   const manifest = findManifest(bundle);
   const n = (c) => `${c} [${label}]`;
@@ -49,7 +63,10 @@ function bundleChecks(bundle, label) {
   checks.push(asCheck(n("no eval/remote code"), checkNoRemoteCode(bundle, manifest), "no eval"));
   checks.push(asCheck(n("permissions"), checkPermissions(manifest), "min perms"));
   checks.push(asCheck(n("content scripts offline"), checkContentScriptsOffline(bundle, manifest), "cs offline"));
-  checks.push(asCheck(n("license key offline"), checkLicenseKeyEmbedded(bundle, pk), "license offline"));
+  const lic = checkLicenseKeyEmbedded(bundle, pk);
+  if (lic.status === "FAIL" && pk && !licenseFeatureBuilt) {
+    checks.push(pending(n("license key offline"), "offline license check (X4, M5) not built: no license source in packages/extension/src"));
+  } else checks.push(asCheck(n("license key offline"), lic, "license offline"));
 }
 
 let sawBundle = false;
@@ -60,16 +77,25 @@ if (existsSync(ZIP)) {
   try { bundle = readZip(raw); } catch (e) { checks.push(fail("release zip", `unreadable: ${e.message}`)); }
   if (bundle) {
     bundleChecks(bundle, "zip");
-    const secrets = secretValues();
     checks.push(asCheck("no API key in zip", checkNoSecrets(bundle, secrets, raw), "no key in zip"));
     if (!secrets.length) checks.push(pending("key value check", "HELIUS_API_KEY not found in the main checkout's .env; only patterns were checked"));
   }
 } else {
-  checks.push(pending("no API key in zip", `${path.relative(ROOT, ZIP)} not built yet`));
+  checks.push(pending("no API key in zip", `${path.relative(ROOT, ZIP)} not built yet (release packaging is M8)`));
 }
 if (existsSync(path.join(UNPACKED, "manifest.json"))) {
   sawBundle = true;
-  bundleChecks(readDir(UNPACKED), "unpacked");
+  const unpacked = readDir(UNPACKED);
+  bundleChecks(unpacked, "unpacked");
+  // Coordinator ruling (V3): a Helius key anywhere in dist FAILs, the unpacked build included. G1 builds without
+  // --dev, so a key here means the release path bakes it in.
+  checks.push(asCheck("no API key in unpacked dist", checkNoSecrets(unpacked, secrets), "no key in dist"));
+}
+// Anything else under dist/ (release staging, stray copies) must not carry the key either.
+const DIST = path.join(ROOT, "dist");
+if (existsSync(DIST) && !process.argv.includes("--zip")) {
+  const other = new Map([...readDir(DIST)].filter(([n]) => !n.endsWith(".zip")));
+  if (other.size) checks.push(asCheck("no API key in dist/", checkNoSecrets(other, secrets), "no key in dist/"));
 }
 if (!sawBundle) checks.push(pending("extension bundle", "neither the release zip nor packages/extension/dist/manifest.json exists"));
 
