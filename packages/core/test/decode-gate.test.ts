@@ -33,7 +33,9 @@ it("G2: all fixtures parse, >=95% eligible instructions named, 1000 malformed in
       else if (e.name.endsWith(".json") && e.name !== "manifest.json") files.push(p);
     }
   };
-  walk("fixtures");
+  // fixtures/tx/manifest.json inventories fixtures/tx only; fixtures/poison has its own manifest
+  // (kelvara.fixture.poison-manifest/v1) and its txs also live in fixtures/tx/mainnet/first-send.
+  walk("fixtures/tx");
   const expected = json<{ count: number; fixtures: { path: string }[] }>("fixtures/tx/manifest.json");
   assert.equal(expected.count, expected.fixtures.length, "fixture manifest count");
   for (const f of expected.fixtures) assert(files.includes(path.join("fixtures", f.path)), `missing fixture ${f.path}`);
