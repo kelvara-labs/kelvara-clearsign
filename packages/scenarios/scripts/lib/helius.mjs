@@ -14,7 +14,22 @@ export function loadHeliusKey(repoRoot) {
     cwd: repoRoot,
     encoding: 'utf8'
   }).trim();
-  const envPath = resolve(common, '..', '.env');
+  let envPath = resolve(common, '..', '.env');
+  if (!existsSync(envPath)) {
+    // A plain `git clone` of a local checkout (e.g. a clean-clone gate run) has its own .git: follow origin when it
+    // is a local directory, to that repo's main checkout.
+    let origin = '';
+    try {
+      origin = execFileSync('git', ['config', '--get', 'remote.origin.url'], { cwd: repoRoot, encoding: 'utf8' }).trim();
+    } catch {
+      // no origin
+    }
+    const local = origin.startsWith('file://') ? origin.slice(7) : origin;
+    if (local.startsWith('/') && existsSync(local)) {
+      const originCommon = execFileSync('git', ['rev-parse', '--path-format=absolute', '--git-common-dir'], { cwd: local, encoding: 'utf8' }).trim();
+      envPath = resolve(originCommon, '..', '.env');
+    }
+  }
   if (!existsSync(envPath)) throw new Error('no .env in the main checkout; set HELIUS_API_KEY there');
   for (const line of readFileSync(envPath, 'utf8').split('\n')) {
     const m = /^\s*HELIUS_API_KEY\s*=\s*"?([^"\s#]+)"?/.exec(line);
