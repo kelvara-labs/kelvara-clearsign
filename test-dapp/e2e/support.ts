@@ -92,8 +92,10 @@ function loadCaseFile(role: E2eRole, rel: string): TxCase | null {
 
 /** A fixture tagged `"e2e": "<role>"` in fixtures/tx/manifest.json (scenarios owns the tags). */
 export function txCase(role: E2eRole): TxCase | null {
+  // fixtures/tx/manifest.json is { schema, count, fixtures: [...] } (older trees: a bare array).
   const manifest = readJson(path.join(ROOT, "fixtures/tx/manifest.json")) as unknown;
-  const entries = Array.isArray(manifest) ? (manifest as Record<string, unknown>[]) : [];
+  const list = Array.isArray(manifest) ? manifest : (manifest as { fixtures?: unknown } | null)?.fixtures;
+  const entries = Array.isArray(list) ? (list as Record<string, unknown>[]) : [];
   const tagged = entries.find((e) => e.e2e === role && typeof e.path === "string");
   if (tagged) return loadCaseFile(role, tagged.path as string);
   if (role === "benign") {
@@ -103,6 +105,36 @@ export function txCase(role: E2eRole): TxCase | null {
     return rel ? loadCaseFile(role, rel) : null;
   }
   return null;
+}
+
+// ---------- live localnet cases (V10: G7 levels run on pre-execution localnet state) ----------
+// Executed fixtures re-analyzed on today's chain do not reproduce the state before execution, and the wallet that
+// signs them is never the fixture wallet. So the level cases come from scenarios S12: e2e.mjs starts
+// `scenario:e2e-cases --serve` (setup only, no attack) and passes its URL; GET /cases/<role> returns the case with
+// a fresh blockhash. The test wallet presents the case's signer (test-dapp SignArgs.account, X6b).
+
+export type LocalRole = "l3-admin" | "l2-trap" | "l4-sweep";
+export interface LocalCase {
+  role: LocalRole;
+  scenario: string;
+  expectLevel: "L2" | "L3" | "L4";
+  tx: string; // base64 wire bytes, unsigned or partially signed
+  signer: string; // base58 pubkey the wallet presents
+  file: string;
+  chain: "solana:localnet";
+  network: "localnet";
+}
+
+export const CASES_URL = process.env.KELVARA_E2E_CASES_URL ?? "";
+/** Why the localnet cases are unavailable (set by e2e.mjs), or "" when CASES_URL serves them. */
+export const CASES_MISSING = process.env.KELVARA_E2E_CASES_MISSING ?? (CASES_URL ? "" : "localnet case server not started (run G7 through tools/selfcheck/src/e2e.mjs)");
+
+export async function localCase(role: LocalRole): Promise<LocalCase> {
+  const res = await fetch(`${CASES_URL.replace(/\/$/, "")}/cases/${role}`);
+  if (!res.ok) throw new Error(`case server: GET /cases/${role} -> HTTP ${res.status}`);
+  const c = (await res.json()) as Partial<LocalCase>;
+  for (const k of ["tx", "signer", "expectLevel"] as const) if (typeof c[k] !== "string" || !c[k]) throw new Error(`case ${role}: missing ${k}`);
+  return { ...(c as LocalCase), role, chain: "solana:localnet", network: "localnet" };
 }
 
 // ---------- pending ----------
@@ -146,8 +178,11 @@ export const test = base.extend<{ ext: Ext }>({
       headless: true,
       args: [`--disable-extensions-except=${EXT_DIR}`, `--load-extension=${EXT_DIR}`]
     });
+    const net = networkGuard(context);
+    await net.install();
     try {
       const sw = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker", { timeout: 15_000 }));
+      await net.watchSockets(sw);
       const extId = new URL(sw.url()).host;
       const page = await context.newPage();
       const ext: Ext = {
@@ -166,12 +201,61 @@ export const test = base.extend<{ ext: Ext }>({
             return (Array.isArray(got.captureLog) ? got.captureLog : []) as CaptureEntry[];
           })
       };
+      if (process.env.KELVARA_E2E_NET_MUTANT === "1") {
+        // Mutant (V10): the service worker reaches a non-Helius host. .invalid never resolves and the guard aborts it.
+        await sw.evaluate(async () => { try { await fetch("https://evil.invalid/mutant"); } catch { /* aborted */ } try { new WebSocket("wss://evil.invalid/mutant"); } catch { /* */ } });
+      }
       await use(ext);
+      const off = await net.violations(sw);
+      // G10 runtime layer: any request to a host outside *.helius-rpc.com / 127.0.0.1 / localhost FAILs the case.
+      expect(off, `G10 runtime: requests to non-Helius hosts: ${off.join(", ")}`).toEqual([]);
     } finally {
       await context.close();
     }
   }
 });
+
+// ---------- G10 runtime layer: every request the browser makes ----------
+
+/** Hosts the extension (and the test dApp) may reach at runtime: Helius RPC, localnet, the local test dApp. */
+export function hostAllowedAtRuntime(u: URL): boolean {
+  if (["chrome-extension:", "data:", "blob:", "about:", "chrome:", "devtools:"].includes(u.protocol)) return true;
+  const h = u.hostname.toLowerCase();
+  return h === "127.0.0.1" || h === "localhost" || h === "[::1]" || h.endsWith(".helius-rpc.com");
+}
+
+/**
+ * Records every request in the context (service worker included: Playwright reports and routes SW fetches) and
+ * aborts the ones to a disallowed host so nothing leaves the machine. WebSocket and EventSource never show up as
+ * requests, so their constructors in the service worker are wrapped to record the URL. A service worker restart drops
+ * the wrapper; fetch/XHR/importScripts stay covered by routing.
+ */
+function networkGuard(context: BrowserContext) {
+  const seen: string[] = [];
+  const bad = (url: string) => { try { return !hostAllowedAtRuntime(new URL(url)); } catch { return true; } };
+  return {
+    install: async () => {
+      context.on("request", (r) => { if (bad(r.url())) seen.push(`${r.serviceWorker() ? "sw" : "page"} ${r.method()} ${redact(r.url())}`); });
+      await context.route((u) => !hostAllowedAtRuntime(u), (route) => route.abort("blockedbyclient"));
+    },
+    watchSockets: (sw: Worker) => sw.evaluate(() => {
+      const g = globalThis as unknown as Record<string, unknown> & { __kelvaraSockets?: string[] };
+      g.__kelvaraSockets = [];
+      for (const name of ["WebSocket", "EventSource"]) {
+        const Orig = g[name] as (new (...a: unknown[]) => object) | undefined;
+        if (!Orig) continue;
+        g[name] = new Proxy(Orig, { construct(t, args) { g.__kelvaraSockets!.push(`${name} ${String(args[0])}`); return Reflect.construct(t, args); } });
+      }
+    }),
+    violations: async (sw: Worker): Promise<string[]> => {
+      let sockets: string[] = [];
+      try { sockets = await sw.evaluate(() => (globalThis as unknown as { __kelvaraSockets?: string[] }).__kelvaraSockets ?? []); } catch { /* worker gone */ }
+      const off = sockets.filter((s) => bad(s.split(" ")[1] ?? "")).map((s) => `sw ${redact(s)}`);
+      return [...new Set([...seen, ...off])];
+    }
+  };
+}
+const redact = (s: string) => s.replace(/(api-key=)[^&\s]+/gi, "$1<redacted>");
 
 /** Configure the extension for a case's network, open the dApp and wait until the wallets are registered. */
 export async function openDapp(ext: Ext, network: "mainnet" | "devnet" | "localnet" = "mainnet", key = heliusKey()): Promise<Page> {
