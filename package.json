@@ -20,7 +20,9 @@
     "test:determinism": "pnpm --filter @kelvara/core test:determinism",
     "test:security": "pnpm --filter @kelvara/selfcheck test:security",
     "idls:build": "pnpm --filter @kelvara/idls idls:build",
-    "selfcheck": "node tools/selfcheck/src/run.mjs"
+    "selfcheck": "node tools/selfcheck/src/run.mjs",
+    "fixtures:fetch": "pnpm --filter @kelvara/scenarios fixtures:fetch",
+    "fixtures:verify": "pnpm --filter @kelvara/scenarios fixtures:verify"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
