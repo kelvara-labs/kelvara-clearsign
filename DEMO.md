@@ -237,21 +237,28 @@ Payer 4.9104 SOL before, 4.9005 SOL after admin + trap + sweep (**0.0099 SOL** p
 
 Not tested by an agent (human only): Solflare imports, clicking in the pages with the extension, the L3/L2/L4 report UI on these devnet requests, the explorer views, the license.
 
-## Devnet playground hub
+## Devnet playground hub — one account for all previews
 
-Open **http://localhost:8780** (also http://127.0.0.1:8780). Start from this checkout with `pnpm demo:serve`, or `pnpm --filter @kelvara/scenarios demo:serve`. The hub binds only 127.0.0.1, uses no CDN, and requests Wallet Standard `solana:signTransaction` only: it never submits signed bytes. Enable SignGuard, configure devnet and Helius in its options, and unlock your wallet manually. Choose Phantom, Solflare, or Backpack from the discovered compatible wallets.
+Open **http://localhost:8780** (also http://127.0.0.1:8780). Enable SignGuard and configure devnet/Helius in its options. Manually import **one** dedicated devnet account from the local file shown at the top of the hub, connect it once through Wallet Standard Phantom/Solflare/Backpack, and all four cards become available together. The canonical account is the existing Squads Member A; trap and sweep transactions now use that same actual signer. GOOD also supports another funded devnet wallet. SignGuard can show a report for GOOD as well; inspect the level rather than expecting silence.
 
-The GOOD memo uses the connected funded devnet account (expected **L0**). The BAD cards show the precise required public account and its local manual import-file path: SHINY trap **L2**, Squads authority hijack **L3**, and full SOL/token sweep **L4**. Read the local import file yourself and import it manually into the wallet; this server cannot serve/download import files. Reconnect after switching accounts; incompatible buttons stay disabled. For the attack previews, choose **Block** in SignGuard. If you approve a wallet signature yourself, this page still does not submit it.
+| Preview | Expected level |
+| --- | --- |
+| Harmless memo | L0 |
+| SHINY permanent delegate/freeze trap | L2 |
+| Squads upgrade authority hijack | L3 |
+| All SOL/token wallet sweep | L4 |
 
-Prepare pre-attack accounts sequentially, only when no other devnet tests are using them:
+The page calls only `signTransaction` and never submits signed bytes. For BAD previews choose **Block** in SignGuard. Imports and wallet prompts are manual; import files remain on disk and cannot be downloaded from this server. All account/import guidance appears once at the top, with no card-by-card account switching. The live shared account is `J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5`; its import file is `/home/andy/orca/workspaces/kelvara-signguard/scenarios/.keys/devnet/member-a.solflare.txt`.
+
+Given existing pre-attack admin, trap and sweep setups, prepare the shared account and serve:
 
 ```sh
-node packages/scenarios/scripts/admin-devnet.mjs --reset --no-serve
-node packages/scenarios/scripts/trap-devnet.mjs --reset --no-serve
-node packages/scenarios/scripts/sweep-devnet.mjs --no-serve --no-fixture
+pnpm --filter @kelvara/scenarios demo:prepare
 pnpm demo:serve
 ```
 
-Before resetting an existing admin pre-attack setup, coordinate with its owner: the shared reset cleanup can finish its old proposal. For this playground preparation the prior program authority was already held by our attacker key, so no old proposal execution or attack command was needed. Do not run attack commands to prepare the playground. Leave actors funded and the proposal unexecuted for repeated previews. Trap/memo/sweep are rebuilt with a current blockhash per request (seller re-signs trap); admin retains its valid durable nonce. After any separate attack/reset, stop the server, prepare the cases again under a devnet reservation, and restart so account metadata agrees with disk.
+`demo:prepare` validates the real Member A key against the existing admin approval, tops only that dedicated account up to 1.1 devnet SOL, and creates/funds its two sweep-mint ATAs using the existing payer/mint authority. It never resets the admin proposal or executes an attack, preserves original buyer/sweep keys and balances, and writes separate public metadata to `packages/scenarios/.devnet/playground.json`. Repeating it tops up only missing balances. It cannot fund arbitrary browser-provided wallets. Coordinate exclusive devnet access before running preparation and restart the server after any external scenario mutations.
 
-Live check (2026-11-08): actual CLI analysis of the hub builders returned L0/L2/L3/L4. Preparation moved the payer from 4.87669272 to 3.12362504 SOL (1.75306768 SOL including retained actor funds and rent, not solely fees). The funded actors are deliberately retained for wallet testing. The hub exposes only `/`, `/style.css`, `/app.js`, `/api/scenarios`, and validated `/api/transaction?kind=…&account=…`; hostile Host/Origin, cross-site requests, non-GET methods, private-file paths and mismatched accounts are rejected.
+For a first checkout with no pre-attack scenarios, prepare admin/trap/sweep sequentially under a reservation using their existing setup commands (`--no-serve`, plus `--no-fixture` for sweep). Do not reset a live admin proposal: its shared cleanup can execute an old proposal. Reuse an existing active admin setup instead. No attacks are needed to prepare this hub. Keep the common account funded while testing. Memo/trap/sweep rebuild on a current blockhash per request; trap preserves the seller signature and admin retains its durable nonce.
+
+Live shared-account check (2026-11-08): actual CLI analysis returned L0/L2/L3/L4 with the same Member A signer for every preview. Preparation moved the payer from 3.12362504 to 2.12059236 SOL (1.00303268 SOL including retained account funding and ATA rent/fees). Original funded accounts and fixtures were preserved. The hub binds only 127.0.0.1 and serves exact allowlisted routes: `/`, `/style.css`, `/app.js`, `/api/scenarios`, and validated `/api/transaction?kind=…&account=…`. Host/Origin/fetch-metadata restrictions, canonical address checks, method restrictions and attack-account matching remain enforced.

@@ -25,14 +25,11 @@ function render() {
     const level = document.createElement('span'); level.className = 'level'; level.textContent = c.expected + (c.id === 'good' ? ' · Clear' : ' · Expected'); head.append(label,level);
     const title = document.createElement('h2'); title.textContent = c.title;
     const desc = document.createElement('p'); desc.textContent = c.description;
-    const required = document.createElement('div'); required.className = 'required';
-    const caption = document.createElement('b'); caption.textContent = c.account ? 'REQUIRED DEVNET ACCOUNT' : 'ANY FUNDED DEVNET ACCOUNT'; required.append(caption,document.createTextNode(c.account || 'Uses your connected account; no transfer of value.'));
-    if(c.importFile) { const path = document.createElement('span'); path.className = 'path'; path.textContent = 'Manual local import: ' + c.importFile; required.append(path); }
     const compatible = account && account.chains.includes('solana:devnet') && account.features.includes('solana:signTransaction') && (!c.account || account.address === c.account);
-    const guidance = document.createElement('div'); guidance.className = 'guidance'; guidance.textContent = !account ? 'Connect a devnet wallet to begin.' : !compatible ? 'Select the required account on devnet, then reconnect.' : 'Account matches. Ready for a fresh preview.';
+    const guidance = document.createElement('div'); guidance.className = 'guidance'; guidance.textContent = !account ? 'Connect a devnet wallet to begin.' : !compatible ? 'Connect the shared demo account shown above to enable all attack previews.' : 'Account matches. Ready for a fresh preview.';
     const button = document.createElement('button'); button.textContent = c.id === 'good' ? 'Preview harmless memo' : 'Preview ' + c.expected + ' scenario'; button.disabled = !compatible || busy;
     button.onclick = () => request(c);
-    card.append(head,title,desc,required,guidance,button); $('#cards').append(card);
+    card.append(head,title,desc,guidance,button); $('#cards').append(card);
   }
 }
 $('#wallets').onchange = () => { account=null; selected=null; $('#address').textContent='Wallet changed — connect again'; render(); };
@@ -62,4 +59,4 @@ async function request(c) {
   } catch(e) { status('Preview stopped: '+e.message+' · Nothing submitted by this page.'); }
   finally { busy=false; render(); }
 }
-try { const r=await fetch('/api/scenarios'); if(!r.ok) throw Error('Scenario catalog unavailable'); scenarios=(await r.json()).scenarios; render(); } catch(e) { status(e.message); }
+try { const r=await fetch('/api/scenarios'); if(!r.ok) throw Error('Scenario catalog unavailable'); const data=await r.json(); scenarios=data.scenarios; $('#shared-address').textContent=data.shared.account; $('#shared-import').textContent=data.shared.importFile; render(); } catch(e) { status(e.message); }

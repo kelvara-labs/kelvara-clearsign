@@ -8,6 +8,7 @@ import { b58decode, b58encode, compileLegacy, readKeypair } from './lib/tx.mjs';
 import { heliusDevnet, redact } from './lib/helius.mjs';
 import { KEYS, PKG, REPO } from './lib/devnet.mjs';
 import { buildBuy, partialSign } from './trap-local.mjs';
+import { SHARED_STATE, sharedAccount } from './demo-prepare.mjs';
 import { currentSweep, unsignedWire } from './sweep-devnet.mjs';
 const assets = resolve(dirname(fileURLToPath(import.meta.url)), '../demo');
 export function validateAccount(value) {
@@ -16,7 +17,7 @@ export function validateAccount(value) {
   if (bytes.length !== 32 || b58encode(bytes) !== value) throw new Error('Invalid wallet address');
   return value;
 }
-export function createPlayground({ catalog, transaction }) {
+export function createPlayground({ catalog, transaction, shared }) {
   const server = createServer(async (req, res) => {
     const port = server.address().port;
     const hosts = [`localhost:${port}`, `127.0.0.1:${port}`];
@@ -32,7 +33,7 @@ export function createPlayground({ catalog, transaction }) {
       const [file, type] = staticRoutes[req.url];
       res.writeHead(200, { 'content-type': `${type}; charset=utf-8` }); res.end(readFileSync(join(assets, file))); return;
     }
-    if (req.url === '/api/scenarios') return reply(200, { chain: 'solana:devnet', scenarios: catalog });
+    if (req.url === '/api/scenarios') return reply(200, { chain: 'solana:devnet', shared, scenarios: catalog });
     const url = new URL(req.url, 'http://localhost');
     if (url.pathname !== '/api/transaction') return reply(404, { error: 'Not found' });
     const kind = url.searchParams.get('kind');
@@ -49,13 +50,15 @@ export function createPlayground({ catalog, transaction }) {
 }
 export async function loadPlayground() {
   const read = kind => JSON.parse(readFileSync(join(PKG, '.devnet', kind, 'scenario.json')));
-  const admin = read('admin'), trap = read('trap'), sweep = read('sweep');
+  const admin = read('admin'), trap = read('trap');
+  const shared = JSON.parse(readFileSync(SHARED_STATE));
+  if (sharedAccount(admin, readKeypair(join(KEYS, 'member-a.json'))) !== shared.account) throw new Error('Run demo:prepare for current Member A');
   const rpc = await heliusDevnet(REPO);
   const catalog = [
     { id: 'good', title: 'A harmless hello', expected: 'L0', label: 'GOOD · Memo', description: 'A plain memo signed by your connected account. Only the network fee would apply if submitted.', account: null },
-    { id: 'trap', title: 'The shiny token trap', expected: 'L2', label: 'BAD · Token-2022', description: 'Buy SHINY: its creator keeps a permanent delegate and freeze authority over your tokens.', account: trap.user, importFile: join(KEYS, 'trap-user.solflare.txt') },
-    { id: 'admin', title: 'The disguised council vote', expected: 'L3', label: 'BAD · Authority hijack', description: 'A “Q4 fee update” approves a Squads proposal that transfers program upgrade authority to an attacker.', account: admin.members.A, importFile: join(KEYS, 'member-a.solflare.txt') },
-    { id: 'sweep', title: 'The airdrop that takes everything', expected: 'L4', label: 'BAD · Wallet sweep', description: 'A claim drains all SOL and both token balances to a non-signing collector, then closes your token accounts.', account: sweep.user, importFile: join(KEYS, 'sweep-user.solflare.txt') }
+    { id: 'trap', title: 'The shiny token trap', expected: 'L2', label: 'BAD · Token-2022', description: 'Buy SHINY: its creator keeps a permanent delegate and freeze authority over your tokens.', account: shared.account },
+    { id: 'admin', title: 'The disguised council vote', expected: 'L3', label: 'BAD · Authority hijack', description: 'A “Q4 fee update” approves a Squads proposal that transfers program upgrade authority to an attacker.', account: shared.account },
+    { id: 'sweep', title: 'The airdrop that takes everything', expected: 'L4', label: 'BAD · Wallet sweep', description: 'A claim drains all SOL and both token balances to a non-signing collector, then closes your token accounts.', account: shared.account }
   ];
   const transaction = async (kind, account) => {
     if (kind === 'admin') return { transaction: readFileSync(join(PKG, '.devnet/admin/approval.unsigned.b64'), 'utf8').trim(), durableNonce: admin.nonce.account };
@@ -64,14 +67,14 @@ export async function loadPlayground() {
     if (kind === 'good') {
       const compiled = compileLegacy({ feePayer: account, recentBlockhash: bh.blockhash, instructions: [{ programId: 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr', keys: [{ pubkey: account, isSigner: true, isWritable: false }], data: Buffer.from('Hello from SignGuard devnet playground') }] });
       wire = unsignedWire(compiled);
-    } else if (kind === 'trap') wire = partialSign(buildBuy({ user: trap.user, seller: trap.seller, mint: trap.token.mint, recentBlockhash: bh.blockhash }).compiled, readKeypair(join(KEYS, 'trap-seller.json')));
+    } else if (kind === 'trap') wire = partialSign(buildBuy({ user: shared.account, seller: trap.seller, mint: trap.token.mint, recentBlockhash: bh.blockhash }).compiled, readKeypair(join(KEYS, 'trap-seller.json')));
     else if (kind === 'sweep') {
-      const sw = await currentSweep(rpc, { user: sweep.user, collector: sweep.collector, mints: sweep.tokens });
+      const sw = await currentSweep(rpc, { user: shared.account, collector: shared.collector, mints: shared.mints });
       return { transaction: sw.wire.toString('base64'), recentBlockhash: sw.recentBlockhash, lastValidBlockHeight: sw.lastValidBlockHeight };
     } else throw new Error('Unknown scenario');
     return { transaction: wire.toString('base64'), recentBlockhash: bh.blockhash, lastValidBlockHeight: bh.lastValidBlockHeight };
   };
-  return { catalog, transaction };
+  return { catalog, transaction, shared };
 }
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {

@@ -33,3 +33,11 @@ test('hub allowlists routes, host, origin, methods and wallet matches', async ()
     assert.equal((await request(`/api/transaction?kind=trap&account=${account}&extra=1`)).status, 400);
   } finally { await new Promise(r => server.close(r)); }
 });
+
+test('shared account requires the actual Member A signer and approval payer', async () => {
+  const { sharedAccount } = await import('../scripts/demo-prepare.mjs');
+  const admin = { members: { A: account }, approval: { feePayer: account } };
+  assert.equal(sharedAccount(admin, { publicKey: account }), account);
+  assert.throws(() => sharedAccount(admin, { publicKey: 'different' }), /does not match/);
+  assert.throws(() => sharedAccount({ ...admin, approval: { feePayer: 'different' } }, { publicKey: account }), /does not match/);
+});
