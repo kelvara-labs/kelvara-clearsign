@@ -12,7 +12,8 @@ import path from "node:path";
 import { ROOT, finish, pass, fail, pending, secretValues } from "./lib.mjs";
 import { readZip } from "./zip.mjs";
 import {
-  checkHosts, checkNoSecrets, checkContentScriptsOffline, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded, checkDependencyLicenses
+  checkHosts, checkNoSecrets, checkContentScriptsOffline, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded, checkDependencyLicenses,
+  checkNoPageControl, checkPassThroughUnwritable
 } from "./security-checks.mjs";
 
 const arg = (flag) => { const i = process.argv.indexOf(flag); return i > 0 ? path.resolve(ROOT, process.argv[i + 1] ?? "") : null; };
@@ -56,6 +57,18 @@ const licenseFeatureBuilt = (() => {
 })();
 const secrets = secretValues();
 
+// passThrough skips the hold; only the service worker may read it and nothing may write it (V6, coordinator ask).
+if (existsSync(EXT_SRC)) {
+  const src = new Map();
+  const walk = (d) => { for (const name of readdirSync(d)) {
+    const p = path.join(d, name);
+    if (statSync(p).isDirectory()) walk(p);
+    else if (/\.(ts|tsx|js|mjs)$/.test(name) && !/\.(test|spec)\./.test(name)) src.set(path.relative(EXT_SRC, p).split(path.sep).join("/"), readFileSync(p, "utf8"));
+  } };
+  walk(EXT_SRC);
+  checks.push(asCheck("passThrough unwritable", checkPassThroughUnwritable(src), "passThrough locked"));
+}
+
 function bundleChecks(bundle, label) {
   const manifest = findManifest(bundle);
   const n = (c) => `${c} [${label}]`;
@@ -63,6 +76,7 @@ function bundleChecks(bundle, label) {
   checks.push(asCheck(n("no eval/remote code"), checkNoRemoteCode(bundle, manifest), "no eval"));
   checks.push(asCheck(n("permissions"), checkPermissions(manifest), "min perms"));
   checks.push(asCheck(n("content scripts offline"), checkContentScriptsOffline(bundle, manifest), "cs offline"));
+  checks.push(asCheck(n("no page control"), checkNoPageControl(bundle, manifest), "no page control"));
   const lic = checkLicenseKeyEmbedded(bundle, pk);
   if (lic.status === "FAIL" && pk && !licenseFeatureBuilt) {
     checks.push(pending(n("license key offline"), "offline license check (X4, M5) not built: no license source in packages/extension/src"));

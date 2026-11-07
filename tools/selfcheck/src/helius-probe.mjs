@@ -23,7 +23,7 @@ const NETS = {
   devnet: { rpc: `https://devnet.helius-rpc.com/?api-key=${key}`, api: `https://api-devnet.helius.xyz/v0`, sig: null }
 };
 const SQUADS_V4 = "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf";
-const USDC = "EPjFWJd5AswuuGZ8eaLnvB6ycMqYMuftz5HyuwzLf8nC";
+const USDC = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
 async function rpc(url, method, params = []) {
   const t0 = performance.now();

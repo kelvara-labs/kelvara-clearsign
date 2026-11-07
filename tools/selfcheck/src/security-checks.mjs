@@ -177,6 +177,37 @@ export function checkContentScriptsOffline(bundle, manifest) {
   return result(f, `${files.size} content script(s) make no network calls`);
 }
 
+// No page control over settings (V6). A web page has no chrome.* API, so it can reach the extension only through
+// externally_connectable / onMessageExternal / onConnectExternal, or through a content script that writes storage.
+// None of these may exist: the hold-skipping settings (passThrough) stay unreachable from any page.
+export function checkNoPageControl(bundle, manifest) {
+  const f = [];
+  if (manifest && "externally_connectable" in manifest) f.push("manifest declares externally_connectable");
+  for (const [name, text] of textFiles(bundle)) {
+    if (/\bon(Message|Connect)External\b/.test(text)) f.push(`onMessageExternal/onConnectExternal in ${name}`);
+  }
+  const cs = new Set();
+  for (const c of manifest?.content_scripts ?? []) for (const js of c.js ?? []) cs.add(js.replace(/^\.?\//, ""));
+  for (const name of cs) {
+    const buf = bundle.get(name) ?? [...bundle].find(([n]) => n.endsWith(`/${name}`))?.[1];
+    if (buf && /\bstorage\s*\.\s*(local|sync|session|managed)\b|\bstorage\b\s*\]/.test(buf.toString("utf8"))) f.push(`content script ${name} touches chrome.storage`);
+  }
+  return result(f, `no externally_connectable, no external listeners, ${cs.size} content script(s) never touch storage`);
+}
+
+// Settings that skip the hold (passThrough) may be read only by the service worker policy: no options UI field,
+// no message handler, no other writer. Source files (Map<relPath, text>) under packages/extension/src, tests excluded.
+export const PASS_THROUGH_READERS = new Set(["sw/settings.ts", "sw/policy.ts"]);
+export function checkPassThroughUnwritable(srcFiles) {
+  const f = [];
+  for (const [name, text] of srcFiles) {
+    if (!/passThrough/.test(text)) continue;
+    if (!PASS_THROUGH_READERS.has(name)) f.push(`passThrough referenced in packages/extension/src/${name} (only ${[...PASS_THROUGH_READERS].join(", ")} may read it; a new reader or any writer needs verifier review)`);
+    else if (/\.set\s*\([^)]*passThrough|passThrough\s*=(?!=)/.test(text)) f.push(`passThrough written in packages/extension/src/${name}`);
+  }
+  return result(f, `passThrough read only by ${[...PASS_THROUGH_READERS].join(", ")}; nothing writes it`);
+}
+
 // Product license: the extension verifies offline against the public key in config/.
 export function checkLicenseKeyEmbedded(bundle, publicKey) {
   if (!publicKey) return { status: "FAIL", detail: "config/license-public-key.txt missing", findings: [] };
