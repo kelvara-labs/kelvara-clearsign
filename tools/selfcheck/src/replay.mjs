@@ -12,12 +12,16 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { ROOT, finish, pass, fail, pending, makeRedactor } from "./lib.mjs";
+import { ROOT, finish, pass, fail, pending, makeRedactor, loadEnv } from "./lib.mjs";
 import { createHash } from "node:crypto";
 import { Buffer } from "node:buffer";
 import { DRIFT_SIGNATURES, evaluateReplay, parseReportOutput, checkTxFixture, devnetCommand, evaluateDevnetRun, DEVNET_TEST_FILE } from "./replay-checks.mjs";
 
 const live = process.env.KELVARA_LIVE === "1" || process.argv.includes("--live");
+// Children get the key through the environment (never argv or logs), so a plain clean clone works too: the CLI only
+// looks in its own git common dir, while loadEnv also follows a local-path origin to the main checkout (V11).
+const childEnv = { ...process.env };
+{ const k = loadEnv().HELIUS_API_KEY; if (k && !childEnv.HELIUS_API_KEY) childEnv.HELIUS_API_KEY = k; }
 const redact = makeRedactor();
 const readJson = (p) => { try { return JSON.parse(readFileSync(path.join(ROOT, p), "utf8")); } catch { return null; } };
 const firstLines = (s, n = 3) => redact(s).trim().split("\n").filter(Boolean).slice(-n).join(" | ").slice(0, 240);
@@ -44,7 +48,7 @@ if (!bin) {
     checks.push(fail("drift replay", `${path.relative(ROOT, binPath)} missing; run pnpm build`));
   } else {
     const r = spawnSync(process.execPath, [binPath, "replay", "--json", ...(live ? ["--live"] : []), ...DRIFT_SIGNATURES], {
-      cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20, timeout: 5 * 60_000
+      cwd: ROOT, encoding: "utf8", maxBuffer: 64 << 20, timeout: 5 * 60_000, env: childEnv
     });
     process.stderr.write(redact(r.stderr ?? ""));
     if (r.status !== 0) {
@@ -68,7 +72,7 @@ for (const s of ["scenario:admin-devnet", "scenario:trap-devnet"]) {
   const { cmd, args, cwdRel } = devnetCommand(s);
   const t0 = Date.now();
   const r = spawnSync(cmd, args, {
-    cwd: path.join(ROOT, cwdRel), encoding: "utf8", maxBuffer: 64 << 20, timeout: 20 * 60_000, env: { ...process.env, KELVARA_CHECK: "1" }
+    cwd: path.join(ROOT, cwdRel), encoding: "utf8", maxBuffer: 64 << 20, timeout: 20 * 60_000, env: { ...childEnv, KELVARA_CHECK: "1" }
   });
   const out = (r.stdout ?? "") + (r.stderr ?? "");
   process.stdout.write(redact(out));
