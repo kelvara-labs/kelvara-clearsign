@@ -1,4 +1,4 @@
 # Progress
 
-One line per task: `M<n> | task | gates | minutes | decisions`
+One line per merged task (coordinator only): `M<n> | role | task | gates | minutes | decisions`
 
