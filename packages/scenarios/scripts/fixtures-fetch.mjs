@@ -9,10 +9,11 @@
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PROGRAMS, DRIFT_REPLAY } from './fixture-programs.mjs';
 import { parseWireTransaction } from './wire.mjs';
+import { walkFixtures, writeManifest } from './lib/manifest.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, '../../..');
@@ -309,44 +310,6 @@ async function fetchReplay() {
     writeFixture(dir, rec);
     console.log(`drift-replay ${r.label}: slot ${result.slot}, ${inv.invocation}, err ${JSON.stringify(result.meta?.err)}`);
   }
-}
-
-function walkFixtures() {
-  const files = [];
-  const walk = (d) => {
-    for (const e of readdirSync(d, { withFileTypes: true })) {
-      const p = join(d, e.name);
-      if (e.isDirectory()) walk(p);
-      else if (e.name.endsWith('.json') && e.name !== 'manifest.json') files.push(p);
-    }
-  };
-  if (existsSync(FIXTURES)) walk(FIXTURES);
-  return files;
-}
-
-function writeManifest() {
-  const files = walkFixtures();
-  const entries = files
-    .map((f) => {
-      const r = JSON.parse(readFileSync(f, 'utf8'));
-      return {
-        path: relative(join(repoRoot, 'fixtures'), f),
-        signature: r.signature,
-        slot: r.slot,
-        slug: r.program.slug,
-        programId: r.program.programId,
-        priority: r.program.priority,
-        invocation: r.invocation,
-        sha256: r.sha256,
-        ...(r.label ? { label: r.label } : {})
-      };
-    })
-    .sort((a, b) => a.path.localeCompare(b.path));
-  writeFileSync(
-    join(FIXTURES, 'manifest.json'),
-    JSON.stringify({ schema: 'kelvara.fixture.manifest/v1', count: entries.length, fixtures: entries }, null, 2) + '\n'
-  );
-  console.log(`manifest: ${entries.length} fixtures`);
 }
 
 // Lookup-table history is discovered from the other fixtures, so it runs last.

@@ -1,0 +1,62 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "4LLXBEkmDj7oz2fxz67szom1jL74w6a8TsRPiksnwNJPkEjJgJRMAnKWgpQrV2BvH75pt7bf8Zm7mqbcwDzc9B7w",
+  "slot": 466491754,
+  "blockTime": 1794050089,
+  "fetchedAt": "2026-11-07T11:30:46.827Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "system",
+    "programId": "11111111111111111111111111111111",
+    "priority": "P0",
+    "name": "System"
+  },
+  "encoding": "base64",
+  "transaction": "Aaa54i/yJw6Gy/yrCP9nzoWYEdnepeDIkPjug6TALY8EMvErOdXxcvco7d/Zn83wfWrX2JAaVBliSlRhsoWz6QoBAAIEacZ5AQnQHzadyF7FOzR21sjkueiqPLeguR9Y4Is07ZClLtGsQo31b6i08BU5n5pXQXHJ/ipONWJ8/yThRHdDHgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAACNIRHW+4qhr3uYL3+LCuy3EIEw0mbVnWuoxEkTVuF2YwMDAAUCMHUAAAMACQMQJwAAAAAAAAICAAEMAgAAAKdPQTIAAAAA",
+  "sha256": "a32b8e6d383975bb279684444c3046698063d910e4e7387d838b8c51c110797f",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5300,
+    "preBalances": [
+      843146331,
+      0,
+      1,
+      1
+    ],
+    "postBalances": [
+      0,
+      843141031,
+      1,
+      1
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 450,
+    "costUnits": 1784
+  },
+  "label": "first-time SOL transfer to a new address",
+  "tags": [
+    "first-send",
+    "benign"
+  ]
+}

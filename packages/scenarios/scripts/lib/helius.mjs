@@ -60,3 +60,12 @@ export function heliusMainnet(repoRoot, { minIntervalMs = 170 } = {}) {
     }
   };
 }
+
+// Helius devnet client with send/confirm/simulate (same shape as localRpc). The key stays in the URL only;
+// errors and `rpc.url` show "helius-devnet".
+export async function heliusDevnet(repoRoot) {
+  const { jsonRpc } = await import('./tx.mjs');
+  const url = `https://devnet.helius-rpc.com/?api-key=${loadHeliusKey(repoRoot)}`;
+  if (new URL(url).hostname !== 'devnet.helius-rpc.com') throw new Error('Helius only');
+  return jsonRpc(url, { label: 'helius-devnet', redact, confirmMs: 90_000 });
+}

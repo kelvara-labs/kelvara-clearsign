@@ -1,0 +1,60 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "5rrNbgpmo4ZJ9paoxTay4xyWQAZBVZWFW1skSDxjZBhPXd1MNUhDBka1SMVZK8eQsUe3B79qM34ZvYDSQvMW2AaB",
+  "slot": 466492122,
+  "blockTime": 1794050166,
+  "fetchedAt": "2026-11-07T11:30:24.361Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "system",
+    "programId": "11111111111111111111111111111111",
+    "priority": "P0",
+    "name": "System"
+  },
+  "encoding": "base64",
+  "transaction": "AfMOzR/md2Rh3f4b9X7cuHoMeIeQFqu9gzF1pcW6/u8kRwcCiWkNX2LGbFpfsMYg+IiMJTYj/Fp0Ch8TmLmBdQABAAIE9EO5KJTbMRYZEkcV46dp4V+NijP+aQ9WSPaA5wbSTmpUlVf7g9Bau0SuKQrS1ZfbhBuu0SYMdqovVtzUK6LImgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAB5MIP+RD5beOP/DiXeJf4RavbOuME//e7p6FOHzQwjdgIDAAUCMHUAAAICAAEMAgAAAEGGuQEAAAAA",
+  "sha256": "23c95392e7deaa1a68c803dcf1370cc0b8211ba3f7bdf8593da7e886f3e46e55",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5000,
+    "preBalances": [
+      28940745,
+      0,
+      1,
+      1
+    ],
+    "postBalances": [
+      0,
+      28935745,
+      1,
+      1
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 300,
+    "costUnits": 1632
+  },
+  "label": "first-time SOL transfer to a new address",
+  "tags": [
+    "first-send",
+    "benign"
+  ]
+}

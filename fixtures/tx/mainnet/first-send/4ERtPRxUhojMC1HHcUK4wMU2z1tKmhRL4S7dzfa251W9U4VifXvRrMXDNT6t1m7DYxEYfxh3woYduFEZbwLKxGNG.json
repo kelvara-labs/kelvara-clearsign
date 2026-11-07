@@ -1,0 +1,68 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "4ERtPRxUhojMC1HHcUK4wMU2z1tKmhRL4S7dzfa251W9U4VifXvRrMXDNT6t1m7DYxEYfxh3woYduFEZbwLKxGNG",
+  "slot": 466491915,
+  "blockTime": 1794050123,
+  "fetchedAt": "2026-11-07T11:30:36.561Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "system",
+    "programId": "11111111111111111111111111111111",
+    "priority": "P0",
+    "name": "System"
+  },
+  "encoding": "base64",
+  "transaction": "AaGhuAS327N0NAktITkxgH8sPG66sCsety2NfeCGSsljA2CuqR8lne2CbIA03P6qtP7XsFM/Vf8YCHXyBDDa7wUBAAMGJIFWwzkWV2eCv1hkUYP0OM7OrEbkIT9aAYUxZ+GMUsqAWwVMSdzx460lzJ8IW68C+VAeJO9UQzaP1LT7Euc5X97Z6jZsNmrBm0la1RBtm0HoTmRk+m3V6WnTwSAkkrwQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAan1RcZLFaO4IqEX3PSl4jPA1wxRbIas0TYBi6pQAAAHvjg1YaBJa0f5ip4hMjyl6DxQA4Y7mWQR0oyjnrGFHoEAwMBBQAEBAAAAAQACQOIEwAAAAAAAAQABQJADQMAAwIAAgwCAAAAwN0gGQAAAAA=",
+  "sha256": "8e960b8c469a88b27ca19af5372a7ee253f5f56af6ee7d49a19c3ff0c736ca15",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 6000,
+    "preBalances": [
+      3830497047480,
+      1447680,
+      0,
+      1,
+      1,
+      42706560
+    ],
+    "postBalances": [
+      3830075457160,
+      1447680,
+      421584320,
+      1,
+      1,
+      42706560
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 600,
+    "costUnits": 2235
+  },
+  "label": "first-time SOL transfer to a new address",
+  "tags": [
+    "first-send",
+    "benign"
+  ]
+}

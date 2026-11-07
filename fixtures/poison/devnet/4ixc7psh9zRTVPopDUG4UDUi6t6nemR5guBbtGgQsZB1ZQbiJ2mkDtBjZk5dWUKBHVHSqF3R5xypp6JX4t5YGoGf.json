@@ -1,0 +1,510 @@
+{
+  "schema": "kelvara.fixture.poison/v1",
+  "kind": "poisoning",
+  "network": "devnet",
+  "id": "devnet-poisoning-4ixc7psh",
+  "label": "scenario:poison-devnet 2026-11-07: user paid friend A8yHT9…Wmu, dust from ground lookalike A8yFk8…Gamu, then sent it 0.5 SOL",
+  "user": "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+  "recipient": "A8yFk8de2QXndMebgExKhxdct6EdyAADjka1WSchGamu",
+  "lookalikeOf": "A8yHT9RFGdV2Wv2FUFpy8T6b2mb3PzaysvEZ34s2dWmu",
+  "match": {
+    "prefix": 3,
+    "suffix": 2
+  },
+  "realTransfer": {
+    "signature": "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH",
+    "slot": 519644501,
+    "blockTime": 1794050812,
+    "kind": "sol",
+    "from": "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+    "to": "A8yHT9RFGdV2Wv2FUFpy8T6b2mb3PzaysvEZ34s2dWmu",
+    "amount": "10000000"
+  },
+  "dust": {
+    "signature": "2hJQUHTWFnLitwmuSxqhWX617uGChZSFTR4bWkrzYxMMyASayXi33iPTpiNs7QCjFvLn2eJgotMFBEek4BHhDLTN",
+    "slot": 519644558,
+    "blockTime": 1794050826,
+    "kind": "sol",
+    "from": "A8yFk8de2QXndMebgExKhxdct6EdyAADjka1WSchGamu",
+    "to": "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+    "amount": "100000"
+  },
+  "request": {
+    "signature": "4ixc7psh9zRTVPopDUG4UDUi6t6nemR5guBbtGgQsZB1ZQbiJ2mkDtBjZk5dWUKBHVHSqF3R5xypp6JX4t5YGoGf",
+    "slot": 519644616,
+    "executed": true,
+    "kind": "sol",
+    "from": "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+    "to": "A8yFk8de2QXndMebgExKhxdct6EdyAADjka1WSchGamu",
+    "amount": "500000000"
+  },
+  "requestNote": "the user really sent to the lookalike (executed on chain)",
+  "expect": {
+    "rule": "address.poisoning",
+    "level": "L4"
+  },
+  "history": {
+    "user": "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+    "asOf": "4ixc7psh9zRTVPopDUG4UDUi6t6nemR5guBbtGgQsZB1ZQbiJ2mkDtBjZk5dWUKBHVHSqF3R5xypp6JX4t5YGoGf",
+    "includesAnchor": false,
+    "signatures": [
+      {
+        "signature": "2hJQUHTWFnLitwmuSxqhWX617uGChZSFTR4bWkrzYxMMyASayXi33iPTpiNs7QCjFvLn2eJgotMFBEek4BHhDLTN",
+        "slot": 519644558,
+        "err": null,
+        "memo": null,
+        "blockTime": 1794050826,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 0
+      },
+      {
+        "signature": "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH",
+        "slot": 519644501,
+        "err": null,
+        "memo": null,
+        "blockTime": 1794050812,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 12
+      },
+      {
+        "signature": "3xdNvJNnkU1rkPPVzykaiqbCkDcJyZNLDPTN5qqsk4NTKvo3LJmi6m2RmhVpMPUkFhMiSJ9ptWA7MiNNppYSV2ZM",
+        "slot": 519644496,
+        "err": null,
+        "memo": null,
+        "blockTime": 1794050811,
+        "confirmationStatus": "finalized",
+        "transactionIndex": 9
+      }
+    ],
+    "txsFetchedDownTo": "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH"
+  },
+  "fetchedAt": "2026-11-07T11:29:27.286Z",
+  "source": "helius-devnet",
+  "calls": [
+    {
+      "method": "getTransaction",
+      "params": [
+        "4ixc7psh9zRTVPopDUG4UDUi6t6nemR5guBbtGgQsZB1ZQbiJ2mkDtBjZk5dWUKBHVHSqF3R5xypp6JX4t5YGoGf",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "4ixc7psh9zRTVPopDUG4UDUi6t6nemR5guBbtGgQsZB1ZQbiJ2mkDtBjZk5dWUKBHVHSqF3R5xypp6JX4t5YGoGf"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 1,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 1
+            },
+            "accountKeys": [
+              "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+              "A8yFk8de2QXndMebgExKhxdct6EdyAADjka1WSchGamu",
+              "11111111111111111111111111111111"
+            ],
+            "recentBlockhash": "35Jbm3FA9g6WoMmTUQxCGp3eeU7CxHSADq2Utwrc8hL7",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "3Bxs3zvX19cRxrhM",
+                "stackHeight": 1
+              }
+            ]
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 5000,
+          "preBalances": [
+            790095000,
+            1895000,
+            1
+          ],
+          "postBalances": [
+            290090000,
+            501895000,
+            1
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 150,
+          "costUnits": 1481
+        },
+        "version": "legacy",
+        "slot": 519644616,
+        "transactionIndex": 0,
+        "blockTime": 1794050840
+      }
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "2hJQUHTWFnLitwmuSxqhWX617uGChZSFTR4bWkrzYxMMyASayXi33iPTpiNs7QCjFvLn2eJgotMFBEek4BHhDLTN",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "2hJQUHTWFnLitwmuSxqhWX617uGChZSFTR4bWkrzYxMMyASayXi33iPTpiNs7QCjFvLn2eJgotMFBEek4BHhDLTN"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 1,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 1
+            },
+            "accountKeys": [
+              "A8yFk8de2QXndMebgExKhxdct6EdyAADjka1WSchGamu",
+              "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+              "11111111111111111111111111111111"
+            ],
+            "recentBlockhash": "5chXVNGbQudaMuimFdVuFx8G6QM9yfxHGAy4D7KZ2EnV",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "3Bxs4ThwQbE4vyj5",
+                "stackHeight": 1
+              }
+            ]
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 5000,
+          "preBalances": [
+            2000000,
+            789995000,
+            1
+          ],
+          "postBalances": [
+            1895000,
+            790095000,
+            1
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 150,
+          "costUnits": 1481
+        },
+        "version": "legacy",
+        "slot": 519644558,
+        "transactionIndex": 0,
+        "blockTime": 1794050826
+      }
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 1,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 1
+            },
+            "accountKeys": [
+              "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+              "A8yHT9RFGdV2Wv2FUFpy8T6b2mb3PzaysvEZ34s2dWmu",
+              "11111111111111111111111111111111"
+            ],
+            "recentBlockhash": "7bQkvdpZjxkEPs6XDGsMafvJT83kisFnWDaFxxzLWfq1",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "3Bxs4NN8M2Yn4TLb",
+                "stackHeight": 1
+              }
+            ]
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 5000,
+          "preBalances": [
+            800000000,
+            0,
+            1
+          ],
+          "postBalances": [
+            789995000,
+            10000000,
+            1
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 150,
+          "costUnits": 1481
+        },
+        "version": "legacy",
+        "slot": 519644501,
+        "transactionIndex": 12,
+        "blockTime": 1794050812
+      }
+    },
+    {
+      "method": "getSignaturesForAddress",
+      "params": [
+        "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+        {
+          "limit": 50,
+          "commitment": "confirmed",
+          "before": "4ixc7psh9zRTVPopDUG4UDUi6t6nemR5guBbtGgQsZB1ZQbiJ2mkDtBjZk5dWUKBHVHSqF3R5xypp6JX4t5YGoGf"
+        }
+      ],
+      "result": [
+        {
+          "signature": "2hJQUHTWFnLitwmuSxqhWX617uGChZSFTR4bWkrzYxMMyASayXi33iPTpiNs7QCjFvLn2eJgotMFBEek4BHhDLTN",
+          "slot": 519644558,
+          "err": null,
+          "memo": null,
+          "blockTime": 1794050826,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 0
+        },
+        {
+          "signature": "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH",
+          "slot": 519644501,
+          "err": null,
+          "memo": null,
+          "blockTime": 1794050812,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 12
+        },
+        {
+          "signature": "3xdNvJNnkU1rkPPVzykaiqbCkDcJyZNLDPTN5qqsk4NTKvo3LJmi6m2RmhVpMPUkFhMiSJ9ptWA7MiNNppYSV2ZM",
+          "slot": 519644496,
+          "err": null,
+          "memo": null,
+          "blockTime": 1794050811,
+          "confirmationStatus": "finalized",
+          "transactionIndex": 9
+        }
+      ]
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "2hJQUHTWFnLitwmuSxqhWX617uGChZSFTR4bWkrzYxMMyASayXi33iPTpiNs7QCjFvLn2eJgotMFBEek4BHhDLTN",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "2hJQUHTWFnLitwmuSxqhWX617uGChZSFTR4bWkrzYxMMyASayXi33iPTpiNs7QCjFvLn2eJgotMFBEek4BHhDLTN"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 1,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 1
+            },
+            "accountKeys": [
+              "A8yFk8de2QXndMebgExKhxdct6EdyAADjka1WSchGamu",
+              "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+              "11111111111111111111111111111111"
+            ],
+            "recentBlockhash": "5chXVNGbQudaMuimFdVuFx8G6QM9yfxHGAy4D7KZ2EnV",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "3Bxs4ThwQbE4vyj5",
+                "stackHeight": 1
+              }
+            ]
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 5000,
+          "preBalances": [
+            2000000,
+            789995000,
+            1
+          ],
+          "postBalances": [
+            1895000,
+            790095000,
+            1
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 150,
+          "costUnits": 1481
+        },
+        "version": "legacy",
+        "slot": 519644558,
+        "transactionIndex": 0,
+        "blockTime": 1794050826
+      }
+    },
+    {
+      "method": "getTransaction",
+      "params": [
+        "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH",
+        {
+          "encoding": "json",
+          "maxSupportedTransactionVersion": 0,
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "transaction": {
+          "signatures": [
+            "5kVnTSbigjdYF3THHiMR1yeGu9YyvnmQcNRfghFqhZGe9KLc76jyysQT5hjVy3ngVTt1Knw89JwjJivdsB3r97hH"
+          ],
+          "message": {
+            "header": {
+              "numRequiredSignatures": 1,
+              "numReadonlySignedAccounts": 0,
+              "numReadonlyUnsignedAccounts": 1
+            },
+            "accountKeys": [
+              "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+              "A8yHT9RFGdV2Wv2FUFpy8T6b2mb3PzaysvEZ34s2dWmu",
+              "11111111111111111111111111111111"
+            ],
+            "recentBlockhash": "7bQkvdpZjxkEPs6XDGsMafvJT83kisFnWDaFxxzLWfq1",
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accounts": [
+                  0,
+                  1
+                ],
+                "data": "3Bxs4NN8M2Yn4TLb",
+                "stackHeight": 1
+              }
+            ]
+          }
+        },
+        "meta": {
+          "err": null,
+          "status": {
+            "Ok": null
+          },
+          "fee": 5000,
+          "preBalances": [
+            800000000,
+            0,
+            1
+          ],
+          "postBalances": [
+            789995000,
+            10000000,
+            1
+          ],
+          "innerInstructions": [],
+          "logMessages": [
+            "Program 11111111111111111111111111111111 invoke [1]",
+            "Program 11111111111111111111111111111111 success"
+          ],
+          "preTokenBalances": [],
+          "postTokenBalances": [],
+          "rewards": [],
+          "loadedAddresses": {
+            "writable": [],
+            "readonly": []
+          },
+          "computeUnitsConsumed": 150,
+          "costUnits": 1481
+        },
+        "version": "legacy",
+        "slot": 519644501,
+        "transactionIndex": 12,
+        "blockTime": 1794050812
+      }
+    }
+  ]
+}

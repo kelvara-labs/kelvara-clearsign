@@ -1,0 +1,170 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "localnet",
+  "signature": "5dH35ADAXRoXC9tCGYnDaqLRsTEctKPTFTVGv5pMMfUhq4oEs1YSwGqPfK3WGBecux3ggLsxmBKpoFJE1bhGfrfh",
+  "slot": 3384,
+  "blockTime": 1794051167,
+  "fetchedAt": "2026-11-07T11:32:49.414Z",
+  "source": "localnet:getTransaction",
+  "program": {
+    "slug": "token-2022",
+    "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+    "priority": "P0",
+    "name": "Token-2022"
+  },
+  "encoding": "base64",
+  "transaction": "AudZ+LKPRdK4DDjcION8z34sh2vxPmuCYtMSd0ZjZ+120LpufwGtdaB4g/SGdw2y0Y26qu0VBKp1bpX4zHGaZwj2wapn2qrzIDGsdrpv0jVkADecJKJBgwc9LmH9kWk5QsIza6ty7pefZIrVeXwo9syJ3tQ9v9ia3HVb4kdO0ukEAgAECExdFRA3EnoSh0WqUTqEBCFvy5s5knm/ZnKThVTP4lQp9qn/1Pt4qUCqgVFjz7ufQXEF6ScFVXNCdT06B7Co3rCUR0fcr/x/83i5/chevCd92Uw88s9YeFaMauUqhY/JP3P9KLVqsiXjkJceQLQD0UJVx5EvD60lUiR2rbV89I+86LB1U4jsYt0j267iHKq6EBSHGB2tZ60EXzNRgCnR2PYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAbd9uHudY/eGEJdvORszdq2GvxNg7kNJ/69+SjYoYv8jJclj04kifG7PRApFI4NgwtaE5na/xCEBI572Nvp+FnSOSFKKhbZ+BH7EkMY8DgYEJUn+x1WUBNEZRBTYQg3jAMHBgACAAQFBgEBBQIAAQwCAAAAAMqaOwAAAAAGBAMEAgEKDAB0O6QLAAAABg==",
+  "sha256": "3e9a098aa69f595cf53b7002bd5a405ebfa8786f41eb13fb715514e7995bc6d9",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "computeUnitsConsumed": 21709,
+    "costUnits": 24554,
+    "err": null,
+    "fee": 10000,
+    "innerInstructions": [
+      {
+        "index": 0,
+        "instructions": [
+          {
+            "accounts": [
+              4
+            ],
+            "data": "84eT",
+            "programIdIndex": 6,
+            "stackHeight": 2
+          },
+          {
+            "accounts": [
+              0,
+              2
+            ],
+            "data": "11119ExAoTptm6xKUTUcw2V69MKmyEdDmRins3j3bK43o9nHeiYUtSiaT9pc292PhNQvxj",
+            "programIdIndex": 5,
+            "stackHeight": 2
+          },
+          {
+            "accounts": [
+              2
+            ],
+            "data": "P",
+            "programIdIndex": 6,
+            "stackHeight": 2
+          },
+          {
+            "accounts": [
+              2,
+              4
+            ],
+            "data": "6SGnymXRK97QLpRj7LPe2zTpFB42bi1CznXfjWa28j8bS",
+            "programIdIndex": 6,
+            "stackHeight": 2
+          }
+        ]
+      }
+    ],
+    "loadedAddresses": {
+      "readonly": [],
+      "writable": []
+    },
+    "logMessages": [
+      "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL invoke [1]",
+      "Program log: CreateIdempotent",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb invoke [2]",
+      "Program log: Instruction: GetAccountDataSize",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb consumed 1502 of 396182 compute units",
+      "Program return: TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb qgAAAAAAAAA=",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb success",
+      "Program 11111111111111111111111111111111 invoke [2]",
+      "Program 11111111111111111111111111111111 success",
+      "Program log: Initialize the associated token account",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb invoke [2]",
+      "Program log: Instruction: InitializeImmutableOwner",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb consumed 529 of 389750 compute units",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb success",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb invoke [2]",
+      "Program log: Instruction: InitializeAccount3",
+      "Program log: Warning: Mint has a permanent delegate, so tokens in this account may be seized at any time",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb consumed 2384 of 386833 compute units",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb success",
+      "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL consumed 18834 of 403000 compute units",
+      "Program ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb invoke [1]",
+      "Program log: Instruction: TransferChecked",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb consumed 2725 of 384016 compute units",
+      "Program TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb success"
+    ],
+    "postBalances": [
+      7995831840,
+      6000000000,
+      2074080,
+      2074080,
+      3424320,
+      1,
+      1141440,
+      731913600
+    ],
+    "postTokenBalances": [
+      {
+        "accountIndex": 2,
+        "mint": "GfKeVq5YtAYkRvcJguMdRKA1Aa2Q7Qp1DmM1jry92F1P",
+        "owner": "696JqKtWrG8WYwdbFEShWVNrgASnJFwJ5cVt1zLKRzAU",
+        "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+        "uiTokenAmount": {
+          "amount": "50000000000",
+          "decimals": 6,
+          "uiAmount": 50000,
+          "uiAmountString": "50000"
+        }
+      },
+      {
+        "accountIndex": 3,
+        "mint": "GfKeVq5YtAYkRvcJguMdRKA1Aa2Q7Qp1DmM1jry92F1P",
+        "owner": "HbseETMPYmfQxhGNKtcpTnyGTJUzzhQHh4CowhMsiZEw",
+        "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+        "uiTokenAmount": {
+          "amount": "950000000000",
+          "decimals": 6,
+          "uiAmount": 950000,
+          "uiAmountString": "950000"
+        }
+      }
+    ],
+    "preBalances": [
+      8997915920,
+      5000000000,
+      0,
+      2074080,
+      3424320,
+      1,
+      1141440,
+      731913600
+    ],
+    "preTokenBalances": [
+      {
+        "accountIndex": 3,
+        "mint": "GfKeVq5YtAYkRvcJguMdRKA1Aa2Q7Qp1DmM1jry92F1P",
+        "owner": "HbseETMPYmfQxhGNKtcpTnyGTJUzzhQHh4CowhMsiZEw",
+        "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+        "uiTokenAmount": {
+          "amount": "1000000000000",
+          "decimals": 6,
+          "uiAmount": 1000000,
+          "uiAmountString": "1000000"
+        }
+      }
+    ],
+    "rewards": [],
+    "status": {
+      "Ok": null
+    }
+  },
+  "label": "scenario:trap-local: buy 50,000 $SHINY (permanent delegate + freeze authority = creator) for 1 SOL; executed on localnet",
+  "tags": [
+    "scenario",
+    "trap"
+  ],
+  "e2e": "l2-trap"
+}

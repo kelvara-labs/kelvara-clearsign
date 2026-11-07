@@ -1,0 +1,75 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "localnet",
+  "signature": "4LbBvq8NvwWJGRLbaf6b6kjuYWUe5JV5HuF2auiLd6CrebsSPB1wdZagC29wpbsFhgF9BC777f43yi1dGj2sBzSH",
+  "slot": 3375,
+  "blockTime": 1794051162,
+  "fetchedAt": "2026-11-07T11:32:49.380Z",
+  "source": "localnet:getTransaction",
+  "program": {
+    "slug": "squads-v4",
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "priority": "P0",
+    "name": "Squads v4"
+  },
+  "encoding": "base64",
+  "transaction": "AabxtvSWe251ByV1m4q9N3kKHmTv/DjjUJE+P7RPUMQf3oxmPFn2HPtuJAJGcJAd0tXqZD8lJtY3tSyEHdfEJw4BAAUI2TvFH2aKUtG8qtX+0+xhoIeuA2zZsyfL9oedvBlTDqRl4JpQzG1gJS4n/P0Np0bmhtmz+usQRIhUc9CbJZ0G/5FAurKbtlnDRaJT8r0hWbbKmyWogqpfGBHNQszZWEgmBqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSNs2hVTuWQE9nyzycCUSLLc5DifY5m6Kz0w+WJHWjRPTAGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qGnLtYO9HfYwzvw1QZuzy883xWP//glbwrTvW5XMRMqJAwQDAQMABAQAAAAFAA1RNCBmZWUgdXBkYXRlBwMGAAIakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+  "sha256": "c15159c58304dce21340f4dd3a86d79d9c797804673175ec533e116f192cc304",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "computeUnitsConsumed": 15416,
+    "costUnits": 17430,
+    "err": null,
+    "fee": 5000,
+    "innerInstructions": [],
+    "loadedAddresses": {
+      "readonly": [],
+      "writable": []
+    },
+    "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+      "Program log: Memo (len 13): \"Q4 fee update\"",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 6299 of 402850 compute units",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: ProposalApprove",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 8967 of 396551 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+    ],
+    "postBalances": [
+      19999990000,
+      1447680,
+      3382560,
+      42706560,
+      1,
+      521498880,
+      2498640,
+      12171440
+    ],
+    "postTokenBalances": [],
+    "preBalances": [
+      19999995000,
+      1447680,
+      3382560,
+      42706560,
+      1,
+      521498880,
+      2498640,
+      12171440
+    ],
+    "preTokenBalances": [],
+    "rewards": [],
+    "status": {
+      "Ok": null
+    }
+  },
+  "label": "scenario:admin-local: Member A approves \"Q4 fee update\" on a durable nonce (its vault transaction gives the upgrade authority to the attacker); executed on localnet",
+  "tags": [
+    "scenario",
+    "admin"
+  ],
+  "e2e": "l3-batch"
+}

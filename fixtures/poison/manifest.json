@@ -1,0 +1,601 @@
+{
+  "schema": "kelvara.fixture.poison-manifest/v1",
+  "engineTask": "E9",
+  "gate": "G3",
+  "count": 30,
+  "cases": [
+    {
+      "path": "poison/devnet/4ixc7psh9zRTVPopDUG4UDUi6t6nemR5guBbtGgQsZB1ZQbiJ2mkDtBjZk5dWUKBHVHSqF3R5xypp6JX4t5YGoGf.json",
+      "id": "devnet-poisoning-4ixc7psh",
+      "kind": "poisoning",
+      "network": "devnet",
+      "user": "7jLcydbZjzQ4ZUw28cyfxHfrTa1YNzqKkNCnvx6Lszcv",
+      "recipient": "A8yFk8de2QXndMebgExKhxdct6EdyAADjka1WSchGamu",
+      "lookalikeOf": "A8yHT9RFGdV2Wv2FUFpy8T6b2mb3PzaysvEZ34s2dWmu",
+      "match": {
+        "prefix": 3,
+        "suffix": 2
+      },
+      "request": "4ixc7psh9zRTVPopDUG4UDUi6t6nemR5guBbtGgQsZB1ZQbiJ2mkDtBjZk5dWUKBHVHSqF3R5xypp6JX4t5YGoGf",
+      "expect": {
+        "rule": "address.poisoning",
+        "level": "L4"
+      },
+      "sha256": "bc6aa325b74fc3365cf7baa66a38e320d6aff91f6c1f151d20c1d381015d8ad1"
+    },
+    {
+      "path": "poison/first-send/19Cv8q3225AyvhWAUT6sqcGPm7R5AwwQAVFLmaEJZdoHWi2HLp7LLD6yBo2Q3PYutV2DeosxZFk8XVMGDoUv3oM.json",
+      "id": "mainnet-first-send-19Cv8q32",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "FAT3G71FEF8tfndmANGGmGfKXty5TJUtg2naeQGZfbPK",
+      "recipient": "FQeuQ8mC5dNa6uYJmBaiaES5dDZQsq3zCkuQqFp8g9mk",
+      "request": "19Cv8q3225AyvhWAUT6sqcGPm7R5AwwQAVFLmaEJZdoHWi2HLp7LLD6yBo2Q3PYutV2DeosxZFk8XVMGDoUv3oM",
+      "txFixture": "tx/mainnet/first-send/19Cv8q3225AyvhWAUT6sqcGPm7R5AwwQAVFLmaEJZdoHWi2HLp7LLD6yBo2Q3PYutV2DeosxZFk8XVMGDoUv3oM.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "9e96c8280c0163ad1a3785054468361bbb8aacda3179d6bb898ca63a7e7ffe23"
+    },
+    {
+      "path": "poison/first-send/27moewTsNGemnrGnCwR2AxtcvNgm6UsCWRvy7Zx7D1sdseYP1aN91hRCjqfQFxmZhk2xZrTeGD9UU6YPcyn9QmAS.json",
+      "id": "mainnet-first-send-27moewTs",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "8LGVDiv6xEjm9L91zFkisiJMAX2AWaffdDRF6DMbBPGT",
+      "recipient": "J5esNycXBVvMSooAWS5jk2qntDGWbaRvS7gkGFAvsqqs",
+      "request": "27moewTsNGemnrGnCwR2AxtcvNgm6UsCWRvy7Zx7D1sdseYP1aN91hRCjqfQFxmZhk2xZrTeGD9UU6YPcyn9QmAS",
+      "txFixture": "tx/mainnet/first-send/27moewTsNGemnrGnCwR2AxtcvNgm6UsCWRvy7Zx7D1sdseYP1aN91hRCjqfQFxmZhk2xZrTeGD9UU6YPcyn9QmAS.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "f925fdf1551cfa7eba60267d834c2f10e2d2b358ce342026d9792cead56df4e6"
+    },
+    {
+      "path": "poison/first-send/2APFoDPiBXp3pdJhBquSE6uj67yDSH4aXokHrkRirqSB8Tx3R5SmivLmqy8nT7EAu7d2AzzmcEXnYLWau9hELDRe.json",
+      "id": "mainnet-first-send-2APFoDPi",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "32dY9xapSsmC6LtRoiULUKj5yqURT6JAvKkGqkGzksPC",
+      "recipient": "9WknbRBx92FLvonKeYDfWB9Hcz8HcjTepzBDj3jbgDsi",
+      "request": "2APFoDPiBXp3pdJhBquSE6uj67yDSH4aXokHrkRirqSB8Tx3R5SmivLmqy8nT7EAu7d2AzzmcEXnYLWau9hELDRe",
+      "txFixture": "tx/mainnet/first-send/2APFoDPiBXp3pdJhBquSE6uj67yDSH4aXokHrkRirqSB8Tx3R5SmivLmqy8nT7EAu7d2AzzmcEXnYLWau9hELDRe.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "bce8774e5cbaef99b9e7d8edeb8cce12fdc9a4dda226384dcb2d4dcb11ebc87e"
+    },
+    {
+      "path": "poison/first-send/2e8CVfnpLhHwQHgARmoF682ceKMURzuVLCf3AaoitunSDAtg11J6CgYBk1qGDpHn2cyHYEL6YbGzGnhgHbsBi3m1.json",
+      "id": "mainnet-first-send-2e8CVfnp",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "ASTyfSima4LLAdDgoFGkgqoKowG1LZFDr9fAQrg7iaJZ",
+      "recipient": "42SuLBugXuYygP27L7BuoR8zwjmJfUPuxHSb25B8JYgM",
+      "request": "2e8CVfnpLhHwQHgARmoF682ceKMURzuVLCf3AaoitunSDAtg11J6CgYBk1qGDpHn2cyHYEL6YbGzGnhgHbsBi3m1",
+      "txFixture": "tx/mainnet/first-send/2e8CVfnpLhHwQHgARmoF682ceKMURzuVLCf3AaoitunSDAtg11J6CgYBk1qGDpHn2cyHYEL6YbGzGnhgHbsBi3m1.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "601bc8b637b98468bc4575e4fb341cf35efcb69948656292ca6631e7707aa989"
+    },
+    {
+      "path": "poison/first-send/2UPxW5Kys8cHFQRXGrJRrhruy5pRTgVbui9msTecjMV63DmLvk6gF8Npvp3pyjYKnQQAJkCyzBB47h1dnHeggPWo.json",
+      "id": "mainnet-first-send-2UPxW5Ky",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "C68a6RCGLiPskbPYtAcsCjhG8tfTWYcoB4JjCrXFdqyo",
+      "recipient": "5oeCm4hhBv8kiobgCKhvvX35zLrsZMQ27iDovCWqaSWX",
+      "request": "2UPxW5Kys8cHFQRXGrJRrhruy5pRTgVbui9msTecjMV63DmLvk6gF8Npvp3pyjYKnQQAJkCyzBB47h1dnHeggPWo",
+      "txFixture": "tx/mainnet/first-send/2UPxW5Kys8cHFQRXGrJRrhruy5pRTgVbui9msTecjMV63DmLvk6gF8Npvp3pyjYKnQQAJkCyzBB47h1dnHeggPWo.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "775ddccc8a2a51e61f6174aedc2d3bdec6adf7b2d2ba94653b058ed9e4f709e7"
+    },
+    {
+      "path": "poison/first-send/2Zy4fLxCSU2AGysHwB6wdo1NsprNzijodhpoG8LRRcDijv2vy7K2mThDwRSqHERoeu6w8HXbsa6JX6V3fZatkCuf.json",
+      "id": "mainnet-first-send-2Zy4fLxC",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "HfHg1Wns87fxJig3WMM2UKWEETUVEkJu5c97KFLqBFV4",
+      "recipient": "2cUakNBPXT8pAULn1jSosuJGXXL4CoKDGATRf7yzaS5S",
+      "request": "2Zy4fLxCSU2AGysHwB6wdo1NsprNzijodhpoG8LRRcDijv2vy7K2mThDwRSqHERoeu6w8HXbsa6JX6V3fZatkCuf",
+      "txFixture": "tx/mainnet/first-send/2Zy4fLxCSU2AGysHwB6wdo1NsprNzijodhpoG8LRRcDijv2vy7K2mThDwRSqHERoeu6w8HXbsa6JX6V3fZatkCuf.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "ccde804eab5b5fefe6b02fbcb949b84a3294525331c2c89982c612926e31588b"
+    },
+    {
+      "path": "poison/first-send/32M2evF8V52MPRnWR9QnHJoUw44XQC2y7eEu3BrKyivXZcbNmkboT3nc2A82KRyYUhPzNhUgP1n1GWhy3yFduB7X.json",
+      "id": "mainnet-first-send-32M2evF8",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "EDNQtPSKxsZysJMA1RheMTxgBgrR6jQg1CS7ZvBXPr7w",
+      "recipient": "B3tEFBfKM9ZjbqMgU4icv6pUzgyJiy125zBVtRmA3ZiL",
+      "request": "32M2evF8V52MPRnWR9QnHJoUw44XQC2y7eEu3BrKyivXZcbNmkboT3nc2A82KRyYUhPzNhUgP1n1GWhy3yFduB7X",
+      "txFixture": "tx/mainnet/first-send/32M2evF8V52MPRnWR9QnHJoUw44XQC2y7eEu3BrKyivXZcbNmkboT3nc2A82KRyYUhPzNhUgP1n1GWhy3yFduB7X.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "06521e3a92db59cca8e1a438d4993b610ebb0df99de4f73418de3f43a693f17e"
+    },
+    {
+      "path": "poison/first-send/38Q4WNWbZjzx9MdKwtz3ChHLxA8ZrdaKa83942zjBxRN5aoUTBNmYh4u1YJJXmLyR5evopGceAtkUcDFyAkiTfNm.json",
+      "id": "mainnet-first-send-38Q4WNWb",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "CN5hnZXFLAeqvQiBhyjVrL3Q1A8Fku17g4dTqpNvbLkk",
+      "recipient": "5eQsyfo83xQiMmcZGXNwUctNiUBP9QRFNWiMi4MWfois",
+      "request": "38Q4WNWbZjzx9MdKwtz3ChHLxA8ZrdaKa83942zjBxRN5aoUTBNmYh4u1YJJXmLyR5evopGceAtkUcDFyAkiTfNm",
+      "txFixture": "tx/mainnet/first-send/38Q4WNWbZjzx9MdKwtz3ChHLxA8ZrdaKa83942zjBxRN5aoUTBNmYh4u1YJJXmLyR5evopGceAtkUcDFyAkiTfNm.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "2d672691a0732cc143e6fd2b4eaec3ecb742a8eaac5232719c7b46ce2a59aa80"
+    },
+    {
+      "path": "poison/first-send/3du1cVUgKhwsNG2T5qsRMwECUUrw4RdpCRg73DzemoriijsNT1xHyubF6FzTa27tb1c3tcTpNz784ri54ZuaZQk6.json",
+      "id": "mainnet-first-send-3du1cVUg",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "VqEg7WYj4XonMN13mXS264cMyddwXJGqCPwebLKARG8",
+      "recipient": "G83pT2f28GbyX4rhZAgshjqy11TiRB4TEkwCfT9vCkov",
+      "request": "3du1cVUgKhwsNG2T5qsRMwECUUrw4RdpCRg73DzemoriijsNT1xHyubF6FzTa27tb1c3tcTpNz784ri54ZuaZQk6",
+      "txFixture": "tx/mainnet/first-send/3du1cVUgKhwsNG2T5qsRMwECUUrw4RdpCRg73DzemoriijsNT1xHyubF6FzTa27tb1c3tcTpNz784ri54ZuaZQk6.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "e5ecfa852eac4e6474219d3e34d3fe40555cd327f3e0ae99f70ef89234cd51c3"
+    },
+    {
+      "path": "poison/first-send/3gudKVmkgDMiD8VUzGEu3a7GyyE3Jkb42crT93obRPmck2adAa7oxhi8XXVtJ49AuaeXrUyFwKePw8N6BVt1Qj3v.json",
+      "id": "mainnet-first-send-3gudKVmk",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "8DfHuYFv7VQ6wgcGtVDN2vtFn5ezF52hHNtPWYcqm8hU",
+      "recipient": "4udyYzmDeR74HZYAhhftEpTdeGmPmwCU75WpDdpUBtce",
+      "request": "3gudKVmkgDMiD8VUzGEu3a7GyyE3Jkb42crT93obRPmck2adAa7oxhi8XXVtJ49AuaeXrUyFwKePw8N6BVt1Qj3v",
+      "txFixture": "tx/mainnet/first-send/3gudKVmkgDMiD8VUzGEu3a7GyyE3Jkb42crT93obRPmck2adAa7oxhi8XXVtJ49AuaeXrUyFwKePw8N6BVt1Qj3v.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "6656aa93c27d8d217b483cd05381ed041054e48db99fed1934a872e2de00d08b"
+    },
+    {
+      "path": "poison/first-send/3jNbU4S8iZrerW8s3t7tF3DrMa1MDhGKT1FYRdsqgowdZxGiLLNYvHmYCsbbMSiyZaBrBL8VCtgKwwdA66ysDre7.json",
+      "id": "mainnet-first-send-3jNbU4S8",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "GtXNsrw2YJVkSTtKqDqq5asfXkh4HV4CWEuGWpZrv6eH",
+      "recipient": "6rMMCdJFGS4C73LZANxPpDq28Ha1Yn1gXwg3qz98X1Su",
+      "request": "3jNbU4S8iZrerW8s3t7tF3DrMa1MDhGKT1FYRdsqgowdZxGiLLNYvHmYCsbbMSiyZaBrBL8VCtgKwwdA66ysDre7",
+      "txFixture": "tx/mainnet/first-send/3jNbU4S8iZrerW8s3t7tF3DrMa1MDhGKT1FYRdsqgowdZxGiLLNYvHmYCsbbMSiyZaBrBL8VCtgKwwdA66ysDre7.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "d35f2d13981f59b7f74d3f90402a124836490be4100153cf155ff50099b172c6"
+    },
+    {
+      "path": "poison/first-send/3nXRSHb71TpYkNfxhZXHuDscKx3MnyB9oLoorP9QvXDRfor67xYhTDiPBp3QDrJ4cMeExQzNKaZ2umz1EzsAendo.json",
+      "id": "mainnet-first-send-3nXRSHb7",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "AfmDsb7uMtBakVgztqLB6hk7Zw4RrjvbzUEyhdZpzh9X",
+      "recipient": "3unYxfNqjA3M3yr3qK6AgfMiNoZ4YcCg9UtrhLKqB57U",
+      "request": "3nXRSHb71TpYkNfxhZXHuDscKx3MnyB9oLoorP9QvXDRfor67xYhTDiPBp3QDrJ4cMeExQzNKaZ2umz1EzsAendo",
+      "txFixture": "tx/mainnet/first-send/3nXRSHb71TpYkNfxhZXHuDscKx3MnyB9oLoorP9QvXDRfor67xYhTDiPBp3QDrJ4cMeExQzNKaZ2umz1EzsAendo.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "332d920ee2942ecf21c92ce94704f9b7baf8c920a6ccdf57b5039e4397498329"
+    },
+    {
+      "path": "poison/first-send/3XBc6Po9xuL7F8yAkrzNiFpSPqWXBqEu52i8VdgdTuYdxp262bWe7smyFE3s3PSvSfPLfk3xiWBBED7RHQufjHt7.json",
+      "id": "mainnet-first-send-3XBc6Po9",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "BAbEo6DfRdUFCENVach2jnxFWdg3jpt9pwR7hLK1FfXF",
+      "recipient": "CVMeunwkDrjDTK9L6b9rZEjXMsJx4PYasPSLTFwXGtG6",
+      "request": "3XBc6Po9xuL7F8yAkrzNiFpSPqWXBqEu52i8VdgdTuYdxp262bWe7smyFE3s3PSvSfPLfk3xiWBBED7RHQufjHt7",
+      "txFixture": "tx/mainnet/first-send/3XBc6Po9xuL7F8yAkrzNiFpSPqWXBqEu52i8VdgdTuYdxp262bWe7smyFE3s3PSvSfPLfk3xiWBBED7RHQufjHt7.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "fcf0a310d4acc677eeaadd2b0899d6aea29802ef8c855195305e075b94bab874"
+    },
+    {
+      "path": "poison/first-send/3zH2ZiJgUMffC8P84PREXJrY3rSkzBwiErWuQcnoDnrMWQwb3mJfGoXQvLauqhEhD6FyecrswKPYvQh23XJAPDYu.json",
+      "id": "mainnet-first-send-3zH2ZiJg",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "2d8Mw6qrrz52QjNVeHtkFNwUCRYNjgFzhEC6KAK7kNKW",
+      "recipient": "AwR6F7bksZ4VkDv4A2qHEMrDyuU3dJzjd1ot4mztuoSs",
+      "request": "3zH2ZiJgUMffC8P84PREXJrY3rSkzBwiErWuQcnoDnrMWQwb3mJfGoXQvLauqhEhD6FyecrswKPYvQh23XJAPDYu",
+      "txFixture": "tx/mainnet/first-send/3zH2ZiJgUMffC8P84PREXJrY3rSkzBwiErWuQcnoDnrMWQwb3mJfGoXQvLauqhEhD6FyecrswKPYvQh23XJAPDYu.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "65df93d6710861dbe465b8d55f92ecb003b51563d54fc633d967ee8aacab45aa"
+    },
+    {
+      "path": "poison/first-send/4ERtPRxUhojMC1HHcUK4wMU2z1tKmhRL4S7dzfa251W9U4VifXvRrMXDNT6t1m7DYxEYfxh3woYduFEZbwLKxGNG.json",
+      "id": "mainnet-first-send-4ERtPRxU",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "3TW4n3GhKHCTN9ZenJ2NEiz9mxT1bkrcepAMuPNM2Q7j",
+      "recipient": "FzvEZyJgLp97GmmAnSH72j4yzEs4E963bub6bjF1KXbM",
+      "request": "4ERtPRxUhojMC1HHcUK4wMU2z1tKmhRL4S7dzfa251W9U4VifXvRrMXDNT6t1m7DYxEYfxh3woYduFEZbwLKxGNG",
+      "txFixture": "tx/mainnet/first-send/4ERtPRxUhojMC1HHcUK4wMU2z1tKmhRL4S7dzfa251W9U4VifXvRrMXDNT6t1m7DYxEYfxh3woYduFEZbwLKxGNG.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "990b6d65bdecc0e76bfaf8312426256c22a60a2db203a824ed63c91fc95d15c0"
+    },
+    {
+      "path": "poison/first-send/4LLXBEkmDj7oz2fxz67szom1jL74w6a8TsRPiksnwNJPkEjJgJRMAnKWgpQrV2BvH75pt7bf8Zm7mqbcwDzc9B7w.json",
+      "id": "mainnet-first-send-4LLXBEkm",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "87uLdirX2AkP9Vht7hqhLseeUg739NSJ7BMQu5ZdTfT5",
+      "recipient": "C7ogGqgPPsVvvURq1QPgkGgwMkzsGf7oPPxBuvN8QphB",
+      "request": "4LLXBEkmDj7oz2fxz67szom1jL74w6a8TsRPiksnwNJPkEjJgJRMAnKWgpQrV2BvH75pt7bf8Zm7mqbcwDzc9B7w",
+      "txFixture": "tx/mainnet/first-send/4LLXBEkmDj7oz2fxz67szom1jL74w6a8TsRPiksnwNJPkEjJgJRMAnKWgpQrV2BvH75pt7bf8Zm7mqbcwDzc9B7w.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "cc9e2eedfc21330b453a01fa58234cc019354f1f5d4080fecc98a3258ed9421f"
+    },
+    {
+      "path": "poison/first-send/4v9maUjzkCZxgpQH2KvarinhHmfYpF1t62U3xPxrWkmTsMSUXH2dACzSQuCgTXFLZUJKfPzFxePYu9Mtnwzdiuo4.json",
+      "id": "mainnet-first-send-4v9maUjz",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "A77HErqtfN1hLLpvZ9pCtu66FEtM8BveoaKbbMoZ4RiR",
+      "recipient": "6QcP7KhKChSLKp3KqiJfHi4xocGmsRAFM7VcAtJrj4H1",
+      "request": "4v9maUjzkCZxgpQH2KvarinhHmfYpF1t62U3xPxrWkmTsMSUXH2dACzSQuCgTXFLZUJKfPzFxePYu9Mtnwzdiuo4",
+      "txFixture": "tx/mainnet/first-send/4v9maUjzkCZxgpQH2KvarinhHmfYpF1t62U3xPxrWkmTsMSUXH2dACzSQuCgTXFLZUJKfPzFxePYu9Mtnwzdiuo4.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "07aadbf1b5e56ae3d5e3b3d7bb72934ae9bfc65434b131fb64f12e695dcf13d7"
+    },
+    {
+      "path": "poison/first-send/56MxLEYAg4D1Th8d2QVvg99etn7pbREbF6FxEvqAixGqeMJMkcZDaNpV7NfLfj8ZAnNjVus39mJsYp5xV3KQVmZA.json",
+      "id": "mainnet-first-send-56MxLEYA",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "64X6cNpgxoWddGqi57mXqu4id85QkadvWEgpsKwfSEWS",
+      "recipient": "CLD8RaTvodnsvkFyAiW2MdyhFXZdM6bmJ5aCo7DFaK8V",
+      "request": "56MxLEYAg4D1Th8d2QVvg99etn7pbREbF6FxEvqAixGqeMJMkcZDaNpV7NfLfj8ZAnNjVus39mJsYp5xV3KQVmZA",
+      "txFixture": "tx/mainnet/first-send/56MxLEYAg4D1Th8d2QVvg99etn7pbREbF6FxEvqAixGqeMJMkcZDaNpV7NfLfj8ZAnNjVus39mJsYp5xV3KQVmZA.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "94ccdcf739135f39dfde66117fb398909dd8e15adddb8d83fa2ebf8001ab724b"
+    },
+    {
+      "path": "poison/first-send/5CaFs54ppmH3HGpZ4VJ1GHk37bHMmzJw9Eh5eW3NhcRSQrLxPueiekmj5bkWTCTM6zvtemXZ6tZ4615kur4Y1Ed1.json",
+      "id": "mainnet-first-send-5CaFs54p",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "6FzhW417ew7oSaD3HQfU1XN4fKVfymWTNvb5n7VnM3id",
+      "recipient": "kv9vJ69BwBwzo6yboR5WWvmsMLjJefXYHUPpXb5KNP8",
+      "request": "5CaFs54ppmH3HGpZ4VJ1GHk37bHMmzJw9Eh5eW3NhcRSQrLxPueiekmj5bkWTCTM6zvtemXZ6tZ4615kur4Y1Ed1",
+      "txFixture": "tx/mainnet/first-send/5CaFs54ppmH3HGpZ4VJ1GHk37bHMmzJw9Eh5eW3NhcRSQrLxPueiekmj5bkWTCTM6zvtemXZ6tZ4615kur4Y1Ed1.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "7b2b6f301408ee5eb4db5f7141b86209ce8170dbc62c2816b99c892786063935"
+    },
+    {
+      "path": "poison/first-send/5iUL4ZDw7EcGdJPPhMidNaaxPew7QEw3TP7YC5QiW6vFmdpJofgi8PeZ34kDC1XFqc1dcwsx8WxeXQiQxXTBbRGG.json",
+      "id": "mainnet-first-send-5iUL4ZDw",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "GmM9mzCVmSAHhmEdUtozaQTqH4h1nXfbXQrT3DxmajQZ",
+      "recipient": "J6UKje4BVCx37KpC5rcaWc9nTiKkPbh9hHtkN6wgDw1X",
+      "request": "5iUL4ZDw7EcGdJPPhMidNaaxPew7QEw3TP7YC5QiW6vFmdpJofgi8PeZ34kDC1XFqc1dcwsx8WxeXQiQxXTBbRGG",
+      "txFixture": "tx/mainnet/first-send/5iUL4ZDw7EcGdJPPhMidNaaxPew7QEw3TP7YC5QiW6vFmdpJofgi8PeZ34kDC1XFqc1dcwsx8WxeXQiQxXTBbRGG.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "fa00110f9c5a0f6f66579dc630567c3701e0e086ca6a717d0ddecb2f8c979636"
+    },
+    {
+      "path": "poison/first-send/5rrNbgpmo4ZJ9paoxTay4xyWQAZBVZWFW1skSDxjZBhPXd1MNUhDBka1SMVZK8eQsUe3B79qM34ZvYDSQvMW2AaB.json",
+      "id": "mainnet-first-send-5rrNbgpm",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "HSWNdyrNdrzxkgrz9LPx8S5TMVLTRUZAtS8axsqHy5PX",
+      "recipient": "6hBKxmDBBP2MC6no6LKaje3fJpqx1dZX1i9zMErnjfqb",
+      "request": "5rrNbgpmo4ZJ9paoxTay4xyWQAZBVZWFW1skSDxjZBhPXd1MNUhDBka1SMVZK8eQsUe3B79qM34ZvYDSQvMW2AaB",
+      "txFixture": "tx/mainnet/first-send/5rrNbgpmo4ZJ9paoxTay4xyWQAZBVZWFW1skSDxjZBhPXd1MNUhDBka1SMVZK8eQsUe3B79qM34ZvYDSQvMW2AaB.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "6da5ee6f1aa3fcf33625a17859c0aeab902c32bb1e8897bc2a25eb532dfca77a"
+    },
+    {
+      "path": "poison/first-send/LjZigYbQgxZmdVByttjnEe4MkSgKMM6wrNwJNfBv6LtAfbmHhzifokJrdn9DvwjtaWDZRLbzXx5LCkqQMZPGxTv.json",
+      "id": "mainnet-first-send-LjZigYbQ",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "BqjBXWqtR2NwHVNkAPgv5uKE4BX61rkSUfCwEYJNuqTZ",
+      "recipient": "51Y2tJbJu2MQiUCbjbb5eR7VC8cHFUbbUJj1yv2TDfVT",
+      "request": "LjZigYbQgxZmdVByttjnEe4MkSgKMM6wrNwJNfBv6LtAfbmHhzifokJrdn9DvwjtaWDZRLbzXx5LCkqQMZPGxTv",
+      "txFixture": "tx/mainnet/first-send/LjZigYbQgxZmdVByttjnEe4MkSgKMM6wrNwJNfBv6LtAfbmHhzifokJrdn9DvwjtaWDZRLbzXx5LCkqQMZPGxTv.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "b6a56777361f36420c3771b511e9c8c7dfa15719384094a1653b561105e00c98"
+    },
+    {
+      "path": "poison/first-send/QNBPz3rt9PLZafd3Gmo79eynASznomVz2s9n5cDGQUPGatgxYmU2S7Axf2dSY8SkUaAr4oHWsjodsLycP3o5Jkg.json",
+      "id": "mainnet-first-send-QNBPz3rt",
+      "kind": "first-send",
+      "network": "mainnet",
+      "user": "J9UU1ewE2AtxCuFHaxCjZC67mtLLv3HJmW1gqn4nAZYn",
+      "recipient": "7froscLkTrZoMXsdo7obaW6nFM16dPBfFP3rVrgwtpGo",
+      "request": "QNBPz3rt9PLZafd3Gmo79eynASznomVz2s9n5cDGQUPGatgxYmU2S7Axf2dSY8SkUaAr4oHWsjodsLycP3o5Jkg",
+      "txFixture": "tx/mainnet/first-send/QNBPz3rt9PLZafd3Gmo79eynASznomVz2s9n5cDGQUPGatgxYmU2S7Axf2dSY8SkUaAr4oHWsjodsLycP3o5Jkg.json",
+      "expect": {
+        "rule": "address.first_send",
+        "level": "L1",
+        "notL4": true,
+        "notRules": [
+          "address.poisoning",
+          "address.dust_sender"
+        ]
+      },
+      "sha256": "06288f12afa79e959c701cf35ab2ad73e3bf5a21ce98012ca7f62608ab253f1a"
+    },
+    {
+      "path": "poison/mainnet/38fajNMmajsedRdsdbvQcyFQAsy4hZK7UYxBzFEnAzR1odUfyFRiEuTx81Fds5FYuyFWTrtScg3pKh2f1bNLuVzx.json",
+      "id": "mainnet-poisoning-38fajNMm",
+      "kind": "poisoning",
+      "network": "mainnet",
+      "user": "FM9bbtG1GghrM3RB2rZokfbM4nm6t2pEZ61na4UxCa1i",
+      "recipient": "24dxciePSrtMpssG6GcV4FjBKtqA7DwvfKfnvEJj9q6h",
+      "lookalikeOf": "24dxyRDueYP7Suy7Av2RRZckMpq2pa1u8MyJKRfL9q6h",
+      "match": {
+        "prefix": 4,
+        "suffix": 4
+      },
+      "request": null,
+      "expect": {
+        "rule": "address.poisoning",
+        "level": "L4"
+      },
+      "sha256": "42d1679c7ed03c79e465ac2965f3c364a48ad50721ed243d825b736e4ed7f254"
+    },
+    {
+      "path": "poison/mainnet/3bBk11x4GjixusDMB4YfyFjbKDfgpHRzHby15Lo4FkMsSWEk6jgd4MXsaLKVk5bQtgq9r7WrazXFij1ujrVqbnCi.json",
+      "id": "mainnet-poisoning-3bBk11x4",
+      "kind": "poisoning",
+      "network": "mainnet",
+      "user": "C5PEN8dcrBdy8XgoYGZT1vjeed2qaDeaKG8czTYvYB8s",
+      "recipient": "A48EcFhCcGoZ9zYV4TJ1M9u9jDt8pfz51anXnDnyBYZY",
+      "lookalikeOf": "A48EYoeiU2EPr7Vu33jNQkLR9dV1ywDGLCcfJByEFYZY",
+      "match": {
+        "prefix": 4,
+        "suffix": 3
+      },
+      "request": null,
+      "expect": {
+        "rule": "address.poisoning",
+        "level": "L4"
+      },
+      "sha256": "03b2e338ca43351386a67c2eac232f36573102126522fe3dbb578a2e3c74df8e"
+    },
+    {
+      "path": "poison/mainnet/3Dz8UAsBSiZMMzAHp3oXYtjURJJyEjxY7JoCH6qUyzzUmrzRSuTV4N4yZkSUS4pmByA94XFkB4m3QJzNzw1BxrDx.json",
+      "id": "mainnet-poisoning-3Dz8UAsB",
+      "kind": "poisoning",
+      "network": "mainnet",
+      "user": "2eAzseqFnFLTAf61M34PD3Moq5B9C9c69FYkrQectcKg",
+      "recipient": "4G7wRu7hgfcuHaPZMb3PepZ1dmDi6v7fFiFmvRUdL3Kc",
+      "lookalikeOf": "4G7wUzsA1tNxwWcgdoxvGrvQZRB9hMH8Hw1hUxNL83Kc",
+      "match": {
+        "prefix": 4,
+        "suffix": 3
+      },
+      "request": null,
+      "expect": {
+        "rule": "address.poisoning",
+        "level": "L4"
+      },
+      "sha256": "ccf52721d75920d74ed2f3a38a1b20bef8d833edb1ad01c9231bd6285fe3d9f8"
+    },
+    {
+      "path": "poison/mainnet/3zurWSVknnxTCoBxZExqyxCqmrRC6T89DX3Gdb9JiCfaEUSCRUaKtUAoJAmRCZFTiS2TB9Er4GUzjTDQfoCDN46B.json",
+      "id": "mainnet-poisoning-3zurWSVk",
+      "kind": "poisoning",
+      "network": "mainnet",
+      "user": "91z9Zp6yySjbW2qHvDX8zG8WNwPvFLoAfGJodEtvqwsL",
+      "recipient": "CM7dWjQ3DNuAkh5gRxHaxMBs1d2dvoowH4RKePUBD2Lg",
+      "lookalikeOf": "CM7dZBydoRwziQUBhPyxToSwGzp5jDkw7VfNudgXJ2Lg",
+      "match": {
+        "prefix": 4,
+        "suffix": 3
+      },
+      "request": null,
+      "expect": {
+        "rule": "address.poisoning",
+        "level": "L4"
+      },
+      "sha256": "317b901f6cb7a4871ddd05f7d4ab72b5aa24c3e7d6a2084bcbc342ef7d250522"
+    },
+    {
+      "path": "poison/mainnet/95CuRYzXDsDdBPzB411cEeWH9FG9K5qcQz3pA5tpXFdQ5NBNWeAHMX9dP3fvkBwk2WUcybBgiShLDYKjPW1VBou.json",
+      "id": "mainnet-poisoning-95CuRYzX",
+      "kind": "poisoning",
+      "network": "mainnet",
+      "user": "FgUtgfQi2i8XbNngbFFtpxBPaKydJoyMzEraJVzyAims",
+      "recipient": "Hho7meFcxVWUTSx8kqxLUbkYeJwQiiMqZc8RUUBg1Xw3",
+      "lookalikeOf": "Hho7gZSQ3TBNsaL8gP3PsC39jc3xcgJ2YuXJxhnWWXw3",
+      "match": {
+        "prefix": 4,
+        "suffix": 3
+      },
+      "request": null,
+      "expect": {
+        "rule": "address.poisoning",
+        "level": "L4"
+      },
+      "sha256": "bd4dce6a7e06db7af53df122b6f388e6551f9b046c561d8fc6b0d418387d6597"
+    },
+    {
+      "path": "poison/mainnet/vCUs3EVGAdsBFJX6syfbrBzevPC8g5ioBoZPTuZcXdpUEcF8nyiaEtkXst4dg2iwUVVb5tEny8oYeNJo6W4c8mG.json",
+      "id": "mainnet-poisoning-vCUs3EVG",
+      "kind": "poisoning",
+      "network": "mainnet",
+      "user": "4pcrwqDYeLime5FijS4FFURLPRL1rbRSVaXmLHaQABj6",
+      "recipient": "Hb42UAs7fa5buSaatqbiw53WTWGgbYjJ4Mbh7tKxhxaF",
+      "lookalikeOf": "Hb4SoG46tMNWhBhf5tbniwzpGGs7o6b6K64dJrNuhxaF",
+      "match": {
+        "prefix": 3,
+        "suffix": 4
+      },
+      "request": null,
+      "expect": {
+        "rule": "address.poisoning",
+        "level": "L4"
+      },
+      "sha256": "69d85f5ee2b977ccf97c80070b366764ed7df739a03b71ae468d0bcfa3857daf"
+    }
+  ]
+}
