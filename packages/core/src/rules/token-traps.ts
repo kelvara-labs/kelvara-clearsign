@@ -2,7 +2,7 @@ import { accountNamed, instructionEvidence } from "./common.js";
 import { isToken } from "./authority-transfer.js";
 import { recipient, mintAccount, accountEvidence } from "./token-state.js";
 import type { RuleContext } from "./types.js";
-import type { MintInfo } from "../state/layouts.js";
+import { TOKEN_PROGRAM, TOKEN_2022_PROGRAM, type MintInfo } from "../state/layouts.js";
 import type { CapabilityClass } from "../report/rubrics.js";
 
 /** Only signed message destinations/ATA creations linked to the connected wallet. */
@@ -18,6 +18,6 @@ export function trapClaims(ctx:RuleContext,id:string,describe:(m:MintInfo)=>{tex
     const finding=describe(mint); if(!finding)continue;
     seen.add(to.mint);
     const claimId=ctx.report.addClaim({kind:"Fact",ruleId:id,level:"L2",statement:`Mint ${to.mint}: ${finding.text}`,evidenceIds:[instructionEvidence(ctx,txIndex,ix),accountEvidence(ctx,to.mint)]});
-    ctx.report.addCapability({direction:"granted",capability:finding.capability,class:finding.class,holder:finding.holder,target:to.mint,claimId});
+    ctx.report.addCapability({direction:"granted",capability:finding.capability,class:finding.class,holder:finding.holder,target:to.mint,claimId,programId:mint.program==="token-2022"?TOKEN_2022_PROGRAM:TOKEN_PROGRAM});
   }});
 }

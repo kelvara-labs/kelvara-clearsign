@@ -1,0 +1,186 @@
+{
+  "network": "localnet",
+  "trimmed": "account data of ProgramData 4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7 cut to its 45-byte header in getMultipleAccounts and simulateTransaction results",
+  "inputs": {
+    "program": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+    "programData": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+    "currentAuthority": "dtmpNZtcTx4PsHcwUXQC464wvZVgEgrkeT78rBA8qWf",
+    "newAuthority": "HkS1KszuJfrpLrSBnX7hi5uCgeMvMRu5nb3VaoUnwW9X",
+    "feePayer": "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+    "wireBase64": "AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAIBAgXZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpAlzct6LYtLs+q7OSxYpJDL82erhUjuPtS/SrDA88kQgMoBZQRzcR44B4onl/6KVieD91fPl+tP/1AUaAmvCO7ICqPaRToihsOIQFT73Y64rAMK5PRbBJNLAU3oQBIAAAPjbPVL+6Jmiqtuiw/s1RmXWcdZeSdf6L+rZkbfj4lEinAp83YyDijfsjc/t94VmhVeiKTwP84LyDIvKcVgKwHkBAwMCAQQEBAAAAAA="
+  },
+  "observed": {
+    "stateChanges": [
+      {
+        "address": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+        "field": "upgradeAuthority",
+        "before": "dtmpNZtcTx4PsHcwUXQC464wvZVgEgrkeT78rBA8qWf",
+        "after": "HkS1KszuJfrpLrSBnX7hi5uCgeMvMRu5nb3VaoUnwW9X"
+      }
+    ]
+  },
+  "calls": [
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 4321
+        },
+        "value": [
+          {
+            "data": [
+              "AgAAADKAWUEc3EeOAeKJ5f+ilYng/dXz5frT/9QFGgJrwjuy",
+              "base64"
+            ],
+            "executable": true,
+            "lamports": 1141440,
+            "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+            "rentEpoch": 0,
+            "space": 36
+          }
+        ]
+      }
+    },
+    {
+      "method": "getAccountInfo",
+      "params": [
+        "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+        {
+          "encoding": "base64",
+          "commitment": "confirmed",
+          "dataSlice": {
+            "offset": 0,
+            "length": 45
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 4321
+        },
+        "value": {
+          "data": [
+            "AwAAAAAAAAAAAAAAAQlzct6LYtLs+q7OSxYpJDL82erhUjuPtS/SrDA88kQg",
+            "base64"
+          ],
+          "executable": false,
+          "lamports": 26924711280,
+          "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+          "rentEpoch": 18446744073709552000,
+          "space": 3868365
+        }
+      }
+    },
+    {
+      "method": "getLatestBlockhash",
+      "params": [
+        {
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 4321
+        },
+        "value": {
+          "blockhash": "BW7spnkuu45W285UsqM7aYDYt6eU3KNgVHjVwj2bz6xg",
+          "lastValidBlockHeight": 4471
+        }
+      }
+    },
+    {
+      "method": "getMultipleAccounts",
+      "params": [
+        [
+          "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7"
+        ],
+        {
+          "encoding": "base64",
+          "commitment": "confirmed"
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 4321
+        },
+        "value": [
+          {
+            "data": [
+              "AwAAAAAAAAAAAAAAAQlzct6LYtLs+q7OSxYpJDL82erhUjuPtS/SrDA88kQg",
+              "base64"
+            ],
+            "executable": false,
+            "lamports": 26924711280,
+            "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+            "rentEpoch": 18446744073709552000,
+            "space": 3868365
+          }
+        ]
+      }
+    },
+    {
+      "method": "simulateTransaction",
+      "params": [
+        "AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAIBAgXZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpAlzct6LYtLs+q7OSxYpJDL82erhUjuPtS/SrDA88kQgMoBZQRzcR44B4onl/6KVieD91fPl+tP/1AUaAmvCO7ICqPaRToihsOIQFT73Y64rAMK5PRbBJNLAU3oQBIAAAPjbPVL+6Jmiqtuiw/s1RmXWcdZeSdf6L+rZkbfj4lEinAp83YyDijfsjc/t94VmhVeiKTwP84LyDIvKcVgKwHkBAwMCAQQEBAAAAAA=",
+        {
+          "encoding": "base64",
+          "sigVerify": false,
+          "replaceRecentBlockhash": false,
+          "commitment": "confirmed",
+          "innerInstructions": true,
+          "accounts": {
+            "encoding": "base64",
+            "addresses": [
+              "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7"
+            ]
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "apiVersion": "2.3.0",
+          "slot": 4322
+        },
+        "value": {
+          "accounts": [
+            {
+              "data": [
+                "AwAAAAAAAAAAAAAAAfjbPVL+6Jmiqtuiw/s1RmXWcdZeSdf6L+rZkbfj4lEi",
+                "base64"
+              ],
+              "executable": false,
+              "lamports": 26924711280,
+              "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+              "rentEpoch": 18446744073709552000,
+              "space": 3868365
+            }
+          ],
+          "err": null,
+          "innerInstructions": [],
+          "loadedAccountsDataSize": 3868658,
+          "logs": [
+            "Program BPFLoaderUpgradeab1e11111111111111111111111 invoke [1]",
+            "New authority Some(HkS1KszuJfrpLrSBnX7hi5uCgeMvMRu5nb3VaoUnwW9X)",
+            "Program BPFLoaderUpgradeab1e11111111111111111111111 success"
+          ],
+          "replacementBlockhash": null,
+          "returnData": null,
+          "unitsConsumed": 2370
+        }
+      }
+    }
+  ]
+}

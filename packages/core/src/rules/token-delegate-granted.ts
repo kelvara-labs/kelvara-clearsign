@@ -12,7 +12,7 @@ export const tokenDelegateGrantedRule: Rule = {
       if (typeof amount !== "bigint" || !delegate || !target) continue;
       const unlimited = amount >= ((1n << 64n)-1n)*99n/100n;
       const id = ctx.report.addClaim({kind:"Fact",ruleId:this.id,level:unlimited?"L2":"L1",statement:`Delegate ${delegate} is granted ${amount} base units from ${target}${unlimited ? " (unlimited or near-max allowance)" : ""}.`,evidenceIds:[instructionEvidence(ctx,txIndex,ix)]});
-      ctx.report.addCapability({direction:"granted",capability:"token.delegate",class:unlimited?"fund_movement":"bounded_spend",holder:delegate,target,claimId:id});
+      ctx.report.addCapability({direction:"granted",capability:"token.delegate",class:unlimited?"fund_movement":"bounded_spend",holder:delegate,target,claimId:id,programId:ix.programAddress});
     }});
   }
 };

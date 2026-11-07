@@ -16,7 +16,8 @@
     "fixtures:decode-spike": "node scripts/fetch-decode-spike.mjs",
     "fixtures:state": "esbuild scripts/record-state-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-state-fixtures.mjs && node dist/scripts/record-state-fixtures.mjs",
     "fixtures:rules": "esbuild scripts/record-rule-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-rule-fixtures.mjs && node dist/scripts/record-rule-fixtures.mjs",
-    "fixtures:poison-history": "esbuild scripts/record-poison-history.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-poison-history.mjs && node dist/scripts/record-poison-history.mjs"
+    "fixtures:poison-history": "esbuild scripts/record-poison-history.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-poison-history.mjs && node dist/scripts/record-poison-history.mjs",
+    "fixtures:graph": "esbuild scripts/record-graph-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-graph-fixtures.mjs && node dist/scripts/record-graph-fixtures.mjs"
   },
   "dependencies": {
     "@codama/dynamic-parsers": "1.4.2",

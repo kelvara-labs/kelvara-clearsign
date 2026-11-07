@@ -20,6 +20,8 @@ import { squadsThresholdMetRule } from "./squads-threshold-met-in-session.js";
 import { squadsUnknownProposalRule } from "./squads-unknown-proposal.js";
 import { squadsZeroTimelockRule } from "./squads-zero-timelock-execution.js";
 import type { Decoder } from "../decode/decoder.js";
+import { GRAPH_RULE_IDS, runCapabilityGraph } from "../graph/preview.js";
+import type { AuthorityMap } from "../graph/authority-map.js";
 import type { DecodedInstruction } from "../decode/types.js";
 import type { Session } from "../ingest/types.js";
 import type { ReportBuilder } from "../report/builder.js";
@@ -47,7 +49,9 @@ export const RULES: readonly Rule[] = [
   addressHistoryRule
 ];
 
+/** Every ruleId a claim may carry: the rules' plus the capability graph's (preview, recovery paths). */
 export const RULE_IDS: readonly string[] = RULES.flatMap((r) => r.ruleIds);
+export const ALL_RULE_IDS: readonly string[] = [...RULE_IDS, ...GRAPH_RULE_IDS];
 
 export interface RunRulesInput {
   session: Session;
@@ -57,6 +61,9 @@ export interface RunRulesInput {
   report: ReportBuilder;
   state?: RuleState;
   rules?: readonly Rule[];
+  /** Authority maps for the capability preview. The graph runs after the rules unless `graph: false`. */
+  authorityMaps?: readonly AuthorityMap[];
+  graph?: boolean;
 }
 
 /** Runs every rule over the session, writing claims into `report`. Returns the context (claim keys). */
@@ -65,6 +72,7 @@ export function runRules(input: RunRulesInput): RuleContext {
   if (!decoded) throw new Error("runRules needs decoded instructions or a decoder");
   const ctx: RuleContext = { session: input.session, decoded, decoder: input.decoder, report: input.report, state: input.state ?? {}, claims: new Map() };
   for (const rule of input.rules ?? RULES) rule.run(ctx);
+  if (input.graph !== false) runCapabilityGraph(ctx, { maps: input.authorityMaps });
   return ctx;
 }
 
