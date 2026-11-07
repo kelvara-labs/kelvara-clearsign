@@ -60,6 +60,7 @@ export {
   getJsonTransaction,
   type RpcClient,
   type RpcClientOptions,
+  type RpcParams,
   type RpcStats,
   type RpcNetwork,
   type RpcErrorCode,
@@ -101,7 +102,23 @@ export {
   type FundingMethod,
   type ProgramState,
   type StateReadErrorCode,
-  type SquadsAccountDecoder
+  type SquadsAccountDecoder,
+  readTransferHistory,
+  transfersOfTransaction,
+  dustReason,
+  lookalike,
+  markMatch,
+  HISTORY_DAYS,
+  HISTORY_MAX_SIGNATURES,
+  DUST_MAX_LAMPORTS,
+  DUST_MAX_USD,
+  type WalletHistory,
+  type HistoryTransfer,
+  type CounterpartyHistory,
+  type AssetInfo,
+  type DustReason,
+  type LookalikeMatch,
+  type ReadHistoryOptions
 } from "./state/index.js";
 export {
   simulateTransaction,
@@ -197,6 +214,11 @@ export {
 // unknown proposal, config changes). Rules are synchronous; read state first and pass it as RuleState.
 export {
   readTokenRuleState,
+  readAddressRuleState,
+  requestTransfers,
+  assessRecipient,
+  type RequestTransfer,
+  type RecipientAssessment,
   runRules,
   RULES,
   RULE_IDS,

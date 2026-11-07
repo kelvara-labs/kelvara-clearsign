@@ -1,9 +1,11 @@
 // E7 / G3: no fixture from any program reaches L4, every report validates (G4 checks), and every
 // ruleId implemented so far fires on at least one real session and stays silent on at least one.
 // Transactions that use lookup tables are resolved with the runtime's own meta.loadedAddresses.
-import { expect, it } from "vitest";
+import { beforeAll, expect, it } from "vitest";
 import type { Address } from "@solana/kit";
-import { accountFromRpc, parseTransaction, RULE_IDS, type ResolvedAccount, type Session, type SessionTransaction } from "../src/index.js";
+import { accountFromRpc, parseTransaction, RULE_IDS, type ResolvedAccount, type RuleState, type Session, type SessionTransaction } from "../src/index.js";
+import { poisonManifest, requestCase } from "./address-helpers.js";
+const devnet = poisonManifest.cases.find((c) => c.kind === "poisoning" && c.network === "devnet")!;
 import { analysisTiming, analyze, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
 
 /** A one-transaction session resolved from the runtime's loaded addresses (real RPC meta). */
@@ -40,6 +42,17 @@ function sessionFromRuntime(base64: string, loaded: { writable: string[]; readon
   return { id: p.messageHash, transactions: [tx], lookupTables: {}, complete: true };
 }
 
+// E9: the executed devnet poisoning send (L4), the same send with no real payment read (dust sender,
+// L3) and 23 real first-time transfers (first-send notice, never L4), all with real history state read
+// through the replayed Helius responses. Read here, outside the 5 s corpus budget, which bounds the rules.
+// Only the newest 10 user transactions are read (rules-address.test.ts reads the default 100).
+const poisonSessions: { name: string; session: Session; state: RuleState; expectedL4?: boolean }[] = [];
+beforeAll(async () => {
+  poisonSessions.push({ name: "poison devnet send", ...(await requestCase(devnet, { maxTransactions: 10 })), expectedL4: true });
+  poisonSessions.push({ name: "poison devnet send, payment not read", ...(await requestCase(devnet, { maxTransactions: 0 })) });
+  for (const c of poisonManifest.cases.filter((x) => x.kind === "first-send")) poisonSessions.push({ name: `first-send ${c.id}`, ...(await requestCase(c, { maxTransactions: 10 })) });
+}, 20_000);
+
 it("G3: no fixture reaches L4; every implemented ruleId has a positive and a negative real session", async () => {
   const started = performance.now();
   const MAIN = recording("mainnet.json");
@@ -65,6 +78,7 @@ it("G3: no fixture reaches L4; every implemented ruleId has a positive and a neg
   for (const f of json("packages/core/test/fixtures/rules/e8-localnet.json").cases) {
     sessions.push({name:f.name,session:await sessionOf([f.transaction]),expectedL4:["owner-takeover","close-authority-takeover","assign-takeover","sweep"].includes(f.name),state:{wallet:f.wallet,accounts:Object.fromEntries(Object.entries(f.accounts).map(([a,r])=>[a,accountFromRpc(a,r as Parameters<typeof accountFromRpc>[1])])),fees:{0:BigInt(f.fee)},walletInventory:f.inventory?{complete:true,tokenAccounts:f.inventory.map((a:{pubkey:string})=>a.pubkey)}:undefined}});
   }
+  sessions.push(...poisonSessions);
   const prepared = performance.now();
   const fired = new Map<string, number>(RULE_IDS.map((id) => [id, 0]));
   const levels = new Map<string, number>();

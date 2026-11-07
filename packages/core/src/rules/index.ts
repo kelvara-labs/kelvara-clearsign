@@ -10,6 +10,7 @@ import { tokenDelegateRevokedRule } from "./token-delegate-revoked.js";
 import { systemAssignTakeoverRule } from "./system-assign-takeover.js";
 import { tokenOwnerTakeoverRule } from "./token-owner-takeover.js";
 import { walletSweepRule } from "./wallet-sweep.js";
+import { addressHistoryRule } from "./address-history.js";
 import { authorityTransferRule } from "./authority-transfer.js";
 import { durableNonceRule } from "./lifetime-durable-nonce.js";
 import { nonceStagedByOutsiderRule } from "./nonce-staged-by-outsider.js";
@@ -42,7 +43,8 @@ export const RULES: readonly Rule[] = [
   token2022NonTransferableRule,
   systemAssignTakeoverRule,
   tokenOwnerTakeoverRule,
-  walletSweepRule
+  walletSweepRule,
+  addressHistoryRule
 ];
 
 export const RULE_IDS: readonly string[] = RULES.flatMap((r) => r.ruleIds);
@@ -67,6 +69,7 @@ export function runRules(input: RunRulesInput): RuleContext {
 }
 
 export { readTokenRuleState } from "./read-token-state.js";
+export { readAddressRuleState, requestTransfers, assessRecipient, type RequestTransfer, type RecipientAssessment } from "./address-history.js";
 export { describeConfigAction } from "./squads-config-change.js";
 export { proposalViews, vaultInstructions, type ProposalView, type MultisigView } from "./squads-session.js";
 export { durableNonceUse, type DurableNonceUse } from "./common.js";

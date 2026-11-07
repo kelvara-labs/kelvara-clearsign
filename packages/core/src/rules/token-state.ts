@@ -19,7 +19,9 @@ export function recipient(ctx: RuleContext, txIndex: number, address: string | n
   const token = tokenAccount(ctx, address);
   if (token) return { owner: token.owner, mint: token.mint };
   for (const ix of ctx.decoded[txIndex] ?? []) {
-    if (ix.programAddress !== "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" || !["createAssociatedToken", "createAssociatedTokenIdempotent"].includes(ix.name ?? "")) continue;
+    // Empty instruction data is the ATA program's legacy Create (same accounts, plus Rent sysvar).
+    const create = ["createAssociatedToken", "createAssociatedTokenIdempotent"].includes(ix.name ?? "") || (ix.status !== "named" && ix.data.length === 0);
+    if (ix.programAddress !== "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL" || !create) continue;
     // Official ATA order: payer, ATA, wallet, mint, System, Token program.
     if (ix.accounts[1]?.address !== address || ![TOKEN_PROGRAM,TOKEN_2022_PROGRAM].includes(ix.accounts[5]?.address ?? "")) continue;
     const owner = ix.accounts[2]?.address, mint = accountNamed(ix,"mint") ?? ix.accounts[3]?.address;

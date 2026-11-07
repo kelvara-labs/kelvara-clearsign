@@ -2,3 +2,4 @@
 export * from "./account-reader.js";
 export * from "./layouts.js";
 export * from "./reads.js";
+export * from "./history.js";
