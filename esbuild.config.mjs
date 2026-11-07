@@ -15,7 +15,11 @@ const common = {
   sourcemap: process.argv.includes("--dev") ? "inline" : false,
   minify: !process.argv.includes("--dev"),
   legalComments: "none",
-  logLevel: "info"
+  logLevel: "info",
+  // Production builds of dependencies: drops dev-only message tables (e.g. @solana/errors links).
+  define: { "process.env.NODE_ENV": '"production"' },
+  // See config/esbuild-shims/json-stable-stringify.mjs: avoids function-bind's Function() in the SW (G10).
+  alias: { "json-stable-stringify": path.join(root, "config/esbuild-shims/json-stable-stringify.mjs") }
 };
 
 // Content scripts run as classic scripts: IIFE keeps every binding out of the page's globals,
