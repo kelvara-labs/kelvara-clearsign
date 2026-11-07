@@ -13,3 +13,4 @@ Every dependency, its license, and where it is used. Nothing under AGPL, BUSL or
 | eslint, @eslint/js | 9.39.x | MIT | dev, lint |
 | typescript-eslint | 8.72.1 | MIT | dev, lint |
 | @types/node | 22.x | MIT | dev, types |
+| @solana/kit (and its @solana/* packages) | 8.5.0 | MIT | packages/core (ingest) |
