@@ -25,7 +25,7 @@ Shared files with special rules:
 - Golden files in fixtures/: scenarios owns them; a change needs a written reason in the
   owner's progress log and the coordinator's approval.
 - The engine's public API (`packages/core/src/index.ts` and the report zod schema) is a
-  contract. The engine announces any change to it with `orca orchestration send --to "@all"`
+  contract. The engine announces any change to it with `orca-ide orchestration send --to "@all"`
   before merging.
 
 ## Order of work
@@ -45,17 +45,17 @@ Shared files with special rules:
 4. Run `pnpm selfcheck --fast` after every task.
 5. Commit on your branch as `M<n>/<role>: <task>`; append one line to
    `progress/<role>.md`: task, gates, minutes, decisions.
-6. Send `orca orchestration send --type heartbeat` at least every 20 minutes of work.
+6. Send `orca-ide orchestration send --type heartbeat` at least every 20 minutes of work.
 7. When the task is done or failed, send `worker_done` exactly once with the task id,
    dispatch id, outcome, a short summary (done / found / remains) and `--files-modified`.
 
-Blocked on a decision? Use `orca orchestration ask --to <coordinator>`, never a local
+Blocked on a decision? Use `orca-ide orchestration ask --to <coordinator>`, never a local
 prompt, and keep working on anything unblocked while you wait.
 
 ## Coordinator loop
 1. Keep the task list in Orca: one task per PLAN.md task, with dependencies and the
-   owning role in the spec. Dispatch with `orca orchestration worker-start`.
-2. Wait on the inbox: `orca orchestration check --wait --types worker_done,escalation,question`.
+   owning role in the spec. Dispatch with `orca-ide orchestration worker-start`.
+2. Wait on the inbox: `orca-ide orchestration check --wait --types worker_done,escalation,question`.
    Ack each delivery after handling it.
 3. On `worker_done`: review the diff, merge the branch into `main`, ask the verifier to run
    the gates for that milestone, then append one line to PROGRESS.md.

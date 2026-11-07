@@ -3,7 +3,7 @@
 ## Before you start
 1. In Orca: Settings → Experimental → enable Orchestration.
 2. Add this folder (`~/MLH Hackaton/kelvara-signguard`) to Orca as a repo.
-3. Check the runtime: `orca status --json`.
+3. Check the runtime: `orca-ide status --json` (on Linux the CLI is `orca-ide`; plain `orca` is the GNOME screen reader).
 4. Open a Claude Code agent on `main` in this repo. That agent is the coordinator.
 
 ## Coordinator prompt
@@ -14,12 +14,12 @@ Paste this into the coordinator:
 > 1. Do M0 yourself on `main`, commit it, and confirm `pnpm selfcheck` runs and prints
 >    all ten gates.
 > 2. Create the Orca run:
->    `orca orchestration run-create --objective "Build Kelvara SignGuard MVP per PLAN.md" --json`
+>    `orca-ide orchestration run-create --objective "Build Kelvara SignGuard MVP per PLAN.md" --json`
 > 3. Create one Orca task per PLAN.md task from M1 onward, with dependencies, and put the
 >    owning role (engine, extension, scenarios, verifier) and the task's gate at the top of
 >    each spec. Use the worker spec template in KICKOFF.md.
 > 4. Start four workers, each in its own worktree and branch:
->    `orca orchestration worker-start --task <taskId> --worktree new-child --name <role> --agent claude --setup run --json`
+>    `orca-ide orchestration worker-start --task <taskId> --worktree new-child --name <role> --agent claude --setup run --json`
 >    with names engine, extension, scenarios and verifier. Re-dispatch each worker's next
 >    task to the same worktree as it finishes.
 > 5. Run the coordinator loop in CLAUDE.md until all ten gates pass on `main`.
@@ -38,10 +38,10 @@ OWNED PATHS: <from CLAUDE.md roles table>
 
 Read CLAUDE.md first and follow the worker loop. Commit only on your branch.
 Send heartbeat every 20 minutes. Finish with exactly one worker_done:
-  orca orchestration send --type worker_done --task-id <taskId> --dispatch-id <dispatchId> \
+  orca-ide orchestration send --type worker_done --task-id <taskId> --dispatch-id <dispatchId> \
     --outcome <succeeded|failed> --subject "<task>" \
     --body "Done: ... Found: ... Remains: ..." --files-modified "<paths>" --json
-Blocking question: orca orchestration ask --to <coordinator> --question "..." --json
+Blocking question: orca-ide orchestration ask --to <coordinator> --question "..." --json
 ```
 
 ## What you (the human) watch
