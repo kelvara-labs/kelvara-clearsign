@@ -16,6 +16,9 @@
     "localnet:down": "node scripts/localnet.mjs down",
     "test": "node --test test/",
     "scenario:admin-local": "node scripts/admin-local.mjs",
-    "scenario:admin-local:attack": "node scripts/admin-local.mjs --attack-only"
+    "scenario:admin-local:attack": "node scripts/admin-local.mjs --attack-only",
+    "test:e2e": "node scripts/e2e.mjs",
+    "scenario:trap-local": "node scripts/trap-local.mjs",
+    "scenario:trap-local:attack": "node scripts/trap-local.mjs --attack-only"
   }
 }
