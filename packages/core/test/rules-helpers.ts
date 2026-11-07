@@ -84,12 +84,20 @@ export async function sessionOf(base64s: string[]): Promise<Session> {
   return ingestSession(base64s.map((b) => ({ base64: b, kind: "wire" as const })));
 }
 
+export const analysisTiming = { rulesMs: 0, buildMs: 0, validateMs: 0 };
+
 /** Runs all rules, validates the report (G4 checks) and returns it. */
 export function analyze(session: Session, state: RuleState = {}): Report {
   const report = new ReportBuilder(session);
+  const start = performance.now();
   runRules({ session, decoder, report, state });
+  const ruled = performance.now();
+  analysisTiming.rulesMs += ruled - start;
   const r = report.build();
+  const built = performance.now();
+  analysisTiming.buildMs += built - ruled;
   const v = validateReport(r);
+  analysisTiming.validateMs += performance.now() - built;
   if (!v.ok) throw new Error(`invalid report: ${v.problems.join("; ")}`);
   return r;
 }

@@ -53,6 +53,17 @@ export const authorityTransferRule: Rule = {
       } else continue;
       if (!target || next === old) continue;
       const id = ctx.report.addClaim({ kind: "Fact", ruleId: this.id, level: next && !signers.has(next) ? "L3" : "L1", statement: `${c.proposed ? "Proposed " : ""}${ix.name} ${capability} on ${target}: ${old ?? "current authority"} gives authority to ${next ?? "nobody (authority removed)"}.`, evidenceIds: [...c.evidence, instructionEvidence(ctx, c.txIndex, ix, c.path)], transactionIndices: [c.txIndex] });
+      // A nonce raises urgency only when linked to an evidenced outside control grant.
+      if (next && !signers.has(next)) {
+        const transactions = new Set([c.txIndex]);
+        if (c.proposed) for (const v of proposalViews(ctx)) {
+          const call = v.transactionCreate ?? v.executes[0] ?? v.approvals[0];
+          if (call?.txIndex === c.txIndex && call.ix.index === c.path[0]) {
+            for (const linked of [...v.approvals, ...v.executes]) transactions.add(linked.txIndex);
+          }
+        }
+        for (const t of transactions) ctx.claims.set(`controlGrant:${t}`, id);
+      }
       if (next) ctx.report.addCapability({ direction: "granted", capability, class: cls, holder: next, target, claimId: id });
       if (old) ctx.report.addCapability({ direction: "revoked", capability, class: cls, holder: old, target, claimId: id });
     }

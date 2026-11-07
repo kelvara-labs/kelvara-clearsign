@@ -25,6 +25,7 @@ import type { ReportBuilder } from "../report/builder.js";
 import type { Rule, RuleContext, RuleState } from "./types.js";
 
 export const RULES: readonly Rule[] = [
+  authorityTransferRule,
   durableNonceRule,
   nonceStagedByOutsiderRule,
   squadsApproveAndExecuteRule,
@@ -32,7 +33,6 @@ export const RULES: readonly Rule[] = [
   squadsZeroTimelockRule,
   squadsUnknownProposalRule,
   squadsConfigChangeRule,
-  authorityTransferRule,
   tokenDelegateGrantedRule,
   tokenDelegateRevokedRule,
   token2022PermanentDelegateRule,
