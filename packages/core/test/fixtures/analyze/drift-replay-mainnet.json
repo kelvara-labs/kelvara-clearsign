@@ -1,0 +1,502 @@
+{
+ "description": "Real mainnet RPC responses read by analyzeSession for drift-replay-mainnet (E14). Replay by method + params.",
+ "recordedAt": "2026-11-07T16:39:32.950Z",
+ "network": "mainnet",
+ "inputs": {
+  "transactions": [
+   "AUCbqUv9bezB4PKRp6mNFLAJ/lIXgK33Uih97FI+VMTA9Y8MZ8cWwR+FRJDHlQefmgkg4z/vyB3lU3gOIrZlJgIBAAMIH9hYErV4XikPqBdSr/B4HAoZn+DpP/Vw6mMapZAUpcsT2p4izt5hqfe4kl1EN90o6b7usccoiGr6aqfJsm6oGRTyMg4dsRyihUh47CbojtjK+VicBfxLmexQWw5HHRWDZfzsRo8uJGh5TA4AJvmFhb6ppRwyd17HyFrmkQfruNn8076t9/m/97Bb74GUNE6z/PJdKB9WR+buAYgPE8T4NQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6gGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqUAAAPoJrVNT30Q+LEw4ZvEYFP/ZAzLHmvzmgm1T448+BYUnBAUDAwcABAQAAAAGBQECAAAFowEw+k6o0OLa0wAAlAAAAAEBAQOQT8iVPc/J87UXmJPuEvycRFytiJqVfWHPuNvMFy9qT0o+70sDyCpxWZ6gehbuS89tzjE1fYRgsqwb1MOphgydCVTbvp7JYMmKeik/4hM2lm/hgNFRrkuBeVYfiYVKU/YBAgIAASgAobAo1Ty4s+TvXifglhVGqtRnSazAkuA8Gox8EYfoh8wkXbnPK8qamQAABgUBBAAABRHcPEngHmxPnwcAAAAAAAAAAAYDAQAECZAlpIi82Cr4AA==",
+   "AZ7x68WfdgL92E6FOpudAaUd22P0MgIu9+VyvApksJRx0iZ6AS0HZ+wxpqsiuV437NZP3uL6EINL5gJK1Udi6QoBAAYLUUkEz7FfLaJjygMX5cDGGgvNfu9lTnGt5EUq42wAKo1KPu9LA8gqcVmeoHoW7kvPbc4xNX2EYLKsG9TDqYYMnZBPyJU9z8nztReYk+4S/JxEXK2ImpV9Yc+428wXL2pPzJDOxGOxYgUeKqXn+B9ykwj35IqmqnNj79y+Fl67ZQH8076t9/m/97Bb74GUNE6z/PJdKB9WR+buAYgPE8T4NQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE9qeIs7eYan3uJJdRDfdKOm+7rHHKIhq+mqnybJuqBkU8jIOHbEcooVIeOwm6I7YyvlYnAX8S5nsUFsORx0VgwlU276eyWDJinopP+ITNpZv4YDRUa5LgXlWH4mFSlP2BoHEzkfiI2i4sVVeyIevCS78fvu2bKP1L79o1Kyct6gGp9UXGSxWjuCKhF9z0peIzwNcMUWyGrNE2AYuqUAAAM4akCj91T+pyjf3uPgYecSepeQVNwg7z9tO/Usf8OuYAwUDAwoABAQAAAAJAwYABAmQJaSIvNgq+AAJBwYEBwACAQgIwgihV5mkGas="
+  ],
+  "simulate": false,
+  "signatures": [
+   "2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H",
+   "4BKBmAJn6TdsENij7CsVbyMVLJU1tX27nfrMM1zgKv1bs2KJy6Am2NqdA3nJm4g9C6eC64UAf5sNs974ygB9RsN1"
+  ]
+ },
+ "observed": {
+  "alertLevel": "L3",
+  "ruleIds": [
+   "authority.transfer",
+   "lifetime.durable_nonce",
+   "nonce.staged_by_outsider",
+   "squads.approve_and_execute",
+   "squads.threshold_met_in_session",
+   "squads.zero_timelock_execution",
+   "graph.capability_preview",
+   "capability.recovery_path"
+  ],
+  "simulation": "Simulation was not run.",
+  "reads": 9
+ },
+ "calls": [
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466582639,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 1447680,
+      "data": [
+       "AQAAAAEAAAAf2FgStXheKQ+oF1Kv8HgcChmf4Ok/9XDqYxqlkBSly2qTHV6QCCy0TWCaMKoB8B+qSvntTfDaijf24k8lTPM2iBMAAAAAAAA=",
+       "base64"
+      ],
+      "owner": "11111111111111111111111111111111",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 80
+     }
+    ]
+   }
+  },
+  {
+   "method": "getSignaturesForAddress",
+   "params": [
+    "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC",
+    {
+     "limit": 1000,
+     "commitment": "confirmed"
+    }
+   ],
+   "result": [
+    {
+     "signature": "2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H",
+     "slot": 410344005,
+     "err": null,
+     "memo": null,
+     "blockTime": 1775059518,
+     "confirmationStatus": "finalized",
+     "transactionIndex": 1118
+    },
+    {
+     "signature": "LJuBqSWpfW6GSgWi2v64B6czZfd618ZXxPLBTQt2tSgF4hHCUgfYvUuAMxeSmfL4FnS8Wt9cKNaSK9YNke7kTz1",
+     "slot": 408444056,
+     "err": null,
+     "memo": null,
+     "blockTime": 1774315326,
+     "confirmationStatus": "finalized",
+     "transactionIndex": 1047
+    }
+   ]
+  },
+  {
+   "method": "getTransaction",
+   "params": [
+    "LJuBqSWpfW6GSgWi2v64B6czZfd618ZXxPLBTQt2tSgF4hHCUgfYvUuAMxeSmfL4FnS8Wt9cKNaSK9YNke7kTz1",
+    {
+     "encoding": "json",
+     "maxSupportedTransactionVersion": 0,
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "transaction": {
+     "signatures": [
+      "LJuBqSWpfW6GSgWi2v64B6czZfd618ZXxPLBTQt2tSgF4hHCUgfYvUuAMxeSmfL4FnS8Wt9cKNaSK9YNke7kTz1",
+      "UJhmfrgQ5G5aV1hdpYqJLfCW6zicJkdwerbjP4mNSqg8ZRzCA82aWDfdCAKXwSAaLEemUbZ9YDRRdyjbytkQYLs"
+     ],
+     "message": {
+      "header": {
+       "numRequiredSignatures": 2,
+       "numReadonlySignedAccounts": 0,
+       "numReadonlyUnsignedAccounts": 3
+      },
+      "accountKeys": [
+       "FMJnBkVpHj5JzN7w4XFysCwY931CYSYk1DsXzqNi7YPF",
+       "7s7s6saC5LHZoLyBXLM3pCjpWaA7meyQdP8NiH9ktAeC",
+       "11111111111111111111111111111111",
+       "SysvarRecentB1ockHashes11111111111111111111",
+       "SysvarRent111111111111111111111111111111111"
+      ],
+      "recentBlockhash": "6Kgar3gBejdQ2iP59FhszUTPQyT6NhC6DRhbTiWuZjFx",
+      "instructions": [
+       {
+        "programIdIndex": 2,
+        "accounts": [
+         0,
+         1
+        ],
+        "data": "11111C8S3NmV3fbPgfc4XnxQZ4bTtW3XEgQxTBMkMXXv6VwUVwkzXueR44DytDZPvyuq1",
+        "stackHeight": 1
+       },
+       {
+        "programIdIndex": 2,
+        "accounts": [
+         1,
+         3,
+         4
+        ],
+        "data": "3eGCC4zxFqk21PnpNwnBdz7jSfgY7txV6C8GJtV39oPSAPSrE",
+        "stackHeight": 1
+       }
+      ]
+     }
+    },
+    "meta": {
+     "err": null,
+     "status": {
+      "Ok": null
+     },
+     "fee": 10000,
+     "preBalances": [
+      98542320,
+      0,
+      1,
+      42706560,
+      1009200
+     ],
+     "postBalances": [
+      97084640,
+      1447680,
+      1,
+      42706560,
+      1009200
+     ],
+     "innerInstructions": [],
+     "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+     ],
+     "preTokenBalances": [],
+     "postTokenBalances": [],
+     "rewards": [],
+     "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+     },
+     "computeUnitsConsumed": 300,
+     "costUnits": 2370
+    },
+    "version": "legacy",
+    "slot": 408444056,
+    "transactionIndex": 1047,
+    "blockTime": 1774315326
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "EmYEryTDXtuVCxrjNqJXbiwr4hfiJajd4g5P58vvhQnc"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466582641,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 1447680,
+      "data": [
+       "AQAAAAEAAABRSQTPsV8tomPKAxflwMYaC81+72VOca3kRSrjbAAqjU0yu+FyR7EjNF06cZcVzjnC7KCAyYPA61Vs0HC5hMzKiBMAAAAAAAA=",
+       "base64"
+      ],
+      "owner": "11111111111111111111111111111111",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 80
+     }
+    ]
+   }
+  },
+  {
+   "method": "getSignaturesForAddress",
+   "params": [
+    "EmYEryTDXtuVCxrjNqJXbiwr4hfiJajd4g5P58vvhQnc",
+    {
+     "limit": 1000,
+     "commitment": "confirmed"
+    }
+   ],
+   "result": [
+    {
+     "signature": "4BKBmAJn6TdsENij7CsVbyMVLJU1tX27nfrMM1zgKv1bs2KJy6Am2NqdA3nJm4g9C6eC64UAf5sNs974ygB9RsN1",
+     "slot": 410344009,
+     "err": null,
+     "memo": null,
+     "blockTime": 1775059519,
+     "confirmationStatus": "finalized",
+     "transactionIndex": 1238
+    },
+    {
+     "signature": "59yWWZjnLeu3WP6Dqj4NW21NWHhdNwkToCbypdNrAHKmhk5C37ZDUygbuDVPSN2XqYzME88k6Ss3sBKGdrmrWrX3",
+     "slot": 409999217,
+     "err": null,
+     "memo": null,
+     "blockTime": 1774924549,
+     "confirmationStatus": "finalized",
+     "transactionIndex": 1006
+    }
+   ]
+  },
+  {
+   "method": "getTransaction",
+   "params": [
+    "59yWWZjnLeu3WP6Dqj4NW21NWHhdNwkToCbypdNrAHKmhk5C37ZDUygbuDVPSN2XqYzME88k6Ss3sBKGdrmrWrX3",
+    {
+     "encoding": "json",
+     "maxSupportedTransactionVersion": 0,
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "transaction": {
+     "signatures": [
+      "59yWWZjnLeu3WP6Dqj4NW21NWHhdNwkToCbypdNrAHKmhk5C37ZDUygbuDVPSN2XqYzME88k6Ss3sBKGdrmrWrX3",
+      "5Adae7Y6HXQ7rVX8DKRXYqqX8cb2ef3oiyGeUWJaWUTQqBoHC4NcXh4Ky8uPEuZXWC73983tCk7P1Rdua9xJmhaY"
+     ],
+     "message": {
+      "header": {
+       "numRequiredSignatures": 2,
+       "numReadonlySignedAccounts": 0,
+       "numReadonlyUnsignedAccounts": 3
+      },
+      "accountKeys": [
+       "FMJnBkVpHj5JzN7w4XFysCwY931CYSYk1DsXzqNi7YPF",
+       "EmYEryTDXtuVCxrjNqJXbiwr4hfiJajd4g5P58vvhQnc",
+       "11111111111111111111111111111111",
+       "SysvarRecentB1ockHashes11111111111111111111",
+       "SysvarRent111111111111111111111111111111111"
+      ],
+      "recentBlockhash": "6ikWfjWqF4M59kavVuxQ7r1nAt8BQSLUXuzBr16HWHUk",
+      "instructions": [
+       {
+        "programIdIndex": 2,
+        "accounts": [
+         0,
+         1
+        ],
+        "data": "11111C8S3NmV3fbPgfc4XnxQZ4bTtW3XEgQxTBMkMXXv6VwUVwkzXueR44DytDZPvyuq1",
+        "stackHeight": 1
+       },
+       {
+        "programIdIndex": 2,
+        "accounts": [
+         1,
+         3,
+         4
+        ],
+        "data": "3eGCC8KwtE3JHyeZQTKejgXjGoG3L7UQZKv1Uhv5DyeiuBR3A",
+        "stackHeight": 1
+       }
+      ]
+     }
+    },
+    "meta": {
+     "err": null,
+     "status": {
+      "Ok": null
+     },
+     "fee": 10000,
+     "preBalances": [
+      94169280,
+      0,
+      1,
+      42706560,
+      1009200
+     ],
+     "postBalances": [
+      92711600,
+      1447680,
+      1,
+      42706560,
+      1009200
+     ],
+     "innerInstructions": [],
+     "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+     ],
+     "preTokenBalances": [],
+     "postTokenBalances": [],
+     "rewards": [],
+     "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+     },
+     "computeUnitsConsumed": 300,
+     "costUnits": 2370
+    },
+    "version": "legacy",
+    "slot": 409999217,
+    "transactionIndex": 1006,
+    "blockTime": 1774924549
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "2LW6PSEjp81xSEttWwXDB6Etb1eKdhYPbFEojYbyhx88"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466582642,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 2958000,
+      "data": [
+       "4HR5ukShT+z2Js+IbK6vyQ3h5AqFw+PvvD/3cZ/bItmprtSDwCyK84XjPEUEr5hsA2iRoVDPcSrn6dTT3fMcShB484loBLfiAgAAAAAACQAAAAAAAAAAAAAAAAAAAAEf2FgStXheKQ+oF1Kv8HgcChmf4Ok/9XDqYxqlkBSly/4FAAAAAJS5b6CyjjSE47iM7OLRtRBZxJZ2/wn+EEFk+W67HYAHH9hYErV4XikPqBdSr/B4HAoZn+DpP/Vw6mMapZAUpcsHUUkEz7FfLaJjygMX5cDGGgvNfu9lTnGt5EUq42wAKo0HYA4FInwukPYtK9XEfNcmDikTfE81X2ICbla5IhF3O+IH9+k7cGuC9qxOAHa5QEEXRav2cZX5EaLCrpq/vTq8fVkH",
+       "base64"
+      ],
+      "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 297
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "2QmMUBZYv2Ssm6ED73Gapt8cgn9u1HQbPaJtfYdDDAwc"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466582642,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 2623920,
+      "data": [
+       "qPqiZFEOos8T2p4izt5hqfe4kl1EN90o6b7usccoiGr6aqfJsm6oGR/YWBK1eF4pD6gXUq/weBwKGZ/g6T/1cOpjGqWQFKXLBwAAAAAAAAD+AP8AAAAAAQEBAwAAAJBPyJU9z8nztReYk+4S/JxEXK2ImpV9Yc+428wXL2pPSj7vSwPIKnFZnqB6Fu5Lz23OMTV9hGCyrBvUw6mGDJ0JVNu+nslgyYp6KT/iEzaWb+GA0VGuS4F5Vh+JhUpT9gEAAAACAgAAAAABKAAAAKGwKNU8uLPk714n4JYVRqrUZ0mswJLgPBqMfBGH6IfMJF25zyvKmpkAAAAA",
+       "base64"
+      ],
+      "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 249
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "J1w1U5BB9W4Tnf2NhrcnTmV5t6iZugXSkujYKadwxti8"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466582643,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 4718880,
+      "data": [
+       "Gl69u3SINSET2p4izt5hqfe4kl1EN90o6b7usccoiGr6aqfJsm6oGQcAAAAAAAAABT9CzWkAAAAA/wIAAAAf2FgStXheKQ+oF1Kv8HgcChmf4Ok/9XDqYxqlkBSly1FJBM+xXy2iY8oDF+XAxhoLzX7vZU5xreRFKuNsACqNAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+       "base64"
+      ],
+      "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 550
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466582643,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 49155476,
+      "data": [
+       "AgAAAGJ1ShjkdERyHHhh6Ow6UX2jfMElSaQtlMX8ie/NQdYc",
+       "base64"
+      ],
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "executable": true,
+      "rentEpoch": 18446744073709552000,
+      "space": 36
+     }
+    ]
+   }
+  },
+  {
+   "method": "getAccountInfo",
+   "params": [
+    "7dLgmtcTavcguNoynVimF9ZNVb13FvhXVRfj2HyrDGaP",
+    {
+     "encoding": "base64",
+     "commitment": "confirmed",
+     "dataSlice": {
+      "offset": 0,
+      "length": 45
+     }
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466582643,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": {
+     "lamports": 46445764320,
+     "data": [
+      "AwAAAJktnRkAAAAAAXLz1AgI9xeBc3BTLZStzmuVu4U/ho8tA895TlJzZDej",
+      "base64"
+     ],
+     "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+     "executable": false,
+     "rentEpoch": 18446744073709552000,
+     "space": 6673114
+    }
+   }
+  }
+ ]
+}

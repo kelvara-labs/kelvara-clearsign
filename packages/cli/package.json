@@ -1,12 +1,22 @@
 {
   "name": "@kelvara/cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "build": "tsc -p tsconfig.json --noEmit && esbuild src/bin.ts --bundle --platform=node --format=esm --target=node22 --log-level=warning --outfile=dist/kelvara.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "bin": {
+    "kelvara": "dist/kelvara.mjs"
+  },
+  "dependencies": {
+    "@kelvara/core": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "3.2.7"
   }
 }

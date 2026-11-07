@@ -1,0 +1,546 @@
+{
+ "description": "Real localnet RPC responses read by analyzeSession for admin-local (E14). Replay by method + params.",
+ "recordedAt": "2026-11-07T16:39:31.339Z",
+ "network": "localnet",
+ "inputs": {
+  "transactions": [
+   "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAUI2TvFH2aKUtG8qtX+0+xhoIeuA2zZsyfL9oedvBlTDqRomrBt5W4wT0pT8ju3G2vKj9lSc7ILl9cGub1u9NVa/sVr0UPLet0S3B+K4odCW3pc7SjE8+EHsPJOR+mmlYjoBqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSNvVMSrGlRLQDw/iAKYeFNQpqaAyM7ct3fylrXEYY/J4UGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qMtCLnT29CcEYigd6KHhrRTfJpuQnjTJQX7CKgXygrXcAwQDAQMABAQAAAAFAA1RNCBmZWUgdXBkYXRlBwMGAAIakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU="
+  ],
+  "multisig": "Dk3XT8ZoeMFiUeehipmZP1Zoun2FLeWB78KHQPuk5Nk4",
+  "proposal": "EHefuQPsFNaLcwjVsWRuEiso4qNQCM9SDQdVPKXPdpA3",
+  "vaultTransaction": "9mkUf5RgvNCwRVMxTPzAqjcWZAAvk1NaS9RjwAhDCdCp",
+  "demoProgram": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+  "programData": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+  "attacker": "dtmpNZtcTx4PsHcwUXQC464wvZVgEgrkeT78rBA8qWf",
+  "nonce": {
+   "account": "83LD6FvnBcv9wG4QXxdbNP459V5Jdx2zue7f7iQ2QavH",
+   "authority": "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+   "funder": "Er6o3ifG4K8V6vGq6zwsW3E7D7zHd6HBXFU5dagoNPFB",
+   "value": "EgSJ3bZBAEYMts28zWg8wxxJz7onxzjqu5bAiEJpgA6F"
+  }
+ },
+ "observed": {
+  "alertLevel": "L3",
+  "ruleIds": [
+   "authority.transfer",
+   "lifetime.durable_nonce",
+   "nonce.staged_by_outsider",
+   "squads.zero_timelock_execution",
+   "graph.capability_preview",
+   "capability.recovery_path"
+  ],
+  "simulation": "Simulation shows: Transaction 0: FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT -0.000005 SOL",
+  "reads": 10
+ },
+ "calls": [
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "83LD6FvnBcv9wG4QXxdbNP459V5Jdx2zue7f7iQ2QavH"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": [
+     {
+      "data": [
+       "AQAAAAEAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpMtCLnT29CcEYigd6KHhrRTfJpuQnjTJQX7CKgXygrXciBMAAAAAAAA=",
+       "base64"
+      ],
+      "executable": false,
+      "lamports": 1447680,
+      "owner": "11111111111111111111111111111111",
+      "rentEpoch": 18446744073709552000,
+      "space": 80
+     }
+    ]
+   }
+  },
+  {
+   "method": "getSignaturesForAddress",
+   "params": [
+    "83LD6FvnBcv9wG4QXxdbNP459V5Jdx2zue7f7iQ2QavH",
+    {
+     "limit": 1000,
+     "commitment": "confirmed"
+    }
+   ],
+   "result": [
+    {
+     "blockTime": 1794069460,
+     "confirmationStatus": "finalized",
+     "err": null,
+     "memo": null,
+     "signature": "3EQGab29wXf9YTqrni8qKVPedh7FprCR7TA42NNnxGdCn3fvQcJ89u11pksmYbkUcUF2u97YeCgSMaDYAXKZ4p3z",
+     "slot": 6055
+    }
+   ]
+  },
+  {
+   "method": "getTransaction",
+   "params": [
+    "3EQGab29wXf9YTqrni8qKVPedh7FprCR7TA42NNnxGdCn3fvQcJ89u11pksmYbkUcUF2u97YeCgSMaDYAXKZ4p3z",
+    {
+     "encoding": "json",
+     "maxSupportedTransactionVersion": 0,
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "blockTime": 1794069460,
+    "meta": {
+     "computeUnitsConsumed": 300,
+     "costUnits": 2370,
+     "err": null,
+     "fee": 10000,
+     "innerInstructions": [],
+     "loadedAddresses": {
+      "readonly": [],
+      "writable": []
+     },
+     "logMessages": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+     ],
+     "postBalances": [
+      19997084640,
+      1447680,
+      1,
+      42706560,
+      1009200
+     ],
+     "postTokenBalances": [],
+     "preBalances": [
+      19998542320,
+      0,
+      1,
+      42706560,
+      1009200
+     ],
+     "preTokenBalances": [],
+     "rewards": [],
+     "status": {
+      "Ok": null
+     }
+    },
+    "slot": 6055,
+    "transaction": {
+     "message": {
+      "accountKeys": [
+       "Er6o3ifG4K8V6vGq6zwsW3E7D7zHd6HBXFU5dagoNPFB",
+       "83LD6FvnBcv9wG4QXxdbNP459V5Jdx2zue7f7iQ2QavH",
+       "11111111111111111111111111111111",
+       "SysvarRecentB1ockHashes11111111111111111111",
+       "SysvarRent111111111111111111111111111111111"
+      ],
+      "header": {
+       "numReadonlySignedAccounts": 0,
+       "numReadonlyUnsignedAccounts": 3,
+       "numRequiredSignatures": 2
+      },
+      "instructions": [
+       {
+        "accounts": [
+         0,
+         1
+        ],
+        "data": "11111C8S3NmV3fbPgfc4XnxQZ4bTtW3XEgQxTBMkMXXv6VwUVwkzXueR44DytDZPvyuq1",
+        "programIdIndex": 2,
+        "stackHeight": 1
+       },
+       {
+        "accounts": [
+         1,
+         3,
+         4
+        ],
+        "data": "3eGCCHUdcYRoB5W1TtJwEoSTiqNP6DQ7dbJJLX71dkMjLR2yZ",
+        "programIdIndex": 2,
+        "stackHeight": 1
+       }
+      ],
+      "recentBlockhash": "7rQ6ck1ucPBdQFpJj1Qa5bF96SqZ3dzU48o1PM8vkDGu"
+     },
+     "signatures": [
+      "3EQGab29wXf9YTqrni8qKVPedh7FprCR7TA42NNnxGdCn3fvQcJ89u11pksmYbkUcUF2u97YeCgSMaDYAXKZ4p3z",
+      "2KYqQ5ScNg867ziLAQsFqZQTzqHxt8bMCs8vs5aZuweVFJcACtB3E5LZpMQh2ksACGSth9nvUZapEB6G2ntWJ2Hq"
+     ]
+    },
+    "version": "legacy"
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "Dk3XT8ZoeMFiUeehipmZP1Zoun2FLeWB78KHQPuk5Nk4"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": [
+     {
+      "data": [
+       "4HR5ukShT+z/x4soMstBZZv1uvp87D0J7n2tifQDNL4SQIWWV5fU/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAAAAD9AwAAALvRLMmPYqtitfoehleayQfgLayi8fWBKpARRC6yiVuSB9k7xR9milLRvKrV/tPsYaCHrgNs2bMny/aHnbwZUw6kB/jbPVL+6Jmiqtuiw/s1RmXWcdZeSdf6L+rZkbfj4lEiBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "base64"
+      ],
+      "executable": false,
+      "lamports": 2498640,
+      "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "rentEpoch": 18446744073709552000,
+      "space": 231
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "EHefuQPsFNaLcwjVsWRuEiso4qNQCM9SDQdVPKXPdpA3"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": [
+     {
+      "data": [
+       "Gl69u3SINSG9UxKsaVEtAPD+IAph4U1CmpoDIzty3d/KWtcRhj8nhQEAAAAAAAAAAdVT72oAAAAA/QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+       "base64"
+      ],
+      "executable": false,
+      "lamports": 3382560,
+      "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "rentEpoch": 18446744073709552000,
+      "space": 358
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "9mkUf5RgvNCwRVMxTPzAqjcWZAAvk1NaS9RjwAhDCdCp"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": [
+     {
+      "data": [
+       "qPqiZFEOos+9UxKsaVEtAPD+IAph4U1CmpoDIzty3d/KWtcRhj8nhbvRLMmPYqtitfoehleayQfgLayi8fWBKpARRC6yiVuSAQAAAAAAAAD7AP0AAAAAAQABBAAAANt1cmyQbsZRiuOfiBsnoMsOsFQb1k1lk4tAVSm/AlyZMoBZQRzcR44B4onl/6KVieD91fPl+tP/1AUaAmvCO7IJc3Lei2LS7PquzksWKSQy/Nnq4VI7j7Uv0qwwPPJEIAKo9pFOiKGw4hAVPvdjrisAwrk9FsEk0sBTehAEgAAAAQAAAAMDAAAAAQACBAAAAAQAAAAAAAAA",
+       "base64"
+      ],
+      "executable": false,
+      "lamports": 2603040,
+      "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "rentEpoch": 18446744073709552000,
+      "space": 246
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+     "83LD6FvnBcv9wG4QXxdbNP459V5Jdx2zue7f7iQ2QavH",
+     "EHefuQPsFNaLcwjVsWRuEiso4qNQCM9SDQdVPKXPdpA3"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": [
+     {
+      "data": [
+       "",
+       "base64"
+      ],
+      "executable": false,
+      "lamports": 19999995000,
+      "owner": "11111111111111111111111111111111",
+      "rentEpoch": 18446744073709552000,
+      "space": 0
+     },
+     {
+      "data": [
+       "AQAAAAEAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpMtCLnT29CcEYigd6KHhrRTfJpuQnjTJQX7CKgXygrXciBMAAAAAAAA=",
+       "base64"
+      ],
+      "executable": false,
+      "lamports": 1447680,
+      "owner": "11111111111111111111111111111111",
+      "rentEpoch": 18446744073709552000,
+      "space": 80
+     },
+     {
+      "data": [
+       "Gl69u3SINSG9UxKsaVEtAPD+IAph4U1CmpoDIzty3d/KWtcRhj8nhQEAAAAAAAAAAdVT72oAAAAA/QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+       "base64"
+      ],
+      "executable": false,
+      "lamports": 3382560,
+      "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "rentEpoch": 18446744073709552000,
+      "space": 358
+     }
+    ]
+   }
+  },
+  {
+   "method": "simulateTransaction",
+   "params": [
+    "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAUI2TvFH2aKUtG8qtX+0+xhoIeuA2zZsyfL9oedvBlTDqRomrBt5W4wT0pT8ju3G2vKj9lSc7ILl9cGub1u9NVa/sVr0UPLet0S3B+K4odCW3pc7SjE8+EHsPJOR+mmlYjoBqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSNvVMSrGlRLQDw/iAKYeFNQpqaAyM7ct3fylrXEYY/J4UGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qMtCLnT29CcEYigd6KHhrRTfJpuQnjTJQX7CKgXygrXcAwQDAQMABAQAAAAFAA1RNCBmZWUgdXBkYXRlBwMGAAIakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+    {
+     "encoding": "base64",
+     "sigVerify": false,
+     "replaceRecentBlockhash": false,
+     "commitment": "confirmed",
+     "innerInstructions": true,
+     "accounts": {
+      "encoding": "base64",
+      "addresses": [
+       "FczLDYQmBLcvgXgkoHy284jRutx9rZNfXFBAYxQN8kxT",
+       "83LD6FvnBcv9wG4QXxdbNP459V5Jdx2zue7f7iQ2QavH",
+       "EHefuQPsFNaLcwjVsWRuEiso4qNQCM9SDQdVPKXPdpA3"
+      ]
+     }
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": {
+     "accounts": [
+      {
+       "data": [
+        "",
+        "base64"
+       ],
+       "executable": false,
+       "lamports": 19999990000,
+       "owner": "11111111111111111111111111111111",
+       "rentEpoch": 18446744073709552000,
+       "space": 0
+      },
+      {
+       "data": [
+        "AQAAAAEAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpH3fRD9ITVZk0g7zxYe3tk+Q5KCBt+hklZsQ8gd3THiViBMAAAAAAAA=",
+        "base64"
+       ],
+       "executable": false,
+       "lamports": 1447680,
+       "owner": "11111111111111111111111111111111",
+       "rentEpoch": 18446744073709552000,
+       "space": 80
+      },
+      {
+       "data": [
+        "Gl69u3SINSG9UxKsaVEtAPD+IAph4U1CmpoDIzty3d/KWtcRhj8nhQEAAAAAAAAAAdVT72oAAAAA/QEAAADZO8UfZopS0byq1f7T7GGgh64DbNmzJ8v2h528GVMOpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+        "base64"
+       ],
+       "executable": false,
+       "lamports": 3382560,
+       "owner": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+       "rentEpoch": 18446744073709552000,
+       "space": 358
+      }
+     ],
+     "err": null,
+     "innerInstructions": [],
+     "loadedAccountsDataSize": 1552564,
+     "logs": [
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr invoke [1]",
+      "Program log: Memo (len 13): \"Q4 fee update\"",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr consumed 6299 of 402850 compute units",
+      "Program MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr success",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf invoke [1]",
+      "Program log: Instruction: ProposalApprove",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf consumed 8967 of 396551 compute units",
+      "Program SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf success"
+     ],
+     "replacementBlockhash": null,
+     "returnData": null,
+     "unitsConsumed": 15416
+    }
+   }
+  },
+  {
+   "method": "getAccountInfo",
+   "params": [
+    "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+    {
+     "encoding": "base64",
+     "commitment": "confirmed",
+     "dataSlice": {
+      "offset": 0,
+      "length": 4
+     }
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": {
+     "data": [
+      "AwAAAA==",
+      "base64"
+     ],
+     "executable": false,
+     "lamports": 26924711280,
+     "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+     "rentEpoch": 18446744073709552000,
+     "space": 3868365
+    }
+   }
+  },
+  {
+   "method": "getProgramAccounts",
+   "params": [
+    "BPFLoaderUpgradeab1e11111111111111111111111",
+    {
+     "encoding": "base64",
+     "dataSlice": {
+      "offset": 0,
+      "length": 0
+     },
+     "filters": [
+      {
+       "dataSize": 36
+      },
+      {
+       "memcmp": {
+        "offset": 4,
+        "bytes": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7"
+       }
+      }
+     ]
+    }
+   ],
+   "result": [
+    {
+     "account": {
+      "data": [
+       "",
+       "base64"
+      ],
+      "executable": true,
+      "lamports": 1141440,
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "rentEpoch": 0,
+      "space": 36
+     },
+     "pubkey": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA"
+    }
+   ]
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": [
+     {
+      "data": [
+       "AgAAADKAWUEc3EeOAeKJ5f+ilYng/dXz5frT/9QFGgJrwjuy",
+       "base64"
+      ],
+      "executable": true,
+      "lamports": 1141440,
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "rentEpoch": 0,
+      "space": 36
+     }
+    ]
+   }
+  },
+  {
+   "method": "getAccountInfo",
+   "params": [
+    "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+    {
+     "encoding": "base64",
+     "commitment": "confirmed",
+     "dataSlice": {
+      "offset": 0,
+      "length": 45
+     }
+    }
+   ],
+   "result": {
+    "context": {
+     "apiVersion": "2.3.0",
+     "slot": 6325
+    },
+    "value": {
+     "data": [
+      "AwAAAAAAAAAAAAAAAdt1cmyQbsZRiuOfiBsnoMsOsFQb1k1lk4tAVSm/AlyZ",
+      "base64"
+     ],
+     "executable": false,
+     "lamports": 26924711280,
+     "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+     "rentEpoch": 18446744073709552000,
+     "space": 3868365
+    }
+   }
+  }
+ ]
+}
