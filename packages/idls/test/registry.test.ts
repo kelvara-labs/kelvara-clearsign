@@ -1,7 +1,7 @@
 // G5 (PLAN.md M3): IDLs and program ids are real and pinned.
 //  - every registry program id is an executable account (chain/programs.json, recorded over Helius;
 //    KELVARA_LIVE=1 re-reads them live, plus every Anchor IDL account, and must still match the pins);
-//  - every IDL hash matches the manifest, roots match the registry, roots are what idls:build makes;
+//  - every IDL hash matches the manifest, roots match the registry, roots are what idls:build makes (compacted: no docs, errors, events);
 //  - every curated capability names an instruction (and signer, and authority type) that exists;
 //  - each P0 IDL decodes at least 3 real fixtures (fixtures/tx and packages/idls/fixtures, top-level and inner);
 //  - every authority-map entry names a real instruction and a real account constraint.
@@ -26,6 +26,7 @@ import {
 import { anchorIdlAddress, heliusCall, heliusMainnetUrl, programChain, type AccountResult, type Recorded } from "../src/chain.js";
 import { buildCapabilityMap, checkCurated, enumVariants, loaderInstructions, resolveCurated, rootInstructions, type CapabilityMap, type CuratedFile } from "../src/maps.js";
 import { PROGRAMS } from "../src/programs.js";
+import { compactRoot } from "../src/compact.js";
 
 const pkgDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repo = path.resolve(pkgDir, "../..");
@@ -88,9 +89,9 @@ describe("G5 registry", () => {
         assert.equal(m.idlAddress, await anchorIdlAddress(m.programId), `${m.name}: anchor:idl address`);
         let root = rootNodeFromAnchor(json<IdlV00 | IdlV01>(`raw/${m.name}.json`)) as RootNode;
         if (root.program.publicKey !== m.programId) root = { ...root, program: { ...root.program, publicKey: m.programId } } as RootNode;
-        assert.equal(JSON.stringify(root), JSON.stringify(roots[m.name]), `${m.name}: root differs from the converted IDL`);
+        assert.equal(JSON.stringify(compactRoot(root)), JSON.stringify(roots[m.name]), `${m.name}: root differs from the converted IDL`);
       } else {
-        assert.deepEqual(roots[m.name], json(`raw/${m.name}.json`), `${m.name}: root is the pinned Codama IDL`);
+        assert.deepEqual(roots[m.name], compactRoot(json(`raw/${m.name}.json`)), `${m.name}: root is the pinned Codama IDL, compacted`);
       }
     }
     // The demo program's IDL in scenarios is the same on-chain IDL account content.

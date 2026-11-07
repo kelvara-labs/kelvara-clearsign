@@ -6,7 +6,8 @@
 //   2. pin    packages/idls/manifest.json: source, commit or slot, sha256, IDL authority, upgrade authority,
 //             verified (on-chain IDL account whose authority equals the upgrade authority, hash pinned).
 //             chain/programs.json keeps the raw RPC responses G5 checks offline.
-//   3. convert raw/<name>.json -> roots/<name>.json (Codama root nodes; Anchor via rootNodeFromAnchor).
+//   3. convert raw/<name>.json -> roots/<name>.json (Codama root nodes; Anchor via rootNodeFromAnchor),
+//             compacted: no docs, errors or events (src/compact.ts).
 //   4. maps   capabilities/<name>.json (curated/<name>.json + keyword rules, low confidence) and
 //             authority/<name>.json (core buildAuthorityMap) for Drift and the demo program.
 //   5. write  registry.json: program id -> decoder, root, source, hashes, verified, map files.
@@ -23,6 +24,7 @@ import { getBase58Decoder } from "@solana/kit";
 import { buildAuthorityMap, UPGRADEABLE_LOADER_PROGRAM, type AnchorIdlJson } from "@kelvara/core";
 import { buildCapabilityMap, checkCurated, enumVariants, loaderInstructions, resolveCurated, rootInstructions, type CuratedFile } from "../src/maps.js";
 import { PROGRAMS, type ProgramSpec } from "../src/programs.js";
+import { compactRoot } from "../src/compact.js";
 import { anchorIdlAddress, heliusCall, heliusMainnetUrl, programChain, type AccountResult, type Recorded } from "../src/chain.js";
 
 const pkgDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -193,6 +195,8 @@ for (const m of entries) {
   if (root?.kind !== "rootNode") throw new Error(`${m.name}: conversion did not return a rootNode`);
   // Anchor legacy IDLs often omit metadata.address; pin the program id from the manifest.
   if (root.program.publicKey !== m.programId) root = { ...root, program: { ...root.program, publicKey: m.programId } } as RootNode;
+  // Compact: no docs, errors or events (see src/compact.ts); the extension bundles these files.
+  root = compactRoot(root);
   roots[m.name] = root;
   writeJson(p("roots", `${m.name}.json`), root, false);
 }
