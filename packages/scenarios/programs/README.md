@@ -20,8 +20,15 @@ Files
 - `marginfi_v2.idl.json`: the on-chain IDL account, zlib-inflated and pretty-printed (content unchanged).
   sha256 `00f776e5e571b1d513fe99873edecdcff96455cf0fc0b04f7e239925fb2b7146`.
 
-Deploying on localnet without Anchor: either
-`solana-test-validator --upgradeable-program <PROGRAM_ID> marginfi_v2.so <UPGRADE_AUTHORITY>`
-(no write transactions; checked in M0: `solana program show` reports our authority and
-Data Length 3868320), or `solana program deploy` under our keys. The IDL is then published
-from the scenario script (anchor:idl account), else pinned from this file and labelled unverified.
+Localnet (M4, task S2): `pnpm --filter @kelvara/scenarios localnet:up` loads `marginfi_v2.so` at genesis
+(`solana-test-validator --upgradeable-program`) at its mainnet program id with our key
+`.keys/localnet/demo-upgrade-authority.json` as upgrade authority. The program must keep its mainnet id: Anchor
+checks `declare_id!`, and we do not hold the mainnet program keypair, so `solana program deploy` cannot place it there.
+
+IDL status on localnet: **pinned, unverified**. `localnet:up` tries to publish the IDL through the program's own
+Anchor IDL instructions (create / resize / write, built by hand, no Anchor CLI). This binary has none: it answers
+`Custom 101` (InstructionFallbackNotFound) to the IDL create instruction (checked 2026-11-07), and the ELF contains no
+`Idl*` instruction names. The mainnet IDL account predates that build. So the scenarios use `marginfi_v2.idl.json`
+from this folder (copied from the mainnet IDL account, `9tb2tzSk…kmmK`), recorded as `idl.status: "unverified"` in
+`.localnet/state.json`. The publish path stays in the script and is used as-is for any program that keeps its IDL
+instructions.
