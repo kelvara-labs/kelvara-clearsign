@@ -1,3 +1,33 @@
+# V4 G8 replay: Drift critical (cached and live), both devnet scenario scripts pass live
+
+**G8 replay: PASS** in both modes. Cached on a fresh clone of `main` e249d4d (E14 + S6 merged) and on `team/verifier` b3d604c. **Live (`--live`)** on a fresh detached worktree of b3d604c (main e249d4d + this runner change; `pnpm install --frozen-lockfile && pnpm build` exit 0): Drift replay over Helius mainnet plus both devnet scenarios executed on chain.
+
+```text
+e249d4d fresh clone   pnpm test:replay              G8 PASS  1.1s   drift critical (cached), admin-devnet SKIP, trap-devnet SKIP
+b3d604c fresh wt      KELVARA_LIVE=1 replay.mjs     G8 PASS  42.5s  drift critical (live), admin-devnet ok (live) 29s, trap-devnet ok (live) 11s
+team/verifier         pnpm selfcheck --only G8      G8 PASS  2.1s   (cached)
+team/verifier         pnpm selfcheck --fast         G1 PASS 34.9s | G2 PASS 9.3s 97.91%, 1000/1000 | G3 PASS 8.1s | G4 PASS 2.8s
+```
+
+Drift session (2HvMSgDE… + 4BKBmAJn…): top-level `level: critical`, `report.alert` L3 Critical `hold_block_default`, alert raised by c1 `authority.transfer` ("Proposed updateAdmin protocol.admin on 5zpq…xcsN … gives authority to H7Pi…7ZgL"), c2/c3 `lifetime.durable_nonce` (AdvanceNonceAccount in both txs), c6 `squads.approve_and_execute`. Replaying 4BKBmAJn… alone gives `warning` with no updateAdmin claim: the vault message is created in 2HvMSgDE…, so G8 needs the whole session (as specified).
+
+Devnet (live, real Squads v4 devnet program, Helius only): admin approval landed on the outsider-funded durable nonce `NrCU88HG…`, executed `5Zfjds1E…`, demo program ADdN9mvE… upgrade authority now the attacker 9xEax7K4…. Trap buy `2e3M15Yj…` gave the user 50,000 SHINY, creator pulled it back with the permanent delegate and froze the account in `Pgmkj2x7…`. Cross-check outside the gate: `kelvara analyze --network devnet` on the setups' bytes gives admin **critical** (authority.transfer, lifetime.durable_nonce, nonce.staged_by_outsider) and trap **warning / hold** (token2022.permanent_delegate, token.freeze_authority), matching G6.
+
+## Runner changes (tools/selfcheck)
+
+- Live devnet step was broken for the merged S6 scripts: running `scenario:<x>-devnet` without flags serves the attacker page forever (or refuses with "scenario already exists"). G8 now runs each scenario headless through the scenarios owner's own live test, `node --test --test-name-pattern=^<kind>-devnet: e2e-devnet/demo-devnet.test.mjs` (`--reset --attack` plus on-chain assertions), and passes only when exactly one test ran and passed.
+- Drift check hardened: when the report has `alert`, its label must be Critical and each required claim must be among `alert.claimIds`.
+- Self-tests 41/41. Mutants on the real Drift report all FAIL: authority.transfer renamed (missing UpdateAdmin), c6 dropped from alert.claimIds (not among alert.claimIds), level high (need critical).
+
+## Decision: SKIP in cached mode
+
+Cached G8 reports the devnet scenarios as SKIP and still PASSes. Devnet scenarios have no cached form (they need live RPC, keys and devnet SOL), and PLAN.md requires both modes only at M8 ("G5 and G8 use cached real fixtures by default and live RPC with --live. Both modes must pass at M8"). So a cached SKIP is acceptable for routine G8 runs. **M6/G8 is certified here on the live run above, where both scripts PASS**, not on SKIP.
+
+## Findings
+
+- Devnet payer `32HLHCJx…` went from 1.227 to **0.205 devnet SOL** in this one live run: each trap run tops the buyer up to 1.1 SOL and the 1 SOL purchase goes to the scenario's seller (`trap-seller` holds ~4 SOL, never recycled). The next live G8 (required at M8) will stop with `NEEDS_HUMAN: devnet payer needs more devnet SOL` unless scenarios recycle seller SOL to the payer or the human funds it. Owner: scenarios / coordinator.
+- No Helius key in the live log (0 matches for an unredacted `api-key=`); `--live` wrote no new fixtures (`git status` clean in the live worktree).
+
 # V9 hour-24 checkpoint: G6 on main 5800793, then G3 + G6 on main 1bcd75d
 
 **G6 localnet: PASS** on a fresh checkout of `main` 5800793 (2 runs + 1 post-mutant run) and on a fresh checkout of `main` 1bcd75d (E10 merged). **G3 rules: PASS** on 1bcd75d (was PENDING). G1, G2, G4 PASS on both. Both mutants FAIL as required.
