@@ -89,3 +89,20 @@ export function finish(gate, checks) {
 export const pass = (name, detail = "", summary) => ({ name, status: "PASS", detail, summary });
 export const fail = (name, detail) => ({ name, status: "FAIL", detail });
 export const pending = (name, detail) => ({ name, status: "PENDING", detail });
+
+// One-line FAIL note from the tail of a failed gate command. Prefer, in order: a SELFCHECK-SUMMARY line, the
+// gate's own scoreboard line ("G6  localnet     FAIL     21.4  missing claim x"), the first error-looking line,
+// the last meaningful line. A gate runner may log an expected "FAIL" probe before its verdict (G6 reports a
+// post-attack localnet, then resets it), so the runner's own verdict line must win over the first match.
+export function failNote(rawTail, code) {
+  // eslint-disable-next-line no-control-regex -- strips ANSI colour codes
+  const tail = rawTail.map((l) => l.replace(/\x1b\[[0-9;]*m/g, ""));
+  const summary = [...tail].reverse().map((l) => l.match(/^SELFCHECK-SUMMARY: (.*)$/)).find(Boolean);
+  if (summary) return summary[1];
+  const verdict = [...tail].reverse().map((l) => l.match(/^G\d+\s+\S+\s+FAIL\s+[\d.]+s?\s+(.*)$/)).find(Boolean);
+  if (verdict) return verdict[1].trim();
+  const noise = /ELIFECYCLE|ERR_PNPM_RECURSIVE|^\s*$|^> |^\s*at |^# exit/;
+  const meaningful = tail.filter((l) => !noise.test(l));
+  const firstError = meaningful.find((l) => /\berror\b|✖|FAIL|Error:/i.test(l));
+  return firstError?.trim() ?? meaningful.at(-1)?.trim() ?? `exit ${code}`;
+}

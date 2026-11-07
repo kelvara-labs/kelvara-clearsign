@@ -13,7 +13,7 @@ import { createWriteStream, mkdirSync, writeFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { setTimeout, clearTimeout } from "node:timers";
 import { GATES, PENDING_EXIT } from "./gates.mjs";
-import { ROOT, makeRedactor } from "./lib.mjs";
+import { ROOT, failNote, makeRedactor } from "./lib.mjs";
 
 const args = process.argv.slice(2);
 const KNOWN = new Set(["--fast", "--only", "--write", "--live", "--verbose", "--allow-dirty"]);
@@ -123,11 +123,7 @@ for (const g of GATES) {
     if (r.code === PENDING_EXIT) { status = "PENDING"; note = summary ? `(milestone ${g.milestone}) ${summary[1]}` : `(milestone ${g.milestone})`; break; }
     if (r.code !== 0) {
       status = "FAIL";
-      const noise = /ELIFECYCLE|ERR_PNPM_RECURSIVE|^\s*$|^> |^\s*at |^# exit/;
-      const meaningful = r.tail.filter((l) => !noise.test(l));
-      const firstError = meaningful.find((l) => /\berror\b|✖|FAIL|Error:/i.test(l));
-      const last = summary?.[1] ?? firstError?.trim() ?? meaningful.at(-1)?.trim() ?? `exit ${r.code ?? r.signal}`;
-      note = `${cmd}: ${last}`.slice(0, 200);
+      note = `${cmd}: ${failNote(r.tail, r.code ?? r.signal)}`.slice(0, 200);
       break;
     }
     if (summary) note = summary[1];
