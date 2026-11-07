@@ -9,7 +9,7 @@ import path from "node:path";
 import { readZip, writeZip } from "../src/zip.mjs";
 import {
   checkHosts, checkNoSecrets, checkNoRemoteCode, checkPermissions, checkLicenseKeyEmbedded,
-  checkDependencyLicenses, licenseForbidden
+  checkDependencyLicenses, licenseForbidden, checkContentScriptsOffline, secretVariants
 } from "../src/security-checks.mjs";
 
 const PK = "96kkANgM8egAtbFSa81PHfjNFajQNo77dpTcno2xmM1s";
@@ -18,12 +18,13 @@ const bundle = (files) => new Map(Object.entries(files).map(([k, v]) => [k, Buff
 const goodManifest = {
   manifest_version: 3, name: "x", permissions: ["storage"],
   host_permissions: ["https://mainnet.helius-rpc.com/*", "https://devnet.helius-rpc.com/*", "http://localhost:8899/*"],
-  content_scripts: [{ matches: ["<all_urls>"], js: ["hook.js"], world: "MAIN" }]
+  content_scripts: [{ matches: ["https://*/*", "http://localhost/*", "http://127.0.0.1/*"], js: ["hook.js"], world: "MAIN" }]
 };
 const clean = () => bundle({
   "manifest.json": JSON.stringify(goodManifest),
   "service-worker.js": `const u="https://mainnet.helius-rpc.com/?api-key="+k;fetch("http://localhost:8899");const PK="${PK}";`,
-  "ui.js": `document.createElementNS("http://www.w3.org/2000/svg","svg");`
+  "ui.js": `document.createElementNS("http://www.w3.org/2000/svg","svg");if(window.top!==self)console.info(n.wallet,e.network)`,
+  "hook.js": `window.postMessage({t:1},"*")`
 });
 
 test("clean bundle passes every check", () => {
@@ -33,6 +34,24 @@ test("clean bundle passes every check", () => {
   assert.equal(checkPermissions(goodManifest).status, "PASS");
   assert.equal(checkLicenseKeyEmbedded(b, PK).status, "PASS");
   assert.equal(checkNoSecrets(b, [FAKE_KEY]).status, "PASS");
+  assert.equal(checkContentScriptsOffline(b, goodManifest).status, "PASS");
+});
+
+test("hosts: manifest content_scripts matches are exempt, other manifest hosts are not", () => {
+  assert.equal(checkHosts(bundle({ "manifest.json": JSON.stringify(goodManifest) })).status, "PASS");
+  const bad = { ...goodManifest, homepage_url: "https://kelvara.example.com" };
+  assert.equal(checkHosts(bundle({ "manifest.json": JSON.stringify(bad) })).status, "FAIL");
+});
+
+test("hosts: dynamic hosts must end in a Helius RPC domain", () => {
+  assert.equal(checkHosts(bundle({ "a.js": "u=`https://${net}.helius-rpc.com/?api-key=${k}`" })).status, "PASS");
+  assert.equal(checkHosts(bundle({ "a.js": "u=`https://${host}/rpc`" })).status, "FAIL");
+  assert.equal(checkHosts(bundle({ "a.js": "u=`https://${x}.evil.com/`" })).status, "FAIL");
+});
+
+test("hosts: only the two Helius API hosts are allowed", () => {
+  assert.equal(checkHosts(bundle({ "a.js": '"https://api.helius.xyz/v0" "https://api-mainnet.helius-rpc.com/v0"' })).status, "PASS");
+  assert.equal(checkHosts(bundle({ "a.js": '"https://api-devnet.helius.xyz/v0"' })).status, "FAIL");
 });
 
 test("hosts: forbidden URLs and bare domains fail", () => {
@@ -50,6 +69,24 @@ test("secrets: key value, api-key=<uuid> and key files fail", () => {
   assert.equal(checkNoSecrets(bundle({ "keys/devnet.keypair.json": "[1,2]" }), []).status, "FAIL");
 });
 
+test("secrets: encoded forms of the key and the raw zip bytes are checked", () => {
+  const b64 = (pre) => Buffer.from(pre + FAKE_KEY + "tail").toString("base64");
+  for (const enc of [FAKE_KEY.replace(/-/g, ""), FAKE_KEY.toUpperCase(), Buffer.from(FAKE_KEY).toString("hex"),
+    [...FAKE_KEY].reverse().join(""), b64(""), b64("a"), b64("ab"), b64("abc")]) {
+    assert.equal(checkNoSecrets(bundle({ "a.js": `x="${enc}"` }), [FAKE_KEY]).status, "FAIL", enc);
+  }
+  assert.ok(secretVariants(FAKE_KEY).every((v) => v.length >= 8));
+  const raw = writeZip({ [`notes-${FAKE_KEY}.txt`]: "x" });
+  assert.equal(checkNoSecrets(bundle({ "a.js": "ok" }), [FAKE_KEY], raw).status, "FAIL");
+});
+
+test("content scripts: network calls fail, missing files fail", () => {
+  for (const s of ['fetch("/x")', "new XMLHttpRequest()", 'new WebSocket("ws://localhost:8900")', "navigator.sendBeacon(u)"]) {
+    assert.equal(checkContentScriptsOffline(bundle({ "hook.js": s }), goodManifest).status, "FAIL", s);
+  }
+  assert.equal(checkContentScriptsOffline(bundle({}), goodManifest).status, "FAIL");
+});
+
 test("remote code: eval, Function, string timers, remote imports and CSP fail", () => {
   for (const s of ["eval(x)", "new Function('return 1')", 'setTimeout("alert(1)",1)', 'importScripts("https://x.y/a.js")',
     'import("https://cdn.x/a.js")']) {
@@ -58,12 +95,21 @@ test("remote code: eval, Function, string timers, remote imports and CSP fail", 
   assert.equal(checkNoRemoteCode(bundle({ "p.html": '<script src="https://cdn.x/a.js"></script>' }), goodManifest).status, "FAIL");
   assert.equal(checkNoRemoteCode(bundle({}), { content_security_policy: { extension_pages: "script-src 'self' 'unsafe-eval'" } }).status, "FAIL");
   assert.equal(checkNoRemoteCode(bundle({ "a.js": "obj.evaluate(x); retrieval(y)" }), goodManifest).status, "PASS");
+  assert.equal(checkNoRemoteCode(bundle({ "a.js": "[].constructor.constructor(s)()" }), goodManifest).status, "FAIL");
+  assert.equal(checkNoRemoteCode(bundle({ "a.js": "chrome.scripting.executeScript({target:t,code:s})" }), goodManifest).status, "FAIL");
+  const csp = (c) => checkNoRemoteCode(bundle({}), { content_security_policy: { extension_pages: c } }).status;
+  assert.equal(csp("script-src 'self' 'wasm-unsafe-eval'; connect-src 'self' https://mainnet.helius-rpc.com"), "PASS");
+  assert.equal(csp("script-src 'self'; connect-src https://api.coingecko.com"), "FAIL");
+  assert.equal(csp("script-src 'self'; connect-src *"), "FAIL");
 });
 
 test("permissions: extra permissions and hosts fail", () => {
   assert.equal(checkPermissions({ ...goodManifest, permissions: ["storage", "tabs"] }).status, "FAIL");
   assert.equal(checkPermissions({ ...goodManifest, host_permissions: ["<all_urls>"] }).status, "FAIL");
   assert.equal(checkPermissions({ ...goodManifest, manifest_version: 2 }).status, "FAIL");
+  assert.equal(checkPermissions({ ...goodManifest, host_permissions: ["https://api-devnet.helius.xyz/*"] }).status, "FAIL");
+  assert.equal(checkPermissions({ ...goodManifest, content_scripts: [{ matches: ["<all_urls>"], js: ["hook.js"] }] }).status, "FAIL");
+  assert.equal(checkPermissions({ ...goodManifest, content_scripts: [{ matches: ["http://*/*"], js: ["hook.js"] }] }).status, "FAIL");
   assert.equal(checkPermissions({ ...goodManifest, externally_connectable: { matches: ["<all_urls>"] } }).status, "FAIL");
   assert.equal(checkPermissions(null).status, "FAIL");
 });

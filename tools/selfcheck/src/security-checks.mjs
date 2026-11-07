@@ -2,24 +2,43 @@
 // Each returns { status: "PASS"|"FAIL", detail, findings[] }.
 import { existsSync, readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
+import { Buffer } from "node:buffer";
 
 // Hosts the extension may name. PLAN.md: Helius RPC and APIs, plus localhost for localnet.
 export const ALLOWED_HOSTS = new Set([
   "mainnet.helius-rpc.com", "devnet.helius-rpc.com",
-  "api.helius.xyz", "api-mainnet.helius.xyz", "api-devnet.helius.xyz",
-  "localhost", "127.0.0.1"
+  "api.helius.xyz", "api-mainnet.helius-rpc.com",
+  "localhost", "127.0.0.1", "[::1]"
 ]);
+// A host built at runtime (`https://${net}.helius-rpc.com`) passes only if its static tail is a Helius domain.
+const DYNAMIC_HOST_OK = /^[^/?#]*\$\{[^}]*\}[^/?#]*\.helius-rpc\.com(:\d+)?$/i;
+// Minified code reads like domains ("n.wallet", "window.top", "console.info"): skip bare matches whose first
+// label is a short identifier or a JS/browser global. Real hosts with a scheme are always checked.
+const JS_GLOBALS = new Set(["window", "self", "globalthis", "document", "console", "location", "navigator", "chrome",
+  "this", "top", "parent", "frames", "math", "json", "object", "reflect", "promise", "symbol", "array", "number",
+  "string", "crypto", "performance", "history", "event", "module", "exports", "process", "require", "error", "date"]);
+const looksLikeCode = (h) => { const first = h.split(".")[0]; return first.length <= 2 || JS_GLOBALS.has(first); };
+// Manifest match patterns that are not network hosts: the hook must run on any dApp (coordinator, X1).
+export const ALLOWED_CONTENT_MATCHES = new Set(["https://*/*", "http://localhost/*", "http://127.0.0.1/*"]);
+function manifestForHostScan(text) {
+  try {
+    const m = JSON.parse(text);
+    for (const cs of m.content_scripts ?? []) { delete cs.matches; delete cs.exclude_matches; }
+    for (const war of m.web_accessible_resources ?? []) delete war.matches;
+    return JSON.stringify(m);
+  } catch { return text; }
+}
 // XML namespace URIs are identifiers, never fetched.
 const NAMESPACE_URIS = [/^https?:\/\/www\.w3\.org\/(1999\/xhtml|2000\/svg|1998\/Math\/MathML|1999\/xlink|XML\/1998\/namespace|2000\/xmlns\/?)$/];
 const TEXT_EXT = /\.(m?js|cjs|json|html?|css|map|txt|md|svg|webmanifest)$/i;
 // Bare domains (no scheme) with common TLDs, e.g. "api.coingecko.com" in a string concatenation.
-const BARE_DOMAIN = /(?<![\w.@/-])((?:[a-z0-9-]+\.)+(?:com|io|xyz|org|net|ai|dev|app|so|co|fi|finance|gg|me|sh|cloud|tech))(?![\w-])/gi;
+const BARE_DOMAIN = /(?<![\w.@/-])((?:[a-z0-9-]+\.)+(?:com|io|xyz|org|net|ai|dev|app|so|co|fi|finance|gg|me|sh|cloud|tech|info|biz|site|online|link|top|ws|to|ly|cc|tv|us|uk|de|network|exchange|money|wallet|trade|fun|pro|live|run|page|workers\.dev|vercel\.app))(?![\w-])/gi;
 const URL_RE = /\b(?:https?|wss?):\/\/[^\s"'`<>)\\]+/gi;
 
 export const MAX_PERMISSIONS = new Set(["storage"]);
 export const ALLOWED_HOST_PERMISSIONS = new Set([
   "https://mainnet.helius-rpc.com/*", "https://devnet.helius-rpc.com/*",
-  "https://api.helius.xyz/*", "https://api-mainnet.helius.xyz/*", "https://api-devnet.helius.xyz/*",
+  "https://api.helius.xyz/*", "https://api-mainnet.helius-rpc.com/*",
   "http://localhost:8899/*", "http://127.0.0.1:8899/*"
 ]);
 
@@ -31,17 +50,24 @@ const result = (findings, okDetail) => findings.length
 
 export function checkHosts(bundle) {
   const bad = new Map();
-  for (const [name, text] of textFiles(bundle)) {
+  for (const [name, raw] of textFiles(bundle)) {
+    const text = /(^|\/)manifest\.json$/.test(name) ? manifestForHostScan(raw) : raw;
     for (const m of text.matchAll(URL_RE)) {
       const u = m[0].replace(/[.,;]+$/, "");
       if (NAMESPACE_URIS.some((re) => re.test(u))) continue;
+      const auth = u.replace(/^[a-z]+:\/\//i, "").split(/[/?#]/)[0].replace(/^[^@]*@/, "");
+      if (auth.includes("${")) {
+        if (!DYNAMIC_HOST_OK.test(auth)) bad.set(auth, bad.get(auth) ?? `dynamic host ${auth} in ${name}`);
+        continue;
+      }
       const h = hostOf(u);
-      if (!h || ALLOWED_HOSTS.has(h)) continue;
+      if (!h) { if (auth) bad.set(auth, bad.get(auth) ?? `unparseable host ${auth} in ${name}`); continue; }
+      if (ALLOWED_HOSTS.has(h)) continue;
       bad.set(h, bad.get(h) ?? `${h} in ${name}`);
     }
     for (const m of text.matchAll(BARE_DOMAIN)) {
       const h = m[1].toLowerCase();
-      if (ALLOWED_HOSTS.has(h) || h === "www.w3.org") continue;
+      if (ALLOWED_HOSTS.has(h) || h === "www.w3.org" || looksLikeCode(h)) continue;
       bad.set(h, bad.get(h) ?? `${h} in ${name}`);
     }
   }
@@ -49,16 +75,34 @@ export function checkHosts(bundle) {
 }
 
 const FORBIDDEN_FILES = [/(^|\/)\.env(\.|$)/, /\.keypair\.json$/, /(^|\/)\.keys\//, /(^|\/)id\.json$/, /\.pem$/];
-export function checkNoSecrets(bundle, secrets = []) {
+// Forms a key can take in a bundle: as is, without dashes, upper-case, URL-encoded, hex, base64 (all three
+// alignments, so a key embedded inside a longer base64 string is still found) and reversed.
+export function secretVariants(secret) {
+  const v = new Set([secret, secret.replace(/-/g, ""), secret.toUpperCase(), encodeURIComponent(secret),
+    Buffer.from(secret).toString("hex"), [...secret].reverse().join("")]);
+  for (let pad = 0; pad < 3; pad++) {
+    const b64 = Buffer.concat([Buffer.alloc(pad), Buffer.from(secret)]).toString("base64");
+    // drop the chars touched by padding at either end; keep the stable middle (>= 16 chars for a uuid)
+    const start = pad ? Math.ceil((pad * 8) / 6) + 1 : 0;
+    const mid = b64.slice(start, b64.length - 4);
+    if (mid.length >= 16) { v.add(mid); v.add(mid.replace(/\+/g, "-").replace(/\//g, "_")); }
+  }
+  return [...v].filter((x) => x.length >= 8);
+}
+export function checkNoSecrets(bundle, secrets = [], rawArchive = null) {
   const f = [];
   for (const name of bundle.keys()) if (FORBIDDEN_FILES.some((re) => re.test(name))) f.push(`secret-like file ${name}`);
-  for (const [name, buf] of bundle) {
+  const variants = secrets.filter(Boolean).flatMap(secretVariants);
+  const hay = [...bundle];
+  if (rawArchive) hay.push(["<zip archive bytes>", rawArchive]);
+  for (const [name, buf] of hay) {
     const text = buf.toString("latin1");
-    for (const s of secrets) if (s && text.includes(s)) f.push(`HELIUS_API_KEY value in ${name}`);
+    const lower = text.toLowerCase();
+    if (variants.some((s) => text.includes(s) || lower.includes(s.toLowerCase()))) f.push(`HELIUS_API_KEY value (or an encoding of it) in ${name}`);
     if (/api[-_]?key=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(text)) f.push(`api-key=<uuid> in ${name}`);
     if (/["']?HELIUS_API_KEY["']?\s*[:=]\s*["'][0-9a-f-]{36}["']/i.test(text)) f.push(`HELIUS_API_KEY literal in ${name}`);
   }
-  return result(f, secrets.length ? "no key (checked against .env value and patterns)" : "no key (pattern check; .env not present)");
+  return result([...new Set(f)], secrets.length ? "no key (checked against .env value, its encodings and patterns)" : "no key (pattern check; .env not present)");
 }
 
 const REMOTE_CODE = [
@@ -68,7 +112,10 @@ const REMOTE_CODE = [
   [/\bset(?:Timeout|Interval)\s*\(\s*["'`]/, "setTimeout/setInterval(string)"],
   [/\bimportScripts\s*\(\s*["'`](?:https?:)?\/\//, "importScripts(remote)"],
   [/\bimport\s*\(\s*["'`](?:https?:)?\/\//, "import(remote)"],
-  [/<script[^>]+src\s*=\s*["'](?:https?:)?\/\//i, "<script src=remote>"]
+  [/<script[^>]+src\s*=\s*["'](?:https?:)?\/\//i, "<script src=remote>"],
+  [/\bconstructor\.constructor\s*\(/, "constructor.constructor("],
+  [/\bexecuteScript\s*\(\s*\{[^}]*\bcode\s*:/, "executeScript({code})"],
+  [/\bWebAssembly\.(?:instantiate|compile)Streaming\s*\(\s*fetch\s*\(\s*["'`](?:https?:)?\/\//, "remote wasm"]
 ];
 export function checkNoRemoteCode(bundle, manifest) {
   const f = [];
@@ -80,6 +127,12 @@ export function checkNoRemoteCode(bundle, manifest) {
   const cspText = typeof csp === "string" ? csp : Object.values(csp ?? {}).join(" ");
   if (/'unsafe-eval'/.test(cspText)) f.push("CSP allows 'unsafe-eval'");
   if (/script-src[^;]*(https?:|\*)/.test(cspText)) f.push("CSP allows remote script sources");
+  const connect = cspText.match(/connect-src([^;]*)/);
+  if (connect) for (const src of connect[1].trim().split(/\s+/)) {
+    if (!src || src.startsWith("'")) continue;
+    const h = src === "*" ? "*" : hostOf(/^[a-z]+:\/\//i.test(src) ? src.replace("*.", "x.") : `https://${src}`);
+    if (src === "*" || !h || !(ALLOWED_HOSTS.has(h) || /\.helius-rpc\.com$/.test(h) && src.includes("*."))) f.push(`CSP connect-src allows ${src}`);
+  }
   return result(f, "no eval, no remote code");
 }
 
@@ -92,12 +145,36 @@ export function checkPermissions(manifest) {
   for (const h of [...(manifest.host_permissions ?? []), ...(manifest.optional_host_permissions ?? [])]) {
     if (!ALLOWED_HOST_PERMISSIONS.has(h)) f.push(`host permission ${h}`);
   }
+  for (const cs of manifest.content_scripts ?? []) {
+    for (const m of cs.matches ?? []) if (!ALLOWED_CONTENT_MATCHES.has(m)) f.push(`content_scripts match ${m}`);
+  }
+  for (const war of manifest.web_accessible_resources ?? []) {
+    for (const m of war.matches ?? []) if (!ALLOWED_CONTENT_MATCHES.has(m)) f.push(`web_accessible_resources match ${m}`);
+  }
   const ec = manifest.externally_connectable;
   if (ec && (ec.ids?.includes("*") || (ec.matches ?? []).some((m) => m.includes("<all_urls>") || /^\*:\/\/\*\//.test(m)))) {
     f.push("externally_connectable is open to all");
   }
   if (manifest.update_url) f.push("update_url set (remote updates)");
   return result(f, `permissions [${(manifest.permissions ?? []).join(",")}], ${(manifest.host_permissions ?? []).length} host(s)`);
+}
+
+// Content scripts (main-world hook and isolated bridge) never talk to the network: the service worker does,
+// so all traffic goes through host_permissions and the Helius adapter.
+const NETWORK_API = [
+  [/(?<![\w$.])fetch\s*\(/, "fetch("], [/\bXMLHttpRequest\b/, "XMLHttpRequest"], [/\bnew\s+WebSocket\b/, "WebSocket"],
+  [/\bsendBeacon\s*\(/, "sendBeacon("], [/\bnew\s+EventSource\b/, "EventSource"], [/\bRTCPeerConnection\b/, "RTCPeerConnection"]
+];
+export function checkContentScriptsOffline(bundle, manifest) {
+  const f = [], files = new Set();
+  for (const cs of manifest?.content_scripts ?? []) for (const js of cs.js ?? []) files.add(js.replace(/^\.?\//, ""));
+  for (const name of files) {
+    const buf = bundle.get(name) ?? [...bundle].find(([n]) => n.endsWith(`/${name}`))?.[1];
+    if (!buf) { f.push(`content script ${name} missing from bundle`); continue; }
+    const text = buf.toString("utf8");
+    for (const [re, label] of NETWORK_API) if (re.test(text)) f.push(`${label} in content script ${name}`);
+  }
+  return result(f, `${files.size} content script(s) make no network calls`);
 }
 
 // Product license: the extension verifies offline against the public key in config/.

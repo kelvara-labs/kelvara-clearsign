@@ -1,6 +1,5 @@
 // G8 checks as pure functions over a replay report (the JSON printed by `kelvara replay --json`).
-// The report schema belongs to the engine; these checks read it defensively and should be pinned
-// to exact ruleIds once the engine publishes them (see REQUIRED_CLAIMS).
+// The report schema belongs to the engine; ruleIds are pinned (engine announcement, M4).
 
 export const DRIFT_SIGNATURES = [
   // BlockSec: create and approve
@@ -10,11 +9,12 @@ export const DRIFT_SIGNATURES = [
 ];
 
 // PLAN.md G8: critical, with durable-nonce, approve-and-execute and UpdateAdmin claims.
-// Each matcher is tried on the claim's ruleId first, then on the whole claim.
+// ruleIds pinned by the engine. The UpdateAdmin claim is authority.transfer and must name the Drift v2
+// instruction updateAdmin (decoded from the vault transaction message) somewhere in the claim.
 export const REQUIRED_CLAIMS = [
-  { name: "durable-nonce", re: /durable[-_ ]?nonce|advance[-_ ]?nonce/i },
-  { name: "approve-and-execute", re: /approve[-_ ]?(and[-_ ]?)?execute|approve[\s\S]{0,200}execute/i },
-  { name: "UpdateAdmin", re: /update[-_ ]?admin/i }
+  { name: "durable-nonce", ruleId: "lifetime.durable_nonce" },
+  { name: "approve-and-execute", ruleId: "squads.approve_and_execute" },
+  { name: "UpdateAdmin", ruleId: "authority.transfer", mentions: /update[-_ ]?admin/i }
 ];
 
 const LEVEL_KEYS = ["level", "severity", "risk", "rank", "verdict", "rating"];
@@ -53,9 +53,11 @@ export function evaluateReplay(report) {
   const claims = collectClaims(report);
   const found = [];
   for (const req of REQUIRED_CLAIMS) {
-    const hit = claims.find((c) => req.re.test(c.ruleId)) ?? claims.find((c) => req.re.test(JSON.stringify(c)));
+    const byRule = claims.filter((c) => c.ruleId === req.ruleId);
+    const hit = req.mentions ? byRule.find((c) => req.mentions.test(JSON.stringify(c))) : byRule[0];
     if (hit) found.push(`${req.name}=${hit.ruleId}`);
-    else problems.push(`missing claim ${req.name}`);
+    else if (byRule.length) problems.push(`claim ${req.ruleId} does not name ${req.mentions.source}`);
+    else problems.push(`missing claim ${req.name} (${req.ruleId})`);
   }
   if (problems.length) return { status: "FAIL", detail: problems.join("; ") };
   return { status: "PASS", detail: `${level.value}; ${found.join(", ")}` };
