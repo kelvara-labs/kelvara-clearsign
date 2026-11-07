@@ -4,6 +4,7 @@
 // Steps: build packages/extension -> pick a free port -> playwright test -> classify the JSON report.
 // Exit 0 PASS, 1 FAIL, 78 PENDING (cases whose feature has not landed; never for a regression).
 // The Helius key goes to the specs through the child env only; output is redacted.
+/* global fetch, setTimeout */
 import { spawn } from "node:child_process";
 import { createWriteStream, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { createServer } from "node:net";
