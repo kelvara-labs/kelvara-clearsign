@@ -2,6 +2,8 @@
 
 One line per task: `M<n> | task | gates | minutes | decisions`
 
+M4 | S2 redispatch verification | localnet:up + localnet:check 11/11; selfcheck --fast G1 PASS, G2–G4 PENDING | 5 | Implementation already committed at 921e235; initial check found validator stopped, then fresh localnet:up succeeded using cached Helius mainnet clone and left validator running at 127.0.0.1:8899. IDL publish again returned Anchor 101; pinned IDL remains explicitly unverified. Full G6 awaits S3/S4 and engine; no gate PASS declaration.
+
 
 M0 | S0 launch.sh + cdp-check | G1 (lint ok) | 25 | tools/browser/launch.sh loads Solflare (newest installed version dir; the session's own launch.sh still points at 2.40.1_0, which no longer exists, now 2.41.2_0/2.42.0_0) + packages/extension/dist; `--wallet-only` until the extension builds. Fails closed if :28538 is held by a non-CDP service or the profile lock is live. cdp-check.mjs checks /json/version, loopback-only listener (ss), lists targets redacted.
 M0 | S0 CDP check | - | 5 | BLOCKED: 127.0.0.1:28538 is held by Docker container `kelvara-wallet-exposure-preview` (127.0.0.1:28538->8080, HTTP app returning 404 on /json/version). Browser cannot bind CDP there. Asked coordinator; not stopping a container I do not own.
