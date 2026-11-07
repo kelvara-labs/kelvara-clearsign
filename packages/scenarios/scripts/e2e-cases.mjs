@@ -9,7 +9,7 @@
 //   ... --serve     after setup, serve http://127.0.0.1:8784: GET /cases (whole object) and GET /cases/<role>;
 //                   trap and sweep are rebuilt on a fresh blockhash per request (same accounts and signers, the
 //                   seller re-signs the buy), admin is the fixed durable-nonce approval
-//   ... --no-setup  reuse the last setups (with --serve or --verify)
+//   ... --no-setup  reuse saved bytes for --verify (fails explicitly if stale); --serve rebuilds fresh bytes
 //   ... --with-ata-sweep  add case l4-sweep-ata: the realistic S9 sweep shape (ATA create + close). Opt-in until
 //                   engine E16 makes wallet.sweep prove it; today it analyzes as L1.
 // Localnet: reused when `localnet check` passes, else a fresh `localnet up` (S10 takeover of a foreign validator).
@@ -18,7 +18,7 @@
 // signer is the pubkey the test wallet must present. Public data only: never a key.
 import { spawnSync } from 'node:child_process';
 import { createServer } from 'node:http';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -99,10 +99,50 @@ async function setupAll() {
   await (await import('./sweep-local.mjs')).setup();
 }
 
-export function verify(cases) {
+/** Check the exact saved message, without changing its blockhash or existing signatures. */
+export async function checkSavedCase(c, rpc) {
+  const diagnostics = {};
+  const fail = (reason) => {
+    const error = new Error(`${c.role}: ${reason}; run scenario:e2e-cases setup again (saved bytes were not refreshed)`);
+    error.diagnostics = diagnostics;
+    throw error;
+  };
+  if (!c.durableNonce) {
+    diagnostics.blockhash = await rpc.call('isBlockhashValid', [c.recentBlockhash, { commitment: 'confirmed' }]);
+    if (diagnostics.blockhash?.value === false) fail('STALE saved blockhash is no longer valid');
+    if (diagnostics.blockhash?.value !== true) fail('blockhash validity could not be established');
+  }
+  diagnostics.simulation = await rpc.call('simulateTransaction', [c.tx, {
+    encoding: 'base64', commitment: 'confirmed', sigVerify: false, replaceRecentBlockhash: false
+  }]);
+  const result = diagnostics.simulation?.value;
+  if (!result || result.err !== null) fail(`saved transaction cannot simulate: ${JSON.stringify(result?.err ?? 'missing simulation result')}`);
+  return diagnostics;
+}
+
+export async function verify(cases) {
+  const { localRpc } = await import('./lib/tx.mjs');
+  const rpc = localRpc(cases.rpcUrl);
   const cli = join(REPO, 'packages', 'cli', 'dist', 'kelvara.mjs');
   const bad = [];
+  const evidenceDir = join(LOCAL, 'verify-failures', `${Date.now()}-${process.pid}`);
+  const recordFailure = (c, details) => {
+    mkdirSync(evidenceDir, { recursive: true });
+    const file = join(evidenceDir, `${c.role}.json`);
+    writeFileSync(file, JSON.stringify({ network: cases.network, rpcUrl: cases.rpcUrl, createdAt: cases.createdAt, case: c, ...details }, null, 2) + '\n');
+    return file;
+  };
   for (const c of cases.cases) {
+    let diagnostics;
+    try {
+      diagnostics = await checkSavedCase(c, rpc);
+    } catch (e) {
+      const evidence = recordFailure(c, { error: String(e?.message ?? e), diagnostics: e.diagnostics });
+      const reason = `${e?.message ?? e}; evidence ${evidence}`;
+      console.log(`[e2e-cases] BAD ${reason}`);
+      bad.push(reason);
+      continue;
+    }
     const r = spawnSync(process.execPath, [cli, 'analyze', '--network', 'localnet', '--wallet', c.signer, '--inventory', '--json', '--tx', c.tx], { cwd: REPO, encoding: 'utf8', maxBuffer: 64 << 20 });
     let level = `exit ${r.status}`, rules = '';
     try {
@@ -110,8 +150,11 @@ export function verify(cases) {
       level = out.alertLevel;
       rules = out.report.claims.map((x) => `${x.ruleId}:${x.level}`).join(', ');
     } catch { /* level stays the exit status */ }
-    console.log(`[e2e-cases] ${c.role} ${level === c.expectLevel ? 'ok ' : 'BAD'} ${level} (expected ${c.expectLevel}) ${rules}`);
-    if (level !== c.expectLevel) bad.push(`${c.role}: ${level}, expected ${c.expectLevel}`);
+    console.log(`[e2e-cases] ${c.role} ${r.status === 0 && level === c.expectLevel ? 'ok ' : 'BAD'} ${level} (expected ${c.expectLevel}) ${rules}`);
+    if (r.status !== 0 || level !== c.expectLevel) {
+      const evidence = recordFailure(c, { diagnostics, exitStatus: r.status, signal: r.signal, stdout: r.stdout, stderr: r.stderr, error: String(r.error ?? '') });
+      bad.push(`${c.role}: ${level}, expected ${c.expectLevel}; evidence ${evidence}`);
+    }
   }
   if (bad.length) throw new Error(bad.join('; '));
 }
@@ -151,7 +194,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     const cases = fromDisk(opts);
     writeFileSync(OUT, JSON.stringify(cases, null, 2) + '\n');
     console.log(`[e2e-cases] ${cases.cases.map((c) => `${c.role} signer ${c.signer}`).join('; ')} -> packages/scenarios/.localnet/e2e-cases.json`);
-    if (args.includes('--verify')) verify(cases);
+    if (args.includes('--verify')) await verify(cases);
     if (json) process.stdout.write(JSON.stringify(cases) + '\n');
     if (args.includes('--serve')) {
       await serve(PORT, opts);
