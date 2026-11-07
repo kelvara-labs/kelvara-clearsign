@@ -112,8 +112,10 @@ export function checkHosts(bundle, inert = []) {
     }
   }
   const unused = inert.map((e, i) => (used.has(i) ? null : e?.string)).filter(Boolean);
-  const note = unused.length ? `; ${unused.length} inert entr${unused.length === 1 ? "y" : "ies"} not seen (stale?)` : "";
-  return result([...bad.values()], `only Helius and localhost reach ${sinks} network sink(s); ${allowed} audited inert string occurrence(s)${note}`);
+  // Stale entries are noise and would silently pre-approve the string if it came back: name them so they get pruned.
+  const note = unused.length ? `; ${unused.length} unused inert entr${unused.length === 1 ? "y" : "ies"} (prune from inert-hosts.json): ${unused.map((u) => `"${u}"`).join(", ")}` : "";
+  const out = result([...bad.values()], `only Helius and localhost reach ${sinks} network sink(s); ${allowed} audited inert string occurrence(s)${note}`);
+  return Object.assign(out, { unused });
 }
 
 const FORBIDDEN_FILES = [/(^|\/)\.env(\.|$)/, /\.keypair\.json$/, /(^|\/)\.keys\//, /(^|\/)id\.json$/, /\.pem$/];

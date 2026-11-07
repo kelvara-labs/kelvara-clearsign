@@ -1,11 +1,12 @@
 // G7 per-level behavior (PLAN M5 Report UI):
-//   L4 sweep: rejected at once with 4001, no Sign anyway, wallet call count 0.
+//   L4 sweep: rejected at once with 4001, no Sign anyway, wallet call count 0. Both shapes: the plain sweep and the
+//             realistic ATA create + close sweep (l4-sweep-ata, default since V11: E16 proves it L4).
 //   L3 admin: held, Block is the default; Block -> 4001 and count 0;
 //             Sign anyway needs hold-to-confirm and then calls the wallet once with identical bytes.
 //   L2 trap:  held with both buttons; Block -> 4001 and count 0.
 //   Benign:   no modal; the wallet is called once with identical bytes.
 // Levels L2-L4 run on LIVE LOCALNET scenarios in their pre-execution state (coordinator, V10): admin-local,
-// trap-local, sweep-local from scenarios S12, served by e2e.mjs; the extension's network is localnet and the test
+// trap-local, sweep-local from scenarios S12 (+ S12b l4-sweep-ata via --with-ata-sweep), served by e2e.mjs; the extension's network is localnet and the test
 // wallet presents the scenario's signer (SignArgs.account). Benign keeps a real mainnet fixture: its level does not
 // depend on chain state.
 import {
@@ -32,8 +33,8 @@ async function modalOrFail(ext: Ext, what: string) {
   return m!;
 }
 
-test("L4 sweep (localnet) is rejected at once with no Sign anyway; wallet never called", async ({ ext }) => {
-  const c = await needLocal("l4-sweep");
+for (const role of ["l4-sweep", "l4-sweep-ata"] as const) test(`L4 ${role === "l4-sweep" ? "sweep" : "realistic ATA create + close sweep"} (localnet) is rejected at once with no Sign anyway; wallet never called`, async ({ ext }) => {
+  const c = await needLocal(role);
   expect(c.expectLevel).toBe("L4");
   const page = await openDapp(ext, "localnet");
   const p = startSign(page, { path: "ws-app-ready", txs: [c.tx], chain: c.chain, account: c.signer });
