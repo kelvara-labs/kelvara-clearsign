@@ -4,6 +4,7 @@ import {
   MAX_TX_BYTES,
   MAX_TXS,
   MAX_WALLET_NAME,
+  isAddress,
   isChain,
   type NoticeMethod,
   type SignMethod
@@ -12,7 +13,7 @@ import type { HookChannel } from "./channel.js";
 
 export interface Guard {
   /** true only when the extension explicitly allows; never throws. */
-  hold(method: SignMethod, wallet: string, chain: unknown, txs: Uint8Array[]): Promise<boolean>;
+  hold(method: SignMethod, wallet: string, chain: unknown, txs: Uint8Array[], account?: unknown): Promise<boolean>;
   notice(method: NoticeMethod, wallet: string): void;
 }
 
@@ -30,13 +31,14 @@ export function cleanWalletName(name: unknown, fallback: string): string {
 
 export function makeGuard(channel: HookChannel, btoaFn: (s: string) => string): Guard {
   return {
-    async hold(method, wallet, chain, txs) {
+    async hold(method, wallet, chain, txs, account) {
       try {
         if (txs.length < 1 || txs.length > MAX_TXS) return false;
         if (txs.some((t) => t.length < 1 || t.length > MAX_TX_BYTES)) return false;
         return await channel.hold({
           method,
           wallet: cleanWalletName(wallet, "unknown"),
+          account: isAddress(account) ? account : null,
           chain: isChain(chain) ? chain : null,
           txs: txs.map((t) => b64encode(t, btoaFn))
         });

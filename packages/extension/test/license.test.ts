@@ -156,7 +156,7 @@ describe("limited report", () => {
 
 describe("service worker: the license changes the report, never the decision", () => {
   const tx = b64encode(messageToWireTx(Uint8Array.from([1, 0, 0, 1, ...new Uint8Array(32), ...new Uint8Array(32), 0])));
-  const req: SignRequest = { v: 1, kind: "sign", id: "a".repeat(32), method: "solana:signTransaction", wallet: "W", chain: "solana:devnet", txs: [tx] };
+  const req: SignRequest = { v: 1, kind: "sign", id: "a".repeat(32), method: "solana:signTransaction", wallet: "W", account: null, chain: "solana:devnet", txs: [tx] };
   const settings = { heliusApiKey: "0123abcd-4567-89ef-0123-456789abcdef", network: "devnet" as const, passThrough: false, licenseKey: "KSG1.x.y" };
   const engineAt = (level: 0 | 1 | 2 | 3 | 4): EngineLike => ({
     analyze: async () => {

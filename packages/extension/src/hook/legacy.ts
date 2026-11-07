@@ -6,7 +6,7 @@
 //     replaced by our private copy;
 //   - late injection is trapped with property setters on window and window.phantom,
 //     plus a rescan driven by a MutationObserver and a few timed passes.
-import { b58decode, bytesEqual, messageToWireTx, txToBytes } from "../shared/codec.js";
+import { b58decode, b58encode, bytesEqual, messageToWireTx, txToBytes } from "../shared/codec.js";
 import type { NoticeMethod, SignMethod } from "../shared/protocol.js";
 import { cleanWalletName, rejection, type Guard } from "./guard.js";
 import { pristine, type HookWindow } from "./pristine.js";
@@ -119,6 +119,28 @@ export function installLegacyHook(win: HookWindow, guard: Guard): LegacyHook {
     return cleanWalletName(safeGet(p, provider, "name"), label);
   }
 
+  /** provider.publicKey as base58 (PublicKey-like with toBase58, or 32 raw bytes), else null. Never throws. */
+  function providerAccount(provider: object): string | null {
+    try {
+      const key = safeGet(p, provider, "publicKey");
+      if (key instanceof Uint8Array) return key.length === 32 ? b58encode(key) : null;
+      if (typeof key !== "object" || key === null) return null;
+      const toBase58 = safeGet(p, key, "toBase58");
+      if (typeof toBase58 === "function") {
+        const s = p.apply(toBase58 as Fn, key, []);
+        return typeof s === "string" ? s : null;
+      }
+      const toBytes = safeGet(p, key, "toBytes");
+      if (typeof toBytes === "function") {
+        const b = p.apply(toBytes as Fn, key, []);
+        return b instanceof Uint8Array && b.length === 32 ? b58encode(b) : null;
+      }
+    } catch {
+      /* a hint only */
+    }
+    return null;
+  }
+
   function makeWrapper(orig: Fn, provider: object, key: string, label: string): Fn {
     const wrapper = function (this: unknown, ...args: unknown[]): unknown {
       const plan = safeClassify(key, args);
@@ -129,7 +151,7 @@ export function installLegacyHook(win: HookWindow, guard: Guard): LegacyHook {
       }
       if (plan.kind === "reject") return p.Promise.reject(rejection());
       return (async () => {
-        const allow = await guard.hold(plan.method, walletName(provider, label), null, plan.txs);
+        const allow = await guard.hold(plan.method, walletName(provider, label), null, plan.txs, providerAccount(provider));
         if (!allow) throw rejection();
         // The page may have changed the transaction object during the hold.
         const again = safeClassify(key, args);
