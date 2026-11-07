@@ -12,7 +12,8 @@
     "test:decode": "node ../../tools/selfcheck/src/pending.mjs G2 M1",
     "test:rules": "node ../../tools/selfcheck/src/pending.mjs G3 M2",
     "test:contract": "node ../../tools/selfcheck/src/pending.mjs G4 M2",
-    "test:determinism": "node ../../tools/selfcheck/src/pending.mjs G9 M7"
+    "test:determinism": "node ../../tools/selfcheck/src/pending.mjs G9 M7",
+    "fixtures:decode-spike": "node scripts/fetch-decode-spike.mjs"
   },
   "dependencies": {
     "@codama/dynamic-parsers": "1.4.2",

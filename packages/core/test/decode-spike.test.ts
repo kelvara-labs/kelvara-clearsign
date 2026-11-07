@@ -170,6 +170,39 @@ describe("E2 spike: P0 IDLs to Codama roots", () => {
     }
   });
 
+  it("decodes every scenarios fixture (fixtures/tx) for the P0 Codama programs", async () => {
+    const fxDir = path.resolve(idlsDir, "../../fixtures");
+    const fm = JSON.parse(readFileSync(path.join(fxDir, "tx/manifest.json"), "utf8")) as { fixtures: { path: string; slug: string }[] };
+    const SLUG: Record<string, string> = { system: "system", "spl-token": "token", "token-2022": "token-2022", "squads-v4": "squads-v4", "drift-v2": "drift-v2" };
+    // These fixtures carry no lookup table accounts; unresolved addresses stay null (positional names still apply).
+    const noTables = { getMultipleAccounts: async (a: readonly string[]) => a.map(() => null) };
+    let named = 0;
+    let total = 0;
+    let driftNonAnchor = 0;
+    const misses: string[] = [];
+    for (const f of fm.fixtures) {
+      const fx = JSON.parse(readFileSync(path.join(fxDir, f.path), "utf8")) as { signature: string; transaction: string };
+      const session = await ingestSession([{ base64: fx.transaction }], { reader: noTables as never });
+      for (const d of decoder.decodeSession(session)[0]!) {
+        if (!Object.values(SLUG).includes(d.programName ?? "") || !Object.values(PROGRAM_IDS).includes(d.programAddress)) continue;
+        total++;
+        if (d.status === "named") named++;
+        // Drift handles a non-Anchor instruction whose data starts with ff ff ff ff (21 bytes, absent
+        // from its IDL). It must stay Unknown; anything else unnamed is a failure.
+        else if (d.programName === "drift-v2" && d.data.length === 21 && d.data.subarray(0, 4).every((b) => b === 0xff)) {
+          expect(d.reason).toBe("no_matching_instruction");
+          driftNonAnchor++;
+        }
+        else misses.push(`${f.slug} ${fx.signature.slice(0, 8)} ix ${d.index} ${d.programName} ${d.reason}`);
+      }
+    }
+    expect(total).toBeGreaterThan(30);
+    expect(misses).toEqual([]);
+    // 5 Drift fixtures each carry one such instruction (93 P0 instructions, 88 named at E2).
+    expect(driftNonAnchor).toBe(5);
+    expect(named + driftNonAnchor).toBe(total);
+  });
+
   it("fixture bytes are real: the stored wire bytes round-trip", () => {
     for (const t of TXS) expect(fromBase64(t.wireBase64).length).toBeGreaterThan(64);
   });
