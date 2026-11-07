@@ -10,6 +10,9 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test:localnet": "node ../../tools/selfcheck/src/pending.mjs G6 M4",
     "fixtures:fetch": "node scripts/fixtures-fetch.mjs",
-    "fixtures:verify": "node scripts/fixtures-verify.mjs"
+    "fixtures:verify": "node scripts/fixtures-verify.mjs",
+    "localnet:up": "node scripts/localnet.mjs up",
+    "localnet:check": "node scripts/localnet.mjs check",
+    "localnet:down": "node scripts/localnet.mjs down"
   }
 }
