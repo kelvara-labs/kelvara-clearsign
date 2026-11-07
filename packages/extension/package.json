@@ -1,0 +1,12 @@
+{
+  "name": "@kelvara/extension",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "node ../../esbuild.config.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

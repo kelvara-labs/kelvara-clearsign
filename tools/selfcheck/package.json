@@ -1,0 +1,10 @@
+{
+  "name": "@kelvara/selfcheck",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:replay": "node src/pending.mjs G8 M6",
+    "test:security": "node src/pending.mjs G10 M7"
+  }
+}

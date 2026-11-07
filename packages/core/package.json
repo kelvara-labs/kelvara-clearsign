@@ -1,0 +1,17 @@
+{
+  "name": "@kelvara/core",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:decode": "node ../../tools/selfcheck/src/pending.mjs G2 M1",
+    "test:rules": "node ../../tools/selfcheck/src/pending.mjs G3 M2",
+    "test:contract": "node ../../tools/selfcheck/src/pending.mjs G4 M2",
+    "test:determinism": "node ../../tools/selfcheck/src/pending.mjs G9 M7"
+  }
+}
