@@ -69,6 +69,28 @@ function constantsOf(ix: InstructionNode): Constant[] | null {
 const matches = (data: Uint8Array, cs: Constant[]): boolean =>
   cs.every(({ offset, bytes }) => offset + bytes.length <= data.length && bytes.every((b, i) => data[offset + i] === b));
 
+/** Defined types of the program that the given instructions reach through definedTypeLinkNodes (transitively). */
+function reachableTypes(program: ProgramNode, instructions: InstructionNode[]): ProgramNode["definedTypes"] {
+  const byName = new Map((program.definedTypes ?? []).map((t) => [t.name, t]));
+  const seen = new Set<string>();
+  const queue: unknown[] = [...instructions];
+  while (queue.length) {
+    const v = queue.pop();
+    if (Array.isArray(v)) {
+      for (const x of v) queue.push(x);
+    } else if (v && typeof v === "object") {
+      const o = v as { kind?: string; name?: string; program?: { name?: string } };
+      if (o.kind === "definedTypeLinkNode" && typeof o.name === "string" && (!o.program || o.program.name === program.name) && !seen.has(o.name)) {
+        seen.add(o.name);
+        const t = byName.get(o.name as never);
+        if (t) queue.push(t);
+      }
+      for (const x of Object.values(o)) if (x && typeof x === "object") queue.push(x);
+    }
+  }
+  return (program.definedTypes ?? []).filter((t) => seen.has(t.name));
+}
+
 export interface Prefilter {
   /** A root that holds only this program's candidate instructions for the data, or null when none can match. */
   rootFor(data: Uint8Array): RootNode | null;
@@ -86,7 +108,11 @@ export function createPrefilter(root: RootNode, program: ProgramNode): Prefilter
       if (pruned === undefined) {
         // Other programs stay (type links may point at them); parseInstruction filters by program address.
         const others = [root.program, ...(root.additionalPrograms ?? [])].filter((p) => p.publicKey !== program.publicKey);
-        pruned = { ...root, program: { ...program, instructions: picked.map((c) => c.node) }, additionalPrograms: others };
+        // Codama re-visits every node of the root it is given on each parse (its visitor dispatch costs a
+        // regex case conversion per node: ~13 ms per marginfi call with all 91 instructions' types), so keep
+        // only the defined types the candidates reach; accounts, PDAs and errors play no part in parsing.
+        const nodes = picked.map((c) => c.node);
+        pruned = { ...root, program: { ...program, instructions: nodes, definedTypes: reachableTypes(program, nodes), accounts: [], pdas: [], errors: [] }, additionalPrograms: others };
         if (cache.size < 4096) cache.set(key, pruned);
       }
       return pruned;

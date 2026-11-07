@@ -1,0 +1,421 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "squads-v4",
+  "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/squads-v4.json",
+  "reviewed": "E12 (engine), 2026-11-07: names checked against roots/squads-v4.json (on-chain IDL; it has no transactionBuffer* instructions)",
+  "entries": [
+    {
+      "instruction": "programConfigInit",
+      "discriminator": "b8bcc6c3cd7c75d8",
+      "authority": null,
+      "signers": [
+        "initializer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "program config init: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "programConfigSetAuthority",
+      "discriminator": "eef224b5208fd84b",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "squads.programConfig",
+      "class": "admin_control",
+      "changes": "hands the Squads program config authority to another key",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "programConfigSetMultisigCreationFee",
+      "discriminator": "65a0f93f9ad7990d",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "squads.programConfig",
+      "class": "config",
+      "changes": "changes the multisig creation fee",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "programConfigSetTreasury",
+      "discriminator": "6f2ef37590bca26b",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "squads.programConfig",
+      "class": "config",
+      "changes": "changes where creation fees go",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigCreate",
+      "discriminator": "7a4d509f54585ac5",
+      "authority": null,
+      "signers": [
+        "createKey",
+        "creator"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "multisig create: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "multisigCreateV2",
+      "discriminator": "32ddc75d28f58be9",
+      "authority": null,
+      "signers": [
+        "createKey",
+        "creator"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "multisig create v2: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "multisigAddMember",
+      "discriminator": "01dbd76cb8e5d608",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority",
+        "rentPayer"
+      ],
+      "capability": "squads.members",
+      "class": "admin_control",
+      "changes": "adds a member (with its permissions) to a controlled multisig",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigRemoveMember",
+      "discriminator": "d975b1d2b691da48",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority",
+        "rentPayer"
+      ],
+      "capability": "squads.members",
+      "class": "admin_control",
+      "changes": "removes a member from a controlled multisig",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigSetTimeLock",
+      "discriminator": "949a794dd4fe9b48",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority",
+        "rentPayer"
+      ],
+      "capability": "squads.timeLock",
+      "class": "admin_control",
+      "changes": "changes the delay between approval and execution (0 = none)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigChangeThreshold",
+      "discriminator": "8d2a0f7ea95c3eb5",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority",
+        "rentPayer"
+      ],
+      "capability": "squads.threshold",
+      "class": "admin_control",
+      "changes": "changes how many approvals a proposal needs",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigSetConfigAuthority",
+      "discriminator": "8f5dc78f5ca9c1e8",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority",
+        "rentPayer"
+      ],
+      "capability": "squads.configAuthority",
+      "class": "admin_control",
+      "changes": "hands the config authority to another key (or makes the multisig autonomous)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigSetRentCollector",
+      "discriminator": "30cc4139d2469c4a",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority",
+        "rentPayer"
+      ],
+      "capability": "squads.rentCollector",
+      "class": "config",
+      "changes": "changes who collects rent from closed transaction accounts",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigAddSpendingLimit",
+      "discriminator": "0bf29f2a56c55973",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority",
+        "rentPayer"
+      ],
+      "capability": "squads.spendingLimit",
+      "class": "fund_movement",
+      "changes": "lets named members spend from a vault without a proposal, up to the limit",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "multisigRemoveSpendingLimit",
+      "discriminator": "e4c6886f7b04b271",
+      "authority": "configAuthority",
+      "signers": [
+        "configAuthority"
+      ],
+      "capability": "squads.spendingLimit",
+      "class": "fund_movement",
+      "changes": "removes a spending limit",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "configTransactionCreate",
+      "discriminator": "9bec57e4894b5127",
+      "authority": "creator",
+      "signers": [
+        "creator",
+        "rentPayer"
+      ],
+      "capability": "squads.members",
+      "class": "admin_control",
+      "changes": "proposes config actions (members, threshold, time lock, spending limits) for an autonomous multisig",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "configTransactionExecute",
+      "discriminator": "7292f4bdfc8c2428",
+      "authority": "member",
+      "signers": [
+        "member",
+        "rentPayer"
+      ],
+      "capability": "squads.members",
+      "class": "admin_control",
+      "changes": "applies approved config actions",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "vaultTransactionCreate",
+      "discriminator": "30fa4ea8d0e2dad3",
+      "authority": "creator",
+      "signers": [
+        "creator",
+        "rentPayer"
+      ],
+      "capability": "squads.vault",
+      "class": "fund_movement",
+      "changes": "proposes any instructions signed by a vault",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "vaultTransactionExecute",
+      "discriminator": "c208a15799a419ab",
+      "authority": "member",
+      "signers": [
+        "member"
+      ],
+      "capability": "squads.vault",
+      "class": "fund_movement",
+      "changes": "runs an approved vault transaction with the vault's signature (anything the vault controls)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "batchCreate",
+      "discriminator": "c28e8d1137b914f8",
+      "authority": null,
+      "signers": [
+        "creator",
+        "rentPayer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "batch create: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "batchAddTransaction",
+      "discriminator": "5964e0124546364c",
+      "authority": null,
+      "signers": [
+        "member",
+        "rentPayer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "batch add transaction: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "batchExecuteTransaction",
+      "discriminator": "ac2cb398157feab4",
+      "authority": "member",
+      "signers": [
+        "member"
+      ],
+      "capability": "squads.vault",
+      "class": "fund_movement",
+      "changes": "runs one approved batch transaction with the vault's signature",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "proposalCreate",
+      "discriminator": "dc3c49e01e6c4f9f",
+      "authority": "creator",
+      "signers": [
+        "creator",
+        "rentPayer"
+      ],
+      "capability": "squads.vote",
+      "class": "other",
+      "changes": "opens a proposal for a transaction",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "proposalActivate",
+      "discriminator": "0b225cf89a1b336a",
+      "authority": null,
+      "signers": [
+        "member"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "proposal activate: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "proposalApprove",
+      "discriminator": "9025a488bcd82af8",
+      "authority": "member",
+      "signers": [
+        "member"
+      ],
+      "capability": "squads.vote",
+      "class": "admin_control",
+      "changes": "approves a proposal; at the threshold it becomes executable",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "proposalReject",
+      "discriminator": "f33e869ce66af687",
+      "authority": null,
+      "signers": [
+        "member"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "proposal reject: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "proposalCancel",
+      "discriminator": "1b2a7fed26a354cb",
+      "authority": null,
+      "signers": [
+        "member"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "proposal cancel: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "spendingLimitUse",
+      "discriminator": "1039827fc1149b86",
+      "authority": "member",
+      "signers": [
+        "member"
+      ],
+      "capability": "squads.spendingLimit",
+      "class": "fund_movement",
+      "changes": "spends from a vault under a spending limit, without a proposal",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "configTransactionAccountsClose",
+      "discriminator": "50cb54359770bbba",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "account_control",
+      "changes": "config transaction accounts close: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "vaultTransactionAccountsClose",
+      "discriminator": "c447bbb00223aaa5",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "vault transaction accounts close: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "vaultBatchTransactionAccountClose",
+      "discriminator": "8612136a814461f7",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "vault batch transaction account close: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "batchAccountsClose",
+      "discriminator": "dac407af82660bff",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "account_control",
+      "changes": "batch accounts close: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": []
+}

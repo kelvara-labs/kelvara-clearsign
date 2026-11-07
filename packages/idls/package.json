@@ -6,18 +6,19 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "idls:build": "node ../../tools/selfcheck/src/pending.mjs idls:build M3",
-    "test:registry": "node ../../tools/selfcheck/src/pending.mjs G5 M3",
-    "idls:fetch": "node scripts/fetch-idls.mjs",
-    "idls:roots": "node scripts/build-roots.mjs"
+    "idls:build": "esbuild scripts/idls-build.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/idls-build.mjs && node dist/scripts/idls-build.mjs",
+    "test:registry": "vitest run test/registry.test.ts",
+    "fixtures:registry": "esbuild scripts/record-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-fixtures.mjs && node dist/scripts/record-fixtures.mjs"
   },
   "dependencies": {
     "@solana/kit": "8.5.0"
   },
   "devDependencies": {
     "@codama/nodes": "1.11.0",
-    "@codama/nodes-from-anchor": "1.5.6"
+    "@codama/nodes-from-anchor": "1.5.6",
+    "@kelvara/core": "workspace:*",
+    "vitest": "3.2.7"
   }
 }

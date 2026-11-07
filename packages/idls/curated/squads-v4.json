@@ -1,0 +1,27 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "squads-v4",
+  "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+  "reviewed": "E12 (engine), 2026-11-07: names checked against roots/squads-v4.json (on-chain IDL; it has no transactionBuffer* instructions)",
+  "instructions": [
+    { "instruction": "multisigAddMember", "authority": "configAuthority", "capability": "squads.members", "class": "admin_control", "changes": "adds a member (with its permissions) to a controlled multisig" },
+    { "instruction": "multisigRemoveMember", "authority": "configAuthority", "capability": "squads.members", "class": "admin_control", "changes": "removes a member from a controlled multisig" },
+    { "instruction": "multisigChangeThreshold", "authority": "configAuthority", "capability": "squads.threshold", "class": "admin_control", "changes": "changes how many approvals a proposal needs" },
+    { "instruction": "multisigSetTimeLock", "authority": "configAuthority", "capability": "squads.timeLock", "class": "admin_control", "changes": "changes the delay between approval and execution (0 = none)" },
+    { "instruction": "multisigSetConfigAuthority", "authority": "configAuthority", "capability": "squads.configAuthority", "class": "admin_control", "changes": "hands the config authority to another key (or makes the multisig autonomous)" },
+    { "instruction": "multisigSetRentCollector", "authority": "configAuthority", "capability": "squads.rentCollector", "class": "config", "changes": "changes who collects rent from closed transaction accounts" },
+    { "instruction": "multisigAddSpendingLimit", "authority": "configAuthority", "capability": "squads.spendingLimit", "class": "fund_movement", "changes": "lets named members spend from a vault without a proposal, up to the limit" },
+    { "instruction": "multisigRemoveSpendingLimit", "authority": "configAuthority", "capability": "squads.spendingLimit", "class": "fund_movement", "changes": "removes a spending limit" },
+    { "instruction": "spendingLimitUse", "authority": "member", "capability": "squads.spendingLimit", "class": "fund_movement", "changes": "spends from a vault under a spending limit, without a proposal" },
+    { "instruction": "configTransactionCreate", "authority": "creator", "capability": "squads.members", "class": "admin_control", "changes": "proposes config actions (members, threshold, time lock, spending limits) for an autonomous multisig" },
+    { "instruction": "configTransactionExecute", "authority": "member", "capability": "squads.members", "class": "admin_control", "changes": "applies approved config actions" },
+    { "instruction": "vaultTransactionCreate", "authority": "creator", "capability": "squads.vault", "class": "fund_movement", "changes": "proposes any instructions signed by a vault" },
+    { "instruction": "vaultTransactionExecute", "authority": "member", "capability": "squads.vault", "class": "fund_movement", "changes": "runs an approved vault transaction with the vault's signature (anything the vault controls)" },
+    { "instruction": "batchExecuteTransaction", "authority": "member", "capability": "squads.vault", "class": "fund_movement", "changes": "runs one approved batch transaction with the vault's signature" },
+    { "instruction": "proposalApprove", "authority": "member", "capability": "squads.vote", "class": "admin_control", "changes": "approves a proposal; at the threshold it becomes executable" },
+    { "instruction": "proposalCreate", "authority": "creator", "capability": "squads.vote", "class": "other", "changes": "opens a proposal for a transaction" },
+    { "instruction": "programConfigSetAuthority", "authority": "authority", "capability": "squads.programConfig", "class": "admin_control", "changes": "hands the Squads program config authority to another key" },
+    { "instruction": "programConfigSetMultisigCreationFee", "authority": "authority", "capability": "squads.programConfig", "class": "config", "changes": "changes the multisig creation fee" },
+    { "instruction": "programConfigSetTreasury", "authority": "authority", "capability": "squads.programConfig", "class": "config", "changes": "changes where creation fees go" }
+  ]
+}

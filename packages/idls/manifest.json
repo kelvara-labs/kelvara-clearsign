@@ -1,57 +1,97 @@
 {
-  "generatedAt": "2026-11-07T07:48:15.743Z",
+  "schema": "kelvara.idl-manifest/v1",
+  "generatedAt": "2026-11-07T17:06:03.222Z",
   "idls": [
     {
       "name": "system",
       "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "upgradeAuthority": null,
+      "programData": null,
       "format": "codama",
       "source": "github.com/solana-program/system/blob/e9cb05138ea802b01f1ddf79ea140dcd765c9db6/idl.json",
       "client": "@solana-program/system@0.16.0",
       "commit": "e9cb05138ea802b01f1ddf79ea140dcd765c9db6",
       "sha256": "bb1a83194457a7fc735f9e5a806ecaced94a17276fc7b45f356171810f15b63a",
-      "verified": false
+      "verified": false,
+      "verification": "official Codama IDL from the program's repo at the commit that published the pinned client; native program, no on-chain IDL account"
     },
     {
       "name": "token",
       "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "upgradeAuthority": null,
+      "programData": "3gvYRKWyXRR9xKWe1ZjPhLY5ZJRN7KDB4rFZFGoJfFk2",
       "format": "codama",
       "source": "github.com/solana-program/token/blob/31646dce3df0a03d468a14913f01b9fd3c3adad0/idl.json",
       "client": "@solana-program/token@0.18.0",
       "commit": "31646dce3df0a03d468a14913f01b9fd3c3adad0",
       "sha256": "33add106ed36fead9222bfd882f1b364f3c4714346becefd5fa6068652b0cc33",
-      "verified": false
+      "verified": false,
+      "verification": "official Codama IDL from the program's repo at the commit that published the pinned client; native program, no on-chain IDL account"
     },
     {
       "name": "token-2022",
       "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "priority": "P0",
+      "upgradeAuthority": "AeLmXCbPaQHGWRLr2saFsEVfmMNuKnxRAbWCT9P5twgz",
+      "programData": "DoU57AYuPFu2QU514RktNPG22QhApEjnKxnBcu4BHDTY",
       "format": "codama",
       "source": "github.com/solana-program/token-2022/blob/e6b4af36a3dbdfe6f66aaf0c564427fa56671bb0/idl.json",
       "client": "@solana-program/token-2022@0.20.0",
       "commit": "e6b4af36a3dbdfe6f66aaf0c564427fa56671bb0",
       "sha256": "13cbda7213599f3312e1b7ffd1c7f176f36ebd74dba9feabe6e9a6874dc1d5d2",
-      "verified": false
+      "verified": false,
+      "verification": "official Codama IDL from the program's repo at the commit that published the pinned client; native program, no on-chain IDL account"
     },
     {
       "name": "squads-v4",
       "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "priority": "P0",
+      "upgradeAuthority": null,
+      "programData": "Fy3YMJCvwbAXUgUM5b91ucUVA3jYzwWLHL3MwBqKsh8n",
       "format": "anchor-legacy",
       "source": "anchor:idl account 6i4UjrDtkc7dqEmCyNDRfoxnAhDKSrY92u96Z74nRFdX (Helius mainnet)",
-      "slot": 466433910,
+      "slot": 466589502,
+      "idlAddress": "6i4UjrDtkc7dqEmCyNDRfoxnAhDKSrY92u96Z74nRFdX",
       "idlAuthority": "HM5y4mz3Bt9JY9mr1hkyhnvqxSH4H2u2451j7Hc2dtvK",
       "sha256": "e708a9d66e3e7bb338951a417a0d6582e1ecf2b591f0918d7980bc0fac7966fd",
       "inflatedSha256": "bf3570d92ed7d5b7d1a85fe822bc911b19f1a091320763f36092f49246f8fad2",
-      "verified": false
+      "verified": false,
+      "verification": "on-chain IDL account, hash pinned, but the program is immutable (no upgrade authority), so the IDL authority HM5y4mz3Bt9JY9mr1hkyhnvqxSH4H2u2451j7Hc2dtvK cannot be tied to the deployed code"
     },
     {
       "name": "drift-v2",
       "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+      "priority": "P0",
+      "upgradeAuthority": "8jj7zJgdr5bDndc7evM74FMGwzLPmd4u4QxNzFi1BMai",
+      "programData": "7dLgmtcTavcguNoynVimF9ZNVb13FvhXVRfj2HyrDGaP",
       "format": "anchor-legacy",
       "source": "anchor:idl account 8BKPjRu7Hvd6Y2J67EdLx9MsrZFQwEMVwYg7NeVbAPF8 (Helius mainnet)",
-      "slot": 466433910,
+      "slot": 466589502,
+      "idlAddress": "8BKPjRu7Hvd6Y2J67EdLx9MsrZFQwEMVwYg7NeVbAPF8",
       "idlAuthority": "Fqo8WncpiP55ExPhuWLzMbm1cuYuJpXjhQPnd8ak3Pyn",
       "sha256": "0a1e0bda015d8bc215b088131d9a93e3eeefd8bac494b14f4bf3dfcdeb41758f",
       "inflatedSha256": "2f2c57bb908f83fbded2b8fe6d8ca05d14b41e42f0617c2e2d2d523a0de1d992",
-      "verified": false
+      "verified": false,
+      "verification": "on-chain IDL account, hash pinned, but its authority Fqo8WncpiP55ExPhuWLzMbm1cuYuJpXjhQPnd8ak3Pyn is not the upgrade authority 8jj7zJgdr5bDndc7evM74FMGwzLPmd4u4QxNzFi1BMai"
+    },
+    {
+      "name": "marginfi-v2",
+      "programId": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+      "priority": "P0-demo",
+      "upgradeAuthority": "J3oBkTkDXU3TcAggJEa3YeBZE5om5yNAdTtLVNXFD47",
+      "programData": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
+      "format": "anchor-0.1.0",
+      "source": "anchor:idl account 9tb2tzSkQqDng2h8dC2xbuKHfQpmPoZP4vnd5Y1rkmmK (Helius mainnet)",
+      "slot": 466589502,
+      "idlAddress": "9tb2tzSkQqDng2h8dC2xbuKHfQpmPoZP4vnd5Y1rkmmK",
+      "idlAuthority": "H5U6dy9ch6puEFPY3t8jEaVQnVfYPUDANQkA4XG6peUo",
+      "sha256": "5d95b34dda1d3e288b011a991d10e1e6e9db3414974b0721ae4ef50f49c60ad5",
+      "inflatedSha256": "c5c778c637cb617a44ac7a58177ffb144e2fb86be62ff4c5d71b566b84adac29",
+      "verified": false,
+      "verification": "on-chain IDL account, hash pinned, but its authority H5U6dy9ch6puEFPY3t8jEaVQnVfYPUDANQkA4XG6peUo is not the upgrade authority J3oBkTkDXU3TcAggJEa3YeBZE5om5yNAdTtLVNXFD47",
+      "note": "demo upgrade target (packages/scenarios/programs/marginfi_v2.idl.json is the same IDL account content); also PLAN P1 (heuristic, low confidence)"
     }
   ]
 }

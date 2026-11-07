@@ -1,0 +1,142 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "bpf-loader-upgradeable",
+  "programId": "BPFLoaderUpgradeab1e11111111111111111111111",
+  "kind": "curated",
+  "checkedAgainst": "packages/core/src/decode/builtin.ts (hand-written decoder)",
+  "reviewed": "E12 (engine), 2026-11-07: names checked against the hand-written decoder (packages/core/src/decode/builtin.ts)",
+  "entries": [
+    {
+      "instruction": "initializeBuffer",
+      "discriminator": "00000000",
+      "authority": null,
+      "signers": [],
+      "capability": "program.buffer",
+      "class": "other",
+      "changes": "creates a code buffer and names its authority",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "write",
+      "discriminator": "01000000",
+      "authority": "bufferAuthority",
+      "signers": [
+        "bufferAuthority"
+      ],
+      "capability": "program.buffer",
+      "class": "other",
+      "changes": "writes code into a buffer",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "deployWithMaxDataLen",
+      "discriminator": "02000000",
+      "authority": "authority",
+      "signers": [
+        "payer",
+        "authority"
+      ],
+      "capability": "program.upgrade",
+      "class": "code_control",
+      "changes": "deploys a new program and names its upgrade authority",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "upgrade",
+      "discriminator": "03000000",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "program.upgrade",
+      "class": "code_control",
+      "changes": "replaces the program's code with the buffer's",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "setAuthority",
+      "discriminator": "04000000",
+      "authority": "currentAuthority",
+      "signers": [
+        "currentAuthority"
+      ],
+      "capability": "program.upgrade",
+      "class": "code_control",
+      "changes": "hands the upgrade authority to another key (or makes the program immutable)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "close",
+      "discriminator": "05000000",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "program.upgrade",
+      "class": "account_control",
+      "changes": "closes the program or buffer and takes its rent; a closed program stops working",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "extendProgram",
+      "discriminator": "06000000",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": "program.upgrade",
+      "class": "other",
+      "changes": "grows ProgramData so larger code can be deployed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "setAuthorityChecked",
+      "discriminator": "07000000",
+      "authority": "currentAuthority",
+      "signers": [
+        "currentAuthority",
+        "newAuthority"
+      ],
+      "capability": "program.upgrade",
+      "class": "code_control",
+      "changes": "hands the upgrade authority to another key that co-signs",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "migrate",
+      "discriminator": "08000000",
+      "authority": "authority",
+      "signers": [
+        "authority"
+      ],
+      "capability": "program.upgrade",
+      "class": "code_control",
+      "changes": "migrates the program to the loader-v4",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "extendProgramChecked",
+      "discriminator": "09000000",
+      "authority": "authority",
+      "signers": [
+        "authority",
+        "payer"
+      ],
+      "capability": "program.upgrade",
+      "class": "other",
+      "changes": "grows ProgramData so larger code can be deployed (authority signs)",
+      "source": "curated",
+      "confidence": "curated"
+    }
+  ],
+  "authorityTypes": []
+}
