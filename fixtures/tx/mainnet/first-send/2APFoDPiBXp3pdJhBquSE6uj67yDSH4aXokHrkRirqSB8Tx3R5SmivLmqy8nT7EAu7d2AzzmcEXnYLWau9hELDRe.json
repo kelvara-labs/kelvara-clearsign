@@ -1,0 +1,62 @@
+{
+  "schema": "kelvara.fixture.tx/v1",
+  "network": "mainnet",
+  "signature": "2APFoDPiBXp3pdJhBquSE6uj67yDSH4aXokHrkRirqSB8Tx3R5SmivLmqy8nT7EAu7d2AzzmcEXnYLWau9hELDRe",
+  "slot": 466491846,
+  "blockTime": 1794050108,
+  "fetchedAt": "2026-11-07T11:30:41.917Z",
+  "source": "helius:getTransaction",
+  "program": {
+    "slug": "system",
+    "programId": "11111111111111111111111111111111",
+    "priority": "P0",
+    "name": "System"
+  },
+  "encoding": "base64",
+  "transaction": "ATob8W9c9N97Epq78GQYmJK35yj/a6rtk7zosFbnOT66sVSti/L70cxSsGFxlM2GCTkIPa7Al/RhbzK0j8pbGg0BAAIEHiJEcKtOLiaWJPMwb3TxZjS11LVlnb/DNIexBSmP2Xd+fNkUYcdumUkqFmJgctgtLBByXzBggSE2G36bZJKPJQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAACkgWvmAJjPryLi88JjaowLQBEzQgEexpDGESXMsY0+/gMDAAUCMHUAAAMACQMQJwAAAAAAAAICAAEMAgAAAD1wDXYAAAAA",
+  "sha256": "8d29b2a6dd1f20c7d2eaf8d37744d486e5ab20c7f9b6d1457f8ed7c925275a65",
+  "version": "legacy",
+  "invocation": "top-level",
+  "meta": {
+    "err": null,
+    "status": {
+      "Ok": null
+    },
+    "fee": 5300,
+    "preBalances": [
+      2005597489,
+      0,
+      1,
+      1
+    ],
+    "postBalances": [
+      25000000,
+      1980592189,
+      1,
+      1
+    ],
+    "innerInstructions": [],
+    "logMessages": [
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+      "Program ComputeBudget111111111111111111111111111111 success",
+      "Program 11111111111111111111111111111111 invoke [1]",
+      "Program 11111111111111111111111111111111 success"
+    ],
+    "preTokenBalances": [],
+    "postTokenBalances": [],
+    "rewards": [],
+    "loadedAddresses": {
+      "writable": [],
+      "readonly": []
+    },
+    "computeUnitsConsumed": 450,
+    "costUnits": 1784
+  },
+  "label": "first-time SOL transfer to a new address",
+  "tags": [
+    "first-send",
+    "benign"
+  ]
+}

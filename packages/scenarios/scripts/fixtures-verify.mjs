@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 // Offline check of fixtures/tx: every file matches the manifest, its bytes hash to sha256, the first
 // signature equals the file name, legacy/v0 messages parse cleanly, no fixture carries an api key, and
-// every program has at least --count fixtures. Exit 0 = all good. No network.
+// every program has at least --count fixtures; fixtures/poison re-derived from its recorded calls
+// (lib/poison-verify.mjs). Exit 0 = all good. No network.
 /* global Buffer */
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
@@ -9,6 +10,7 @@ import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PROGRAMS, DRIFT_REPLAY } from './fixture-programs.mjs';
 import { parseWireTransaction } from './wire.mjs';
+import { verifyPoisonFixtures } from './lib/poison-verify.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '../../../fixtures');
@@ -60,6 +62,8 @@ for (const p of PROGRAMS) {
 for (const r of DRIFT_REPLAY) {
   if (!manifest.fixtures.some((e) => e.path === `tx/drift-replay/${r.signature}.json`)) fail(`drift-replay ${r.role}: missing`);
 }
+const poison = verifyPoisonFixtures();
+for (const f of poison) fail(`poison: ${f}`);
 for (const f of failures) console.log(`FAIL ${f}`);
-console.log(`${failures.length ? 'FAIL' : 'PASS'} fixtures: ${manifest.fixtures.length} checked, ${PROGRAMS.length} programs, ${DRIFT_REPLAY.length} replay txs`);
+console.log(`${failures.length ? 'FAIL' : 'PASS'} fixtures: ${manifest.fixtures.length} checked, ${PROGRAMS.length} programs, ${DRIFT_REPLAY.length} replay txs, poison cases checked`);
 process.exitCode = failures.length ? 1 : 0;

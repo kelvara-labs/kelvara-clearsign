@@ -1,6 +1,6 @@
 {
   "schema": "kelvara.fixture.manifest/v1",
-  "count": 63,
+  "count": 88,
   "fixtures": [
     {
       "path": "tx/drift-replay/2HvMSgDEfKhNryYZKhjowrBY55rUx5MWtcWkG9hqxZCFBaTiahPwfynP1dxBSRk9s5UTVc8LFeS4Btvkm9pc2C4H.json",
@@ -34,6 +34,40 @@
       "invocation": "top-level",
       "sha256": "6f92d4cebca8968b1f375f82d56418da4a7b6ff6097051abf8dacae2167c4e60",
       "label": "Drift attack 2/2: approve and execute (AdvanceNonceAccount, proposalApprove, vaultTransactionExecute, UpdateAdmin)"
+    },
+    {
+      "path": "tx/localnet/admin/4LbBvq8NvwWJGRLbaf6b6kjuYWUe5JV5HuF2auiLd6CrebsSPB1wdZagC29wpbsFhgF9BC777f43yi1dGj2sBzSH.json",
+      "signature": "4LbBvq8NvwWJGRLbaf6b6kjuYWUe5JV5HuF2auiLd6CrebsSPB1wdZagC29wpbsFhgF9BC777f43yi1dGj2sBzSH",
+      "slot": 3375,
+      "slug": "squads-v4",
+      "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "c15159c58304dce21340f4dd3a86d79d9c797804673175ec533e116f192cc304",
+      "network": "localnet",
+      "label": "scenario:admin-local: Member A approves \"Q4 fee update\" on a durable nonce (its vault transaction gives the upgrade authority to the attacker); executed on localnet",
+      "tags": [
+        "scenario",
+        "admin"
+      ],
+      "e2e": "l3-batch"
+    },
+    {
+      "path": "tx/localnet/trap/5dH35ADAXRoXC9tCGYnDaqLRsTEctKPTFTVGv5pMMfUhq4oEs1YSwGqPfK3WGBecux3ggLsxmBKpoFJE1bhGfrfh.json",
+      "signature": "5dH35ADAXRoXC9tCGYnDaqLRsTEctKPTFTVGv5pMMfUhq4oEs1YSwGqPfK3WGBecux3ggLsxmBKpoFJE1bhGfrfh",
+      "slot": 3384,
+      "slug": "token-2022",
+      "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "3e9a098aa69f595cf53b7002bd5a405ebfa8786f41eb13fb715514e7995bc6d9",
+      "network": "localnet",
+      "label": "scenario:trap-local: buy 50,000 $SHINY (permanent delegate + freeze authority = creator) for 1 SOL; executed on localnet",
+      "tags": [
+        "scenario",
+        "trap"
+      ],
+      "e2e": "l2-trap"
     },
     {
       "path": "tx/mainnet/address-lookup-table/2ymw1vXSmcSYmAaGQJ4Po2mwgK51nE4Pn4YeuZKyDxsv3Q4mGTKaNczvEtrJxaN2JuU1whKMW7GszKbMHrVNpS5u.json",
@@ -234,6 +268,351 @@
       "priority": "P0",
       "invocation": "top-level",
       "sha256": "539dc4c42135dee8d1368ba3b57d1c89eda3b4d9a231aa3a558eea51311154cf"
+    },
+    {
+      "path": "tx/mainnet/first-send/19Cv8q3225AyvhWAUT6sqcGPm7R5AwwQAVFLmaEJZdoHWi2HLp7LLD6yBo2Q3PYutV2DeosxZFk8XVMGDoUv3oM.json",
+      "signature": "19Cv8q3225AyvhWAUT6sqcGPm7R5AwwQAVFLmaEJZdoHWi2HLp7LLD6yBo2Q3PYutV2DeosxZFk8XVMGDoUv3oM",
+      "slot": 466491754,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "7cebc6d06118bf30ba73e89a2f2f3f9eb2ed06ca2ae794d36908c71b85344770",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/27moewTsNGemnrGnCwR2AxtcvNgm6UsCWRvy7Zx7D1sdseYP1aN91hRCjqfQFxmZhk2xZrTeGD9UU6YPcyn9QmAS.json",
+      "signature": "27moewTsNGemnrGnCwR2AxtcvNgm6UsCWRvy7Zx7D1sdseYP1aN91hRCjqfQFxmZhk2xZrTeGD9UU6YPcyn9QmAS",
+      "slot": 466491685,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "97d5856393b98d49ed68c46afe17e76ac92aad4ba706df66757731edd6d3c6f5",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/2APFoDPiBXp3pdJhBquSE6uj67yDSH4aXokHrkRirqSB8Tx3R5SmivLmqy8nT7EAu7d2AzzmcEXnYLWau9hELDRe.json",
+      "signature": "2APFoDPiBXp3pdJhBquSE6uj67yDSH4aXokHrkRirqSB8Tx3R5SmivLmqy8nT7EAu7d2AzzmcEXnYLWau9hELDRe",
+      "slot": 466491846,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "8d29b2a6dd1f20c7d2eaf8d37744d486e5ab20c7f9b6d1457f8ed7c925275a65",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/2e8CVfnpLhHwQHgARmoF682ceKMURzuVLCf3AaoitunSDAtg11J6CgYBk1qGDpHn2cyHYEL6YbGzGnhgHbsBi3m1.json",
+      "signature": "2e8CVfnpLhHwQHgARmoF682ceKMURzuVLCf3AaoitunSDAtg11J6CgYBk1qGDpHn2cyHYEL6YbGzGnhgHbsBi3m1",
+      "slot": 466488488,
+      "slug": "spl-token",
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "83ae93fa7b0522bd551ed00f5d16c1a9667159f01ecf3c11683bcd971b43946f",
+      "label": "first-time stablecoin transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/2UPxW5Kys8cHFQRXGrJRrhruy5pRTgVbui9msTecjMV63DmLvk6gF8Npvp3pyjYKnQQAJkCyzBB47h1dnHeggPWo.json",
+      "signature": "2UPxW5Kys8cHFQRXGrJRrhruy5pRTgVbui9msTecjMV63DmLvk6gF8Npvp3pyjYKnQQAJkCyzBB47h1dnHeggPWo",
+      "slot": 466489707,
+      "slug": "spl-token",
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "fab286f722e2019a5039eedc87568d46fb3c6b1cc2f65eb3fc74b4a7b20332f3",
+      "label": "first-time stablecoin transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/2Zy4fLxCSU2AGysHwB6wdo1NsprNzijodhpoG8LRRcDijv2vy7K2mThDwRSqHERoeu6w8HXbsa6JX6V3fZatkCuf.json",
+      "signature": "2Zy4fLxCSU2AGysHwB6wdo1NsprNzijodhpoG8LRRcDijv2vy7K2mThDwRSqHERoeu6w8HXbsa6JX6V3fZatkCuf",
+      "slot": 466491616,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "9aa508d7cb05261975b5f9d5d083b54dfc1e3fafadc319b83897cc20be2a0cb7",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/32M2evF8V52MPRnWR9QnHJoUw44XQC2y7eEu3BrKyivXZcbNmkboT3nc2A82KRyYUhPzNhUgP1n1GWhy3yFduB7X.json",
+      "signature": "32M2evF8V52MPRnWR9QnHJoUw44XQC2y7eEu3BrKyivXZcbNmkboT3nc2A82KRyYUhPzNhUgP1n1GWhy3yFduB7X",
+      "slot": 466491754,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "25a1f4a11914860e4deffad99bc1fd6a6e1344e51d67b057f1f8bc4d0dfe13b3",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/38Q4WNWbZjzx9MdKwtz3ChHLxA8ZrdaKa83942zjBxRN5aoUTBNmYh4u1YJJXmLyR5evopGceAtkUcDFyAkiTfNm.json",
+      "signature": "38Q4WNWbZjzx9MdKwtz3ChHLxA8ZrdaKa83942zjBxRN5aoUTBNmYh4u1YJJXmLyR5evopGceAtkUcDFyAkiTfNm",
+      "slot": 466491984,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "550e19e9a1f9f14e0fb740f999dd309d39a107e5df4fa947baf066d73ee4cd85",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/3du1cVUgKhwsNG2T5qsRMwECUUrw4RdpCRg73DzemoriijsNT1xHyubF6FzTa27tb1c3tcTpNz784ri54ZuaZQk6.json",
+      "signature": "3du1cVUgKhwsNG2T5qsRMwECUUrw4RdpCRg73DzemoriijsNT1xHyubF6FzTa27tb1c3tcTpNz784ri54ZuaZQk6",
+      "slot": 466491915,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "bd6d738d48eeb47b79a2014e433aaeb3a12743a30d8442a4da728a064fdb82ff",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/3gudKVmkgDMiD8VUzGEu3a7GyyE3Jkb42crT93obRPmck2adAa7oxhi8XXVtJ49AuaeXrUyFwKePw8N6BVt1Qj3v.json",
+      "signature": "3gudKVmkgDMiD8VUzGEu3a7GyyE3Jkb42crT93obRPmck2adAa7oxhi8XXVtJ49AuaeXrUyFwKePw8N6BVt1Qj3v",
+      "slot": 466489431,
+      "slug": "spl-token",
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "10a449aef04aab495e2854b8f3e84743ed181d8ddbd36fb77f3bd5889b0a88f1",
+      "label": "first-time stablecoin transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/3jNbU4S8iZrerW8s3t7tF3DrMa1MDhGKT1FYRdsqgowdZxGiLLNYvHmYCsbbMSiyZaBrBL8VCtgKwwdA66ysDre7.json",
+      "signature": "3jNbU4S8iZrerW8s3t7tF3DrMa1MDhGKT1FYRdsqgowdZxGiLLNYvHmYCsbbMSiyZaBrBL8VCtgKwwdA66ysDre7",
+      "slot": 466492007,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "109df604ad3286da384c288863896784a1d1bc6b6afedf0e64106eb4c39a1f09",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/3nXRSHb71TpYkNfxhZXHuDscKx3MnyB9oLoorP9QvXDRfor67xYhTDiPBp3QDrJ4cMeExQzNKaZ2umz1EzsAendo.json",
+      "signature": "3nXRSHb71TpYkNfxhZXHuDscKx3MnyB9oLoorP9QvXDRfor67xYhTDiPBp3QDrJ4cMeExQzNKaZ2umz1EzsAendo",
+      "slot": 466491685,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "047ff5df1e739c8e71097abfbb2e907e7fe7d544c7d3941d9c7aab663290b1ee",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/3XBc6Po9xuL7F8yAkrzNiFpSPqWXBqEu52i8VdgdTuYdxp262bWe7smyFE3s3PSvSfPLfk3xiWBBED7RHQufjHt7.json",
+      "signature": "3XBc6Po9xuL7F8yAkrzNiFpSPqWXBqEu52i8VdgdTuYdxp262bWe7smyFE3s3PSvSfPLfk3xiWBBED7RHQufjHt7",
+      "slot": 466491616,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "c84b2ae740c74e166586d302796322d9c7a22a2071cde25b7899c13a4f186a4a",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/3zH2ZiJgUMffC8P84PREXJrY3rSkzBwiErWuQcnoDnrMWQwb3mJfGoXQvLauqhEhD6FyecrswKPYvQh23XJAPDYu.json",
+      "signature": "3zH2ZiJgUMffC8P84PREXJrY3rSkzBwiErWuQcnoDnrMWQwb3mJfGoXQvLauqhEhD6FyecrswKPYvQh23XJAPDYu",
+      "slot": 466489661,
+      "slug": "spl-token",
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "2c4dae4403dc37750080f61b117cbce96e5f7a06a72366f7020e3ecf805bc886",
+      "label": "first-time stablecoin transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/4ERtPRxUhojMC1HHcUK4wMU2z1tKmhRL4S7dzfa251W9U4VifXvRrMXDNT6t1m7DYxEYfxh3woYduFEZbwLKxGNG.json",
+      "signature": "4ERtPRxUhojMC1HHcUK4wMU2z1tKmhRL4S7dzfa251W9U4VifXvRrMXDNT6t1m7DYxEYfxh3woYduFEZbwLKxGNG",
+      "slot": 466491915,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "8e960b8c469a88b27ca19af5372a7ee253f5f56af6ee7d49a19c3ff0c736ca15",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/4LLXBEkmDj7oz2fxz67szom1jL74w6a8TsRPiksnwNJPkEjJgJRMAnKWgpQrV2BvH75pt7bf8Zm7mqbcwDzc9B7w.json",
+      "signature": "4LLXBEkmDj7oz2fxz67szom1jL74w6a8TsRPiksnwNJPkEjJgJRMAnKWgpQrV2BvH75pt7bf8Zm7mqbcwDzc9B7w",
+      "slot": 466491754,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "a32b8e6d383975bb279684444c3046698063d910e4e7387d838b8c51c110797f",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/4v9maUjzkCZxgpQH2KvarinhHmfYpF1t62U3xPxrWkmTsMSUXH2dACzSQuCgTXFLZUJKfPzFxePYu9Mtnwzdiuo4.json",
+      "signature": "4v9maUjzkCZxgpQH2KvarinhHmfYpF1t62U3xPxrWkmTsMSUXH2dACzSQuCgTXFLZUJKfPzFxePYu9Mtnwzdiuo4",
+      "slot": 466486556,
+      "slug": "spl-token",
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "5d7d8d649eccf3c6cc4bdd84dabe3fbca6e08bf85e9a76d5fcee9848460a898b",
+      "label": "first-time stablecoin transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/56MxLEYAg4D1Th8d2QVvg99etn7pbREbF6FxEvqAixGqeMJMkcZDaNpV7NfLfj8ZAnNjVus39mJsYp5xV3KQVmZA.json",
+      "signature": "56MxLEYAg4D1Th8d2QVvg99etn7pbREbF6FxEvqAixGqeMJMkcZDaNpV7NfLfj8ZAnNjVus39mJsYp5xV3KQVmZA",
+      "slot": 466489063,
+      "slug": "spl-token",
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "18d91196ed6b1b05eae3941a94ad179211d0c2ce19566db053e4c4170398a735",
+      "label": "first-time stablecoin transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/5CaFs54ppmH3HGpZ4VJ1GHk37bHMmzJw9Eh5eW3NhcRSQrLxPueiekmj5bkWTCTM6zvtemXZ6tZ4615kur4Y1Ed1.json",
+      "signature": "5CaFs54ppmH3HGpZ4VJ1GHk37bHMmzJw9Eh5eW3NhcRSQrLxPueiekmj5bkWTCTM6zvtemXZ6tZ4615kur4Y1Ed1",
+      "slot": 466491754,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "eebdfd5b22cf3d9f1fad7b0c7c0bfa8d1b189d105f5c4e0f26f66c6691351796",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/5iUL4ZDw7EcGdJPPhMidNaaxPew7QEw3TP7YC5QiW6vFmdpJofgi8PeZ34kDC1XFqc1dcwsx8WxeXQiQxXTBbRGG.json",
+      "signature": "5iUL4ZDw7EcGdJPPhMidNaaxPew7QEw3TP7YC5QiW6vFmdpJofgi8PeZ34kDC1XFqc1dcwsx8WxeXQiQxXTBbRGG",
+      "slot": 466491685,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "dcd7656f3aeed742db25521bc68048911fb08f61f5db613698a7ce991c897c3b",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/5rrNbgpmo4ZJ9paoxTay4xyWQAZBVZWFW1skSDxjZBhPXd1MNUhDBka1SMVZK8eQsUe3B79qM34ZvYDSQvMW2AaB.json",
+      "signature": "5rrNbgpmo4ZJ9paoxTay4xyWQAZBVZWFW1skSDxjZBhPXd1MNUhDBka1SMVZK8eQsUe3B79qM34ZvYDSQvMW2AaB",
+      "slot": 466492122,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "23c95392e7deaa1a68c803dcf1370cc0b8211ba3f7bdf8593da7e886f3e46e55",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/LjZigYbQgxZmdVByttjnEe4MkSgKMM6wrNwJNfBv6LtAfbmHhzifokJrdn9DvwjtaWDZRLbzXx5LCkqQMZPGxTv.json",
+      "signature": "LjZigYbQgxZmdVByttjnEe4MkSgKMM6wrNwJNfBv6LtAfbmHhzifokJrdn9DvwjtaWDZRLbzXx5LCkqQMZPGxTv",
+      "slot": 466491846,
+      "slug": "system",
+      "programId": "11111111111111111111111111111111",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "198ba94e5494ba8f996d1cd5a4079be47016f67277ed666f19769a9b87304847",
+      "label": "first-time SOL transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
+    },
+    {
+      "path": "tx/mainnet/first-send/QNBPz3rt9PLZafd3Gmo79eynASznomVz2s9n5cDGQUPGatgxYmU2S7Axf2dSY8SkUaAr4oHWsjodsLycP3o5Jkg.json",
+      "signature": "QNBPz3rt9PLZafd3Gmo79eynASznomVz2s9n5cDGQUPGatgxYmU2S7Axf2dSY8SkUaAr4oHWsjodsLycP3o5Jkg",
+      "slot": 466487338,
+      "slug": "spl-token",
+      "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "priority": "P0",
+      "invocation": "top-level",
+      "sha256": "92db56cfa6f117085e3bf8459b8c14b27880d1b26390879fe47e33a73e53a079",
+      "label": "first-time stablecoin transfer to a new address",
+      "tags": [
+        "first-send",
+        "benign"
+      ]
     },
     {
       "path": "tx/mainnet/jupiter-v6/2a5KCPg7Jn5fpg5gqGqfuGoXhb6BEvRs3MDqNmoSKGHXXa12Q6rCU9vCz5t5RqihUMa3LFwy885ayiQPV2eUmeSv.json",

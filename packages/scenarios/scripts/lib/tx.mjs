@@ -175,24 +175,43 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 export function localRpc(url) {
   const host = new URL(url).hostname;
   if (host !== '127.0.0.1' && host !== 'localhost') throw new Error('localRpc is localnet only');
+  return jsonRpc(url);
+}
+
+// Same client for an allowed remote endpoint (Helius devnet, see lib/helius.mjs heliusDevnet). Error
+// messages never carry the URL; `label` replaces it in logs.
+export function jsonRpc(url, { label = url, redact = (s) => s, confirmMs = 30_000 } = {}) {
   let id = 0;
   const call = async (method, params = []) => {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ jsonrpc: '2.0', id: ++id, method, params }),
-      signal: AbortSignal.timeout(30_000)
-    });
+    let res;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        res = await fetch(url, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ jsonrpc: '2.0', id: ++id, method, params }),
+          signal: AbortSignal.timeout(30_000)
+        });
+      } catch (e) {
+        throw new Error(redact(`${method}: ${e?.message ?? e} (${label})`));
+      }
+      if ((res.status === 429 || res.status >= 500) && attempt < 5) {
+        await sleep(1000 * 2 ** attempt);
+        continue;
+      }
+      break;
+    }
+    if (!res.ok) throw new Error(`${method}: HTTP ${res.status} from ${label}`);
     const body = await res.json();
     if (body.error) {
-      const err = new Error(`${method}: ${JSON.stringify(body.error)}`);
+      const err = new Error(redact(`${method}: ${JSON.stringify(body.error)}`));
       err.rpcError = body.error;
       throw err;
     }
     return body.result;
   };
 
-  async function confirm(signature, timeoutMs = 30_000) {
+  async function confirm(signature, timeoutMs = confirmMs) {
     const end = Date.now() + timeoutMs;
     while (Date.now() < end) {
       const { value } = await call('getSignatureStatuses', [[signature]]);
@@ -228,7 +247,7 @@ export function localRpc(url) {
     return sig;
   }
 
-  return { url, call, send, simulate, confirm, airdrop };
+  return { url: label, call, send, simulate, confirm, airdrop };
 }
 
 export const SYSTEM_PROGRAM = '11111111111111111111111111111111';

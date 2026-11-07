@@ -19,6 +19,11 @@
     "scenario:admin-local:attack": "node scripts/admin-local.mjs --attack-only",
     "test:e2e": "node scripts/e2e.mjs",
     "scenario:trap-local": "node scripts/trap-local.mjs",
-    "scenario:trap-local:attack": "node scripts/trap-local.mjs --attack-only"
+    "scenario:trap-local:attack": "node scripts/trap-local.mjs --attack-only",
+    "fixtures:poison": "node scripts/fixtures-poison.mjs",
+    "fixtures:e2e": "node scripts/fixtures-e2e.mjs",
+    "scenario:poison-devnet": "node scripts/poison-devnet.mjs",
+    "scenario:poison-devnet:attack": "node scripts/poison-devnet.mjs --attack-only",
+    "test:devnet": "node --test e2e-devnet/"
   }
 }
