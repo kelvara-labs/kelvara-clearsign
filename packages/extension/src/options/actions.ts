@@ -5,6 +5,7 @@
 import { pickEndpoint, type Network } from "../sw/endpoint.js";
 import { probeEndpoint, type FetchLike } from "../sw/probe.js";
 import { readSettings } from "../sw/settings.js";
+import { describeLicense, verifyLicense, type LicenseResult } from "../license/verify.js";
 import { keyForTest, keyStatus, planSave } from "./form.js";
 
 export interface Store {
@@ -94,4 +95,42 @@ export async function testConnection(store: Store, keyField: string, network: st
   const endpoint = pickEndpoint(chainFor(net), net, keyForTest(typed, saved));
   const r = await probeEndpoint(endpoint, fetchFn);
   return { text: r.ms === null ? r.message : `${r.message} (${r.ms} ms)`, kind: r.ok ? "ok" : "err", clearField: false };
+}
+
+// License (PLAN M5): verified offline here before it is stored, and again by the
+// service worker on every request. The license text is not secret, but it is still
+// never echoed back: the status names only email, plan and expiry.
+export type Verify = (raw: unknown) => Promise<LicenseResult>;
+const defaultVerify: Verify = (raw) => verifyLicense(raw);
+
+export async function licenseStatus(store: Store, verify: Verify = defaultVerify): Promise<string> {
+  let raw: unknown;
+  try {
+    raw = (await store.get(["licenseKey"])).licenseKey;
+  } catch {
+    return "Could not read the saved license: reports show the risk level and top finding only.";
+  }
+  return describeLicense(await verify(raw).catch((): LicenseResult => ({ ok: false, reason: "unsupported" })));
+}
+
+export async function saveLicense(store: Store, field: string, verify: Verify = defaultVerify): Promise<Outcome> {
+  const typed = field.trim();
+  if (!typed) return { text: "Paste a license key first.", kind: "err", clearField: false };
+  const r = await verify(typed).catch((): LicenseResult => ({ ok: false, reason: "unsupported" }));
+  if (!r.ok) return { text: `Not saved. ${describeLicense(r)}`, kind: "err", clearField: false };
+  try {
+    await store.set({ licenseKey: typed });
+  } catch {
+    return { text: "Could not save the license: nothing was changed. Try again.", kind: "err", clearField: false };
+  }
+  return { text: `License saved. ${describeLicense(r)}`, kind: "ok", clearField: true };
+}
+
+export async function removeLicense(store: Store): Promise<Outcome> {
+  try {
+    await store.remove("licenseKey");
+  } catch {
+    return { text: "Could not remove the license: it may still be saved. Try again.", kind: "err", clearField: false };
+  }
+  return { text: "License removed. Reports show the risk level and top finding only.", kind: "info", clearField: true };
 }

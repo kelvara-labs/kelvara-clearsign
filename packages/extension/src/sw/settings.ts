@@ -1,7 +1,8 @@
+import { LICENSE_MAX } from "../license/verify.js";
 import type { Network } from "./endpoint.js";
 import type { Settings } from "./policy.js";
 
-export const SETTINGS_KEYS = ["heliusApiKey", "network", "passThrough"] as const;
+export const SETTINGS_KEYS = ["heliusApiKey", "network", "passThrough", "licenseKey"] as const;
 export const NETWORKS: readonly Network[] = ["mainnet", "devnet", "localnet"];
 
 /**
@@ -23,7 +24,8 @@ export function isNetwork(x: unknown): x is Network {
 
 export function readSettings(raw: Record<string, unknown>): Settings {
   const network: Network = isNetwork(raw.network) ? raw.network : "mainnet";
-  return { heliusApiKey: normalizeKey(raw.heliusApiKey), network, passThrough: raw.passThrough === true };
+  const licenseKey = typeof raw.licenseKey === "string" && raw.licenseKey.length <= LICENSE_MAX ? raw.licenseKey : undefined;
+  return { heliusApiKey: normalizeKey(raw.heliusApiKey), network, passThrough: raw.passThrough === true, licenseKey };
 }
 
 export type LoadedSettings = { ok: true; settings: Settings } | { ok: false; reason: string };

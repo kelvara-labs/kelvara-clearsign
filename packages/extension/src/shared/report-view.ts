@@ -43,6 +43,8 @@ export interface ReportView {
   claims: Claim[];
   /** Base58 SHA-256 of each transaction message, to match on a Ledger. */
   messageHashes: string[];
+  /** No valid license: only the risk header and top finding were kept (src/license/limit.ts). */
+  limited: boolean;
 }
 
 const MAX_TEXT = 2000;
@@ -97,7 +99,8 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "messageHashes"])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "messageHashes", "limited"])) return null;
+  if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
   if (!list(x.capabilities, isCapability) || !list(x.preview, isPreview, 16) || !list(x.claims, isClaim)) return null;
