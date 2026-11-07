@@ -38,11 +38,22 @@ export {
 } from "./state/index.js";
 
 // M1 / E2: decode (Codama parseInstruction first, built-in Anchor decoder as fallback; Unknown is never safe).
+// M1 / E4: hand-written decoders for the upgradeable loader and Memo (decoder: "builtin").
 export {
   createDecoder,
   createAnchorFallbackDecoder,
   anchorInstructionDiscriminator,
+  decodeUpgradeableLoaderInstruction,
+  decodeMemoInstruction,
+  BUILTIN_PROGRAMS,
+  UPGRADEABLE_LOADER_PROGRAM,
+  UPGRADEABLE_LOADER_INSTRUCTIONS,
+  MEMO_PROGRAM,
+  MEMO_V1_PROGRAM,
   type Decoder,
+  type DecoderOptions,
+  type BuiltinDecoded,
+  type BuiltinProgram,
   type AnchorFallbackDecoder,
   type AnchorDecoded,
   type ProgramEntry,

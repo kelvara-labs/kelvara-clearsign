@@ -5,12 +5,19 @@ import { fromBase58, fromBase64 } from "../util/encoding.js";
 import type { ResolvedInstruction, Session } from "../ingest/types.js";
 import { createAnchorFallbackDecoder, type AnchorFallbackDecoder } from "./anchor-fallback.js";
 import { createPrefilter, type Prefilter } from "./prefilter.js";
+import { BUILTIN_PROGRAMS, type BuiltinProgram } from "./builtin.js";
 import type { DecodedAccount, DecodedInstruction, ProgramEntry } from "./types.js";
 
 interface Registered {
   name: string;
   prefilter?: Prefilter;
   fallback?: AnchorFallbackDecoder;
+  builtin?: BuiltinProgram["decode"];
+}
+
+export interface DecoderOptions {
+  /** Register the hand-written decoders (upgradeable loader, Memo). Default true. Registry entries win on the same id. */
+  builtins?: boolean;
 }
 
 export interface Decoder {
@@ -78,8 +85,9 @@ function codamaArgs(data: unknown): Record<string, unknown> {
  * Anchor decoder handles what it cannot. Anything left is Unknown with a reason, never safe.
  * Never throws on instruction bytes.
  */
-export function createDecoder(entries: readonly ProgramEntry[]): Decoder {
+export function createDecoder(entries: readonly ProgramEntry[], options: DecoderOptions = {}): Decoder {
   const byId = new Map<string, Registered>();
+  if (options.builtins !== false) for (const b of BUILTIN_PROGRAMS) byId.set(b.programId, { name: b.name, builtin: b.decode });
   for (const e of entries) {
     const reg: Registered = { name: e.name };
     if (e.root) reg.prefilter = createPrefilter(e.root, { ...e.root.program, publicKey: e.programId as RootNode["program"]["publicKey"] });
@@ -95,6 +103,19 @@ export function createDecoder(entries: readonly ProgramEntry[]): Decoder {
     const reg = byId.get(ix.programAddress);
     if (!reg) return unknown(ix, null, "program_not_in_registry");
     let sawError = false;
+
+    if (reg.builtin) {
+      let d;
+      try {
+        d = reg.builtin(ix.data);
+      } catch {
+        return unknown(ix, reg.name, "args_did_not_decode");
+      }
+      if (!d) return unknown(ix, reg.name, "no_matching_instruction");
+      const accounts = baseAccounts(ix);
+      for (const acc of accounts) acc.name = d.accountNames[acc.position] ?? d.restAccountName ?? null;
+      return { index: ix.index, programAddress: ix.programAddress, programName: reg.name, status: "named", decoder: "builtin", name: d.name, args: d.args, accounts, data: ix.data };
+    }
 
     const root = reg.prefilter?.rootFor(ix.data);
     if (root) {
