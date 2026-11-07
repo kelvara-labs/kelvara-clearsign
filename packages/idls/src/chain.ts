@@ -1,7 +1,8 @@
 // Reading the recorded chain state of registry programs (chain/programs.json) and Anchor IDL addresses.
-import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createAddressWithSeed, getBase58Decoder, getProgramDerivedAddress, type Address } from "@solana/kit";
 import { UPGRADEABLE_LOADER_PROGRAM } from "@kelvara/core";
 
@@ -42,12 +43,35 @@ export async function anchorIdlAddress(programId: string): Promise<Address> {
 
 export const redact = (s: unknown): string => String(s).replace(/api-key=[^&\s"']+/gi, "api-key=REDACTED");
 
-/** Helius mainnet RPC URL with HELIUS_API_KEY from the main checkout's .env (never printed). */
+/** Helius mainnet RPC URL from the environment or a main checkout's .env (never printed). */
 export function heliusMainnetUrl(cwd: string): string {
-  const common = execSync("git rev-parse --path-format=absolute --git-common-dir", { cwd }).toString().trim();
-  const key = readFileSync(path.join(common, "..", ".env"), "utf8").match(/^HELIUS_API_KEY=(.+)$/m)?.[1]?.trim();
-  if (!key) throw new Error("HELIUS_API_KEY missing from .env");
-  return `https://mainnet.helius-rpc.com/?api-key=${key}`;
+  const url = (key: string) => `https://mainnet.helius-rpc.com/?api-key=${key}`;
+  if (process.env.HELIUS_API_KEY) return url(process.env.HELIUS_API_KEY);
+  const candidates: string[] = [];
+  const git = (dir: string, args: string[]) => execFileSync("git", args, {
+    cwd: dir, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"]
+  }).trim();
+  const mainEnv = (dir: string) => path.join(path.dirname(git(dir, ["rev-parse", "--path-format=absolute", "--git-common-dir"])), ".env");
+  try {
+    candidates.push(mainEnv(cwd));
+  } catch {
+    /* not a git checkout */
+  }
+  try {
+    const origin = git(cwd, ["config", "--get", "remote.origin.url"]);
+    const local = origin.startsWith("file://") ? fileURLToPath(origin) : origin;
+    if (path.isAbsolute(local) && existsSync(local)) candidates.push(mainEnv(local));
+  } catch {
+    /* no usable local origin; never contact remote origins */
+  }
+  for (const file of candidates) {
+    if (!existsSync(file)) continue;
+    for (const line of readFileSync(file, "utf8").split("\n")) {
+      const match = /^\s*(?:export\s+)?HELIUS_API_KEY\s*=\s*["']?([^"'\s#]+)/.exec(line);
+      if (match) return url(match[1]!);
+    }
+  }
+  throw new Error("HELIUS_API_KEY missing from environment or main checkout .env");
 }
 
 /** One JSON-RPC call with retries on network errors, 429 and 5xx; errors are redacted. */
