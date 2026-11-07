@@ -2,13 +2,15 @@
 
 Merged `main` first without local changes: combined candidate `ee8822750c73f41dbcda17d35ca55e74bb706449` contains X9 `03b0f12` (via main `741ded5`) and readiness fix `b3f45fd`. No extension-owned paths were edited. X9 retains the L2 stub until G6; its `@kelvara/core` workspace dependency is not integration evidence.
 
+All V8 results below are on **`team/verifier`**, not `main`. Main remains `741ded53adefc3aad44457c29e30f7957235b406`; `git merge-base --is-ancestor 741ded5 ee88227` and `git merge-base --is-ancestor main HEAD` both exit 0. The readiness fix and verifier evidence await coordinator review and merge. Coordinator subsequently confirmed the existing X9 candidate, no newer extension service-worker changes, and routing future extension questions through the coordinator.
+
 `hasRealEngine()` delegates to TypeScript AST inspection: only demonstrated direct `decide(..., stubEngine)` wiring to the fixed L2 literal adapter defers engine cases. Non-stub, mixed, indirect and unknown wiring runs assertions; unreadable or malformed source fails. Regression tests cover dependency-plus-stub versus real wiring, import aliases, misleading comments, unused stub imports, adapter integration/spreads, replaced adapters, bypassed decision calls, invalid syntax and adapter setup code. The last four cases were added in `9669129`; the implementation and earlier regression cases are in `b3f45fd`.
 
 ```text
-pnpm selfcheck --only G7   2026-11-07T13:47:50Z  candidate ee88227 (clean at launch)
+pnpm selfcheck --only G7   2026-11-07T13:47:50Z  team/verifier ee88227 (clean at launch)
 G7  e2e       PENDING  100.1s  15 PASS / 0 FAIL / 7 engine-wiring PENDING
 
-pnpm selfcheck --fast      2026-11-07T13:48:30Z  candidate 9669129 (clean)
+pnpm selfcheck --fast      2026-11-07T13:48:30Z  team/verifier 9669129 (clean)
 G1  build     PASS      25.9s
 G2  decode    PASS       7.4s  97.83%, 1000/1000 fuzz
 G3  rules     PENDING    3.8s  remaining M2 rules
