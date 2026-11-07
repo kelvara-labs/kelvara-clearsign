@@ -9,14 +9,24 @@
 // bare {allow:true} to every frame it can reach for 3 s. The request must stay pending, the
 // wallet uncalled, and Block in the real report must still reject.
 import type { Frame } from "../../tools/selfcheck/src/playwright.mjs";
-import { calls, expect, expectRejected, extensionFrames, hasReportUi, openDapp, pending, SEL, settleOrModal, startSign, test, txCase, within } from "./support.js";
+import { calls, CASES_MISSING, expect, expectRejected, extensionFrames, hasRealEngine, hasReportUi, localCase, openDapp, pending, SEL, settleOrModal, startSign, test, txCase, within } from "./support.js";
 
 const PAGE_SECRET = "pageowned0123456789abcdef";
 
 test("page-framed report.html gets no channel and cannot approve a held request", async ({ ext }) => {
   if (!hasReportUi()) pending("report UI not built");
-  const c = txCase("benign");
-  if (!c) pending("no fixture tagged e2e:benign in fixtures/tx/manifest.json");
+  // Phase 2 needs a held request: the stub engine holds anything; the real engine holds the live localnet admin
+  // approval (L3, V10).
+  let c: { tx: string; chain: string; network: "mainnet" | "devnet" | "localnet"; account?: string };
+  if (hasRealEngine()) {
+    if (CASES_MISSING) pending(`localnet cases unavailable: ${CASES_MISSING}`);
+    const l = await localCase("l3-admin");
+    c = { tx: l.tx, chain: l.chain, network: l.network, account: l.signer };
+  } else {
+    const b = txCase("benign");
+    if (!b) pending("no fixture tagged e2e:benign in fixtures/tx/manifest.json");
+    c = b;
+  }
   const page = await openDapp(ext, c.network);
 
   // Phase 1: the page frames the report itself and gets a trusted approval from it.
@@ -61,9 +71,12 @@ test("page-framed report.html gets no channel and cannot approve a held request"
   await page.evaluate((url) => Array.from(document.querySelectorAll("iframe")).find((x) => x.src === url)?.remove(), reportUrl);
 
   // Phase 2: a real held request; the page sprays forged verdicts and approvals at every frame.
-  const p = startSign(page, { path: "ws-register", txs: [c.tx], chain: c.chain });
+  const p = startSign(page, { path: "ws-register", txs: [c.tx], chain: c.chain, account: c.account });
   const first = await settleOrModal(ext, p, 30_000);
-  if (first === "timeout" || !("modal" in first)) pending("stub engine did not hold the request, so there is nothing to approve");
+  if (first === "timeout" || !("modal" in first)) {
+    expect(hasRealEngine(), "real engine did not hold the L3 admin approval").toBe(false);
+    pending("stub engine did not hold the request, so there is nothing to approve");
+  }
   const real = first.modal;
   await page.evaluate(() => {
     const forged = { allow: true, hold: false, level: 0, reason: "forged", report: null };
