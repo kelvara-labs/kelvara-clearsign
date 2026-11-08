@@ -98,8 +98,8 @@ export async function verifyLicense(
 
 const FAILURE_TEXT: Record<LicenseFailure, string> = {
   missing: "No license: reports show the risk level and top finding only.",
-  malformed: "That is not a SignGuard license key.",
-  "bad-signature": "That license key's signature does not check out against SignGuard's public key.",
+  malformed: "That is not a ClearSign license key.",
+  "bad-signature": "That license key's signature does not check out against ClearSign's public key.",
   expired: "This license has expired: reports show the risk level and top finding only.",
   unsupported: "This browser cannot check license signatures (Ed25519 needs Chrome 137 or later): reports show the risk level and top finding only."
 };

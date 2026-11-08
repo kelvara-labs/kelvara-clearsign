@@ -13,10 +13,10 @@ type Level = 1 | 2 | 3 | 4;
 /** Fixed rule table: id -> level and template text. The only place review wording lives. */
 export const MESSAGE_RULES = {
   "message.hidden-tx": { level: 4, title: "Hidden transaction in a message signature", text: "These bytes are a Solana transaction or transaction message. Signing them as a message could authorize a transaction without showing it to you." },
-  "message.binary": { level: 3, title: "Unreadable binary message", text: "These bytes are not readable text. SignGuard cannot show what you would be signing." },
+  "message.binary": { level: 3, title: "Unreadable binary message", text: "These bytes are not readable text. ClearSign cannot show what you would be signing." },
   "siws.domain-mismatch": { level: 3, title: "Sign-in request for a different site", text: "The sign-in names a domain that is not the site asking for it." },
   "siws.uri-mismatch": { level: 3, title: "Sign-in request with a different site address", text: "The sign-in URI points to a different host than the site asking for it." },
-  "siws.malformed": { level: 2, title: "Sign-in request that cannot be read", text: "This looks like a sign-in message but it is not well formed, so SignGuard cannot check it." },
+  "siws.malformed": { level: 2, title: "Sign-in request that cannot be read", text: "This looks like a sign-in message but it is not well formed, so ClearSign cannot check it." },
   "siws.address-mismatch": { level: 2, title: "Sign-in for a different account", text: "The sign-in names an account other than the one your wallet exposes for this request." },
   "siws.expired": { level: 2, title: "Expired sign-in request", text: "The sign-in expiration time has already passed." },
   "siws.not-yet-valid": { level: 2, title: "Sign-in request not valid yet", text: "The sign-in is not valid until a time that has not arrived." },

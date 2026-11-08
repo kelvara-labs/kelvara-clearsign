@@ -20,7 +20,7 @@ export const stubEngine: EngineLike = {
       level: 2,
       title: "Not analyzed: the analysis engine is not wired in yet",
       summary:
-        "SignGuard could not read what this request authorizes, so it cannot vouch for it. Block unless you trust this site and checked the request in your wallet.",
+        "ClearSign could not read what this request authorizes, so it cannot vouch for it. Block unless you trust this site and checked the request in your wallet.",
       simulation: null,
       authorizes: null,
       capabilities: [],

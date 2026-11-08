@@ -1,5 +1,5 @@
 /*
-  Kelvara SignGuard devnet playground. Same design system as the extension
+  Kelvara ClearSign devnet playground. Same design system as the extension
   (packages/extension/static/interface.css): the tokens block below is a verbatim copy and
   packages/extension/preview/check-tokens.mjs fails when the two drift (run it with --write to resync).
   CSP: style-src 'self' only, so no inline styles; the mark is a data: image.

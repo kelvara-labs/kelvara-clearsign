@@ -54,7 +54,7 @@ export async function decide(
   const failure = (reason: string): WorkerVerdict =>
     blocked(reason, {
       title: "Blocked: request could not be analyzed",
-      summary: `${reason}. SignGuard blocks what it cannot check.`,
+      summary: `${reason}. ClearSign blocks what it cannot check.`,
       simulation: null,
       authorizes: null,
       capabilities: [],

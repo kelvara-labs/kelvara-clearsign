@@ -11,7 +11,7 @@ export interface Sentence {
   text: string;
   claimIds: string[];
 }
-/** "ai": written by the user's own provider and checked against the facts; "signguard": SignGuard's own text. */
+/** "ai": written by the user's own provider and checked against the facts; "signguard": ClearSign's own text. */
 export interface Explanation {
   source: "ai" | "signguard";
   sentences: Sentence[];
@@ -62,13 +62,13 @@ export function validateAiSentences(raw: unknown, report: ReportView): Sentence[
   return list;
 }
 
-/** SignGuard's own explanation: the engine's explanation text for the risk claims, else the plain summary. */
+/** ClearSign's own explanation: the engine's explanation text for the risk claims, else the plain summary. */
 export function fallbackExplanation(report: ReportView): Explanation {
   const risks = report.claims.filter((c) => c.level !== null && c.level !== "L0" && !c.rule?.startsWith("fact."));
   const own = risks.slice(0, EXPLAIN_MAX_SENTENCES).map((c) => ({ text: c.text.slice(0, OWN_SENTENCE_MAX), claimIds: [c.id] }));
   if (own.length) return { source: "signguard", sentences: own };
   const facts = report.claims.filter((c) => c.rule?.startsWith("fact.")).map((c) => c.id).slice(0, MAX_CLAIM_REFS);
-  return { source: "signguard", sentences: [{ text: (report.summary || report.title || "SignGuard could not describe this request.").slice(0, OWN_SENTENCE_MAX), claimIds: facts }] };
+  return { source: "signguard", sentences: [{ text: (report.summary || report.title || "ClearSign could not describe this request.").slice(0, OWN_SENTENCE_MAX), claimIds: facts }] };
 }
 
 /** Public facts only: claim ids and text, capability phrases and the simulation text. No bytes, hashes or keys. */

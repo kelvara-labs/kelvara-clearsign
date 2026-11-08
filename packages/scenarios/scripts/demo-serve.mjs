@@ -69,7 +69,7 @@ export async function loadPlayground() {
     let wire;
     if (kind === 'fees' && fees) wire = feeApproval(fees, bh.blockhash);
     else if (kind === 'good') {
-      const compiled = compileLegacy({ feePayer: account, recentBlockhash: bh.blockhash, instructions: [{ programId: 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr', keys: [{ pubkey: account, isSigner: true, isWritable: false }], data: Buffer.from('Hello from SignGuard devnet playground') }] });
+      const compiled = compileLegacy({ feePayer: account, recentBlockhash: bh.blockhash, instructions: [{ programId: 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr', keys: [{ pubkey: account, isSigner: true, isWritable: false }], data: Buffer.from('Hello from ClearSign devnet playground') }] });
       wire = unsignedWire(compiled);
     } else if (kind === 'trap') wire = partialSign(buildBuy({ user: shared.account, seller: trap.seller, mint: trap.token.mint, recentBlockhash: bh.blockhash }).compiled, readKeypair(join(KEYS, 'trap-seller.json')));
     else if (kind === 'sweep') {

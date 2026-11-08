@@ -100,7 +100,7 @@ describe("kelvara analyze", () => {
     const out = path.join(tmp, "admin.json");
     const { code, stdout, stderr } = await run(["analyze", "--network", "localnet", "--out", out, file], () => recordedRpc(rec));
     expect(code, stderr).toBe(0);
-    expect(stdout).toMatch(/^Kelvara SignGuard analyze {2}network localnet/);
+    expect(stdout).toMatch(/^Kelvara ClearSign analyze {2}network localnet/);
     expect(stdout).toContain("ALERT L3 Critical");
     expect(stdout).toContain("Simulation shows: Transaction 0:");
     const r = JSON.parse(readFileSync(out, "utf8")) as CliResult;

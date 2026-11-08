@@ -75,7 +75,7 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
     confirm,
     reject,
     show(explanation) {
-      caption.textContent = explanation.source === "ai" || intent?.source === "ai" ? "Assessment by your AI provider" : "Assessment by SignGuard";
+      caption.textContent = explanation.source === "ai" || intent?.source === "ai" ? "Assessment by your AI provider" : "Assessment by ClearSign";
       caption.setAttribute("data-explain-source", explanation.source);
       body.replaceChildren(...explanation.sentences.map((s) => node("p", s.text, { "data-claim-ids": s.claimIds.join(",") })));
     }

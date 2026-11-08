@@ -30,7 +30,7 @@ export function showReport(verdict: WorkerVerdict, deadline: number, id?: string
     host.setAttribute("style", HOST_STYLE[mode]);
     const root = host.attachShadow({ mode: "closed" });
     const frame = document.createElement("iframe");
-    frame.title = "Kelvara SignGuard signing report";
+    frame.title = "Kelvara ClearSign signing report";
     frame.setAttribute("style", "border:0;width:100%;height:100%;display:block;color-scheme:normal;background:transparent");
     frame.src = chrome.runtime.getURL(`report.html#${secret}`);
     root.append(frame);

@@ -305,7 +305,7 @@ function header(r: Report, ex: ReportExplanation): { title: string; summary: str
   const g = r.counts.granted, v = r.counts.revoked;
   const tally = g + v > 0 ? `${g} permission${g === 1 ? "" : "s"} granted and ${v} revoked.` : "";
   if (top.length === 0) {
-    const human = factSummary(r) ?? "SignGuard found no risks but could not describe what this request does.";
+    const human = factSummary(r) ?? "ClearSign found no risks but could not describe what this request does.";
     return { title: clip(ex.headline.replace(/^([^:]+): /, "$1 · "), MAX_SHORT), summary: clip(`${human} ${tally}`.trim(), MAX_TEXT) };
   }
   return {
@@ -328,7 +328,7 @@ export function engineErrorVerdict(reason: string, hashes: readonly string[]): W
     report: {
       ...EMPTY,
       title: "Blocked: request could not be analyzed",
-      summary: clip(`${reason}. SignGuard blocks what it cannot check.`, MAX_TEXT),
+      summary: clip(`${reason}. ClearSign blocks what it cannot check.`, MAX_TEXT),
       messageHashes: safeHashes
     }
   };

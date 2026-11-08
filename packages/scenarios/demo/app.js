@@ -55,7 +55,7 @@ async function request(c) {
     const response = await fetch('/api/transaction?kind='+encodeURIComponent(c.id)+'&account='+encodeURIComponent(account.address), { cache:'no-store' });
     const data = await response.json(); if(!response.ok) throw Error(data.error);
     if(data.chain !== 'solana:devnet' || data.account !== account.address) throw Error('Transaction account/network mismatch');
-    status('Preview requested. Expected '+c.expected+'. Review SignGuard and choose Block for the attack test.');
+    status('Preview requested. Expected '+c.expected+'. Review ClearSign and choose Block for the attack test.');
     const [result] = await selected.features['solana:signTransaction'].signTransaction({ account, chain:'solana:devnet', transaction:Uint8Array.from(atob(data.transaction), c=>c.charCodeAt(0)) });
     status('Wallet returned '+result.signedTransaction.length+' signed bytes. Nothing was submitted. You can repeat this preview.');
   } catch(e) { status('Preview stopped: '+e.message+' · Nothing submitted by this page.'); }

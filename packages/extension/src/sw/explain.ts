@@ -1,6 +1,6 @@
 // Service-worker side of the report's plain-language explanation. Only the worker may call a model provider.
 // The explanation is presentation: it never changes a level, a claim, or a signing control. Provider output is
-// accepted only when validateAiSentences passes; every other outcome falls back to SignGuard's own text.
+// accepted only when validateAiSentences passes; every other outcome falls back to ClearSign's own text.
 import type { WorkerVerdict } from "../shared/protocol.js";
 import { isId, SW_EXPLAIN } from "../shared/protocol.js";
 import { AI_SENTENCE_MAX, EXPLAIN_MAX_SENTENCES, explanationInput, fallbackExplanation, validateAiSentences, type Explanation } from "../shared/explanation.js";
@@ -22,10 +22,10 @@ export interface ExplainDeps {
   timeoutMs?: number;
 }
 
-/** One model call at most. Anything unexpected is the SignGuard explanation. */
+/** One model call at most. Anything unexpected is the ClearSign explanation. */
 export async function explainReport(verdict: WorkerVerdict, deps: ExplainDeps): Promise<Explanation> {
   const report = verdict.report;
-  const own = report ? fallbackExplanation(report) : { source: "signguard" as const, sentences: [{ text: verdict.reason.slice(0, 600) || "SignGuard could not describe this request.", claimIds: [] }] };
+  const own = report ? fallbackExplanation(report) : { source: "signguard" as const, sentences: [{ text: verdict.reason.slice(0, 600) || "ClearSign could not describe this request.", claimIds: [] }] };
   if (!report) return own;
   // Routine transfers need no confirmation question and no provider call.
   const needsAi = (verdict.level ?? 0) >= 1 || report.intent?.context.complex === true;

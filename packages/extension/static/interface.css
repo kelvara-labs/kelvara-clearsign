@@ -1,5 +1,5 @@
 /*
-  Kelvara SignGuard interface styles: popup, options and the signing report.
+  Kelvara ClearSign interface styles: popup, options and the signing report.
   Sections: 1 tokens, 2 base, 3 components, 4 popup, 5 options, 6 report.
   The tokens block is copied verbatim into packages/scenarios/demo/style.css;
   packages/extension/preview/check-tokens.mjs fails when the two copies drift.

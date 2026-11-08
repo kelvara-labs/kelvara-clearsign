@@ -198,7 +198,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const status = el("p", { class: "status", role: "status" });
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
-  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard")), ...levelHeader(v, r));
+  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara ClearSign")), ...levelHeader(v, r));
 
   let answered = false;
   let sign: HTMLButtonElement | null = null;
@@ -247,7 +247,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
     };
     syncChoices();
     if (explain && r && !r.message) {
-      // Never wait on the provider longer than its own timeout: show SignGuard's text and enable the choices.
+      // Never wait on the provider longer than its own timeout: show ClearSign's text and enable the choices.
       const safety = setTimeout(() => settle(local), EXPLAIN_WAIT_MS);
       explain().then((x) => settle(readExplanation(x) ?? local), () => settle(local)).finally(() => clearTimeout(safety));
     } else {

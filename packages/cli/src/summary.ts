@@ -7,7 +7,7 @@ const short = (a: string | null): string => (a && a.length > 12 ? `${a.slice(0, 
 export function humanSummary(report: Report, ctx: { command: string; network: string; reads?: ReadNote[]; notes?: string[] }): string {
   const out: string[] = [];
   const a = report.alert;
-  out.push(`Kelvara SignGuard ${ctx.command}  network ${ctx.network}  session ${report.session.id}  ${report.session.transactions.length} transaction(s)${report.session.complete ? "" : "  (incomplete: unresolved accounts)"}`);
+  out.push(`Kelvara ClearSign ${ctx.command}  network ${ctx.network}  session ${report.session.id}  ${report.session.transactions.length} transaction(s)${report.session.complete ? "" : "  (incomplete: unresolved accounts)"}`);
   out.push(`ALERT ${a.level} ${a.label} -> ${a.action}`);
   out.push(report.simulation.status === "not_run" ? "Simulation: not run." : report.simulation.summary);
   const claims = [...report.claims].sort((x, y) => levelValue(y.level) - levelValue(x.level) || Number(x.id.slice(1)) - Number(y.id.slice(1)));

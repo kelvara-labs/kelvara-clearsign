@@ -78,7 +78,7 @@ export async function mountPopup(): Promise<void> {
       ? "Signing requests are passing through without analysis. Reset extension settings to restore the guard."
       : ready ? "See what moves. Know who gains control. Every signing request gets a closer look."
       : "Add your Helius key to review Solana transactions before your wallet opens.";
-    node("guard-action-label").textContent = ready ? "Manage connection" : "Set up SignGuard";
+    node("guard-action-label").textContent = ready ? "Manage connection" : "Set up ClearSign";
     const entries = activity(raw.captureLog);
     node("checks-count").textContent = String(entries.length);
     node("blocked-count").textContent = String(entries.filter(rejected).length);

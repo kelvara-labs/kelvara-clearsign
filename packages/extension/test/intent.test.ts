@@ -243,7 +243,7 @@ describe("assessment card (step 1)", () => {
     const caption = elements.find(e => has(e, "data-intent-source"))!;
     expect(caption.textContent).toBe("Preparing assessment…");
     a.show({ source: "signguard", sentences: [{ text: "One.", claimIds: [] }] });
-    expect(caption.textContent).toBe("Assessment by SignGuard");
+    expect(caption.textContent).toBe("Assessment by ClearSign");
     a.show({ source: "ai", sentences: [{ text: "Two.", claimIds: [] }] });
     expect(caption.textContent).toBe("Assessment by your AI provider");
     expect(elements.find(e => has(e, "data-intent-explain"))!.children.map(c => c.textContent)).toEqual(["Two."]);

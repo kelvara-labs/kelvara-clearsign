@@ -1,4 +1,4 @@
-// X20: report semantics. Calm L0, readable unknowns, two-step flow, explanation (SignGuard and validated AI), Ledger hash line.
+// X20: report semantics. Calm L0, readable unknowns, two-step flow, explanation (ClearSign and validated AI), Ledger hash line.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ReportBuilder, ingestSession } from "@kelvara/core";
 import { AI_STORAGE_KEY, DEFAULT_AI_URL } from "../src/intent/provider.js";
@@ -165,7 +165,7 @@ const deps = (fetchFn: typeof fetch, stored: unknown = provider): ExplainDeps =>
 const completion = (value: unknown) => new Response(JSON.stringify({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify(value) } }] }));
 
 describe("explanation", () => {
-  it("SignGuard explanation is the report's own text for the risk claims; routine L0 uses the summary", () => {
+  it("ClearSign explanation is the report's own text for the risk claims; routine L0 uses the summary", () => {
     const e = fallbackExplanation(view());
     expect(e.source).toBe("signguard");
     expect(e.sentences).toEqual([{ text: expect.stringContaining("permanent delegate"), claimIds: ["c1"] }]);
@@ -215,7 +215,7 @@ describe("explanation", () => {
     expect(v).toEqual(verdictOf(2, r)); // level, hold and controls untouched
   });
 
-  it.each(["invalid", "refusal", "http-error", "redirect", "thrown", "no-provider", "disabled", "no-permission", "routine"])("%s falls back to SignGuard's explanation", async (mode) => {
+  it.each(["invalid", "refusal", "http-error", "redirect", "thrown", "no-provider", "disabled", "no-permission", "routine"])("%s falls back to ClearSign's explanation", async (mode) => {
     const r = view();
     const fetchFn = vi.fn<typeof fetch>(async () => {
       if (mode === "invalid") return completion({ sentences: [{ text: "Invented 123456.", claimIds: ["c1"] }] });
@@ -279,7 +279,7 @@ describe("explanation request from the report frame", () => {
     expect(await store.answer(msg, frame, ext)).toBeNull();
   });
 
-  it("no provider: the frame still gets SignGuard's explanation without any model call", async () => {
+  it("no provider: the frame still gets ClearSign's explanation without any model call", async () => {
     const fetchFn = vi.fn<typeof fetch>();
     const store = new ExplainStore();
     store.start(ID, verdictOf(2, view()), deps(fetchFn, null));
