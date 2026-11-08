@@ -51,7 +51,7 @@ describe("evidence-bound intent", () => {
     expect(c.candidates.find((x) => x.kind === "transfer")?.reasons[0]?.text).toContain("0 successful outgoing");
   });
 
-  it("counts successful exact outgoing transactions, deduplicates signatures, excludes dust/failed/incoming/lookalikes and states partial window", async () => {
+  it("counts successful exact outgoing transactions, deduplicates signatures, includes tiny outgoing payments, excludes failed/incoming/lookalikes and states partial window", async () => {
     const {session, state} = await requestCase(devnet);
     const h = structuredClone(state.history!);
     const real = h.outgoing.find((t) => t.to === devnet.lookalikeOf)!;
@@ -63,7 +63,7 @@ describe("evidence-bound intent", () => {
     const count = initial.candidates.find((x) => x.kind === "transfer")!.reasons[0]!.text.match(/(\d+) successful outgoing/)![1];
     expect(Number(count)).toBeGreaterThan(0);
     // Synthetic mutations of real records, never represented as new RPC fixtures.
-    h.outgoing.push(structuredClone(real), {...real, signature: "dust-unit", amount: 1n}, {...real, signature: "failed-unit"}, {...real, signature: "incoming-unit", from: real.to, to: h.wallet}, {...real, signature: "lookalike-unit", to: devnet.recipient});
+    h.outgoing.push(structuredClone(real), {...real, signature: "dust-unit", amount: 1n}, {...real, signature: "failed-unit"}, {...real, signature: "incoming-unit", from: real.to, to: h.wallet, amount: 1n}, {...real, signature: "lookalike-unit", to: devnet.recipient});
     for (const sig of ["dust-unit", "failed-unit", "incoming-unit", "lookalike-unit"]) {
       h.signatures.push({...h.signatures[0]!, signature: sig, err: sig === "failed-unit" ? {InstructionError: [0, "unit"]} : null});
       h.read.push(sig);
@@ -72,8 +72,34 @@ describe("evidence-bound intent", () => {
     h.counterparties[devnet.recipient]!.complete = false;
     const c = context(session, {...state, history: h}, decoded);
     expect(c.historyNote).toContain("partial");
-    expect(c.candidates.find((x) => x.kind === "transfer")!.reasons[0]!.text).toContain(`${count} successful outgoing`);
+    expect(c.candidates.find((x) => x.kind === "transfer")!.reasons[0]!.text).toContain(`${Number(count) + 1} successful outgoing`);
     expect(c.historyNote).toContain("does not establish safety");
+  });
+
+  it("counts only dated transfers inside the inclusive window and marks missing timestamps uncertain", async () => {
+    const {session, state} = await requestCase(devnet);
+    const h = structuredClone(state.history!);
+    const real = h.outgoing.find((t) => t.to === devnet.lookalikeOf)!;
+    const decoded = decoder.decodeSession(session);
+    decoded.flat().find((ix) => ix.name === "transferSol")!.accounts.find((a) => a.name === "destination")!.address = real.to as Address;
+    const get = () => context(session, {...state, history: h}, decoded);
+    const count = (c: IntentContext) => Number(c.candidates.find((x) => x.kind === "transfer")!.reasons[0]!.text.match(/(\d+) successful outgoing/)![1]);
+    const baseline = count(get());
+    // Explicit synthetic mutations of a real payment; no invented RPC provenance.
+    const times = [h.since - 1, h.now + 1, h.since, h.now, null, Number.NaN];
+    times.forEach((blockTime, i) => {
+      const signature = `timestamp-unit-${i}`;
+      h.outgoing.push({...real, signature, blockTime, amount: 1n});
+      h.signatures.push({...h.signatures[0]!, signature, blockTime, err: null});
+      h.read.push(signature);
+    });
+    const c = get();
+    expect(count(c)).toBe(baseline + 2); // only exact since/now boundaries qualify
+    expect(c.historyNote).toContain("partial");
+    expect(c.historyNote).toContain("undated activity remains unknown");
+    expect(c.historyNote).toContain("Undated transfers are excluded");
+    expect(c.candidates.find((x) => x.kind === "transfer")!.reasons[0]!.text).toContain("(partial)");
+    expect(validateIntentContext(c, c.messageHashes)).toEqual(c);
   });
 
   it("keeps all u64 transfer precision and routine transfers offline from AI", async () => {
