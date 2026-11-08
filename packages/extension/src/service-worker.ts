@@ -14,7 +14,9 @@ import {
   type WorkerVerdict
 } from "./shared/protocol.js";
 import { realEngine } from "./sw/engine.js";
+import { networkFor } from "./sw/endpoint.js";
 import { messageVerdict, reviewMessage } from "./sw/message-review.js";
+import { withContext } from "./sw/report-context.js";
 import { decide } from "./sw/policy.js";
 import { SETTINGS_KEYS, loadSettings, readSettings } from "./sw/settings.js";
 
@@ -75,9 +77,10 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
   const loaded = await loadSettings((keys) => chrome.storage.local.get(keys));
   const deterministic = loaded.ok ? await decide(req, loaded.settings, realEngine) : blocked(loaded.reason);
-  const verdict = await enhanceIntent(deterministic, {
+  const enhanced = await enhanceIntent(deterministic, {
     get: keys => chrome.storage.local.get(keys), fetch: fetch.bind(globalThis), permissions: chrome.permissions
   });
+  const verdict = withContext(enhanced, msg.url, loaded.ok ? networkFor(req.chain, loaded.settings.network) : null);
   await appendLog({
     ts: Date.now(),
     id: req.id,
@@ -97,7 +100,7 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
 async function handleMessage(msg: Record<string, unknown>): Promise<WorkerVerdict> {
   const req = validateMessageRequest(msg.request);
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
-  const verdict = messageVerdict(reviewMessage(req, msg.url));
+  const verdict = withContext(messageVerdict(reviewMessage(req, msg.url)), msg.url, null);
   await appendLog({
     ts: Date.now(), id: req.id, url: msg.url.slice(0, 512), method: req.method, wallet: req.wallet, chain: req.chain,
     txCount: 0, kind: "message", level: verdict.level, allow: verdict.allow, hold: verdict.hold, reason: verdict.reason

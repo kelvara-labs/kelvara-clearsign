@@ -35,6 +35,7 @@ export async function mountAIOptions(): Promise<void> {
     void action().then(async result => {
       buttons.forEach(b => { b.disabled = false; });
       if (result.clearField) await refresh();
+      if (result.url) url.value = result.url;
       out.textContent = result.text;
       out.dataset.kind = result.kind;
     }).catch(() => {

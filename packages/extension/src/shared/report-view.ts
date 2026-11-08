@@ -27,6 +27,11 @@ export interface PreviewEntry {
   can: { name: string; detail: string }[]; // ranked by damage, first = worst
 }
 
+export const REPORT_NETWORKS = ["mainnet", "devnet", "localnet"] as const;
+export type ReportNetwork = (typeof REPORT_NETWORKS)[number];
+const ORIGIN_RE = /^[a-z][a-z0-9+.-]*:\/\/[^\s/?#@\\]+$/;
+export const isOrigin = (x: unknown): x is string => typeof x === "string" && x.length <= 300 && ORIGIN_RE.test(x);
+
 export const ALERT_LEVEL_NAMES = ["L0", "L1", "L2", "L3", "L4"] as const;
 export type AlertLevelName = (typeof ALERT_LEVEL_NAMES)[number];
 // Engine evidence types and sources (kelvara-report-v1), plus "extension" for the worker's own notes.
@@ -78,6 +83,10 @@ export interface ReportView {
   intent?: ReportIntent;
   /** Message-signing review (signMessage / signIn); the transaction sections are then empty. */
   message?: MessageReview;
+  /** Requesting page origin (scheme://host[:port], no path, query or key), shown as a "site" pill. */
+  origin?: string;
+  /** Network the request is analyzed on, shown as a "network" pill. */
+  network?: ReportNetwork;
   /** Risk header: one line, what is at stake. */
   title: string;
   summary: string;
@@ -177,7 +186,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -190,6 +199,8 @@ export function validateReportView(x: unknown): ReportView | null {
   if (!list(x.messageHashes, (h): h is string => typeof h === "string" && B58_HASH.test(h))) return null;
   if (Object.hasOwn(x, "intent") && !validateReportIntent(x.intent, x.messageHashes as string[])) return null;
   if (Object.hasOwn(x, "message") && !validateMessageReview(x.message)) return null;
+  if (Object.hasOwn(x, "origin") && !isOrigin(x.origin)) return null;
+  if (Object.hasOwn(x, "network") && !oneOf(x.network, REPORT_NETWORKS)) return null;
   return x as unknown as ReportView;
 }
 

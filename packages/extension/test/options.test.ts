@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { loadView, saveSettings, syncsInputs, testConnection, type Store } from "../src/options/actions.js";
+import { saveProvider } from "../src/options/ai-actions.js";
 import { keyForTest, keyStatus, planSave } from "../src/options/form.js";
 import { pickEndpoint } from "../src/sw/endpoint.js";
 import { GENESIS, probeEndpoint, type FetchLike } from "../src/sw/probe.js";
@@ -111,5 +113,46 @@ describe("manifest", () => {
     const scripts = [...html.matchAll(/<script\b[^>]*>/g)].map((x) => x[0]);
     expect(scripts).toEqual(['<script type="module" src="ui.js">']);
     expect(html).not.toMatch(/(?:src|href)="https?:\/\//);
+  });
+});
+
+function memStore(data: Record<string, unknown> = {}): Store & { data: Record<string, unknown> } {
+  return {
+    data,
+    get: async () => data,
+    set: async (items) => void Object.assign(data, items),
+    remove: async (keys) => void [keys].flat().forEach((k) => delete data[k])
+  };
+}
+
+describe("Test does not reset unsaved form state", () => {
+  it("select devnet -> Test (stored mainnet) -> Save stores devnet; the Test names its network", async () => {
+    const store = memStore({ network: "mainnet", heliusApiKey: KEY });
+    const form = { network: "devnet" }; // what the <select> holds
+    const t = await testConnection(store, "", form.network, fakeFetch(200, { result: GENESIS.devnet }));
+    expect(t.text).toMatch(/^Devnet: /);
+    expect(t.kind).toBe("ok");
+    // The page re-reads storage after every action but syncs inputs only when this is true.
+    expect(syncsInputs(t)).toBe(false);
+    expect((await loadView(store)).network).toBe("mainnet");
+    const saved = await saveSettings(store, "", form.network);
+    expect(syncsInputs(saved)).toBe(true);
+    expect(store.data.network).toBe("devnet");
+  });
+  it("failed tests and failed saves never sync inputs; Remove does", async () => {
+    expect(syncsInputs(await testConnection(memStore(), "", "mainnet", fakeFetch(200, {})))).toBe(false);
+    expect(syncsInputs(await saveSettings(memStore(), "bad key!", "devnet"))).toBe(false);
+  });
+});
+
+describe("AI provider normalized URL", () => {
+  it("Save reports the normalized URL (never the key) for a base URL", async () => {
+    const store = memStore();
+    const perms = { request: async () => true, contains: async () => true };
+    const r = await saveProvider(store, perms, { url: "http://127.0.0.1:20128/v1", model: "m", key: "secret-key-value", enabled: true });
+    expect(r).toMatchObject({ kind: "ok", url: "http://127.0.0.1:20128/v1/chat/completions" });
+    expect(r.text).toContain("Saved as http://127.0.0.1:20128/v1/chat/completions");
+    expect(JSON.stringify(r)).not.toContain("secret-key-value");
+    expect(readFileSync(new URL("../static/options.html", import.meta.url), "utf8")).toMatch(/base URL ending in \/v1 is completed automatically/);
   });
 });

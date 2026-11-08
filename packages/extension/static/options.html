@@ -2,7 +2,7 @@
 <html lang="en" data-page="options">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SignGuard · Settings</title><link rel="stylesheet" href="interface.css"></head>
 <body><main class="settings-shell">
-  <header class="settings-header"><div class="brand"><img class="brand-mark" src="mark.svg" alt=""><div><div class="brand-word">Sign<span>Guard</span></div><div class="eyebrow">by Kelvara</div></div></div><span class="version">v0.4.0 · MVP</span></header>
+  <header class="settings-header"><div class="brand"><img class="brand-mark" src="mark.svg" alt=""><div><div class="brand-word">Sign<span>Guard</span></div><div class="eyebrow">by Kelvara</div></div></div><span class="version">v0.4.1 · MVP</span></header>
   <div class="page-title"><p class="eyebrow">Your connection, your control</p><h1>A little setup. A clearer signature.</h1><p>Connect SignGuard to Solana. Get the full picture of what your next signature puts in motion.</p></div>
   <div class="setup-indicator" id="setup-indicator" role="status"><span class="dot"></span><span id="setup-label">Reading your settings…</span></div>
   <section class="panel settings-card" aria-labelledby="connection-title">
@@ -22,7 +22,7 @@
     <div class="ai-body">
     <p>Opt in to send bounded public engine questions, reasons and message-hash binding to your selected provider. No raw transaction bytes, signatures, wallet secrets or page content are sent. Chain data comes only from Helius. The provider cannot change rules, levels or signing controls; failures use engine templates.</p>
     <label class="field-label" for="ai-url">API URL</label><input id="ai-url" type="url" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="Provider endpoint URL">
-    <p class="field-hint">Full Chat Completions or Responses endpoint; a base URL uses /chat/completions. HTTPS remote, HTTP loopback only. Changing the endpoint requires re-entering its key.</p>
+    <p class="field-hint">Full Chat Completions or Responses endpoint. A base URL ending in /v1 is completed automatically to .../chat/completions; the saved URL is shown after Save. HTTPS remote, HTTP loopback only. Changing the endpoint requires re-entering its key.</p>
     <label class="field-label" for="ai-key">API key</label><input id="ai-key" type="password" autocomplete="new-password" spellcheck="false" maxlength="4096" placeholder="Optional for local inference">
     <label class="field-label" for="ai-model">Model</label><input id="ai-model" type="text" autocomplete="off" spellcheck="false" maxlength="160" placeholder="gpt-4.1-mini">
     <label><input id="ai-enabled" type="checkbox"> Enable optional AI selection for complex requests</label>
