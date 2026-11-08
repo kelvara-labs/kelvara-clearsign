@@ -99,7 +99,7 @@ test("E23/X19: benign memo report names the memo, says no permission changes, ha
 });
 
 for (const [role, level] of [["l2-trap", "L2"], ["l3-admin", "L3"], ["l4-sweep", "L4"]] as const) {
-  test(`E23/X19: ${role} keeps ${level}; Grants/Revokes come first and the no-permission line never appears`, async ({ ext }) => {
+  test(`E23/X19: ${role} keeps ${level}; Grants/Revokes come first (sweep: only Sends, no Grants/Revokes) and the no-permission line never appears on authority changes`, async ({ ext }) => {
     if (!hasRealEngine()) pending("real engine not wired into the extension");
     if (CASES_MISSING) pending(`localnet cases unavailable: ${CASES_MISSING}`);
     if (!hasReportUi()) pending("report UI not landed");
@@ -110,8 +110,14 @@ for (const [role, level] of [["l2-trap", "L2"], ["l3-admin", "L3"], ["l4-sweep",
     expect(m, `${role}: no report modal`).not.toBeNull();
     await expect(m!.locator(SEL.level).first()).toHaveAttribute("data-kelvara-level", level);
     const authorizes = await m!.locator(".authorize p").innerText();
-    expect(authorizes).toMatch(/^(Grants|Revokes) /);
-    expect(authorizes).not.toContain(NO_PERM);
+    if (role === "l4-sweep") {
+      // The sweep only moves funds: capabilities are empty, so the no-permission line is accurate and nothing may claim Grants/Revokes.
+      expect(authorizes).toMatch(/^Sends /);
+      expect(authorizes).not.toMatch(/\b(Grants|Revokes)\b/);
+    } else {
+      expect(authorizes).toMatch(/^(Grants|Revokes) /);
+      expect(authorizes).not.toContain(NO_PERM);
+    }
     expect(await m!.locator("body").innerText()).not.toMatch(/claim\(s\)/);
     expect(await m!.locator(".simulation p").innerText()).not.toMatch(/Transaction 0:/);
     const block = m!.locator(SEL.block).first();
