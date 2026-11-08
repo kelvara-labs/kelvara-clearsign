@@ -62,7 +62,7 @@ function claimCard(c: Claim, evidence: Map<string, EvidenceItem>, tokens?: Repor
     { class: "claim", "data-claim": c.id, "data-claim-kind": c.kind.toLowerCase() },
     c.rule?.startsWith("fact.")
       ? el("summary", {}, el("strong", { class: "claim-title" }, c.title))
-      : el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), c.level ? el("span", { class: "claim-level" }, c.level) : null, " ", el("strong", { class: "claim-title" }, c.title)),
+      : el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), c.level ? el("span", { class: "claim-level", "data-lv": c.level.slice(1) }, c.level) : null, " ", el("strong", { class: "claim-title" }, c.title)),
     el("p", { class: "claim-text" }, ...withTokens(c.text, tokens)),
     c.advice ? el("p", { class: "advice" }, c.advice) : null,
     items.length ? el("div", { class: "explorer" }, ...items.map(evidenceCard)) : el("p", { class: "muted" }, "No evidence attached."),
@@ -101,21 +101,74 @@ function instructionList(r: ReportView): HTMLElement | null {
         ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, ...(/^\d+$/.test(f.value) ? [Number(f.value).toLocaleString("en-US")] : r.tokens?.some((t) => f.value.includes(t.label)) ? withTokens(f.value, r.tokens, document, false) : [addr(f.value)]))]))
         : null
     );
-  if (!multi) return section("Instructions", el("ol", { class: "instructions" }, ...list.map(line)));
+  const cb = multi ? [] : list.filter((i) => /compute budget/i.test(i.program) && i.name && /^set(ComputeUnit|LoadedAccounts)/.test(i.name));
+  const bar = cb.length ? computeBar(r, cb, line) : null;
+  const rest = bar ? list.filter((i) => !cb.includes(i)) : list;
+  const main = rest.length ? section("Instructions", el("ol", { class: "instructions" }, ...rest.map(line))) : null;
+  if (!multi) return bar ? el("div", { class: "ix-group" }, bar, ...(main ? [main] : [])) : main;
   const txs = [...new Set(list.map((i) => i.tx))];
   return section("Instructions", ...txs.flatMap((t) => [el("h3", {}, `Transaction ${t + 1}`), el("ol", { class: "instructions" }, ...list.filter((i) => i.tx === t).map(line))]));
 }
 
+const num = (v: string | undefined): number | null => (v !== undefined && /^[\d,]+$/.test(v) ? Number(v.replace(/,/g, "")) : null);
+const sol = (s: string | undefined): number | null => (s !== undefined && /^\d+(\.\d+)?$/.test(s) ? Number(s) : null);
+
+/** One compact "Compute & fees" block instead of one card per Compute Budget instruction. Shows only values the report carries. */
+function computeBar(r: ReportView, cb: NonNullable<ReportView["details"]>["instructions"], line: (i: NonNullable<ReportView["details"]>["instructions"][number]) => HTMLElement): HTMLElement {
+  const arg = (key: string) => cb.flatMap((i) => i.args).find((a) => a.key === key)?.value;
+  const limit = num(arg("units"));
+  const price = num(arg("microLamports"));
+  const consumed = r.evidence.flatMap((e) => e.fields).map((f) => (/^units_?consumed$/i.test(f.key) ? num(f.value) : null)).find((x) => x !== null) ?? null;
+  const feeLine = [...(r.details?.balances ?? []), ...(r.authorizes?.split("\n") ?? [])].find((l) => /^Fees\b/.test(l)) ?? "";
+  const net = sol(/([\d.]+) SOL network/.exec(feeLine)?.[1]);
+  const prio = sol(/up to ([\d.]+) SOL priority/.exec(feeLine)?.[1]);
+  const lamports = (v: number) => `${Math.round(v * 1e9).toLocaleString("en-US")} lamports`;
+  const fmt = (v: number) => `${v.toLocaleString("en-US", { maximumFractionDigits: 9 })} SOL`;
+  const rows: HTMLElement[] = [];
+  if (limit !== null) {
+    const pct = consumed !== null && limit > 0 ? Math.min(100, (consumed / limit) * 100) : null;
+    rows.push(
+      el(
+        "div",
+        { class: "cf-row", "data-compute": "units" },
+        el("div", { class: "cf-line" }, el("span", { class: "cf-label" }, "Compute units"), el("span", { class: "cf-value", title: consumed !== null ? `${consumed.toLocaleString("en-US")} used of ${limit.toLocaleString("en-US")} requested` : `${limit.toLocaleString("en-US")} requested` }, consumed !== null ? `${consumed.toLocaleString("en-US")} of ${limit.toLocaleString("en-US")} CU` : `Limit ${limit.toLocaleString("en-US")} CU`)),
+        pct !== null ? el("div", { class: "cf-bar", "aria-hidden": "true" }, el("i", { style: `width:${pct.toFixed(1)}%` })) : null
+      )
+    );
+  }
+  if (net !== null || prio !== null || price !== null) {
+    const total = (net ?? 0) + (prio ?? 0);
+    const share = total > 0 ? ((net ?? 0) / total) * 100 : 100;
+    rows.push(
+      el(
+        "div",
+        { class: "cf-row", "data-compute": "fees" },
+        el("div", { class: "cf-line" }, el("span", { class: "cf-label" }, "Fees"), el("span", { class: "cf-value", title: total > 0 ? `${lamports(net ?? 0)} network + up to ${lamports(prio ?? 0)} priority` : "" }, total > 0 ? `${prio ? "Up to " : ""}${fmt(total)}` : "No priority fee")),
+        total > 0 ? el("div", { class: "cf-bar cf-split", "aria-hidden": "true" }, el("i", { class: "cf-net", style: `width:${share.toFixed(1)}%` }), el("i", { class: "cf-prio" })) : null,
+        el(
+          "div",
+          { class: "cf-legend" },
+          net !== null ? el("span", { class: "cf-key cf-net-key", title: lamports(net) }, `Network ${fmt(net)}`) : null,
+          prio !== null ? el("span", { class: "cf-key cf-prio-key", title: `up to ${lamports(prio)}` }, `Priority up to ${fmt(prio)}`) : null,
+          price !== null ? el("span", { class: "cf-price" }, `${price.toLocaleString("en-US")} micro-lamports per CU`) : null
+        )
+      )
+    );
+  }
+  return section("Compute & fees", el("div", { class: "compute-bar", "data-compute-bar": "" }, ...rows), el("details", { class: "compute-raw" }, el("summary", {}, "Show instructions"), el("ol", { class: "instructions" }, ...cb.map(line))));
+}
+
 /** Small "Copy raw" button: copies the instruction as JSON on click only. Not a decision control. */
 export function copyRawButton(raw: RawInstruction, clipboard: () => Pick<Clipboard, "writeText"> | undefined = () => navigator.clipboard): HTMLButtonElement {
-  const b = el("button", { type: "button", class: "copy-raw", "data-copy-raw": `${raw.transaction}:${raw.index}`, "aria-label": "Copy raw instruction as JSON" }, "Copy raw");
+  const b = el("button", { type: "button", class: "copy-raw", "data-copy-raw": `${raw.transaction}:${raw.index}`, "aria-label": "Copy raw instruction as JSON", title: "Copy raw instruction as JSON" }, "Copy raw");
   let timer: ReturnType<typeof setTimeout> | undefined;
   b.addEventListener("click", () => {
     void Promise.resolve(clipboard()?.writeText(JSON.stringify(raw, null, 2))).then(
       () => {
         b.textContent = "Copied";
+        b.setAttribute("data-copied", "true");
         clearTimeout(timer);
-        timer = setTimeout(() => { b.textContent = "Copy raw"; }, 2000);
+        timer = setTimeout(() => { b.textContent = "Copy raw"; b.setAttribute("data-copied", "false"); }, 2000);
       },
       () => { b.textContent = "Copy failed"; }
     );
@@ -243,7 +296,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const status = el("p", { class: "status", role: "status" });
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
-  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara ClearSign")), ...levelHeader(v, r));
+  card.append(el("header", {}, el("div", { class: "brand" }, el("img", { class: "brand-mark", src: "mark.svg", alt: "" }), el("span", { class: "brand-lockup" }, el("span", { class: "brand-word" }, "Clear", el("span", {}, "Sign")), el("span", { class: "brand-by" }, "by Kelvara")))), ...levelHeader(v, r));
 
   let answered = false;
   let sign: HTMLButtonElement | null = null;
@@ -264,7 +317,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const stepped = mode === "hold" && !!r;
   const assessment = stepped ? assessmentCard(r!.message ? undefined : r!.intent, v.level, r!.message ? "Did you intend to sign this message?" : undefined, r!.tokens) : null;
   const details = el("div", { class: "review-details", "data-report-step": "details" }, ...detailsStep(v, r));
-  const footer = el("footer", { class: "decision" }, status, block);
+  const footer = el("footer", { class: "decision" }, status, mode === "hold" ? el("div", { class: "countdown", "aria-hidden": "true", style: `--total:${secondsLeft()}s` }, el("i")) : null, block);
   if (assessment) {
     card.setAttribute("data-report-current", "intent");
     details.hidden = true;

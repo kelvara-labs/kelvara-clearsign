@@ -1,4 +1,5 @@
 import { mountAIOptions } from "./ai-page.js";
+import { mountCollapsibles } from "./collapse.js";
 import { mountLabels } from "./labels.js";
 import { mountPrograms, mountTrusted } from "./programs.js";
 import { mountShell } from "./shell.js";
@@ -19,6 +20,7 @@ export async function mountOptions(): Promise<void> {
   mountPrograms();
   mountTrusted();
   mountLabels();
+  mountCollapsibles();
   mountShell();
   await mountAIOptions();
   const keyInput = el<HTMLInputElement>("helius-key");
