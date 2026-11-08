@@ -751,7 +751,8 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 .assessment .caption { display: inline-block; margin: 0; padding: 0; border: 0; text-transform: none; letter-spacing: 0; font-size: var(--fs-label); font-weight: 600; color: var(--brand-mint); }
 .assessment[data-intent-status="selected"] .caption { color: var(--brand-violet); }
 .assessment .explanation p { margin: 0 0 var(--space-2); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-1); }
-.assessment .question { margin: var(--space-4) 0 var(--space-2); font-size: var(--fs-title); line-height: var(--lh-title); letter-spacing: -0.01em; font-weight: 650; text-transform: none; color: var(--text-1); }
+.assessment .question { margin: var(--space-4) 0 var(--space-2); padding-top: var(--space-3); border-top: 1px solid var(--border); font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 650; text-transform: none; color: var(--text-1); }
+.assessment .question + ul { margin: 0 0 var(--space-3); padding-left: var(--space-4); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); color: var(--text-2); }
 .intent-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
 .intent-actions .choice { flex: 1 1 160px; min-height: 44px; padding: 10px var(--space-4); border-radius: var(--radius-control); border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--text-1); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); font-weight: 650; transition: background var(--dur-fast) var(--ease); }
 .intent-actions .choice:hover:not(:disabled) { background: var(--surface-3); }
