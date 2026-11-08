@@ -1,5 +1,11 @@
 # Kelvara SignGuard selfcheck — v0.2.1 (always-show policy)
 
+## V14 intent/provider validation — preparation only
+
+Merged scope baseline `1e24e0a`; implementation and final integration SHA are pending coordinator authorization. V13 below certifies the historical v0.2.1 release only; it does not certify optional remote AI or intent review. No V14 G7/G9/G10 integration verdict, live paired-proposal proof, or paid model usage is claimed.
+
+Verifier preparation adds an independent exact-origin/provider-permission oracle, optional-capability versus installed-grant checks, seeded provider-key leakage checks, and browser assertions for all three collapsed fields and a never-prefilled password field. Foreign hosts, changed endpoints, wildcard actual grants, and redirects are rejected by the oracle; unrecognized dynamic hosts remain G10 failures. Current targeted self-tests and spec typecheck/lint are preparation evidence, not provider implementation evidence. Full G7 awaits merged implementation and one browser worker; live paired devnet evidence additionally requires explicit reservation.
+
 ## V13 final certification — 2026-11-08, main `a22a51c`
 
 **All ten gates PASS on a fresh plain `git clone` of main `a22a51c4fddb0d8388826e531c0ea230d00f5b94`.** Live G8 also PASSes on the same clone, and two `pnpm release` builds are byte-identical. This supersedes the V12b partial run and the V11 MVP certification below, which are kept as history. `a22a51c` differs from `8f894c9` (V12b) only by the V12b verifier report merge and the coordinator log; the extension and engine sources are the same.

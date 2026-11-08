@@ -64,3 +64,17 @@ The specs code against these; nothing else in the UI is assumed.
   `{ wallet, method, txCount, allow, level }` for every analyzed request, as it does today.
 - Settings keys in `chrome.storage.local`: `heliusApiKey`, `network`.
 - Removing the UI's host element from the page, or 90 s with no answer, rejects with 4001.
+
+V14 provider/intent contract: `intent-provider.spec.ts` requires initially collapsed
+`#ai-provider` details with URL `#ai-url`, password `#ai-key`, and model `#ai-model`
+all invisible until the summary is opened, including after reload. A stored seeded
+key must never be prefilled or appear in the DOM; `#ai-delete` clears configuration.
+These tests use fake provider credentials and do not demonstrate paid model usage.
+
+`ext.approveConfiguredProvider()` refreshes the G7 runtime oracle after a Save user
+gesture: it reads `aiProvider` and Chrome's actual granted origins, requires the
+exact configured origin pattern, and permits only that origin. Optional wildcard
+capability in the manifest does not count as a runtime grant. Redirects fail even
+if the destination is otherwise allowed. The guard does not infer authorization
+from provider storage alone. Provider tests must mock transport explicitly and
+assert request shape/failures; a mock response is not live provider evidence.
