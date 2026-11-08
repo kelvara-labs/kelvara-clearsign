@@ -24,3 +24,4 @@ X19 (M8): E23 facts rendered as plain language (sw/facts-text.ts): authorizes li
 - X22 Options Programs section: generated programs-data.json from registry (gen-programs.mjs in build), ui.js 65360 -> 70332 bytes, 0.5.2, G1/G10 pass
 - X23 trusted aggregator sites (jup.ag, app.velocity.exchange): routed header at L0 w/o risk claims, routed intent, green site pill, Options list; 0.5.3. G10 hosts needs inert-hosts.json entries (verifier-owned)
 - X24 (E26 pending, hand-built evidence): single Assessment heading, token labels from evidence + hover mint, net balances, Other accounts, Copy raw, overflow test; 0.5.4
+- X25: symbols with address on hover on real E26 output, rounding for reading, page-1/page-2 split, header pills, pen icon, signature_check text; 0.5.6

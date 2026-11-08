@@ -161,7 +161,7 @@ input:focus-visible, select:focus-visible { outline-offset: 0; }
 
 /* 3. Components */
 .brand { display: flex; align-items: center; gap: var(--space-3); }
-.brand-mark { width: 32px; height: 35px; }
+.brand-mark { width: 32px; height: 32px; }
 .brand-word { font-size: var(--fs-title); line-height: var(--lh-title); font-weight: 700; letter-spacing: -0.02em; }
 .brand-word span { font-weight: 450; color: var(--text-2); }
 
@@ -277,7 +277,7 @@ input:focus-visible, select:focus-visible { outline-offset: 0; }
 /* 4. Popup (360 px) */
 .popup { width: 360px; padding: var(--space-4) var(--space-4) var(--space-3); }
 .popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-4); }
-.popup .brand-mark { width: 28px; height: 31px; }
+.popup .brand-mark { width: 28px; height: 28px; }
 
 .hero { padding: var(--space-4); position: relative; background: linear-gradient(135deg, var(--surface-2), var(--surface-1)); }
 .hero-top { display: flex; align-items: center; justify-content: space-between; }
@@ -371,7 +371,7 @@ html[data-page="options"] { scroll-behavior: smooth; scroll-padding-top: 88px; }
   box-shadow: var(--shadow-sticky);
 }
 .app-header .brand { gap: var(--space-2); }
-.app-header .brand-mark { width: 24px; height: 26px; }
+.app-header .brand-mark { width: 24px; height: 24px; }
 .app-header .brand-word { font-size: var(--fs-body); line-height: var(--lh-body); }
 .header-sep { width: 1px; height: 20px; margin: 0 var(--space-2); background: var(--border-strong); }
 .app-title { font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 600; color: var(--text-2); }
@@ -573,7 +573,7 @@ html[data-page="report"][data-level] body:has(.mode-hold, .mode-info) { backgrou
 .card > * { margin-left: var(--space-5); margin-right: var(--space-5); }
 .card > header { margin-top: 0; padding: var(--space-4) 0 var(--space-3); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2) var(--space-3); }
 .card .brand { gap: var(--space-2); font-size: var(--fs-label); line-height: var(--lh-label); font-weight: 650; color: var(--text-2); white-space: nowrap; }
-.card .brand img { width: 20px; height: 22px; }
+.card .brand img { width: 20px; height: 20px; }
 
 /* Risk banner */
 .risk-banner {

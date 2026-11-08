@@ -122,6 +122,9 @@ describe("real E26 output on the recorded Jupiter swaps", () => {
     const m = fromReport(r, r.session.transactions.map((t) => t.messageHash));
     if (!m.ok) throw new Error(m.reason);
     expect(m.report.authorizes).toMatch(/Velocity · [A-Z]/);
+    expect(m.report.authorizes).toContain("Verifies a signature (no funds moved)");
+    expect(m.report.authorizes).not.toMatch(/\d+-byte|Ed25519/);
+    expect(m.report.summary).not.toMatch(/Verifies/);
     expect(m.report.authorizes).not.toMatch(/token mint|intent template|decoded instruction|program id/i);
   });
 });
@@ -202,7 +205,7 @@ describe("mint on hover", () => {
   it("each label is a span with the full mint in title and accessible text", () => {
     const doc = fakeDoc();
     const out = withTokens("You send −23.18 USDC today", [{ mint: USDC, label: "USDC" }], doc) as (N | string)[];
-    expect(out[0]).toBe("You send −");
+    expect(out[0]).toBe("You send ");
     const span = out[3] as N;
     expect(span.text).toBe("USDC");
     expect(span.attrs.title).toBe(USDC);
@@ -217,7 +220,7 @@ describe("mint on hover", () => {
     const spans = nodes.filter((n) => n.attrs["data-kelvara-token"] === USDC);
     expect(spans.length).toBeGreaterThanOrEqual(2);
     expect(nodes.some((n) => n.attrs["data-other-accounts"] !== undefined)).toBe(true);
-    expect(nodes.filter((n) => "data-balance" in n.attrs).map((n) => n.text)).toContain("You send−≈23.18 USDC");
+    expect(nodes.filter((n) => "data-balance" in n.attrs).map((n) => n.text)).toContain("You send≈−23.18 USDC");
   });
 });
 
@@ -351,4 +354,67 @@ describe("second screen layout", () => {
       server.kill();
     }
   }, 120000);
+});
+
+import { roundForReading } from "../src/report/tokens.js";
+import { levelHeader as header, detailsStep as details } from "../src/report/page.js";
+
+describe("rounding for reading", () => {
+  it("rounds for the eye, keeps the exact value for hover, never to zero", () => {
+    const cases: [string, string, boolean][] = [
+      ["23.180052", "23.18", true], ["1250000.5", "1,250,000.5", false], ["0.25889912", "0.2589", true], ["0.000003864", "0.000003864", false],
+      ["5.77101", "5.771", true], ["1000.123456", "1,000.12", true], ["7", "7", false], ["0.000005", "0.000005", false], ["0.00000000123456", "0.000000001235", true]
+    ];
+    for (const [exact, shown, changed] of cases) expect(roundForReading(exact), exact).toEqual({ text: shown, changed });
+    expect(roundForReading("0").text).toBe("0");
+  });
+  it("text gets ≈ and the exact amount in the title only when rounding changed it; SOL too", () => {
+    const doc = fakeDoc();
+    const out = withTokens("You send −23.180052 USDC and pay 0.000005 SOL, receive 0.258554337 SOL", [{ mint: USDC, label: "USDC" }], doc) as (N | string)[];
+    const amounts = out.filter((x): x is N => typeof x !== "string" && x.attrs.title !== undefined && x.attrs.title.includes(" ") && x.children.length > 0);
+    expect(amounts.map((a) => [a.attrs.title, a.children[0]])).toEqual([["−23.180052 USDC", "≈−23.18 "], ["0.258554337 SOL", "≈0.2586 "]]);
+    expect(out.some((x) => x === "0.000005")).toBe(true);
+  });
+});
+
+describe("header pills and page split", () => {
+  it("title, level, site and network are pills in one row, no separators; trusted stays green by attribute", () => {
+    fakeDoc();
+    const m = ok(swapReport());
+    const report = { ...m.report, origin: "https://app.velocity.exchange", trustedSite: "Velocity", network: "mainnet" as const };
+    const els = (header({ allow: false, hold: true, level: 0, reason: "r", report }, report) as unknown as N[]).flatMap((e) => [e, ...e.all()]);
+    const row = els.find((n) => (n.attrs.class ?? "").includes("report-head"))!;
+    const kids = row.children.filter((c): c is N => typeof c !== "string");
+    expect(kids.some((c) => c.tag === "h1")).toBe(true);
+    for (const attr of ["data-kelvara-level", "data-kelvara-origin", "data-kelvara-network"]) expect(kids.some((c) => attr in c.attrs), attr).toBe(true);
+    expect(kids.find((c) => "data-kelvara-origin" in c.attrs)!.attrs["data-kelvara-trusted"]).toBe("true");
+    expect(row.children.some((c) => c === " · ")).toBe(false);
+  });
+  it("page 2 shows no Ledger hash line", () => {
+    fakeDoc();
+    const m = ok(swapReport());
+    const els = (details({ allow: false, hold: true, level: 0, reason: "r", report: m.report }, m.report) as unknown as N[]).flatMap((e) => [e, ...e.all()]);
+    expect(els.some((n) => "data-kelvara-hash" in n.attrs || n.attrs.class === "ledger-hash")).toBe(false);
+  });
+});
+
+describe("real Jupiter evidence labels simulation mints", () => {
+  it("a USDC balance row says USDC, from E26's type=derivation kind=token evidence", async () => {
+    const { report } = await realSwap(0);
+    const withSim = structuredClone(report) as Report;
+    const payer = withSim.evidence.find((e) => e.type === "derivation" && typeof (e.data as { feePayer?: string } | null)?.feePayer === "string");
+    const wallet = (payer!.data as { feePayer: string }).feePayer;
+    const id = `e${withSim.evidence.length + 1}`;
+    (withSim.evidence as unknown[]).push({
+      id, type: "simulation", source: "simulation", summary: "sim", transactionIndex: 0, instructionPath: null, address: null,
+      data: { solChanges: [], tokenChanges: [{ owner: wallet, mint: USDC, delta: "5762509", decimals: 6 }, { owner: wallet, mint: JUPUSD, delta: "-5771010", decimals: 6 }], stateChanges: [] }
+    });
+    withSim.simulation = { status: "ok", summary: "Simulation shows: balances change.", evidenceIds: [id] };
+    withSim.counts.evidence += 1;
+    const fixed = { ...withSim, digest: reportDigest(withSim) } as Report;
+    const m = fromReport(fixed, fixed.session.transactions.map((t) => t.messageHash));
+    if (!m.ok) throw new Error(m.reason);
+    expect(m.report.details!.balances).toEqual(expect.arrayContaining(["You receive · +5.762509 USDC", "You send · −5.77101 JupUSD"]));
+    expect(JSON.stringify(m.report.details)).not.toContain("token EPjF");
+  });
 });

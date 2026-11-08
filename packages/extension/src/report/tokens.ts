@@ -20,7 +20,9 @@ export function roundForReading(exact: string): { text: string; changed: boolean
   const wholePart = s.slice(0, s.length - decimals);
   const fracPart = s.slice(s.length - decimals).replace(/0+$/, "");
   const shownWhole = BigInt(wholePart).toLocaleString("en-US");
-  const text = BigInt(wholePart) === 0n && !fracPart ? "< 0.0001" : `${shownWhole}${fracPart ? `.${fracPart}` : ""}`;
+  if (BigInt(`${int}${frac}` || "0") === 0n) return { text: "0", changed: false };
+  if (BigInt(wholePart) === 0n && !fracPart) return { text: "< 0.0001", changed: true };
+  const text = `${shownWhole}${fracPart ? `.${fracPart}` : ""}`;
   const normalize = (x: string) => { const [a = "0", b = ""] = x.split("."); return `${BigInt(a)}.${b.replace(/0+$/, "")}`; };
   return { text, changed: normalize(clean) !== normalize(text.replace(/,/g, "")) };
 }
@@ -34,7 +36,7 @@ export function roundForReading(exact: string): { text: string; changed: boolean
 export function withTokens(text: string, tokens: readonly TokenRef[] | undefined, doc: Document = document, round = true): (Node | string)[] {
   const byLabel = new Map<string, string | null>([["SOL", null], ...(tokens ?? []).map((t) => [t.label, t.mint] as [string, string | null])]);
   const labels = [...byLabel.keys()].sort((a, b) => b.length - a.length).map(esc).join("|");
-  const re = new RegExp(`(?<![\\w.,])(\\d[\\d,]*(?:\\.\\d+)?) (${labels})(?![\\w…])|(?<![\\w…])(${labels})(?![\\w…])`, "g");
+  const re = new RegExp(`(?<![\\w.,])([−+-]?)(\\d[\\d,]*(?:\\.\\d+)?) (${labels})(?![\\w…])|(?<![\\w…])(${labels})(?![\\w…])`, "g");
   const out: (Node | string)[] = [];
   let last = 0;
   const token = (label: string): HTMLElement => {
@@ -53,17 +55,17 @@ export function withTokens(text: string, tokens: readonly TokenRef[] | undefined
   for (const m of text.matchAll(re)) {
     if (m.index > last) out.push(text.slice(last, m.index));
     last = m.index + m[0].length;
-    if (m[1] !== undefined) {
-      const { text: rounded, changed } = roundForReading(m[1]);
-      if (!round || !changed) out.push(m[1], " ", token(m[2]!));
+    if (m[2] !== undefined) {
+      const { text: rounded, changed } = roundForReading(m[2]);
+      if (!round || !changed) out.push(`${m[1]}${m[2]}`, " ", token(m[3]!));
       else {
         const amount = doc.createElement("span");
         amount.className = "amount";
-        amount.setAttribute("title", `${m[1]} ${m[2]}`);
-        amount.append(`${rounded.startsWith("<") ? "" : "≈"}${rounded} `, token(m[2]!));
+        amount.setAttribute("title", `${m[1]}${m[2]} ${m[3]}`);
+        amount.append(`${rounded.startsWith("<") ? "" : "≈"}${m[1]}${rounded} `, token(m[3]!));
         out.push(amount);
       }
-    } else out.push(token(m[3]!));
+    } else out.push(token(m[4]!));
   }
   if (last < text.length) out.push(text.slice(last));
   return out;

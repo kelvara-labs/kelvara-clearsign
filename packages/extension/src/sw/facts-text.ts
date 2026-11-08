@@ -91,6 +91,9 @@ export function factLines(r: Report): FactLine[] {
         if (m) line = { rule: c.ruleId, claimId: c.id, tx, text: `Swap on ${m[3]}: you give ${m[1]} and get ${m[2]} (the price may move at most ${Number(m[4]) / 100}% against you)`, brief: `swaps ${m[1]!.replace(/^up to /, "")} for ${m[2]!.replace(/^(at least|exactly) /, "")}` };
         break;
       }
+      case "fact.signature_check":
+        line = { rule: c.ruleId, claimId: c.id, tx, text: "Verifies a signature (no funds moved)", brief: null };
+        break;
       case "fact.priority_fee": {
         const max = derived.maxPriorityFeeLamports;
         if (max === null) line = { rule: c.ruleId, claimId: c.id, tx, text: "Sets a compute unit price without a limit, so the priority fee depends on the limit the network applies", brief: null };

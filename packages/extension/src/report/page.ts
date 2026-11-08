@@ -196,8 +196,8 @@ export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement
   const level = v.level;
   const pills = contextPills(r);
   if (level === 0) {
-    const calm = /^No risks found/.test(title);
-    const [lead, rest] = calm ? ["No risks found", title.replace(/^No risks found\s*[·:]?\s*/, "").trim()] : (() => { const [a, ...b] = title.split(" · "); return [a ?? title, b.join(" · ")]; })();
+    const calm = !/^Can't fully verify/.test(title);
+    const [lead, rest] = /^No risks found/.test(title) ? ["No risks found", title.replace(/^No risks found\s*[·:]?\s*/, "").trim()] : (() => { const [a, ...b] = title.split(" · "); return [a ?? title, b.join(" · ")]; })();
     return [
       el(
         "section",
