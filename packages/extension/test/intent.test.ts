@@ -12,7 +12,8 @@ import { buttonsFor } from "../src/report/model.js";
 import { enhanceIntent } from "../src/intent/enhance.js";
 import { poisonManifest, requestCase } from "../../core/test/address-helpers.js";
 import { analyze, decoder } from "../../core/test/rules-helpers.js";
-import { intentCard } from "../src/report/intent.js";
+import { assessmentCard, CONFIRM_LABEL, REJECT_LABEL } from "../src/report/intent.js";
+import { fallbackExplanation } from "../src/shared/explanation.js";
 let context: IntentContext;
 let routineContext: IntentContext;
 let poisoningContext: IntentContext;
@@ -197,34 +198,68 @@ class Element extends EventTarget {
   attrs: Record<string, string> = {};
   setAttribute(k: string, v: string) { this.attrs[k] = v; }
   append(...kids: Element[]) { this.children.push(...kids); }
+  replaceChildren(...kids: Element[]) { this.children = kids; }
 }
-it("correction choices are bounded with no text input and cannot change selection or hashes", () => {
+const fakeDom = () => {
   const elements: Element[] = [];
   vi.stubGlobal("document", { createElement: (tag: string) => { const e = new Element(); e.tag = tag; elements.push(e); return e; } });
-  const intent = templateIntent(context);
-  const before = structuredClone(intent);
-  intentCard(intent);
-  const choices = elements.filter(e => Object.hasOwn(e.attrs, "data-intent-choice"));
-  expect(choices).toHaveLength(4);
-  expect(elements.some(e => ["input", "textarea"].includes(e.tag))).toBe(false);
-  choices[0]!.dispatchEvent(new Event("click"));
-  expect(intent).toEqual(before);
-  expect(elements.find(e => Object.hasOwn(e.attrs, "data-intent-feedback"))?.textContent).toContain("fresh report");
+  return elements;
+};
+const has = (e: Element, name: string) => Object.hasOwn(e.attrs, name);
+
+describe("assessment card (step 1)", () => {
+  it("shows the question with two choices only: no pick list, no input, no developer wording", () => {
+    const elements = fakeDom();
+    const intent = templateIntent(context);
+    const before = structuredClone(intent);
+    const a = assessmentCard(intent, 3);
+    expect(elements.filter(e => e.tag === "button").map(e => e.textContent)).toEqual([CONFIRM_LABEL, REJECT_LABEL]);
+    expect(CONFIRM_LABEL).toBe("Yes, this is what I intended");
+    expect(REJECT_LABEL).toBe("No, reject");
+    expect(has(a.confirm as never, "data-intent-confirm")).toBe(true);
+    expect(has(a.reject as never, "data-intent-reject")).toBe(true);
+    expect(elements.some(e => has(e, "data-intent-choice") || has(e, "data-intent-cancel") || ["input", "textarea"].includes(e.tag))).toBe(false);
+    expect(elements.find(e => has(e, "data-intent-question"))?.textContent).toBe(context.candidates.find(c => c.id === context.fallbackId)!.question);
+    const text = elements.map(e => e.textContent).join(" ");
+    expect(text).not.toMatch(/AI-selected|engine-authored|Engine template|template|That's not my intent/i);
+    expect(intent).toEqual(before);
+  });
+  it("routine L0 has no intent question, only the generic prompt and the two choices", () => {
+    const elements = fakeDom();
+    const a = assessmentCard(templateIntent(routineContext), 0);
+    expect(elements.some(e => has(e, "data-intent-question") || has(e, "data-kelvara-intent"))).toBe(false);
+    expect(elements.find(e => e.tag === "h3")?.textContent).toBe("Is this what you intended to do?");
+    expect(elements.filter(e => e.tag === "button")).toHaveLength(2);
+    expect(a.confirm.textContent).toBe(CONFIRM_LABEL);
+  });
+  it("a notice level asks the question even for a routine context", () => {
+    const elements = fakeDom();
+    assessmentCard(templateIntent(routineContext), 1);
+    expect(elements.some(e => has(e, "data-intent-question"))).toBe(true);
+  });
+  it("captions say who wrote the assessment in plain words", () => {
+    const elements = fakeDom();
+    const a = assessmentCard(templateIntent(context), 2);
+    const caption = elements.find(e => has(e, "data-intent-source"))!;
+    expect(caption.textContent).toBe("Preparing assessment…");
+    a.show({ source: "signguard", sentences: [{ text: "One.", claimIds: [] }] });
+    expect(caption.textContent).toBe("Assessment by SignGuard");
+    a.show({ source: "ai", sentences: [{ text: "Two.", claimIds: [] }] });
+    expect(caption.textContent).toBe("Assessment by your AI provider");
+    expect(elements.find(e => has(e, "data-intent-explain"))!.children.map(c => c.textContent)).toEqual(["Two."]);
+    expect(fallbackExplanation(reportView).source).toBe("signguard");
+  });
 });
 
-it("real recorded poisoning comparison displays full addresses and matched positions; correction only blocks", () => {
-  const elements: Element[] = [];
-  vi.stubGlobal("document", { createElement: (tag: string) => { const e = new Element(); e.tag = tag; elements.push(e); return e; } });
+it("real recorded poisoning comparison displays full addresses and matched positions", () => {
+  const elements = fakeDom();
   const intent = templateIntent(poisoningContext);
   const before = structuredClone(intent);
-  const block = vi.fn();
-  intentCard(intent, block);
+  assessmentCard(intent, 2);
   const c = poisoningContext.candidates.find(c => c.id === poisoningContext.fallbackId)!.comparison!;
   const codes = elements.filter(e => e.tag === "code");
   expect(codes.map(code => code.children.map(e => e.textContent).join(""))).toEqual([c.proposed, c.previous]);
   expect(elements.filter(e => e.tag === "mark")).toHaveLength(2 * (c.prefix + c.suffix));
-  expect(elements.find(e => Object.hasOwn(e.attrs, "data-intent-compare"))).toBeTruthy();
-  elements.find(e => Object.hasOwn(e.attrs, "data-intent-cancel"))!.dispatchEvent(new Event("click"));
-  expect(block).toHaveBeenCalledOnce();
+  expect(elements.find(e => has(e, "data-intent-compare"))).toBeTruthy();
   expect(intent).toEqual(before);
 });

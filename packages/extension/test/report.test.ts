@@ -165,7 +165,7 @@ describe("bridge: held requests go to the report UI", () => {
     const show = vi.fn(async () => true);
     const r = await run(v(3, { hold: true, report: view }), show);
     expect(r.allow).toBe(true);
-    expect(show).toHaveBeenCalledWith(expect.objectContaining({ level: 3 }), 1000 + 90_000);
+    expect(show).toHaveBeenCalledWith(expect.objectContaining({ level: 3 }), 1000 + 90_000, expect.any(String));
     expect(r.sent).toContainEqual({ type: SW_DECIDED, id: r.reqId, allow: true });
     expect((await run(v(2, { hold: true }), async () => false)).allow).toBe(false);
   });
@@ -201,7 +201,7 @@ describe("bridge: held requests go to the report UI", () => {
   it.each([0, 1] as const)("L%s waits for Continue, Block or UI failure", async (level) => {
     const show = vi.fn(async () => true);
     expect((await run(v(level, { hold: true, report: view }), show)).allow).toBe(true);
-    expect(show).toHaveBeenCalledWith(expect.objectContaining({ level, hold: true }), 91000);
+    expect(show).toHaveBeenCalledWith(expect.objectContaining({ level, hold: true }), 91000, expect.any(String));
     expect((await run(v(level, { hold: true }), async () => false)).allow).toBe(false);
     expect((await run(v(level, { hold: true }))).allow).toBe(false);
     expect((await run(v(level, { hold: true }), async () => { throw Error("UI failed"); })).allow).toBe(false);

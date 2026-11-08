@@ -263,6 +263,9 @@ export interface NoticeMessage {
 }
 
 /** bridge -> worker: what the user chose for a held request (updates the capture log only). */
+export const SW_BIND = "kelvara-signguard/bind";
+/** report frame -> worker: the plain-language explanation of its own held report (SW_BIND binds id, secret and tab). */
+export const SW_EXPLAIN = "kelvara-signguard/explain";
 export const SW_DECIDED = "kelvara-signguard/decided";
 export interface DecidedMessage {
   type: typeof SW_DECIDED;

@@ -5,7 +5,7 @@
 import { rankedCapabilities, type ReportView } from "../shared/report-view.js";
 
 export const LIMITED_SUMMARY =
-  "The full report (simulation, every capability change, what each authority can do, evidence) needs a SignGuard license. Add one in the extension options.";
+  "The full report (simulation, every permission change, what each authority can do, evidence) needs a SignGuard license. Add one in the extension options.";
 
 export function limitReport(r: ReportView): ReportView {
   const topCap = rankedCapabilities(r)[0];

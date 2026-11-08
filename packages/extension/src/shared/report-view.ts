@@ -79,8 +79,26 @@ export interface Claim {
   moreEvidence: number;
 }
 
+/** One instruction of the request, in order, named from the IDL; name is null when it could not be decoded. */
+export interface InstructionLine {
+  tx: number;
+  path: string;
+  /** Display name of the program ("System Program") or its address. */
+  program: string;
+  name: string | null;
+  args: EvidenceField[];
+  accounts: EvidenceField[];
+}
+
+/** Review details (step 2): what each instruction is and what changes after signing. */
+export interface ReportDetails {
+  instructions: InstructionLine[];
+  changes: string[];
+}
+
 export interface ReportView {
   intent?: ReportIntent;
+  details?: ReportDetails;
   /** Message-signing review (signMessage / signIn); the transaction sections are then empty. */
   message?: MessageReview;
   /** Requesting page origin (scheme://host[:port], no path, query or key), shown as a "site" pill. */
@@ -167,6 +185,22 @@ function isEvidence(x: unknown): x is EvidenceItem {
   );
 }
 
+function isInstructionLine(x: unknown): x is InstructionLine {
+  return (
+    plain(x) &&
+    exact(x, ["tx", "path", "program", "name", "args", "accounts"]) &&
+    Number.isInteger(x.tx) && (x.tx as number) >= 0 &&
+    typeof x.path === "string" && /^[0-9]{1,4}(\.[0-9]{1,4}){0,7}$/.test(x.path) &&
+    str(x.program, MAX_SHORT) && x.program.length > 0 &&
+    nullOr(x.name, (v): v is string => str(v, MAX_SHORT) && v.length > 0) &&
+    list(x.args, isField, 8) && list(x.accounts, isField, 8)
+  );
+}
+
+function isDetails(x: unknown): x is ReportDetails {
+  return plain(x) && exact(x, ["instructions", "changes"]) && list(x.instructions, isInstructionLine, MAX_ITEMS) && list(x.changes, (v): v is string => str(v, 600), 32);
+}
+
 function isClaim(x: unknown): x is Claim {
   return (
     plain(x) &&
@@ -186,7 +220,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -198,6 +232,7 @@ export function validateReportView(x: unknown): ReportView | null {
   if (!x.claims.every((c) => c.evidenceIds.every((id) => ids.has(id)))) return null;
   if (!list(x.messageHashes, (h): h is string => typeof h === "string" && B58_HASH.test(h))) return null;
   if (Object.hasOwn(x, "intent") && !validateReportIntent(x.intent, x.messageHashes as string[])) return null;
+  if (Object.hasOwn(x, "details") && !isDetails(x.details)) return null;
   if (Object.hasOwn(x, "message") && !validateMessageReview(x.message)) return null;
   if (Object.hasOwn(x, "origin") && !isOrigin(x.origin)) return null;
   if (Object.hasOwn(x, "network") && !oneOf(x.network, REPORT_NETWORKS)) return null;

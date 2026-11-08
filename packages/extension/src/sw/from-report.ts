@@ -15,11 +15,12 @@ import {
   type EvidenceField,
   type EvidenceItem,
   type PreviewEntry as ViewPreview,
+  type ReportDetails,
   type ReportView,
   type Risk,
   VIEW_CAPS
 } from "../shared/report-view.js";
-import { authorizeFacts, factSummary, humanSimulation } from "./facts-text.js";
+import { authorizeFacts, factLines, factSummary, hasNoPermissionChange, humanSimulation, NO_PERMISSION_TEXT } from "./facts-text.js";
 import { idlPathFor } from "./idl-paths.js";
 
 export type Level = 0 | 1 | 2 | 3 | 4;
@@ -81,13 +82,51 @@ function rankCapabilities(r: Report): CapabilityChange[] {
     }));
 }
 
-/** Programs and instruction count the report can name when nothing was decoded into facts. */
-function undecoded(r: Report): string {
-  const ix = r.evidence.filter((e) => e.type === "instruction");
-  const programs = [...new Set(ix.map((e) => String((e.data as { programId?: unknown } | null)?.programId ?? e.address ?? "")).filter(Boolean))];
-  const n = ix.length;
-  if (!n) return "Unknown: this report does not describe what the instructions do. Treat it as unchecked.";
-  return `Unknown: ${n} instruction${n === 1 ? "" : "s"} could not be described${programs.length ? ` (program${programs.length === 1 ? "" : "s"} ${programs.join(", ")})` : ""}. Treat them as unchecked.`;
+const PROGRAM_NAMES: Record<string, string> = {
+  "11111111111111111111111111111111": "System Program",
+  TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA: "Token Program",
+  TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb: "Token-2022",
+  ComputeBudget111111111111111111111111111111: "Compute Budget",
+  SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf: "Squads v4",
+  ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL: "Associated Token Account",
+  MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr: "Memo",
+  Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo: "Memo",
+  BPFLoaderUpgradeab1e11111111111111111111111: "Upgradeable Loader"
+};
+const shortId = (a: string): string => (a.length > 12 ? `${a.slice(0, 4)}…${a.slice(-4)}` : a);
+const programLabel = (programId: string | null, registryName: string | null): string => (programId && PROGRAM_NAMES[programId]) || registryName || (programId ? shortId(programId) : "an unknown program");
+
+interface IxView { tx: number; path: string; program: string; name: string | null; args: unknown; accounts: unknown; programId: string | null }
+
+/** Instruction evidence in request order, one entry per instruction path. */
+function instructionViews(r: Report): IxView[] {
+  const seen = new Set<string>();
+  const out: IxView[] = [];
+  for (const e of r.evidence) {
+    if (e.type !== "instruction" || e.transactionIndex === null || !e.instructionPath?.length) continue;
+    const key = `${e.transactionIndex}:${e.instructionPath.join(".")}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const d = (e.data && typeof e.data === "object" && !Array.isArray(e.data) ? e.data : {}) as Record<string, unknown>;
+    const programId = typeof d.programId === "string" ? d.programId : e.address;
+    out.push({
+      tx: e.transactionIndex,
+      path: e.instructionPath.slice(0, 8).join("."),
+      program: programLabel(programId, typeof d.program === "string" ? d.program : null),
+      name: typeof d.name === "string" && d.name ? d.name : null,
+      args: d.args,
+      accounts: d.accounts,
+      programId
+    });
+  }
+  return out.sort((a, b) => a.tx - b.tx || a.path.localeCompare(b.path, undefined, { numeric: true }));
+}
+
+/** "Could not decode 1 instruction on Squads v4; its effects are unknown." One sentence per program. */
+function undecodedText(r: Report): string {
+  const byProgram = new Map<string, number>();
+  for (const i of instructionViews(r)) if (i.name === null) byProgram.set(i.program, (byProgram.get(i.program) ?? 0) + 1);
+  return [...byProgram].map(([p, n]) => `Could not decode ${n} instruction${n === 1 ? "" : "s"} on ${p}; ${n === 1 ? "its" : "their"} effects are unknown.`).join(" ");
 }
 
 function authorizes(r: Report): string | null {
@@ -95,10 +134,44 @@ function authorizes(r: Report): string | null {
   const list = (caps: Capability[]) => caps.map((c) => `${capPhrase(c)}${c.holder ? ` (holder ${c.holder})` : ""}`).join("; ");
   if (r.capabilities.granted.length) parts.push(`Grants ${list(r.capabilities.granted)}.`);
   if (r.capabilities.revoked.length) parts.push(`Revokes ${list(r.capabilities.revoked)}.`);
-  const facts = authorizeFacts(r);
-  parts.push(...facts);
-  if (!parts.length) parts.push(undecoded(r));
-  return clip(parts.join(" "), MAX_TEXT);
+  parts.push(...authorizeFacts(r));
+  const unknown = undecodedText(r);
+  if (unknown) parts.push(unknown);
+  return parts.length ? clip(parts.join(" "), MAX_TEXT) : null;
+}
+
+const argRows = (args: unknown): EvidenceField[] => {
+  const rows: EvidenceField[] = [];
+  if (args && typeof args === "object" && !Array.isArray(args)) {
+    for (const [k, v] of Object.entries(args)) if (rows.length < 6) rows.push({ key: clip(k, MAX_SHORT), value: clip(scalar(v), MAX_SHORT) });
+  }
+  return rows;
+};
+const accountRows = (accounts: unknown): EvidenceField[] => {
+  const rows: EvidenceField[] = [];
+  if (Array.isArray(accounts)) {
+    for (const a of accounts) {
+      const acc = (a && typeof a === "object" ? a : {}) as Record<string, unknown>;
+      if (rows.length < 6 && typeof acc.name === "string" && acc.name && typeof acc.address === "string") rows.push({ key: clip(acc.name, MAX_SHORT), value: clip(acc.address, MAX_SHORT) });
+    }
+  }
+  return rows;
+};
+
+/** Step 2 of the report: ordered instructions named from the IDL, and what changes after signing. */
+function reviewDetails(r: Report): ReportDetails {
+  const ixs = instructionViews(r).slice(0, MAX_ITEMS);
+  const multi = r.session.transactions.length > 1;
+  const changes: string[] = [];
+  for (const c of r.capabilities.granted) changes.push(clip(`Grants ${capPhrase(c)}${c.holder ? ` to ${c.holder}` : ""}.`, 600));
+  for (const c of r.capabilities.revoked) changes.push(clip(`Revokes ${capPhrase(c)}${c.holder ? ` from ${c.holder}` : ""}.`, 600));
+  for (const f of factLines(r)) if (f.rule === "fact.sol_transfer" || f.rule === "fact.token_transfer") changes.push(clip(`${multi && f.tx !== null ? `Transaction ${f.tx}: ` : ""}${f.text}.`, 600));
+  for (const c of r.claims) if (c.kind === "Fact" && c.level !== "L0" && c.level !== null && !c.ruleId?.startsWith("fact.")) changes.push(clip(c.statement.trim(), 600));
+  if (hasNoPermissionChange(r)) changes.push(NO_PERMISSION_TEXT);
+  return {
+    instructions: ixs.map((i) => ({ tx: i.tx, path: i.path, program: clip(i.program, MAX_SHORT), name: i.name ? clip(i.name, MAX_SHORT) : null, args: argRows(i.args), accounts: accountRows(i.accounts) })),
+    changes: [...new Set(changes)].slice(0, 32)
+  };
 }
 
 function simulationLine(r: Report): string | null {
@@ -230,9 +303,9 @@ function header(r: Report, ex: ReportExplanation): { title: string; summary: str
   const top = r.alert.claimIds.map((id) => byId.get(id)!);
   // Counts only as a small secondary sentence, and only when something changed.
   const g = r.counts.granted, v = r.counts.revoked;
-  const tally = g + v > 0 ? `${g} granted and ${v} revoked capability change(s).` : "";
+  const tally = g + v > 0 ? `${g} permission${g === 1 ? "" : "s"} granted and ${v} revoked.` : "";
   if (top.length === 0) {
-    const human = factSummary(r) ?? "No finding reaches a notice level, but SignGuard could not describe what this request does.";
+    const human = factSummary(r) ?? "SignGuard found no risks but could not describe what this request does.";
     return { title: clip(ex.headline.replace(/^([^:]+): /, "$1 · "), MAX_SHORT), summary: clip(`${human} ${tally}`.trim(), MAX_TEXT) };
   }
   return {
@@ -303,6 +376,7 @@ export function fromReport(input: unknown, hashes: readonly string[]): FromRepor
       summary: head.summary,
       simulation: simulationLine(r),
       authorizes: authorizes(r),
+      details: reviewDetails(r),
       capabilities: rankCapabilities(r),
       preview: previews(r),
       claims: viewClaims,

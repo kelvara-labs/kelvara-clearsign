@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kelvara SignGuard",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Holds Solana signing requests and shows what they hand over before your wallet opens.",
   "minimum_chrome_version": "120",
   "permissions": [

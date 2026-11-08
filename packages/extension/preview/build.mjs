@@ -21,7 +21,7 @@ await build({ entryPoints: [path.join(here, "gen-data.ts")], outfile: gen, bundl
 execFileSync("node", [gen, path.join(out, "verdicts.json")], { cwd: pkg, stdio: "inherit" });
 
 cpSync(path.join(here, "page"), out, { recursive: true });
-for (const f of ["popup.html", "options.html"]) {
+for (const f of ["popup.html", "options.html", "report.html"]) {
   const html = readFileSync(path.join(out, f), "utf8").replace('<script type="module" src="ui.js">', '<script src="stub.js"></script><script type="module" src="ui.js">');
   writeFileSync(path.join(out, f), html);
 }
