@@ -33,7 +33,7 @@ describe("L0 facts as readable text", () => {
     expect(m.report.authorizes).toContain("Sends 50000000 base units (decimals not read) to token account B73ttuVCWzLmTHr5D2MGxMGYVzL4zj8MmSPLvqE8d9qV.");
     expect(m.report.authorizes).toContain("Fees: 0.00001 SOL network + up to 0.000000006 SOL priority.");
     expect(m.report.authorizes).toContain("Fees: 0.00001 SOL network");
-    expect(m.report.authorizes).toMatch(/No authority, delegate, owner or upgrade permission changes\. Fees: [^.]+\.[0-9]+ SOL network \+ up to [0-9.]+ SOL priority\.$/);
+    expect(m.report.authorizes).toMatch(/No authority, delegate, owner or upgrade permission changes\.\nFees: [^.]+\.[0-9]+ SOL network \+ up to [0-9.]+ SOL priority\.$/);
     expect(m.report.authorizes).not.toContain("Unknown");
     expect(m.report.summary).toBe("This transaction signs a memo and sends tokens. No authority, delegate, owner or upgrade permission changes.");
     expect(m.report.summary).not.toMatch(/claim\(s\)|change\(s\)/);
@@ -42,7 +42,7 @@ describe("L0 facts as readable text", () => {
   it("SOL transfer + priority fee (real mainnet)", async () => {
     const r = await fixtureReport("/first-send/", (n) => n.includes("fact.sol_transfer") && n.includes("fact.priority_fee"));
     const m = view(r);
-    expect(m.report.authorizes).toMatch(/^Sends [\d.]+ SOL to \w+\. No authority, delegate, owner or upgrade permission changes\. Fees: 0\.000005 SOL network \+ up to [\d.]+ SOL priority\.$/);
+    expect(m.report.authorizes).toMatch(/^Sends [\d.]+ SOL to \w+\.\nNo authority, delegate, owner or upgrade permission changes\.\nFees: 0\.000005 SOL network \+ up to [\d.]+ SOL priority\.$/);
     expect(m.report.summary).toMatch(/^This transaction sends [\d.]+ SOL\. No authority/);
     expect(m.report.claims.filter((c) => c.rule?.startsWith("fact.")).length).toBe(4);
   });

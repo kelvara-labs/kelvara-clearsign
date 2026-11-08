@@ -88,7 +88,7 @@ export function factLines(r: Report): FactLine[] {
       }
       case "fact.swap": {
         const m = /swaps (up to .+?) for ((?:at least|exactly) .+?) via (\S+) \(.*slippage tolerance (\d+) bps\)/.exec(c.statement);
-        if (m) line = { rule: c.ruleId, claimId: c.id, tx, text: `Swaps ${m[1]} for ${m[2]} via ${m[3]} (slippage up to ${Number(m[4]) / 100}%)`, brief: `swaps ${m[1]!.replace(/^up to /, "")} for ${m[2]!.replace(/^(at least|exactly) /, "")}` };
+        if (m) line = { rule: c.ruleId, claimId: c.id, tx, text: `Swap on ${m[3]}: you give ${m[1]} and get ${m[2]} (the price may move at most ${Number(m[4]) / 100}% against you)`, brief: `swaps ${m[1]!.replace(/^up to /, "")} for ${m[2]!.replace(/^(at least|exactly) /, "")}` };
         break;
       }
       case "fact.priority_fee": {

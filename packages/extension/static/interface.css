@@ -842,3 +842,7 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 .balances .who { flex: none; max-width: 45%; }
 .balances .what { flex: 1 1 0; min-width: 0; }
 .balances li.state .what { color: var(--text-2); font-weight: 400; font-size: var(--fs-label); line-height: var(--lh-label); }
+
+.authorize-list { margin: var(--space-2) 0 0; padding-left: var(--space-4); display: grid; gap: var(--space-1); }
+.authorize-list li { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-1); }
+.authorize-list li:last-child { color: var(--text-2); font-size: var(--fs-body-sm); }

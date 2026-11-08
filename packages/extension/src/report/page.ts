@@ -137,7 +137,7 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
       el(
         "section",
         { class: "versus" },
-        r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), el("p", {}, ...withTokens(r.authorizes, r.tokens))) : null,
+        r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), r.authorizes.includes("\n") ? el("ul", { class: "authorize-list" }, ...r.authorizes.split("\n").filter(Boolean).map((line) => el("li", {}, ...withTokens(line, r.tokens)))) : el("p", {}, ...withTokens(r.authorizes, r.tokens))) : null,
         el(
           "div",
           { class: "simulation" },

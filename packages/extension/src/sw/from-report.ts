@@ -140,7 +140,7 @@ function undecodedText(r: Report): string {
         ? `Calls ${p}, a program ClearSign can't read${n > 1 ? ` (${n} instructions)` : ""}: what it moves or authorizes is unknown.`
         : `Includes ${n} ${p} instruction${n === 1 ? "" : "s"} ClearSign couldn't read; ${n === 1 ? "its" : "their"} effect is unknown.`
     )
-    .join(" ");
+    .join("\n");
 }
 
 function authorizes(r: Report): string | null {
@@ -151,7 +151,7 @@ function authorizes(r: Report): string | null {
   const unknown = undecodedText(r);
   if (unknown) parts.push(unknown);
   parts.push(...authorizeFacts(r));
-  return parts.length ? clip(parts.join(" "), MAX_TEXT) : null;
+  return parts.length ? clip(parts.join("\n"), MAX_TEXT) : null;
 }
 
 const argRows = (args: unknown): EvidenceField[] => {
