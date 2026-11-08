@@ -5,9 +5,10 @@
 // We listen first on both (capture listeners at document_start), stop the original
 // event and re-dispatch one whose register() wraps every wallet before the app sees it.
 import { txToBytes } from "../shared/codec.js";
-import type { NoticeMethod, SignMethod } from "../shared/protocol.js";
+import type { SignMethod } from "../shared/protocol.js";
 import { cleanWalletName, rejection, type Guard } from "./guard.js";
 import { pristine, type HookWindow, type Pristine } from "./pristine.js";
+import { isSigningFeature, isSigningName } from "./signing.js";
 
 /** The one account every input names (input.account.address), else null. Only a hint: never throws. */
 export function inputAccount(p: Pristine, inputs: readonly unknown[]): string | null {
@@ -31,8 +32,9 @@ const SIGN_FEATURES: Record<string, { fn: string; method: SignMethod }> = {
   "solana:signTransaction": { fn: "signTransaction", method: "solana:signTransaction" },
   "solana:signAndSendTransaction": { fn: "signAndSendTransaction", method: "solana:signAndSendTransaction" }
 };
-const NOTICE_FEATURES: Record<string, { fn: string; method: NoticeMethod }> = {
-  "solana:signMessage": { fn: "signMessage", method: "solana:signMessage" }
+/** Fail-closed stand-in: the wallet is never called, the dApp sees a user rejection. */
+const blocked: Fn = async () => {
+  throw rejection();
 };
 
 export interface WalletStandardHook {
@@ -70,15 +72,21 @@ export function installWalletStandardHook(win: HookWindow, guard: Guard): Wallet
       const spec = SIGN_FEATURES[key]!;
       out[key] = wrapFeature(out[key], spec.fn, (orig, owner) => signWrapper(orig, owner, spec.method, walletName));
     }
-    for (const key of Object.keys(NOTICE_FEATURES)) {
-      if (!(key in out)) continue;
-      const spec = NOTICE_FEATURES[key]!;
-      out[key] = wrapFeature(out[key], spec.fn, (orig, owner) =>
-        function (this: unknown, ...inputs: unknown[]) {
-          guard.notice(spec.method, walletName);
-          return p.apply(orig, owner, inputs);
-        }
-      );
+    // Message signing, sign-in and any vendor/unknown signing feature cannot be analyzed as a
+    // transaction: they never reach the wallet. Only standard:* and non-signing names pass.
+    for (const key of p.ownKeys(out)) {
+      if (typeof key !== "string" || key in SIGN_FEATURES || !(key in out)) continue;
+      const feature = out[key];
+      if (!feature || typeof feature !== "object") continue;
+      const all = isSigningFeature(key);
+      let copy: Obj | null = null;
+      for (const fnKey of p.ownKeys(feature as Obj)) {
+        if (typeof fnKey !== "string" || !(all || (!key.startsWith("standard:") && isSigningName(fnKey)))) continue;
+        if (typeof safeGet(p, feature as object, fnKey) !== "function") continue;
+        copy ??= copyObject(p, feature as Obj);
+        copy[fnKey] = blocked;
+      }
+      if (copy) out[key] = Object.isFrozen(feature) ? Object.freeze(copy) : copy;
     }
     if (Object.isFrozen(features)) Object.freeze(out);
     featureCache.set(features, out);

@@ -7,15 +7,19 @@
 //   - late injection is trapped with property setters on window and window.phantom,
 //     plus a rescan driven by a MutationObserver and a few timed passes.
 import { b58decode, b58encode, bytesEqual, messageToWireTx, txToBytes } from "../shared/codec.js";
-import type { NoticeMethod, SignMethod } from "../shared/protocol.js";
+import type { SignMethod } from "../shared/protocol.js";
 import { cleanWalletName, rejection, type Guard } from "./guard.js";
 import { pristine, type HookWindow } from "./pristine.js";
-import { makeShim, safeGet } from "./wallet-standard.js";
+import { isSigningName } from "./signing.js";
+import { findDescriptor, makeShim, safeGet } from "./wallet-standard.js";
 
 type Fn = (...args: unknown[]) => unknown;
 type Obj = Record<PropertyKey, unknown>;
 
-export const LEGACY_PATHS = ["solana", "phantom.solana", "solflare", "backpack"] as const;
+export const LEGACY_PATHS = [
+  "solana", "phantom.solana", "solflare", "backpack", "braveSolana", "glow.solana", "exodus.solana",
+  "coin98.sol", "okxwallet.solana", "trustwallet.solana"
+] as const;
 
 const LEGACY_KEYS = [
   "signTransaction",
@@ -24,12 +28,12 @@ const LEGACY_KEYS = [
   "signAndSendAllTransactions",
   "sendTransaction",
   "signMessage",
+  "signIn",
   "request"
 ] as const;
 
 type Plan =
   | { kind: "pass" }
-  | { kind: "notice"; method: NoticeMethod }
   | { kind: "sign"; method: SignMethod; txs: Uint8Array[]; forward: unknown[] }
   | { kind: "reject" };
 
@@ -63,14 +67,11 @@ export function classify(key: string, args: unknown[]): Plan {
       const method: SignMethod = `legacy:${key}`;
       return { kind: "sign", method, txs, forward: [list.map((t, i) => substitute(t, txs[i]!)), ...args.slice(1)] };
     }
-    case "signMessage":
-      return { kind: "notice", method: "legacy:signMessage" };
     case "request": {
       const req = args[0] as { method?: unknown; params?: Obj } | undefined;
       const m = req && typeof req === "object" ? req.method : undefined;
       const params = (req?.params ?? {}) as Obj;
-      if (m === "signMessage") return { kind: "notice", method: "legacy:signMessage" };
-      if (m === "signTransaction" || m === "signAndSendTransaction") {
+      if (m === "signTransaction" || m === "signAndSendTransaction" || m === "sendTransaction") {
         const tx = "message" in params ? fromMessage(params.message) : txToBytes(params.transaction);
         return { kind: "sign", method: `legacy:${m}`, txs: [tx], forward: args };
       }
@@ -80,10 +81,11 @@ export function classify(key: string, args: unknown[]): Plan {
         const txs = items.map((x: unknown) => ("messages" in params ? fromMessage(x) : txToBytes(x)));
         return { kind: "sign", method: `legacy:${m}`, txs, forward: args };
       }
-      return { kind: "pass" };
+      // Message signing, sign-in and any other signing-named method cannot be analyzed: never reaches the wallet.
+      return isSigningName(m) ? { kind: "reject" } : { kind: "pass" };
     }
     default:
-      return { kind: "pass" };
+      return isSigningName(key) ? { kind: "reject" } : { kind: "pass" };
   }
 }
 
@@ -141,14 +143,13 @@ export function installLegacyHook(win: HookWindow, guard: Guard): LegacyHook {
     return null;
   }
 
-  function makeWrapper(orig: Fn, provider: object, key: string, label: string): Fn {
+  /** `fixed` null: a prototype-level wrapper that acts on whatever `this` the page calls it with. */
+  function makeWrapper(orig: Fn, fixed: object | null, key: string, label: string): Fn {
     const wrapper = function (this: unknown, ...args: unknown[]): unknown {
+      const provider = fixed ?? (this && (typeof this === "object" || typeof this === "function") ? (this as object) : null);
+      if (!provider) return p.Promise.reject(rejection());
       const plan = safeClassify(key, args);
       if (plan.kind === "pass") return p.apply(orig, provider, args);
-      if (plan.kind === "notice") {
-        guard.notice(plan.method, walletName(provider, label));
-        return p.apply(orig, provider, args);
-      }
       if (plan.kind === "reject") return p.Promise.reject(rejection());
       return (async () => {
         const allow = await guard.hold(plan.method, walletName(provider, label), null, plan.txs, providerAccount(provider));
@@ -170,10 +171,22 @@ export function installLegacyHook(win: HookWindow, guard: Guard): LegacyHook {
     if (hit) return hit;
     const pr = provider as Obj;
     const wrappers: Record<string, Fn> = {};
-    for (const key of LEGACY_KEYS) {
+    const keys = new Set<string>(LEGACY_KEYS);
+    for (let cur: object | null = pr; cur && cur !== Object.prototype; cur = p.getPrototypeOf(cur) as object | null)
+      for (const k of p.ownKeys(cur)) if (isSigningName(k)) keys.add(k as string);
+    for (const key of keys) {
       const fn = safeGet(p, pr, key);
       if (typeof fn !== "function" || ourFns.has(fn as Fn)) continue;
       wrappers[key] = makeWrapper(fn as Fn, provider, key, label);
+      // The page can reach the class method through the prototype (`Proto.m.call(provider, tx)`): guard it too.
+      const found = findDescriptor(p, pr, key);
+      if (found && found.owner !== pr && found.owner !== Object.prototype && typeof found.desc.value === "function") {
+        try {
+          p.defineProperty(found.owner, key, { ...found.desc, value: makeWrapper(fn as Fn, null, key, label) });
+        } catch {
+          /* frozen prototype: the instance-level wrapper still guards the normal path */
+        }
+      }
     }
     let inPlace = true;
     for (const [key, w] of Object.entries(wrappers)) {
@@ -248,16 +261,19 @@ export function installLegacyHook(win: HookWindow, guard: Guard): LegacyHook {
   }
 
   const exposeProvider = (label: string) => (v: object) => wrapProvider(v, label);
-  const exposePhantom = (ph: object): object => {
-    trap(ph, "solana", exposeProvider("phantom.solana"));
-    return ph;
+  const exposeNested = (name: string, label: string) => (holder: object): object => {
+    trap(holder, name, exposeProvider(label));
+    return holder;
   };
 
   function rescan(): void {
     trap(win, "solana", exposeProvider("solana"));
     trap(win, "solflare", exposeProvider("solflare"));
     trap(win, "backpack", exposeProvider("backpack"));
-    trap(win, "phantom", exposePhantom);
+    trap(win, "braveSolana", exposeProvider("braveSolana"));
+    trap(win, "phantom", exposeNested("solana", "phantom.solana"));
+    for (const [holder, name] of [["glow", "solana"], ["exodus", "solana"], ["coin98", "sol"], ["okxwallet", "solana"], ["trustwallet", "solana"]] as const)
+      trap(win, holder, exposeNested(name, `${holder}.${name}`));
   }
 
   rescan();

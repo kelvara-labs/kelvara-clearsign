@@ -172,3 +172,19 @@ describe("presented account (scenario signer pubkey, no private key)", () => {
     expect(core.log.calls[0]!.signed).toEqual([false]);
   });
 });
+
+describe("signIn, vendor feature and timeline", () => {
+  it("records signIn and the vendor signing feature with timestamps in arrival order", async () => {
+    const core = new FixtureWalletCore(await FixtureKey.generate());
+    const w = new FixtureStandardWallet(core, "ws-register");
+    const f = w.features as unknown as Record<string, Record<string, (...a: unknown[]) => Promise<unknown>>>;
+    expect(Object.keys(f)).toEqual(expect.arrayContaining(["solana:signIn", "fixture:signBlob"]));
+    await f["solana:signIn"]!.signIn!({ domain: "d" });
+    await f["fixture:signBlob"]!.signBlob!({ blob: new Uint8Array([1]) });
+    await makeLegacyProvider(core).signIn({ domain: "d" });
+    expect(core.log.timeline.map((t) => t.method)).toEqual(["solana:signIn", "fixture:signBlob", "legacy:signIn"]);
+    expect(core.log.timeline.every((t, i, a) => t.at > 0 && (i === 0 || t.mono >= a[i - 1]!.mono))).toBe(true);
+    expect(core.log.count).toBe(0);
+    expect(core.log.messageCount).toBe(3);
+  });
+});

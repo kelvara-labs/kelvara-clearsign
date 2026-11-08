@@ -103,3 +103,11 @@ Assertions via `/last`: `authorization` is `null` unless a key was configured; `
 ### Granting the optional host permission headlessly
 
 `chrome.permissions.request` shows a native browser prompt that Playwright cannot accept, so Save with a fresh install hangs. Do not add any production permission. Instead, load a **test copy** of `packages/extension/dist` whose `manifest.json` has `"http://127.0.0.1/*"` appended to `host_permissions` (point `KELVARA_EXT_DIR` at the copy). The request then resolves `true` without a prompt, `permissions.contains({origins:["http://127.0.0.1:<port>/*"]})` is `true` (port-agnostic), and the real Options UI works: open `options.html`, expand `#ai-provider`, fill `#ai-url` (`<mock>/mode/<name>/v1/chat/completions`), `#ai-model`, optional `#ai-key`, check `#ai-enabled`, click `#ai-save`, then `#ai-test`. Verified with Chromium headless: Save succeeds, Test reports a valid selection, and `/last` shows `Authorization: Bearer <key>`.
+
+## Wallet-hold ordering (X16)
+
+The fixture wallet offers, besides the transaction features: `solana:signMessage`, `solana:signIn`, the vendor-prefixed signing feature `fixture:signBlob` (Wallet Standard) and legacy `signMessage`/`signIn`. API: `kelvaraTestDapp.signMessage(path, text)`, `.signIn(path)`, `.signVendor(path)`.
+
+Extension policy under test: transaction methods are held until a trusted Continue, then forwarded exactly once with the analyzed bytes; message signing, `signIn` and any vendor/unknown signing-named feature or method are rejected with 4001 before the wallet is called (the wallet's `messageCount` and `timeline` stay empty). `standard:*` features and `connect` pass.
+
+`calls().timeline` lists every call that reached the wallet (any method): `{ n, path, method, at, mono }` (`at` = Date.now(), `mono` = performance.now()). For ordering assertions, compare the first `timeline[].at` with the moment the report's Continue was clicked: the wallet entry must come after. A rejected call leaves `timeline` empty. Message-like calls (`signMessage`, `signIn`, `fixture:signBlob`) also appear in `messages`; transactions in `calls`/`count`.

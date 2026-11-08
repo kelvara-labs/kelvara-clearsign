@@ -56,7 +56,7 @@ export class FixtureStandardWallet {
         address: a.address,
         publicKey: a.publicKey.slice(),
         chains: SOLANA_CHAINS,
-        features: ["solana:signTransaction", "solana:signAndSendTransaction", "solana:signMessage"]
+        features: ["solana:signTransaction", "solana:signAndSendTransaction", "solana:signMessage", "solana:signIn", "fixture:signBlob"]
       });
     return this.#account;
   }
@@ -92,7 +92,10 @@ export class FixtureStandardWallet {
         supportedTransactionVersions: ["legacy", 0],
         signAndSendTransaction: this.#signAndSendTransaction
       },
-      "solana:signMessage": { version: "1.0.0", signMessage: this.#signMessage }
+      "solana:signMessage": { version: "1.0.0", signMessage: this.#signMessage },
+      "solana:signIn": { version: "1.0.0", signIn: this.#signIn },
+      // A vendor-prefixed signing feature (like phantom:*, backpack:*): the extension must not let it reach the wallet.
+      "fixture:signBlob": { version: "1.0.0", signBlob: this.#signBlob }
     };
   }
 
@@ -133,6 +136,20 @@ export class FixtureStandardWallet {
       const signature = await this.#core.signMessage(this.#path, "solana:signMessage", asBytes(i.message));
       out.push({ signedMessage: i.message, signature });
     }
+    return out;
+  };
+  #signIn = async (...inputs: { domain?: string }[]) => {
+    const out = [];
+    for (const i of inputs) {
+      const message = new TextEncoder().encode(`sign-in:${i.domain ?? ""}`);
+      const signature = await this.#core.signMessage(this.#path, "solana:signIn", message);
+      out.push({ account: this.#current, signedMessage: message, signature });
+    }
+    return out;
+  };
+  #signBlob = async (...inputs: { blob?: Uint8Array }[]) => {
+    const out = [];
+    for (const i of inputs) out.push({ signature: await this.#core.signMessage(this.#path, "fixture:signBlob", i.blob ?? new Uint8Array()) });
     return out;
   };
 }
@@ -204,6 +221,11 @@ export function makeLegacyProvider(core: FixtureWalletCore) {
     },
     async signMessage(message: Uint8Array) {
       const signature = await core.signMessage("legacy", "legacy:signMessage", message);
+      return { signature, publicKey: current() };
+    },
+    async signIn(input: { domain?: string } = {}) {
+      const message = new TextEncoder().encode(`sign-in:${input.domain ?? ""}`);
+      const signature = await core.signMessage("legacy", "legacy:signIn", message);
       return { signature, publicKey: current() };
     }
   };
