@@ -309,11 +309,7 @@ export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement
   }
   const badge = el("span", { class: "level pill" }, level === null ? "Blocked · analysis unavailable" : `L${level} · ${LEVEL_NAMES[level]}`);
   if (level !== null) badge.setAttribute("data-kelvara-level", `L${level}`);
-<<<<<<< HEAD
-  return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill" }, ...withTokens(title, r?.tokens)), badge, ...pills, titleOrb(r))];
-=======
-  return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill", ...(r?.fullTitle ? { title: r.fullTitle } : {}) }, ...withTokens(title, r?.tokens)), badge, ...(r?.moreRisks ? [el("span", { class: "more-risks", "data-more-risks": String(r.moreRisks), title: r.fullTitle ?? "" }, `+${r.moreRisks} more risk${r.moreRisks === 1 ? "" : "s"}`)] : []), ...pills)];
->>>>>>> team/extension
+  return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill", ...(r?.fullTitle ? { title: r.fullTitle } : {}) }, ...withTokens(title, r?.tokens)), badge, ...(r?.moreRisks ? [el("span", { class: "more-risks", "data-more-risks": String(r.moreRisks), title: r.fullTitle ?? "" }, `+${r.moreRisks} more risk${r.moreRisks === 1 ? "" : "s"}`)] : []), ...pills, titleOrb(r))];
 }
 
 /** What the assessment card shows when the worker has no explanation: the report's own one-line summary. */
