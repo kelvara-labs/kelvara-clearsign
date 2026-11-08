@@ -90,8 +90,8 @@ export function factLines(r: Report): FactLine[] {
         break;
       }
       case "fact.network_fee": {
-        const fee = solText(derived.getFeeForMessageLamports ?? derived.baseFeeLamports);
-        if (fee) line = { rule: c.ruleId, tx, text: `Pays a network fee of ${derived.getFeeForMessageLamports == null ? "about " : ""}${fee}`, brief: null };
+        const fee = solText(derived.baseFeeLamports ?? derived.getFeeForMessageLamports);
+        if (fee) line = { rule: c.ruleId, tx, text: `Pays a network fee of ${fee}`, brief: null };
         break;
       }
     }

@@ -94,6 +94,8 @@ export interface InstructionLine {
 export interface ReportDetails {
   instructions: InstructionLine[];
   changes: string[];
+  /** Plain balance lines from the simulation, one per account and asset ("You · −23.18 USDC"). */
+  balances?: string[];
 }
 
 export interface ReportView {
@@ -198,7 +200,7 @@ function isInstructionLine(x: unknown): x is InstructionLine {
 }
 
 function isDetails(x: unknown): x is ReportDetails {
-  return plain(x) && exact(x, ["instructions", "changes"]) && list(x.instructions, isInstructionLine, MAX_ITEMS) && list(x.changes, (v): v is string => str(v, 600), 32);
+  return plain(x) && exact(x, ["instructions", "changes", ...(Object.hasOwn(x, "balances") ? ["balances"] : [])]) && list(x.instructions, isInstructionLine, MAX_ITEMS) && list(x.changes, (v): v is string => str(v, 600), 32) && (!Object.hasOwn(x, "balances") || list(x.balances, (v): v is string => str(v, 300), 32));
 }
 
 function isClaim(x: unknown): x is Claim {

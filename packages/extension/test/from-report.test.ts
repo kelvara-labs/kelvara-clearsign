@@ -190,7 +190,7 @@ describe("fromReport: Drift session", () => {
   it("an empty report is L0 Clear", () => {
     const m = ok(fromReport(new ReportBuilder(session).build(), hashes));
     expect(m.level).toBe(0);
-    expect(m.report.title).toBe("Clear · nothing above notice level found; not every instruction is understood");
+    expect(m.report.title).toBe("Can't fully verify this transaction");
   });
 
   it("license limiter still applies after mapping: top finding is the upgrade authority", () => {

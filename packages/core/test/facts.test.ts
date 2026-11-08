@@ -113,7 +113,7 @@ describe("benign facts on real fixtures", () => {
     const unknown: DecodedInstruction = { ...ixs!.find((i) => i.name === "memo")!, status: "unknown", name: null, args: null };
     const r = build(session, [[...ixs!, unknown]]);
     expect(facts(r, "fact.no_permission_change")).toEqual([]);
-    expect(explainReport(r).headline).toContain("not every instruction is understood");
+    expect(explainReport(r).headline).toContain("Can't fully verify this transaction");
   });
 
   it("memo text is bounded, quoted and plain", async () => {

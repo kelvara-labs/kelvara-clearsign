@@ -45,7 +45,8 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
       const reason = selected.reasons.find((r) => r.id === id)!;
       reasons.append(node("li", reason.text, { "data-intent-reason": id }));
     }
-    card.append(reasons, node("p", intent.context.historyNote, { class: "muted", "data-intent-history": "" }));
+    card.append(reasons);
+    if (selected.kind === "transfer" || selected.kind === "poisoning") card.append(node("p", intent.context.historyNote, { class: "muted", "data-intent-history": "" }));
     if (selected.comparison) {
       const compare = node("details", "", { "data-intent-compare": "", open: "" });
       compare.append(node("summary", "Compare addresses"));

@@ -55,7 +55,9 @@ function claimCard(c: Claim, evidence: Map<string, EvidenceItem>): HTMLElement {
   const card = el(
     "details",
     { class: "claim", "data-claim": c.id, "data-claim-kind": c.kind.toLowerCase() },
-    el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), c.level ? el("span", { class: "claim-level" }, c.level) : null, " ", el("strong", { class: "claim-title" }, c.title)),
+    c.rule?.startsWith("fact.")
+      ? el("summary", {}, el("strong", { class: "claim-title" }, c.title))
+      : el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), c.level ? el("span", { class: "claim-level" }, c.level) : null, " ", el("strong", { class: "claim-title" }, c.title)),
     el("p", { class: "claim-text" }, c.text),
     c.advice ? el("p", { class: "advice" }, c.advice) : null,
     items.length ? el("div", { class: "explorer" }, ...items.map(evidenceCard)) : el("p", { class: "muted" }, "No evidence attached."),
@@ -76,6 +78,9 @@ export function hashLine(hashes: string[]): HTMLElement {
   );
 }
 
+/** "setComputeUnitLimit" -> "Set compute unit limit"; "microLamports" -> "Micro lamports". */
+const humanName = (n: string): string => { const w = n.replace(/_/g, " ").replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLowerCase().trim(); return w.charAt(0).toUpperCase() + w.slice(1); };
+
 /** Instructions in request order: "System Program · transfer", with the decoded arguments and accounts. */
 function instructionList(r: ReportView): HTMLElement | null {
   const list = r.details?.instructions ?? [];
@@ -85,9 +90,9 @@ function instructionList(r: ReportView): HTMLElement | null {
     el(
       "li",
       { class: i.name ? "ix" : "ix ix-unknown", "data-ix": `${i.tx}:${i.path}` },
-      el("strong", {}, i.name ? `${i.program} · ${i.name}` : `Unknown instruction on ${i.program}`),
+      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : "Unreadable instruction")),
       i.args.length || i.accounts.length
-        ? el("dl", { class: "where" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, f.key), el("dd", {}, addr(f.value))]))
+        ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, /^\d+$/.test(f.value) ? Number(f.value).toLocaleString("en-US") : addr(f.value))]))
         : null
     );
   if (!multi) return section("Instructions", el("ol", { class: "instructions" }, ...list.map(line)));
@@ -106,7 +111,14 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
         "section",
         { class: "versus" },
         r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), el("p", {}, r.authorizes)) : null,
-        el("div", { class: "simulation" }, el("h2", {}, "What simulation shows"), el("p", {}, r.simulation ?? "Not simulated"))
+        el(
+          "div",
+          { class: "simulation" },
+          el("h2", {}, "What simulation shows"),
+          r.details?.balances?.length
+            ? el("ul", { class: "balances" }, ...r.details.balances.map((b) => { const [who, ...rest] = b.split(" · "); const what = rest.join(" · "); return el("li", { "data-balance": "", class: what.startsWith("−") ? "out" : what.startsWith("+") ? "in" : "state" }, el("span", { class: "who" }, who ?? b), el("span", { class: "what" }, what)); }))
+            : el("p", {}, r.simulation ?? "Not simulated")
+        )
       )
     );
   }
@@ -152,13 +164,14 @@ export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement
   const context = r && (r.origin || r.network) ? [contextLine(r)] : [];
   const level = v.level;
   if (level === 0) {
-    const rest = title.replace(/^No risks found\s*[·:]?\s*/, "").trim();
+    const calm = /^No risks found/.test(title);
+    const [lead, rest] = calm ? ["No risks found", title.replace(/^No risks found\s*[·:]?\s*/, "").trim()] : (() => { const [a, ...b] = title.split(" · "); return [a ?? title, b.join(" · ")]; })();
     return [
       el(
         "section",
-        { class: "calm-head" },
+        { class: calm ? "calm-head" : "calm-head unverified" },
         el("span", { class: "level-icon", "aria-hidden": "true" }),
-        el("h1", { id: "title" }, el("strong", {}, "No risks found"), rest ? el("span", { class: "headline" }, ` ${rest}`) : null),
+        el("h1", { id: "title" }, el("strong", {}, lead), rest ? el("span", { class: "headline" }, ` ${rest}`) : null),
         el("span", { class: "level-chip", "data-kelvara-level": "L0", title: "Alert level L0" }, "L0")
       ),
       ...context

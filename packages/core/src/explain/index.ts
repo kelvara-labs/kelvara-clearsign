@@ -154,6 +154,11 @@ export const RULE_TEMPLATES: Readonly<Record<string, RuleTemplate>> = {
     why: "Simulation shows only a fee or a normal purchase, but the transaction also grants control that a balance preview cannot show.",
     advice: "Read what you authorize, not only what the simulation shows."
   },
+  "fact.unknown_instruction": {
+    title: "Calls a program ClearSign can't read",
+    why: "ClearSign has no public interface for this program, so it cannot tell what the instruction moves or authorizes.",
+    advice: "Continue only if you trust this site and this program."
+  },
   "fact.memo": {
     title: "Signs a memo",
     why: "A memo is plain text recorded with the transaction; it moves no funds and gives no one any power.",
@@ -266,13 +271,13 @@ export function explainClaim(claim: Claim): ClaimExplanation {
 const levelNum = (l: AlertLevel): number => Number(l.slice(1));
 
 /** Strongest fact first: what the transaction does matters more than what it costs. */
-const FACT_ORDER = ["fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
+const FACT_ORDER = ["fact.unknown_instruction", "fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
 
 /** L0 headline: says what the transaction does; says "No risks found" only when every instruction was understood. */
 function calmHeadline(report: Report, claims: ClaimExplanation[]): string {
   const strongest = FACT_ORDER.map((id) => claims.find((c) => c.ruleId === id)).find((c) => !!c);
   const allUnderstood = claims.some((c) => c.ruleId === "fact.no_permission_change");
-  const head = allUnderstood ? "No risks found" : `${report.alert.label}: nothing above notice level found; not every instruction is understood`;
+  const head = allUnderstood ? "No risks found" : "Can't fully verify this transaction";
   return strongest ? `${head}: ${strongest.title.charAt(0).toLowerCase()}${strongest.title.slice(1)}` : head;
 }
 

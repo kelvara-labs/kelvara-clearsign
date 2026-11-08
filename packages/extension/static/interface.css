@@ -727,6 +727,8 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 .calm-head .level-icon { width: 22px; height: 22px; margin-top: 2px; }
 .calm-head h1, .notice-line h1 { flex: 1 1 auto; min-width: 0; margin: 0; font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 500; color: var(--text-2); }
 .calm-head h1 strong { color: var(--text-1); font-weight: 650; }
+.calm-head.unverified .level-icon { --lv-icon: var(--icon-l1); background: var(--risk-2-fg); }
+.calm-head.unverified h1 strong { color: var(--risk-2-fg); }
 .notice-line { display: flex; align-items: flex-start; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
 .notice-line .level-icon { width: 18px; height: 18px; margin-top: 3px; }
 .level-chip { flex: none; padding: 0 8px; border: 1px solid var(--lv-border); border-radius: var(--radius-pill); color: var(--lv-fg); font-size: var(--fs-meta); line-height: var(--lh-label); font-weight: 650; letter-spacing: 0.02em; white-space: nowrap; }
@@ -790,3 +792,23 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
   html[data-level="L0"] .decision .block, html[data-level="L1"] .decision .block { order: 3; }
   .risk-banner h1 { font-size: var(--fs-title); }
 }
+
+/* Details step: balance rows, instruction cards, plain fact rows */
+.balances { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-control); overflow: hidden; }
+.balances li { display: flex; justify-content: space-between; gap: var(--space-3); padding: 10px var(--space-3); background: var(--surface-1); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); }
+.balances .who { color: var(--text-2); font-family: var(--font-mono); }
+.balances .what { color: var(--text-1); font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+.balances li.out .what { color: var(--risk-3-fg); }
+.balances li.in .what { color: var(--brand-mint); }
+.instructions { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); counter-reset: ix; }
+.instructions > li.ix { counter-increment: ix; padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface-1); }
+.instructions > li.ix-unknown { border-color: var(--risk-2-border); background: var(--risk-2-bg); }
+.ix-head { display: flex; flex-direction: column; gap: 2px; }
+.ix-head::before { content: counter(ix); display: none; }
+.ix-program { font-size: var(--fs-meta); line-height: var(--lh-meta); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); font-weight: 600; }
+.ix-name { font-size: var(--fs-body-sm); color: var(--text-1); }
+.ix-args { display: grid; grid-template-columns: minmax(96px, auto) 1fr; gap: 4px var(--space-3); margin: var(--space-2) 0 0; font-size: var(--fs-label); line-height: var(--lh-label); }
+.ix-args dt { color: var(--text-2); }
+.ix-args dd { margin: 0; color: var(--text-1); font-family: var(--font-mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.claim[data-claim-kind="fact"] > summary { padding-left: 26px; position: relative; }
+.claim[data-claim-kind="fact"] > summary::before { content: "✓"; position: absolute; left: 6px; color: var(--brand-mint); font-weight: 700; }

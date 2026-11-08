@@ -122,11 +122,17 @@ function instructionViews(r: Report): IxView[] {
   return out.sort((a, b) => a.tx - b.tx || a.path.localeCompare(b.path, undefined, { numeric: true }));
 }
 
-/** "Could not decode 1 instruction on Squads v4; its effects are unknown." One sentence per program. */
-function undecodedText(r: Report): string {
+
+/** Programs with undecoded instructions and how many, in first-seen order. */
+function unknownPrograms(r: Report): [string, number][] {
   const byProgram = new Map<string, number>();
   for (const i of instructionViews(r)) if (i.name === null) byProgram.set(i.program, (byProgram.get(i.program) ?? 0) + 1);
-  return [...byProgram].map(([p, n]) => `Could not decode ${n} instruction${n === 1 ? "" : "s"} on ${p}; ${n === 1 ? "its" : "their"} effects are unknown.`).join(" ");
+  return [...byProgram];
+}
+
+/** "Could not decode 1 instruction on Squads v4; its effects are unknown." One sentence per program. */
+function undecodedText(r: Report): string {
+  return unknownPrograms(r).map(([p, n]) => `Could not decode ${n} instruction${n === 1 ? "" : "s"} on ${p}; ${n === 1 ? "its" : "their"} effects are unknown.`).join(" ");
 }
 
 function authorizes(r: Report): string | null {
@@ -158,6 +164,51 @@ const accountRows = (accounts: unknown): EvidenceField[] => {
   return rows;
 };
 
+const KNOWN_MINTS: Record<string, string> = {
+  EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: "USDC",
+  Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB: "USDT",
+  So11111111111111111111111111111111111111112: "wSOL"
+};
+const SYSTEM_ID = "11111111111111111111111111111111";
+const big = (v: unknown): bigint | null => { try { return typeof v === "bigint" ? v : typeof v === "string" || typeof v === "number" ? BigInt(v) : null; } catch { return null; } };
+const amount = (raw: bigint, decimals: number): string => {
+  const neg = raw < 0n, a = neg ? -raw : raw, base = 10n ** BigInt(decimals);
+  const frac = decimals ? (a % base).toString().padStart(decimals, "0").replace(/0+$/, "") : "";
+  return `${neg ? "−" : "+"}${(a / base).toLocaleString("en-US")}${frac ? `.${frac}` : ""}`;
+};
+
+/** "You · −0.000019116 SOL", "5Bzo…EUD6 · +4.862954 USDC", "73eQ…8syi · account closed". */
+function balanceLines(r: Report): string[] {
+  const payer = (() => {
+    for (const e of r.evidence) { const d = e.data as Record<string, unknown> | null; if (e.type === "derivation" && d && typeof d.feePayer === "string") return d.feePayer; }
+    return null;
+  })();
+  const who = (a: string) => (a === payer ? "You" : shortId(a));
+  const out: string[] = [];
+  for (const e of r.evidence) {
+    if (e.type !== "simulation" || !e.data || typeof e.data !== "object") continue;
+    const d = e.data as Record<string, unknown>;
+    for (const c of Array.isArray(d.solChanges) ? d.solChanges : []) {
+      const x = c as Record<string, unknown>, delta = big(x.delta);
+      if (typeof x.address === "string" && delta !== null && delta !== 0n) out.push(`${who(x.address)} · ${amount(delta, 9)} SOL`);
+    }
+    for (const c of Array.isArray(d.tokenChanges) ? d.tokenChanges : []) {
+      const x = c as Record<string, unknown>, delta = big(x.delta);
+      if (typeof x.owner !== "string" || typeof x.mint !== "string" || delta === null || delta === 0n) continue;
+      const dec = typeof x.decimals === "number" ? x.decimals : null;
+      out.push(`${who(x.owner)} · ${dec === null ? `${delta < 0n ? "−" : "+"}${(delta < 0n ? -delta : delta).toString()} base units` : amount(delta, dec)} ${KNOWN_MINTS[x.mint] ?? `token ${shortId(x.mint)}`}`);
+    }
+    for (const c of Array.isArray(d.stateChanges) ? d.stateChanges : []) {
+      const x = c as Record<string, unknown>;
+      if (typeof x.address !== "string" || typeof x.field !== "string") continue;
+      if (x.field === "owner" && x.after === SYSTEM_ID) out.push(`${who(x.address)} · account closed`);
+      else if (x.field === "owner" && (x.before === null || x.before === undefined)) out.push(`${who(x.address)} · new account`);
+      else if (x.field !== "state" && x.field !== "delegatedAmount" && x.field !== "tokenOwner") out.push(`${who(x.address)} · ${x.field} changes to ${typeof x.after === "string" ? shortId(x.after) : String(x.after ?? "none")}`);
+    }
+  }
+  return [...new Set(out.map((l) => clip(l, 300)))].slice(0, 32);
+}
+
 /** Step 2 of the report: ordered instructions named from the IDL, and what changes after signing. */
 function reviewDetails(r: Report): ReportDetails {
   const ixs = instructionViews(r).slice(0, MAX_ITEMS);
@@ -170,7 +221,8 @@ function reviewDetails(r: Report): ReportDetails {
   if (hasNoPermissionChange(r)) changes.push(NO_PERMISSION_TEXT);
   return {
     instructions: ixs.map((i) => ({ tx: i.tx, path: i.path, program: clip(i.program, MAX_SHORT), name: i.name ? clip(i.name, MAX_SHORT) : null, args: argRows(i.args), accounts: accountRows(i.accounts) })),
-    changes: [...new Set(changes)].slice(0, 32)
+    changes: [...new Set(changes)].slice(0, 32),
+    balances: balanceLines(r)
   };
 }
 
@@ -306,6 +358,13 @@ function header(r: Report, ex: ReportExplanation): { title: string; summary: str
   const tally = g + v > 0 ? `${g} permission${g === 1 ? "" : "s"} granted and ${v} revoked.` : "";
   if (top.length === 0) {
     const human = factSummary(r) ?? "ClearSign found no risks but could not describe what this request does.";
+    const unknown = unknownPrograms(r);
+    if (unknown.length) {
+      const n = unknown.reduce((a, [, c]) => a + c, 0);
+      const names = unknown.map(([p]) => p).join(", ");
+      const lead = `It calls ${n === 1 ? "a program" : `${n} instructions on programs`} ClearSign doesn't recognize (${names}), so what ${n === 1 ? "it moves or authorizes" : "they move or authorize"} is unknown.`;
+      return { title: clip(`Can't fully verify · ${n} unreadable instruction${n === 1 ? "" : "s"}`, MAX_SHORT), summary: clip(`${lead} ${human} ${tally}`.trim(), MAX_TEXT) };
+    }
     return { title: clip(ex.headline.replace(/^([^:]+): /, "$1 · "), MAX_SHORT), summary: clip(`${human} ${tally}`.trim(), MAX_TEXT) };
   }
   return {

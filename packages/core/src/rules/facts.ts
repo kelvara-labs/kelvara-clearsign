@@ -12,7 +12,7 @@ import { arg } from "./squads-session.js";
 import { mintAccount, recipient as tokenRecipient, tokenAccount } from "./token-state.js";
 import type { RuleContext } from "./types.js";
 
-export const FACT_RULE_IDS = ["fact.memo", "fact.sol_transfer", "fact.token_transfer", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"] as const;
+export const FACT_RULE_IDS = ["fact.unknown_instruction", "fact.memo", "fact.sol_transfer", "fact.token_transfer", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"] as const;
 
 export const LAMPORTS_PER_SIGNATURE = 5000n;
 const ATA_PROGRAM = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
@@ -97,7 +97,13 @@ export function addBenignFacts(ctx: RuleContext): void {
       anyInstruction = true;
       const understood = isMemo(ix) || isSolTransfer(ix) || isTokenTransfer(ix) || isComputeBudget(ix) || isAtaCreate(ix);
       if (!understood) allBenign = false;
-      if (!understood) continue;
+      if (!understood) {
+        if (ix.status === "unknown") {
+          const ev = instructionEvidence(ctx, t, ix);
+          report.addClaim({ kind: "Fact", ruleId: "fact.unknown_instruction", statement: `Transaction ${t}, instruction ${ix.index} calls program ${ix.programAddress}, which ClearSign cannot decode, so what it moves or authorizes is unknown.`, evidenceIds: [ev] });
+        }
+        continue;
+      }
       const ev = instructionEvidence(ctx, t, ix);
       allIxEvidence.push(ev);
       if (isMemo(ix)) {
