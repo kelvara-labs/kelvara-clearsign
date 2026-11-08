@@ -187,17 +187,29 @@ function balanceRow(b: string, tokens: ReportView["tokens"]): HTMLElement {
   return el("li", { "data-balance": "", class: dir }, el("span", { class: "who" }, who ?? b), el("span", { class: "what" }, ...withTokens(what, tokens)));
 }
 
+/** "Key risks": one plain sentence per alert claim, at most three, first on page 2 for L2 to L4. */
+function keyRisksBlock(r: ReportView): HTMLElement {
+  return el(
+    "section",
+    { class: "key-risks", "data-key-risks": "" },
+    el("h2", {}, "Key risks"),
+    el("ul", {}, ...(r.keyRisks ?? []).map((k) => el("li", { "data-key-risk": k.id }, el("strong", {}, k.headline), " ", el("span", { class: "key-risk-text" }, ...withTokens(k.text, r.tokens)))))
+  );
+}
+
 /** Step 2: simulation, instructions, new states, capability changes, claims with evidence, Ledger hash. */
 export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
   const out: HTMLElement[] = [];
   if (!r) return [el("p", { class: "summary" }, v.reason)];
   if (r.message) return [messageReview(r.message)];
+  const risky = v.level !== null && v.level >= 2;
+  if (risky && r.keyRisks?.length) out.push(keyRisksBlock(r));
   if (r.simulation !== null || r.authorizes !== null) {
     out.push(
       el(
         "section",
         { class: "versus" },
-        r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), r.authorizes.includes("\n") ? el("ul", { class: "authorize-list" }, ...r.authorizes.split("\n").filter(Boolean).map((line) => el("li", {}, ...withTokens(line, r.tokens)))) : el("p", {}, ...withTokens(r.authorizes, r.tokens))) : null,
+        r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, risky ? "What changes" : "What you actually authorize"), r.authorizes.includes("\n") ? el("ul", { class: "authorize-list" }, ...r.authorizes.split("\n").filter(Boolean).map((line) => el("li", {}, ...withTokens(line, r.tokens)))) : el("p", {}, ...withTokens(r.authorizes, r.tokens))) : null,
         el(
           "div",
           { class: "simulation" },
@@ -211,10 +223,11 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
     );
   }
   const ix = instructionList(r);
-  if (ix) out.push(ix);
+  if (ix) out.push(risky ? el("details", { class: "collapsed-instructions", "data-collapsed": "instructions" }, el("summary", {}, `Show ${r.details?.instructions.length ?? 0} instruction${r.details?.instructions.length === 1 ? "" : "s"}`), ix) : ix);
   const changes = r.details?.changes ?? [];
-  if (changes.length) out.push(section("What changes after signing", el("ul", { class: "changes" }, ...changes.map((c) => el("li", {}, ...withTokens(c, r.tokens))))));
-  const caps = rankedCapabilities(r);
+  // One "what changes" list: the authorize lines already hold grants and revokes first, then the facts, fees last.
+  if (r.authorizes === null && changes.length) out.push(section("What changes", el("ul", { class: "changes" }, ...changes.map((c) => el("li", {}, ...withTokens(c, r.tokens))))));
+  const caps = r.limited ? rankedCapabilities(r) : [];
   if (caps.length) {
     out.push(
       section(
@@ -241,7 +254,9 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
     const factSection = facts.length ? section("What this transaction does", ...facts.map((c) => claimCard(c, byId, r.tokens))) : null;
     const riskSection = risks.length ? section(r.limited ? "Top finding" : "Findings (open for evidence)", ...risks.map((c) => claimCard(c, byId, r.tokens))) : null;
     const first = v.level !== null && v.level <= 1;
-    out.push(...[first ? factSection : riskSection, first ? riskSection : factSection].filter((x): x is HTMLElement => !!x));
+    const sections = [first ? factSection : riskSection, first ? riskSection : factSection].filter((x): x is HTMLElement => !!x);
+    if (risky && !r.limited) out.push(el("details", { class: "all-findings", "data-collapsed": "findings" }, el("summary", {}, `Show all findings (${r.claims.length})`), ...sections));
+    else out.push(...sections);
   }
   return out;
 }
@@ -294,7 +309,11 @@ export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement
   }
   const badge = el("span", { class: "level pill" }, level === null ? "Blocked · analysis unavailable" : `L${level} · ${LEVEL_NAMES[level]}`);
   if (level !== null) badge.setAttribute("data-kelvara-level", `L${level}`);
+<<<<<<< HEAD
   return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill" }, ...withTokens(title, r?.tokens)), badge, ...pills, titleOrb(r))];
+=======
+  return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill", ...(r?.fullTitle ? { title: r.fullTitle } : {}) }, ...withTokens(title, r?.tokens)), badge, ...(r?.moreRisks ? [el("span", { class: "more-risks", "data-more-risks": String(r.moreRisks), title: r.fullTitle ?? "" }, `+${r.moreRisks} more risk${r.moreRisks === 1 ? "" : "s"}`)] : []), ...pills)];
+>>>>>>> team/extension
 }
 
 /** What the assessment card shows when the worker has no explanation: the report's own one-line summary. */
@@ -338,7 +357,9 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   if (assessment) {
     card.setAttribute("data-report-current", "intent");
     details.hidden = true;
-    details.prepend(assessment.explanation);
+    const keyBlock = details.querySelector("[data-key-risks]");
+    if (keyBlock) keyBlock.after(assessment.explanation);
+    else details.prepend(assessment.explanation);
     card.append(assessment.node, details);
   } else {
     card.setAttribute("data-report-current", "details");

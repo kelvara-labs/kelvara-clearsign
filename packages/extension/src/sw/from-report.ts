@@ -21,6 +21,7 @@ import {
   VIEW_CAPS
 } from "../shared/report-view.js";
 import { reportMints, relabel, tagLabels, tokenAmountText, tokenLabels, tokenMetas, type TokenMeta } from "./tokens.js";
+import { keyRisks, stripEvidencePrefix } from "./key-risks.js";
 import { netBalances } from "./net-balances.js";
 import { authorizeFacts, feeLine, factLines, factSummary, hasNoPermissionChange, humanSimulation, NO_PERMISSION_TEXT } from "./facts-text.js";
 import { idlPathFor } from "./idl-paths.js";
@@ -455,9 +456,12 @@ export function fromReport(input: unknown, hashes: readonly string[], routedBy?:
     const byClaimId = new Map(r.claims.map((x) => [x.id, x]));
     const humanFact = (text: string, human: string | undefined, statement: string | undefined): string => (!human ? text : statement && text.includes(statement) ? text.replace(statement, human.replace(/\.$/, "")) : `${human} ${text}`);
     const details = reviewDetails(r);
+    const key = LEVELS[r.alert.level] >= 2 && !(!r.session.complete && LEVELS[r.alert.level] < 2) ? keyRisks(r) : { risks: [], more: 0 };
+    const keyed = key.risks.length > 0;
     const body = {
-      title: tl(head.title, MAX_SHORT),
-      summary: tl(head.summary),
+      title: keyed ? tl(key.risks[0]!.headline, MAX_SHORT) : tl(head.title, MAX_SHORT),
+      summary: keyed ? tl(key.risks.map((k) => k.text).join(" ")) : tl(head.summary),
+      ...(keyed ? { fullTitle: tl(head.title, MAX_SHORT), keyRisks: key.risks.map((k) => ({ id: k.id, headline: tl(k.headline, MAX_SHORT), text: tl(k.text, 400) })), ...(key.risks.length + key.more > 1 ? { moreRisks: key.risks.length + key.more - 1 } : {}) } : {}),
       simulation: (() => { const s = simulationLine(r); return s === null ? null : tl(s); })(),
       authorizes: (() => { const a = authorizes(r); return a === null ? null : tl(a); })(),
       details: {
@@ -467,7 +471,7 @@ export function fromReport(input: unknown, hashes: readonly string[], routedBy?:
       },
       capabilities: rankCapabilities(r).map((c) => ({ ...c, authority: tl(c.authority, MAX_SHORT), holder: tl(c.holder, MAX_SHORT) })),
       preview: previews(r).map((p) => ({ ...p, authority: tl(p.authority, MAX_SHORT), can: p.can.map((a) => ({ ...a, detail: tl(a.detail, MAX_SHORT) })) })),
-      claims: viewClaims.map((c) => ({ ...c, title: tl(c.title, MAX_SHORT), text: tl(humanFact(c.text, factText.get(c.id), byClaimId.get(c.id)?.statement)), advice: c.advice === null ? null : tl(c.advice) })),
+      claims: viewClaims.map((c) => ({ ...c, title: tl(c.title, MAX_SHORT), text: tl(stripEvidencePrefix(humanFact(c.text, factText.get(c.id), byClaimId.get(c.id)?.statement))), advice: c.advice === null ? null : tl(c.advice) })),
       evidence,
       messageHashes: [...hashes],
       limited: false,

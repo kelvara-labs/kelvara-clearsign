@@ -27,3 +27,4 @@ X19 (M8): E23 facts rendered as plain language (sw/facts-text.ts): authorizes li
 - X25: symbols with address on hover on real E26 output, rounding for reading, page-1/page-2 split, header pills, pen icon, signature_check text; 0.5.6
 - X26 View on Orb: button posts open-explorer to the worker which validates sender and id and opens https://orbmarkets.io/address/<id>; 0.5.7; G10 needs inert-hosts entry
 - X27 impostor sites -> L4, kamino.com trusted (lending); 0.5.8; G10 needs 5 inert-hosts entries
+- X28 critical info first: key risks, short title, one What changes list, collapsed findings/instructions; 0.5.9

@@ -9,6 +9,7 @@ import { FALLBACK_TEMPLATE, RULE_TEMPLATES, ReportBuilder, explainReport, ingest
 import { limitReport } from "../src/license/limit.js";
 import { validateWorkerVerdict, type SignRequest } from "../src/shared/protocol.js";
 import { validateReportView } from "../src/shared/report-view.js";
+import { stripEvidencePrefix } from "../src/sw/key-risks.js";
 import { DEPLOY_ANY_CODE, fromReport, type FromReport } from "../src/sw/from-report.js";
 import { idlPathFor } from "../src/sw/idl-paths.js";
 import type { EngineLike } from "../src/sw/engine-stub.js";
@@ -111,10 +112,11 @@ describe("fromReport: Drift session", () => {
   it("level, title and summary come from the alert claims; the title is the engine's template headline", () => {
     const m = ok(fromReport(driftReport(), hashes));
     expect(m.level).toBe(3);
-    expect(m.report.title).toBe(explainReport(driftReport()).headline);
-    expect(m.report.title).toBe("Critical: The transaction does not expire; This signature reaches the multisig threshold");
-    expect(m.report.summary).toContain("If the proposal reaches its threshold");
-    expect(m.report.summary).toContain("3 permissions granted and 1 revoked.");
+    expect(m.report.fullTitle).toBe(explainReport(driftReport()).headline);
+    expect(m.report.fullTitle).toBe("Critical: The transaction does not expire; This signature reaches the multisig threshold");
+    expect(m.report.title.length).toBeLessThanOrEqual(80);
+    expect(m.report.title).not.toMatch(/;/);
+    expect(m.report.keyRisks!.length).toBeLessThanOrEqual(3);
     expect(m.report.limited).toBe(false);
     expect(validateReportView(m.report)).not.toBeNull();
   });
@@ -177,13 +179,14 @@ describe("fromReport: Drift session", () => {
     expect(c.map((x) => x.id)).toEqual(["c3", "c4", "c1", "c2"]);
     for (const [i, x] of ex.claims.entries()) {
       expect(c[i]!.title).toBe(x.title);
-      expect(c[i]!.text.startsWith(x.text)).toBe(true);
+      expect(c[i]!.text.startsWith(stripEvidencePrefix(x.text))).toBe(true);
       expect(c[i]!.advice).toBe(x.advice);
       expect(c[i]!.rule).toBe(x.ruleId);
       expect(c[i]!.level).toBe(x.level);
     }
     expect(c[0]!.title).toBe(RULE_TEMPLATES["lifetime.durable_nonce"]!.title);
-    expect(c[0]!.text).toContain("Derived from the decoded instructions: Transaction 2 can be held and submitted at any later time.");
+    expect(c[0]!.text).toContain("Transaction 2 can be held and submitted at any later time.");
+    expect(c[0]!.text).not.toMatch(/Derived from|Proven from/);
     expect(c[0]!.evidenceIds).toEqual([]);
     expect(c[0]!.text).toContain("Follows from c1.");
     expect(c[1]!.text).toContain("Assumes: the multisig threshold read from chain is current.");
@@ -229,7 +232,7 @@ describe("fromReport: Drift session", () => {
     expect(v.allow).toBe(false);
     expect(v.hold).toBe(true);
     expect(v.level).toBe(3);
-    expect(v.report!.title).toMatch(/^Critical:/);
+    expect(v.report!.fullTitle).toMatch(/^Critical:/);
   });
 });
 
