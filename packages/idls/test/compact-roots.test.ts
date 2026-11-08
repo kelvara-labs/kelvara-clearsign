@@ -12,6 +12,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, it } from "vitest";
 import type { RootNode } from "@codama/nodes";
+import { dropUnresolvablePdas } from "../src/anchor.js";
 import { rootNodeFromAnchor, type IdlV00, type IdlV01 } from "@codama/nodes-from-anchor";
 import type { Address } from "@solana/kit";
 import { analyzeSession, createDecoder, parseTransaction, type AnchorIdlJson, type Decoder, type ResolvedInstruction } from "@kelvara/core";
@@ -31,7 +32,7 @@ const anchor = (m: ManifestIdl) => m.format.startsWith("anchor");
 /** The full conversion idls:build made before E17 (same steps, no compaction). */
 function fullRoot(m: ManifestIdl): RootNode {
   const raw = json<unknown>(`packages/idls/raw/${m.name}.json`);
-  let root = (anchor(m) ? rootNodeFromAnchor(raw as IdlV00 | IdlV01) : raw) as RootNode;
+  let root = (anchor(m) ? rootNodeFromAnchor(dropUnresolvablePdas(raw) as IdlV00 | IdlV01) : raw) as RootNode;
   if (root.program.publicKey !== m.programId) root = { ...root, program: { ...root.program, publicKey: m.programId } } as RootNode;
   return root;
 }

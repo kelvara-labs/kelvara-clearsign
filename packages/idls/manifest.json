@@ -1,6 +1,6 @@
 {
   "schema": "kelvara.idl-manifest/v1",
-  "generatedAt": "2026-11-08T11:22:13.230Z",
+  "generatedAt": "2026-11-08T11:40:24.200Z",
   "idls": [
     {
       "name": "system",
@@ -52,7 +52,7 @@
       "programData": "Fy3YMJCvwbAXUgUM5b91ucUVA3jYzwWLHL3MwBqKsh8n",
       "format": "anchor-legacy",
       "source": "anchor:idl account 6i4UjrDtkc7dqEmCyNDRfoxnAhDKSrY92u96Z74nRFdX (Helius mainnet)",
-      "slot": 466896598,
+      "slot": 466901577,
       "idlAddress": "6i4UjrDtkc7dqEmCyNDRfoxnAhDKSrY92u96Z74nRFdX",
       "idlAuthority": "HM5y4mz3Bt9JY9mr1hkyhnvqxSH4H2u2451j7Hc2dtvK",
       "sha256": "e708a9d66e3e7bb338951a417a0d6582e1ecf2b591f0918d7980bc0fac7966fd",
@@ -68,7 +68,7 @@
       "programData": "7dLgmtcTavcguNoynVimF9ZNVb13FvhXVRfj2HyrDGaP",
       "format": "anchor-legacy",
       "source": "anchor:idl account 8BKPjRu7Hvd6Y2J67EdLx9MsrZFQwEMVwYg7NeVbAPF8 (Helius mainnet)",
-      "slot": 466896598,
+      "slot": 466901578,
       "idlAddress": "8BKPjRu7Hvd6Y2J67EdLx9MsrZFQwEMVwYg7NeVbAPF8",
       "idlAuthority": "Fqo8WncpiP55ExPhuWLzMbm1cuYuJpXjhQPnd8ak3Pyn",
       "sha256": "0a1e0bda015d8bc215b088131d9a93e3eeefd8bac494b14f4bf3dfcdeb41758f",
@@ -84,7 +84,7 @@
       "programData": "4Q8u2ny8YYgytJEncwZQfVWbd5axZtfgDxYKHehvPQR7",
       "format": "anchor-0.1.0",
       "source": "anchor:idl account 9tb2tzSkQqDng2h8dC2xbuKHfQpmPoZP4vnd5Y1rkmmK (Helius mainnet)",
-      "slot": 466896598,
+      "slot": 466901578,
       "idlAddress": "9tb2tzSkQqDng2h8dC2xbuKHfQpmPoZP4vnd5Y1rkmmK",
       "idlAuthority": "H5U6dy9ch6puEFPY3t8jEaVQnVfYPUDANQkA4XG6peUo",
       "sha256": "5d95b34dda1d3e288b011a991d10e1e6e9db3414974b0721ae4ef50f49c60ad5",
@@ -101,7 +101,7 @@
       "programData": "4Ec7ZxZS6Sbdg5UGSLHbAnM7GQHp2eFd4KYWRexAipQT",
       "format": "anchor-0.1.0",
       "source": "anchor:idl account C88XWfp26heEmDkmfSzeXP7Fd7GQJ2j9dDTUsyiZbUTa (Helius mainnet)",
-      "slot": 466896599,
+      "slot": 466901578,
       "idlAddress": "C88XWfp26heEmDkmfSzeXP7Fd7GQJ2j9dDTUsyiZbUTa",
       "idlAuthority": "9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg",
       "sha256": "49e1e01f9b8aaf3aa90a4a90e5824e3625a8dd7f28fa47f34afb4dde974690e0",
@@ -109,6 +109,22 @@
       "verified": false,
       "verification": "on-chain IDL account, hash pinned, but its authority 9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg is not the upgrade authority CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ",
       "note": "Jupiter v6 aggregator (swaps); IDL from the on-chain anchor:idl account"
+    },
+    {
+      "name": "velocity",
+      "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+      "priority": "P1",
+      "upgradeAuthority": "8jj7zJgdr5bDndc7evM74FMGwzLPmd4u4QxNzFi1BMai",
+      "programData": "HkRf36jvUB32dnHjHqpMnPcKJhUP2TUKJTH7RDTifJm7",
+      "format": "anchor-0.1.0",
+      "source": "helius parsed-events idl vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P slot 464750765 (source program_metadata; program has no anchor:idl account)",
+      "slot": 464750765,
+      "idlAddress": "9sopg47HkBi4kdAmgXdwsjvspxT6Fz3oj21KnXu4bPQo",
+      "sha256": "bc3cacd7a65366e8f3b1cf81437b2bd74993fba5102f86fc9214d15b78f9d2dc",
+      "inflatedSha256": "d9a133251aeeab64dd78980a4f77aa768d9acb5fbc7a0597f369e40987dd1f1b",
+      "verified": false,
+      "verification": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified",
+      "note": "Velocity; no anchor:idl account, IDL from the program's on-chain Program Metadata as served by Helius Parsed Events (Orb shows the same IDL)"
     }
   ]
 }

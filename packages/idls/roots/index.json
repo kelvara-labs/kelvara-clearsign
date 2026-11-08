@@ -40,5 +40,11 @@
     "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
     "decoder": "codama",
     "instructions": 19
+  },
+  {
+    "name": "velocity",
+    "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+    "decoder": "codama",
+    "instructions": 216
   }
 ]

@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 import { inflateSync } from "node:zlib";
 import { describe, it } from "vitest";
 import type { RootNode } from "@codama/nodes";
+import { dropUnresolvablePdas } from "../src/anchor.js";
 import { rootNodeFromAnchor, type IdlV00, type IdlV01 } from "@codama/nodes-from-anchor";
 import { getBase58Encoder, type Address } from "@solana/kit";
 import {
@@ -87,7 +88,7 @@ describe("G5 registry", () => {
       assert.equal(sha256(readFileSync(path.join(pkgDir, r.root!))), r.rootSha256, `${m.name}: root hash`);
       if (m.format.startsWith("anchor")) {
         assert.equal(m.idlAddress, await anchorIdlAddress(m.programId), `${m.name}: anchor:idl address`);
-        let root = rootNodeFromAnchor(json<IdlV00 | IdlV01>(`raw/${m.name}.json`)) as RootNode;
+        let root = rootNodeFromAnchor(dropUnresolvablePdas(json<IdlV00 | IdlV01>(`raw/${m.name}.json`)) as IdlV00 | IdlV01) as RootNode;
         if (root.program.publicKey !== m.programId) root = { ...root, program: { ...root.program, publicKey: m.programId } } as RootNode;
         assert.equal(JSON.stringify(compactRoot(root)), JSON.stringify(roots[m.name]), `${m.name}: root differs from the converted IDL`);
       } else {

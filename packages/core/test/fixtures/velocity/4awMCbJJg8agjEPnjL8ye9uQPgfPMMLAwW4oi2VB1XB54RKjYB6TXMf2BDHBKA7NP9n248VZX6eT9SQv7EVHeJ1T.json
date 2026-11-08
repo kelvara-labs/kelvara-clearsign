@@ -1,0 +1,101 @@
+{
+ "schema": "kelvara.fixture.tx/v1",
+ "network": "mainnet",
+ "signature": "4awMCbJJg8agjEPnjL8ye9uQPgfPMMLAwW4oi2VB1XB54RKjYB6TXMf2BDHBKA7NP9n248VZX6eT9SQv7EVHeJ1T",
+ "slot": 466901826,
+ "blockTime": 1794138052,
+ "fetchedAt": "2026-11-08T11:40:52.850Z",
+ "source": "helius:getTransaction",
+ "program": {
+  "slug": "velocity",
+  "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+  "name": "Velocity"
+ },
+ "encoding": "base64",
+ "transaction": "AbNRJ4mGCN3V4LTpvbPtiqjmRSHOggw/fkniQDf4gXJEf475rpC7xH9vSyBcg8o2JHrqUSf6aioOwU4fbpDkNQaAAQAKCwsTmnMXjvkiA909VkuRcHCx5bqJMznye0aMzmbbBGuaAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAADfUbWfJP7vhL5Qo+DjUD/BXB0SSf0imT8ynBEgAAAAA2i3jJdgvHeeM1NsWchD2ctk/qngbil2VS3nwFY+eOWKm3hx3+udHFOnCt99RxZeo3aikY9+4dAWqvcCj0A7hkGp9UXGHvRZjXa1ARV/cLAwSTGjyFWdaXbustfCAAAAIhzlL9Asgzp3IAerfcGz+aJcFI3CK2X48w76kNIN/Zu7xZ7H9jY7P9gnANWQHSzTHGrBm+sglM69RF3hNFw1E0J3IbfF9uKCPF5RTC8E10ouvX+ZaWQBlb1I0zsXDMI7YMrjl8FnhxBrANfyzLDlIXB6pk3j2ecxkX7akmZ/WYjN4uUQXa9OQ04WGb1KmaAGQ7GUpRYXvf+TAD+lnJmk/tqu/Fs8IcjkA3bpyw2cSRdwvDgu0QSRWeoFUrDFOm5wQUBAAUCQA0DAAEACQMAAAAAAAAAAAIAEAEAEAADAFAAAwByAMIAAwADBwAEBQsMDQ60AtrtqvUnj6YhKAEAALkBGoI31aACHtm3kjTIIp4G36NNlFqV38IES75iE23R4QEq1ym1A2tko9kMPOsHscQDx+g8K+SFawz3/tHjxaJ53QoKgO/B9IDFYVrz+2c9Qih+mT2p+8NQa25B36MpUIIMLmzCAHXTx5MAeURRwl8GAAMEBgAAAAUAMI24FQIAAAACqvm5FQIAAAAByu2wFQIAAAAE+P8MAQB5RFHCXwYAAQAAAAUAzecwMecGAAACTYY4MecGAAABTkkpMecGAAAE+P8MAQB5RFHCXwYAAgAAAAUA6qynGjQAAAACgHApGzQAAAABznF6GjQAAAAE+P8MAQB5RFHCXwYAbgAAAAUAvjsKzQEAAAAC58oSzQEAAAABMWPvzAEAAAAE+P8MAQB5RFHCXwYAAwsQDwwGAAcICQoHCAj3F/9B1FrdwgEv8MYvLMQSn8Q0VnamKsJcckMzWt+mIP7oC4Qb8U79WwULERMVEAEA",
+ "sha256": "0b703cf563b6a22d47e36ec6724baadfc4b1e38b374a288a4970457e21ad1e6c",
+ "version": 0,
+ "meta": {
+  "err": null,
+  "status": {
+   "Ok": null
+  },
+  "fee": 10000,
+  "preBalances": [
+   2929848646,
+   1,
+   1,
+   1141440,
+   3542640,
+   0,
+   2561280,
+   32183040,
+   2561280,
+   23489920,
+   1869440,
+   1224960,
+   1224960,
+   1224960,
+   1224960,
+   11748480,
+   13084800
+  ],
+  "postBalances": [
+   2929838646,
+   1,
+   1,
+   1141440,
+   3542640,
+   0,
+   2561280,
+   32183040,
+   2561280,
+   23489920,
+   1869440,
+   1224960,
+   1224960,
+   1224960,
+   1224960,
+   11748480,
+   13084800
+  ],
+  "innerInstructions": [],
+  "logMessages": [
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P invoke [1]",
+   "Program log: Instruction: PostPythLazerOracleUpdate",
+   "Program log: Skipping lazer price update. next_timestamp 1794138052000000 <= current_timestamp 1794138052000000",
+   "Program log: Skipping lazer price update. next_timestamp 1794138052000000 <= current_timestamp 1794138052000000",
+   "Program log: Skipping lazer price update. next_timestamp 1794138052000000 <= current_timestamp 1794138052000000",
+   "Program log: Skipping lazer price update. next_timestamp 1794138052000000 <= current_timestamp 1794138052000000",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P consumed 18401 of 199700 compute units",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P success",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P invoke [1]",
+   "Program log: Instruction: UpdatePerpBidAskTwap",
+   "Program log: estimated_bid = Some(75825000000) estimated_ask = Some(75976100000)",
+   "Program log: after amm bid twap = 75831573342 -> 75831764109\n        ask twap = 75896118993 -> 75896341163\n        ts = 1794138042 -> 1794138052",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P consumed 43449 of 181299 compute units",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P success"
+  ],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "rewards": [],
+  "loadedAddresses": {
+   "writable": [
+    "2k3UHX6ehRFzx5fTVvbL6FwXhMjkucjJDL9MuVKLo8TV",
+    "J7Fp8iTKuKdCM7PnzqHXTdTo5Jr7ykAmiDyvpz58GJGZ",
+    "6wQ5RiQ7usJ3TqYZSiuAPZHrVCeSWNrvace84khDKEmH",
+    "Nc9hadTxNbLw6SiYVGVGjp4WZjanWUuNiKSxdHwHNtK",
+    "7s5WRWA3GahueLNfNb8bbVnHnxCssK5YjGCR3wP6Aa1t"
+   ],
+   "readonly": [
+    "2etx5NvPNxeMZ7EfHE6GjJfW2imRYEUANehNS1WB4CVW"
+   ]
+  },
+  "computeUnitsConsumed": 62150,
+  "costUnits": 68444
+ }
+}

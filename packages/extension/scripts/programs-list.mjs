@@ -16,6 +16,7 @@ const NAMES = {
   "drift-v2": "Drift v2",
   "marginfi-v2": "marginfi v2",
   "jupiter-v6": "Jupiter v6",
+  velocity: "Velocity",
   memo: "Memo",
   "compute-budget": "Compute Budget"
 };

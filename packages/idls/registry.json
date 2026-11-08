@@ -138,6 +138,23 @@
       "authorityMap": null
     },
     {
+      "name": "velocity",
+      "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+      "priority": "P1",
+      "decoder": "codama",
+      "root": "roots/velocity.json",
+      "rootSha256": "4c6b6fadcdee307dca02f4a9e7bf5d8f4c08141e99931217c7b22a804b43b0ce",
+      "idl": "raw/velocity.json",
+      "sha256": "bc3cacd7a65366e8f3b1cf81437b2bd74993fba5102f86fc9214d15b78f9d2dc",
+      "source": "helius parsed-events idl vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P slot 464750765 (source program_metadata; program has no anchor:idl account)",
+      "verified": false,
+      "executable": true,
+      "upgradeAuthority": "8jj7zJgdr5bDndc7evM74FMGwzLPmd4u4QxNzFi1BMai",
+      "capabilities": "capabilities/velocity.json",
+      "capabilityMap": "curated",
+      "authorityMap": null
+    },
+    {
       "name": "memo",
       "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
       "priority": "P1",

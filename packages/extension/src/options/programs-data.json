@@ -123,6 +123,23 @@
   "detail": "on-chain IDL account, hash pinned, but its authority 9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg is not the upgrade authority CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ"
  },
  {
+  "name": "velocity",
+  "title": "Velocity",
+  "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "mint authority",
+   "freezing",
+   "transfers",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
+ },
+ {
   "name": "memo",
   "title": "Memo",
   "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",

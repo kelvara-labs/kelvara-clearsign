@@ -1,0 +1,2806 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "velocity",
+  "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/velocity.json",
+  "reviewed": "E25 (engine), 2026-11-08: the 23 admin instructions that Velocity shares by name with the Drift v2 curated map (Velocity's IDL is Drift-derived, same upgrade authority); names checked against roots/velocity.json, admin tie by field name as for Drift; every other instruction keeps the low-confidence keyword class",
+  "entries": [
+    {
+      "instruction": "addInsuranceFundStake",
+      "discriminator": "fb90730bde2f3eec",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "add insurance fund stake: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "addMarketToAmmCache",
+      "discriminator": "7095c3de7c0757ed",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "add market to amm cache: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "adminDeposit",
+      "discriminator": "d24241b666d6b01e",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "fund_movement",
+      "changes": "deposits into a user account from an admin token account",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "adminUpdateUserStatsPausedOperations",
+      "discriminator": "b7683f96f0c7030a",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses chosen operations of a user",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "beginSwap",
+      "discriminator": "ae6de401f269e869",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "begin swap: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "cancelOrder",
+      "discriminator": "5f81edf00831df84",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "cancel order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "cancelOrderByUserId",
+      "discriminator": "6bd3fa8512253964",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "cancel order by user id: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "cancelOrders",
+      "discriminator": "eee15f9ee36708c2",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "cancel orders: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "cancelOrdersByIds",
+      "discriminator": "861390a55ef0d25e",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "cancel orders by ids: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "cancelRequestRemoveInsuranceFundStake",
+      "discriminator": "61eb4e3ed42af17f",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "cancel request remove insurance fund stake: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "changeApprovedBuilder",
+      "discriminator": "b386d32dc305bdad",
+      "authority": null,
+      "signers": [
+        "authority",
+        "payer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "change approved builder: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "changeSignedMsgWsDelegateStatus",
+      "discriminator": "fccafcdbb31b548a",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "change signed msg ws delegate status: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deleteAmmCache",
+      "discriminator": "d882d7cee9e8bf58",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "delete amm cache: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deleteInitializedPerpMarket",
+      "discriminator": "5b9a18576a3bbe42",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "delete initialized perp market: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deleteInitializedSpotMarket",
+      "discriminator": "1f8c43bfbd1465dd",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "account_control",
+      "changes": "deletes a newly listed spot market and its vaults",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "deletePrelaunchOracle",
+      "discriminator": "3ba964314511adfd",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "delete prelaunch oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deleteSignedMsgUserOrders",
+      "discriminator": "ddf780fdd4fe2e99",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "delete signed msg user orders: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deleteUser",
+      "discriminator": "ba5511f9dbe762fb",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "delete user: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deposit",
+      "discriminator": "f223c68952e1f2b6",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "deposit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "depositIntoPerpMarketFeePool",
+      "discriminator": "223a39446150f406",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "deposit into perp market fee pool: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "depositIntoPerpMarketPnlPool",
+      "discriminator": "e014326aba01b60f",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "deposit into perp market pnl pool: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "depositIntoSpotMarketRevenuePool",
+      "discriminator": "5c28972a7afe8bf6",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "deposit into spot market revenue pool: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "depositIntoSpotMarketVault",
+      "discriminator": "30fc7749ffcdaef7",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "deposit into spot market vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "endSwap",
+      "discriminator": "b1b81bc1220dd291",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "end swap: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "extendAccount",
+      "discriminator": "ea66c2cb96483ee5",
+      "authority": null,
+      "signers": [
+        "payer",
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "extend account: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "fillPerpOrder",
+      "discriminator": "0dbcf86786d96af0",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "fill perp order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "forceCancelOrders",
+      "discriminator": "40b5c43fde4840e8",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "force cancel orders: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "forceDeleteUser",
+      "discriminator": "02f1c3ace318fe9e",
+      "authority": null,
+      "signers": [
+        "keeper"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "force delete user: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "forfeitRevenueShareOrder",
+      "discriminator": "8dcd94ab745c35fa",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "forfeit revenue share order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initialize",
+      "discriminator": "afaf6d1f0d989bed",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeAmmCache",
+      "discriminator": "263cab9ecb3a8908",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize amm cache: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeInsuranceFundStake",
+      "discriminator": "bbb3f346f85a5c93",
+      "authority": null,
+      "signers": [
+        "authority",
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize insurance fund stake: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializePerpMarket",
+      "discriminator": "8409e5767576753e",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "lists a new perp market",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializePrelaunchOracle",
+      "discriminator": "a9b25419af3e1df7",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize prelaunch oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializePythLazerOracle",
+      "discriminator": "8c6b21d6ebdb6714",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize pyth lazer oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeReferrerName",
+      "discriminator": "eb7ee70a2aa41a3d",
+      "authority": null,
+      "signers": [
+        "authority",
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize referrer name: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeRevenueShare",
+      "discriminator": "39097b835234320d",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize revenue share: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeRevenueShareEscrow",
+      "discriminator": "bb127b58ee68549a",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize revenue share escrow: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeSignedMsgUserOrders",
+      "discriminator": "a4639c7e9c3963b4",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize signed msg user orders: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeSignedMsgWsDelegates",
+      "discriminator": "288460dbb8c15008",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize signed msg ws delegates: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeSpotMarket",
+      "discriminator": "eac4802c5e0f30c9",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "lists a new spot market (any mint and oracle)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initializeUser",
+      "discriminator": "6f11b9fa3c7a26fe",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize user: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeUserStats",
+      "discriminator": "fef34862fb82a8d5",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize user stats: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "liquidateBorrowForPerpPnl",
+      "discriminator": "a911205acf94d11b",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "liquidate borrow for perp pnl: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "liquidatePerp",
+      "discriminator": "4b2377f7bf128b02",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "liquidate perp: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "liquidatePerpPnlForDeposit",
+      "discriminator": "ed4bc6ebe9ba4b23",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "liquidate perp pnl for deposit: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "liquidatePerpWithFill",
+      "discriminator": "5f6f7c6956a9bb22",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "liquidate perp with fill: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "liquidateSpot",
+      "discriminator": "6b00802923e5fb12",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "liquidate spot: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "liquidateSpotWithSwapBegin",
+      "discriminator": "0c2bb0539cfb750d",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "liquidate spot with swap begin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "liquidateSpotWithSwapEnd",
+      "discriminator": "8e58a3a0df4b37e1",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "liquidate spot with swap end: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "logUserBalances",
+      "discriminator": "a21523fb2039a1d2",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "log user balances: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "modifyOrder",
+      "discriminator": "2f7c75ffc9c5825e",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "modify order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "modifyOrderByUserId",
+      "discriminator": "9e4d04fdfcc2a1b3",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "modify order by user id: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "moveAmmPrice",
+      "discriminator": "eb6d0252db76069f",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "moves a perp AMM's reserves and price",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "overrideAmmCacheInfo",
+      "discriminator": "bdc680093191c973",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "override amm cache info: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "pauseSpotMarketDepositWithdraw",
+      "discriminator": "b7773baa8923f256",
+      "authority": null,
+      "signers": [
+        "keeper"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "pause spot market deposit withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "placeAndMakePerpOrder",
+      "discriminator": "95750bed2f5f59ed",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "place and make perp order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "placeAndMakeSignedMsgPerpOrder",
+      "discriminator": "101a7b835e1daf62",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "place and make signed msg perp order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "placeAndTakePerpOrder",
+      "discriminator": "d53301bb6cdce6e0",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "place and take perp order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "placeOrders",
+      "discriminator": "3c3f327b0cc53cbe",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "place orders: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "placePerpOrder",
+      "discriminator": "45a15dca787e4cb9",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "place perp order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "placeScaleOrders",
+      "discriminator": "81f94637b1fafc5e",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "place scale orders: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "placeSignedMsgTakerOrder",
+      "discriminator": "204f658b1906620f",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "place signed msg taker order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "postPythLazerOracleUpdate",
+      "discriminator": "daedaaf5278fa621",
+      "authority": null,
+      "signers": [
+        "keeper"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "post pyth lazer oracle update: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "recenterPerpMarketAmm",
+      "discriminator": "18570a73a5be508b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "recenter perp market amm: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "recenterPerpMarketAmmCrank",
+      "discriminator": "a613400a0e33657a",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "recenter perp market amm crank: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "reclaimRent",
+      "discriminator": "dac813c5e359c016",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "reclaim rent: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "refreshSpotMarketInterest",
+      "discriminator": "0bbc328d4933864e",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "refresh spot market interest: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "removeInsuranceFundStake",
+      "discriminator": "80a68e09febb8fae",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "remove insurance fund stake: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "repegAmmCurve",
+      "discriminator": "03246659b48078d5",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "re-pegs a perp AMM's price",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "requestRemoveInsuranceFundStake",
+      "discriminator": "8e46cc5c496ab434",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "request remove insurance fund stake: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resetEquityFloorBreaker",
+      "discriminator": "e6b5ca247f38381b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "reset equity floor breaker: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resetPerpMarketAmmOracleTwap",
+      "discriminator": "7f0a37a47be22f18",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "reset perp market amm oracle twap: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resizeRevenueShareEscrowOrders",
+      "discriminator": "207cf7e197d5e126",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "resize revenue share escrow orders: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resizeSignedMsgUserOrders",
+      "discriminator": "890a579612734fa8",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "resize signed msg user orders: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resolvePerpBankruptcy",
+      "discriminator": "e010b0d6a2d5b7de",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "resolve perp bankruptcy: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resolvePerpPnlDeficit",
+      "discriminator": "a8cc44969f7e5f94",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "resolve perp pnl deficit: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resolveSpotBankruptcy",
+      "discriminator": "7cc2f0fec6d5347a",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "resolve spot bankruptcy: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "revertFill",
+      "discriminator": "eceeb045ef0ab5c1",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "revert fill: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setUserStatusToBeingLiquidated",
+      "discriminator": "6a85a0cec1abc0c2",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "set user status to being liquidated: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "settleExpiredMarket",
+      "discriminator": "78590b197a4d48c1",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "settle expired market: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "settleExpiredMarketPoolsToRevenuePool",
+      "discriminator": "3713eea9e35ac8b8",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "settle expired market pools to revenue pool: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "settleFundingPayment",
+      "discriminator": "de5aca5e1c2d73b7",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "settle funding payment: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "settleMultiplePnls",
+      "discriminator": "7f4275392832987f",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "settle multiple pnls: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "settlePnl",
+      "discriminator": "2b3dea2d0f5f9899",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "settle pnl: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "settleRevenueShare",
+      "discriminator": "157b9bddc2f0e94c",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "settle revenue share: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "settleRevenueToInsuranceFund",
+      "discriminator": "c8785d884526c79f",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "settle revenue to insurance fund: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "specialTransferPerpPositionToVamm",
+      "discriminator": "276fbbf3128bdf01",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "special transfer perp position to vamm: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "sweepPerpMarketFees",
+      "discriminator": "c293b5e6c19bf1e1",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "sweep perp market fees: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "syncStateSlotDuration",
+      "discriminator": "907bb07e51b45783",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "sync state slot duration: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transferDeposit",
+      "discriminator": "141493df293fcc6f",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "transfer deposit: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transferDepositByDelegate",
+      "discriminator": "8dabf1a1111f871d",
+      "authority": null,
+      "signers": [
+        "delegate"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "transfer deposit by delegate: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transferFeeAndPnlPool",
+      "discriminator": "a76e60d3d7fa7327",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "transfer fee and pnl pool: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transferPerpPosition",
+      "discriminator": "17acbca886d2036c",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "transfer perp position: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "transferPools",
+      "discriminator": "c5679a196b5a3c5e",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "transfer pools: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "triggerOrder",
+      "discriminator": "3f7033e9e82ff0c7",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "trigger order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "tripEquityFloorBreaker",
+      "discriminator": "85b81950c134a2f9",
+      "authority": null,
+      "signers": [
+        "keeper"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "trip equity floor breaker: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateAdmin",
+      "discriminator": "a1b028d53cb8b3e4",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "hands the protocol admin (state.admin) to another key: the step in the replayed Drift attack",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateAmmCache",
+      "discriminator": "58043f5e53e0ff82",
+      "authority": null,
+      "signers": [
+        "keeper"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update amm cache: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateAmmJitIntensity",
+      "discriminator": "b5bf356da6f9378e",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update amm jit intensity: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateAmms",
+      "discriminator": "c96ad9fd04afe461",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update amms: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateDiscountMint",
+      "discriminator": "20fc7ad3421f2ff1",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "mint_control",
+      "changes": "update discount mint: can mint new supply (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateExchangeStatus",
+      "discriminator": "53a0fcfa817431df",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses or resumes the whole exchange",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateFeatureBitFlagsBuilderCodes",
+      "discriminator": "0180b133ad2d0b66",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update feature bit flags builder codes: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFeatureBitFlagsMedianTriggerPrice",
+      "discriminator": "40b9dd2d57930c13",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update feature bit flags median trigger price: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFeatureBitFlagsMintRedeemLpPool",
+      "discriminator": "1a0b8e7ace9f092d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update feature bit flags mint redeem lp pool: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFeatureBitFlagsMmOracle",
+      "discriminator": "da8621bae73b8295",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update feature bit flags mm oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFeatureBitFlagsSettleLpPool",
+      "discriminator": "ba1c4ee69b53f21a",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update feature bit flags settle lp pool: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFeatureBitFlagsSwapLpPool",
+      "discriminator": "5310960c6603163a",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update feature bit flags swap lp pool: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFeatureBitFlagsVammMakerRebate",
+      "discriminator": "ed8407ff749b0577",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update feature bit flags vamm maker rebate: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFundingRate",
+      "discriminator": "c9b274d4a69048ee",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "update funding rate: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateHotAdmin",
+      "discriminator": "a2c7b640d6f4c31e",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update hot admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateInitialAmmCacheInfo",
+      "discriminator": "9dd26d43d4aa0c6b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update initial amm cache info: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateInitialPctToLiquidate",
+      "discriminator": "d285e180c2320d6d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update initial pct to liquidate: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateInsuranceFundUnstakingPeriod",
+      "discriminator": "2c452be2ccdfca34",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update insurance fund unstaking period: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateK",
+      "discriminator": "4862098b81e5ac38",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes a perp AMM's liquidity",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateLiquidationDuration",
+      "discriminator": "1c9a14f966c04947",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update liquidation duration: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateLiquidationMarginBufferRatio",
+      "discriminator": "84e0f3a09a5261d7",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update liquidation margin buffer ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateOracleGuardRails",
+      "discriminator": "83700a3b203628a4",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "loosens or tightens the oracle sanity checks",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updatePauseAdmin",
+      "discriminator": "199d3ce42a60859e",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "update pause admin: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpAuctionDuration",
+      "discriminator": "7e6e34ae1eced75a",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp auction duration: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpBidAskTwap",
+      "discriminator": "f717ff41d45addc2",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp bid ask twap: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpFeeStructure",
+      "discriminator": "17b26fcb49168c4b",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "config",
+      "changes": "changes perp trading fees",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updatePerpMarketAmmOracleTwap",
+      "discriminator": "f14a727bce9918ca",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update perp market amm oracle twap: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketAmmSpreadAdjustment",
+      "discriminator": "9bc3952bdc52adcd",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market amm spread adjustment: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketAmmSummaryStats",
+      "discriminator": "7a65f9eed109f1f5",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market amm summary stats: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketBankruptcyIfFloorPct",
+      "discriminator": "c002e5dcf3737954",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update perp market bankruptcy if floor pct: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketBaseSpread",
+      "discriminator": "475f54a8099dc641",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market base spread: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketConcentrationCoef",
+      "discriminator": "184ee87ea9b0e610",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update perp market concentration coef: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketConfig",
+      "discriminator": "865a062250a05ef5",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update perp market config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketContractTier",
+      "discriminator": "ec800f5fcbd64475",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market contract tier: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketCurveUpdateIntensity",
+      "discriminator": "3283069ce2e7bd48",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update perp market curve update intensity: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketExpiry",
+      "discriminator": "2cdde397838c166e",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market expiry: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketFeeAdjustment",
+      "discriminator": "c2ae57662b942070",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market fee adjustment: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketFeePoolBufferTarget",
+      "discriminator": "7dea282c5b1ae7b1",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market fee pool buffer target: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketFundingBiasSensitivity",
+      "discriminator": "8f3eea91b8ed6e74",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update perp market funding bias sensitivity: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketFundingDeadZone",
+      "discriminator": "f93a886002746f7f",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update perp market funding dead zone: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketFundingPeriod",
+      "discriminator": "aba1455b818ba11c",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market funding period: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketImfFactor",
+      "discriminator": "cfc23884234347f4",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update perp market imf factor: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketLiquidationFee",
+      "discriminator": "5a89099129089475",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update perp market liquidation fee: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketLpPoolId",
+      "discriminator": "77d09a58a55c15bc",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market lp pool id: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketLpPoolPausedOperations",
+      "discriminator": "b55e5d9233592087",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "update perp market lp pool paused operations: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketMarginRatio",
+      "discriminator": "82ad6b2d77691a71",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes margin requirements of a perp market",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updatePerpMarketMaxFillReserveFraction",
+      "discriminator": "13ac729a2a87a185",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market max fill reserve fraction: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketMaxImbalances",
+      "discriminator": "0fce49853c085659",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market max imbalances: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketMaxOpenInterest",
+      "discriminator": "c24f95e0f666ba8c",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market max open interest: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketMaxSlippageRatio",
+      "discriminator": "eb2528c4469236c9",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market max slippage ratio: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketMaxSpread",
+      "discriminator": "50fc7a3e28da5b64",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market max spread: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketMinOrderSize",
+      "discriminator": "e24a05596cdf2e8d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market min order size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketName",
+      "discriminator": "d31f15d2406c42c9",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market name: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketNumberOfUsers",
+      "discriminator": "233e90b1b43ed7c4",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market number of users: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketOracle",
+      "discriminator": "b6716fa043ae59bf",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "points a perp market at a different oracle (price manipulation)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updatePerpMarketOracleLowRiskSlotDelayOverride",
+      "discriminator": "7c6c93e56d757b03",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update perp market oracle low risk slot delay override: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketOracleSlotDelayOverride",
+      "discriminator": "a55befe33face308",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update perp market oracle slot delay override: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketPausedOperations",
+      "discriminator": "351088841edc7955",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses chosen operations of a perp market",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updatePerpMarketPnlPool",
+      "discriminator": "32caf9e0a6b80d8f",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update perp market pnl pool: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketReferencePriceOffsetDeadbandPct",
+      "discriminator": "d649a60bda4c6ea3",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market reference price offset deadband pct: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketStatus",
+      "discriminator": "47c9af7affcfc4cf",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses or resumes a perp market",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updatePerpMarketStepSizeAndTickSize",
+      "discriminator": "e7ff6119928bae04",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market step size and tick size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketTakerFeeAddon",
+      "discriminator": "3516bf0f3e9624cb",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update perp market taker fee addon: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePerpMarketUnrealizedAssetWeight",
+      "discriminator": "8784cda56d96a66a",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update perp market unrealized asset weight: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePrelaunchOracle",
+      "discriminator": "dc841b1be9dc3ddb",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update prelaunch oracle: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePrelaunchOracleParams",
+      "discriminator": "62cd93f3124b53cf",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update prelaunch oracle params: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updatePromoFeeTier",
+      "discriminator": "6839f1a245c605af",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update promo fee tier: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateProtocolFeeRecipient",
+      "discriminator": "d53c156a2a433ca2",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update protocol fee recipient: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSolvencyStatus",
+      "discriminator": "51880f0618a52c85",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "update solvency status: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpecialUserStatus",
+      "discriminator": "17eda6c22607292d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "update special user status: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotAuctionDuration",
+      "discriminator": "b6b2cb48bb8f9d6b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot auction duration: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotFeeStructure",
+      "discriminator": "61d8698371f68e8d",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "config",
+      "changes": "changes spot trading fees",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateSpotMarketAssetTier",
+      "discriminator": "fdd1e70ef2d0f382",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market asset tier: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketBorrowRate",
+      "discriminator": "47efec99d23efe4c",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market borrow rate: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketCumulativeInterest",
+      "discriminator": "27a68bf39ea59be1",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "update spot market cumulative interest: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketDepositCap",
+      "discriminator": "4c15b39a1ca1ae6b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update spot market deposit cap: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketExpiry",
+      "discriminator": "d00bd39fe2180bf7",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market expiry: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketFeeAdjustment",
+      "discriminator": "94b6037e9d72dc63",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market fee adjustment: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketIfFactor",
+      "discriminator": "931ee02212e66904",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update spot market if factor: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketIfPausedOperations",
+      "discriminator": "65d74f4a3b294f0c",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "update spot market if paused operations: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketLiquidationFee",
+      "discriminator": "0b0dff35388868b1",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update spot market liquidation fee: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketMarginWeights",
+      "discriminator": "6d2157c3ff240651",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes collateral weights of a spot market",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateSpotMarketMaxTokenBorrows",
+      "discriminator": "3966ccd4fd5f0dc7",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market max token borrows: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketMaxTokenDeposits",
+      "discriminator": "38bf4f121a7950d0",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "config",
+      "changes": "changes a spot market's deposit cap",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateSpotMarketMinOrderSize",
+      "discriminator": "5d800b771a14b532",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market min order size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketName",
+      "discriminator": "11d00101a2d3bce0",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market name: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketOracle",
+      "discriminator": "72b86625f6bab463",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "points a spot market at a different oracle (price manipulation)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateSpotMarketOrdersEnabled",
+      "discriminator": "be4fce0f1ae5e52b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update spot market orders enabled: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketPausedOperations",
+      "discriminator": "643d9951b40c06f8",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses chosen operations of a spot market",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateSpotMarketPoolId",
+      "discriminator": "16d5c5a08bc15195",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market pool id: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketRevenueSettlePeriod",
+      "discriminator": "515c7e29fae19cdb",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update spot market revenue settle period: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketScaleInitialAssetWeightStart",
+      "discriminator": "d9cccc76cc82e193",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update spot market scale initial asset weight start: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketStatus",
+      "discriminator": "4e5e10bcc16ee71f",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses or resumes a spot market",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateSpotMarketStepSizeAndTickSize",
+      "discriminator": "ee998950ce3bfa3d",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update spot market step size and tick size: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSpotMarketWithdrawCircuitBreaker",
+      "discriminator": "0261876175a941df",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "update spot market withdraw circuit breaker: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateStateMaxInitializeUserFee",
+      "discriminator": "ede119edc12d4d61",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update state max initialize user fee: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateStateMaxNumberOfSubAccounts",
+      "discriminator": "9b7bd602dda6cc55",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update state max number of sub accounts: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateStateSettlementDuration",
+      "discriminator": "6144c7eb83503dad",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update state settlement duration: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserAcceleratedReferralStatus",
+      "discriminator": "6dd9dd59d87f0c78",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "update user accelerated referral status: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserAllowDelegateTransfer",
+      "discriminator": "eb6aac27dfeea7cc",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "update user allow delegate transfer: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserCustomMarginRatio",
+      "discriminator": "15dd8cbb20810b7b",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update user custom margin ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserDelegate",
+      "discriminator": "8bcd8d8d71245ebb",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update user delegate: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserEquityFloor",
+      "discriminator": "31578b7788efba68",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update user equity floor: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserIdle",
+      "discriminator": "fd85431667a11464",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update user idle: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserMarginTradingEnabled",
+      "discriminator": "c25cccdff6bc1fcb",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update user margin trading enabled: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserName",
+      "discriminator": "8719b938a5352288",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update user name: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserPerpPositionCustomMarginRatio",
+      "discriminator": "79899d9b59ba9171",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update user perp position custom margin ratio: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserPoolId",
+      "discriminator": "db56496a38da806d",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update user pool id: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserQuoteAssetInsuranceStake",
+      "discriminator": "fb659c07023f1e17",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update user quote asset insurance stake: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserReduceOnly",
+      "discriminator": "c7472a439013566d",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update user reduce only: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserStatsReferrerStatus",
+      "discriminator": "ae9a482abf9491cd",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "update user stats referrer status: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateUserVaultOwned",
+      "discriminator": "329cda8fd85e445d",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "update user vault owned: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateWarmAdmin",
+      "discriminator": "23f470770563c3cc",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update warm admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateWithdrawGuardThreshold",
+      "discriminator": "3812273d9bd32c85",
+      "authority": "admin",
+      "signers": [
+        "admin"
+      ],
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes how much can leave a spot market before withdraws are limited",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdraw",
+      "discriminator": "b712469c946da122",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawFromPerpMarketFeePool",
+      "discriminator": "8d333b33a9f02e47",
+      "authority": null,
+      "signers": [
+        "payer",
+        "admin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw from perp market fee pool: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawProtocolFeesPerp",
+      "discriminator": "e36317e3a8d988b5",
+      "authority": null,
+      "signers": [
+        "payer",
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw protocol fees perp: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawProtocolFeesSpot",
+      "discriminator": "b1d81eeffdb17b9b",
+      "authority": null,
+      "signers": [
+        "payer",
+        "authority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw protocol fees spot: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "zeroMmOracleFields",
+      "discriminator": "c0e227cccf7894fa",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "zero mm oracle fields: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": []
+}
