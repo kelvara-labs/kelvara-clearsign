@@ -10,6 +10,7 @@
 import { RpcError, type RpcClient } from "../rpc/client.js";
 import { getSignaturesForAddress, type SignatureInfo } from "../rpc/methods.js";
 import { fromBase58 } from "../util/encoding.js";
+import type { LookalikeMatch } from "../util/lookalike.js";
 import { SYSTEM_PROGRAM, TOKEN_2022_PROGRAM, TOKEN_PROGRAM } from "./layouts.js";
 
 export const HISTORY_DAYS = 30;
@@ -315,24 +316,7 @@ export function dustReason(t: HistoryTransfer, h: Pick<WalletHistory, "assets" |
   return null;
 }
 
-export interface LookalikeMatch {
-  prefix: number;
-  suffix: number;
-}
-
-/**
- * Lookalike test (PLAN.md 3d): at least 5 shared characters across the start and the end, at least 2
- * on each side. Shared = longest common prefix and suffix (case-sensitive, base58). Null otherwise.
- */
-export function lookalike(a: string, b: string): LookalikeMatch | null {
-  if (a === b) return null;
-  const n = Math.min(a.length, b.length);
-  let prefix = 0;
-  while (prefix < n && a[prefix] === b[prefix]) prefix++;
-  let suffix = 0;
-  while (suffix < n - prefix && a[a.length - 1 - suffix] === b[b.length - 1 - suffix]) suffix++;
-  return prefix >= 2 && suffix >= 2 && prefix + suffix >= 5 ? { prefix, suffix } : null;
-}
+export { lookalike, type LookalikeMatch } from "../util/lookalike.js";
 
 /** Marks matched characters: "[24dx]ciePS…L9[9q6h]" style, full address kept. */
 export function markMatch(address: string, m: LookalikeMatch): string {
