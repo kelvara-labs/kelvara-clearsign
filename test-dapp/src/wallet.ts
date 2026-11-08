@@ -30,6 +30,16 @@ export interface MessageRecord {
   at: number;
 }
 
+/** One entry per call that reached the wallet (any method), in arrival order, for ordering assertions. */
+export interface TimelineEntry {
+  n: number;
+  path: WalletPath;
+  method: string;
+  at: number;
+  /** performance.now() at arrival: monotonic, comparable with page-side marks. */
+  mono: number;
+}
+
 export interface CallLog {
   /** Transaction-signing calls that reached the wallet. Zero means the wallet was never called. */
   count: number;
@@ -38,10 +48,12 @@ export interface CallLog {
   /** Message-signing calls (these pass through the extension with a notice). */
   messageCount: number;
   messages: MessageRecord[];
+  /** Every wallet-level call of any method (transactions, messages, signIn, vendor), with timestamps. */
+  timeline: TimelineEntry[];
 }
 
 export function emptyLog(): CallLog {
-  return { count: 0, byPath: { "ws-register": 0, "ws-app-ready": 0, legacy: 0 }, calls: [], messageCount: 0, messages: [] };
+  return { count: 0, byPath: { "ws-register": 0, "ws-app-ready": 0, legacy: 0 }, calls: [], messageCount: 0, messages: [], timeline: [] };
 }
 
 export class FixtureKey {
@@ -142,6 +154,7 @@ export class FixtureWalletCore {
       signed: [],
       at: Date.now()
     };
+    this.mark(path, method, rec.n);
     this.log.count++;
     this.log.byPath[path]++;
     this.log.calls.push(rec);
@@ -154,9 +167,16 @@ export class FixtureWalletCore {
     return results.map((r) => r.bytes);
   }
 
+  private mark(path: WalletPath, method: string, n: number): void {
+    this.log.timeline.push({ n, path, method, at: Date.now(), mono: performance.now() });
+  }
+
+  /** Message-like prompts (signMessage, signIn, vendor signing): recorded in `messages` and the timeline. */
   async signMessage(path: WalletPath, method: string, message: Uint8Array): Promise<Uint8Array> {
     this.log.messageCount++;
-    this.log.messages.push({ n: ++this.n, path, method, message: b64encode(message), at: Date.now() });
+    const n = ++this.n;
+    this.mark(path, method, n);
+    this.log.messages.push({ n, path, method, message: b64encode(message), at: Date.now() });
     this.emit();
     return this.key.signBytes(message);
   }

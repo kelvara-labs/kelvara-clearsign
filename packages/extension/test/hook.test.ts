@@ -183,16 +183,14 @@ describe("Wallet Standard", () => {
     expect(w.calls.length).toBe(0);
   });
 
-  it("signMessage passes through with a notice", async () => {
+  it("signMessage never reaches the wallet (blocked fail-closed, no analyzable bytes)", async () => {
     const r = rig(allow);
     const app = startApp(r.win);
     const w = new FixtureWallet();
     registerWallet(r.win, w);
     const f = (app[0] as { features: Record<string, { signMessage: (i: unknown) => Promise<unknown> }> }).features["solana:signMessage"]!;
-    await f.signMessage({ message: new Uint8Array([1, 2]) });
-    await Promise.resolve();
-    expect(w.messageCalls).toBe(1);
-    expect(r.sent[0]).toMatchObject({ type: "kelvara-signguard/notice", notice: { method: "solana:signMessage" } });
+    await expect(f.signMessage({ message: new Uint8Array([1, 2]) })).rejects.toEqual(rejected);
+    expect(w.messageCalls).toBe(0);
   });
 
   it("wraps a frozen wallet with a frozen own features property", async () => {
