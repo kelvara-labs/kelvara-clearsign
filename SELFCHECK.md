@@ -1,4 +1,18 @@
-# Kelvara SignGuard selfcheck — v0.3.0 (V15: all ten gates PASS)
+# Kelvara SignGuard selfcheck — V16 (G7 FAIL: two flaky e2e paths; G1-G6, G8-G10 PASS)
+
+## V16 certification attempt — 2026-11-08, verifier `f237025` (main `ff54b48` merged)
+
+Fresh plain clone `/tmp/kelvara-v16`, frozen install, build, `E2E_WORKERS=1 pnpm selfcheck`: **G1-G6 and G8-G10 PASS, G7 FAIL** (88 passed, 3 failed). Release zip sha256 `7923965228ff2a7c...28eb3` identical x3. `pnpm demo:verify-intent` PASS (read-only, run from the scenarios checkout that holds `.devnet/fees/scenario.json`). Live G8 not run. Localnet stopped.
+
+Unit suites on the clone (vitest --maxWorkers=2, one package at a time): core 279/279, cli 11/11, extension 360/360, scenarios (node --test) 45/45. No red tests.
+
+New specs (test-dapp/e2e): wallet-hold, message-review, options-v16, report-context (origin/network, E22 ComputeBudget, E23/X19 readable report, opacity/filter/transform regression for every `[data-kelvara-action]` button and ancestors at L2/L3/L4). The l4-sweep authorizes assertion now follows X19: the sweep has no capability changes, so the correct text starts with "Sends" and the no-permission line is accurate.
+
+G7 failures (all pass when run in isolation, so they are timing/race dependent, not deterministic logic errors):
+1. `levels.spec.ts` L3 admin "Sign anyway needs a hold, then calls the wallet once": one of the ws-register/legacy variants fails with "Sign anyway did not forward" (a different variant per run; reproduced in the clone and in the worktree after the L4 and L3-Block tests ran first, 3 of 4 full-file runs). Suspect: `packages/extension/src/report/page.ts` cancels the hold when the IntersectionObserver v2 gate flickers (`gesture?.cancel()` / `frameTick` `reset()`), or the plain click followed by a hold. Owner: extension.
+2. `report-context.spec.ts` l4-sweep (both the E23 text test and the opacity test) intermittently hang 2 min in `click` on the L4 "Dismiss" button (`performing click action`, then timeout) after the report was already auto-rejected. Passes in 2 s when run alone. Owner: extension (L4 Dismiss after auto-reject).
+3. `report-iframe.spec.ts` "page-framed report.html gets no channel": poll for `[{allow:true}]` empty after 5 s once (first full run only; not reproduced in two reruns). Owner: extension.
+Host was under heavy memory pressure (swap full, ~1 GB free) during all runs, which probably widens the races.
 
 ## V15 AI intent certification — 2026-11-08, merged main `bdb906f` + verifier `52c08ae`
 
