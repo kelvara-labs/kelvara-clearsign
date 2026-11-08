@@ -1,4 +1,4 @@
-import { validateIntentContext, type IntentContext } from "@kelvara/core";
+import { validateIntentContext, type IntentContext } from "@kelvara/core/intent-schema";
 export type IntentStatus = "template" | "not-configured" | "selected" | "unavailable" | "invalid";
 export interface ReportIntent {
   context: IntentContext;

@@ -53,6 +53,8 @@ Blocked on a decision? Use `orca-ide orchestration ask --to <coordinator>`, neve
 prompt, and keep working on anything unblocked while you wait.
 
 ## Coordinator loop
+Models (user choice, 2026-11-08): coordinator runs Claude Opus 5.5 low; dispatch workers with
+`--agent claude --model claude-sonnet-5-5` (Codex only when Claude is unavailable).
 1. Keep the task list in Orca: one task per PLAN.md task, with dependencies and the
    owning role in the spec. Dispatch with `orca-ide orchestration worker-start`.
 2. Wait on the inbox: `orca-ide orchestration check --wait --types worker_done,escalation,question`.
