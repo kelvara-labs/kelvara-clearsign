@@ -12,7 +12,7 @@
     "test:decode": "vitest run test/ingest.test.ts test/decode-*.test.ts",
     "test:rules": "vitest run test/rules-*.test.ts",
     "test:contract": "vitest run test/report-*.test.ts",
-    "test:determinism": "vitest run test/determinism.test.ts",
+    "test:determinism": "vitest run test/determinism.test.ts test/intent.test.ts",
     "fixtures:decode-spike": "node scripts/fetch-decode-spike.mjs",
     "fixtures:state": "esbuild scripts/record-state-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-state-fixtures.mjs && node dist/scripts/record-state-fixtures.mjs",
     "fixtures:rules": "esbuild scripts/record-rule-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-rule-fixtures.mjs && node dist/scripts/record-rule-fixtures.mjs",

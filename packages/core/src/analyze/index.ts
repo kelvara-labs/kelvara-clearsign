@@ -3,6 +3,7 @@
 // "what simulation shows" section and returns a validated report. Without an RpcClient it runs the rules
 // on the session alone (nothing read means "not read", never "safe"). Shared by the CLI and the extension;
 // no Node imports, so it stays service-worker safe.
+import { buildIntentContext, type IntentContext } from "./intent.js";
 import { getAddressEncoder, getProgramDerivedAddress, type Address } from "@solana/kit";
 import type { Decoder } from "../decode/decoder.js";
 import type { DecodedInstruction } from "../decode/types.js";
@@ -54,6 +55,7 @@ export interface ReadNote {
 
 export interface AnalyzeResult {
   report: Report;
+  intentContext: IntentContext;
   state: RuleState;
   reads: ReadNote[];
 }
@@ -271,5 +273,5 @@ export async function analyzeSession(session: Session, opts: AnalyzeOptions): Pr
   const built = report.build();
   const v = validateReport(built);
   if (!v.ok) throw new Error(`engine produced an invalid report: ${v.problems.join("; ")}`);
-  return { report: built, state, reads };
+  return { report: built, state, reads, intentContext: buildIntentContext({ session, decoded, state, report: built, decoder: opts.decoder }) };
 }
