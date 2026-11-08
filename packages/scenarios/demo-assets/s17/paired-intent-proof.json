@@ -1,0 +1,1036 @@
+{
+  "network": "devnet",
+  "proofs": [
+    {
+      "role": "fees",
+      "unsignedTransaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAMF/iY3PMKE+pExfGdFpsoPjux8Kw+ncMXIiIZ63sdnJ9TJSdTEhKMkMZWVg9tkCQWzkCYhkjbcn1tdPzUXDypkzAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSNf/Eh6/92paF+AxwA1BsdVcZ2rHiajGaEnJwaoAj+ZfUGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qGGTaSLeNzE7eGFZLI3gGRp52a+iVWfaJ4SCY8Qf6fXXAgIBAA1RNCBmZWUgdXBkYXRlBAMDAAEakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+      "report": {
+        "schemaVersion": "kelvara-report-v1",
+        "engineVersion": "0.1.0",
+        "rubrics": {
+          "alertLevels": "alert-levels-v1",
+          "capabilityRisk": "capability-risk-v1"
+        },
+        "session": {
+          "id": "AwUgNGjpnb6WGibSX2uCHWowCAUDeM4pr94MZZpTnajP",
+          "complete": true,
+          "transactions": [
+            {
+              "index": 0,
+              "messageHash": "5epVLLXU6THfDigPrNbK8Kd5jc2LyCqjz9vfRnxyAJXD",
+              "version": "legacy",
+              "label": null
+            }
+          ]
+        },
+        "alert": {
+          "level": "L1",
+          "label": "Notice",
+          "action": "pass_with_notice",
+          "claimIds": [
+            "c1"
+          ]
+        },
+        "simulation": {
+          "status": "ok",
+          "summary": "Simulation shows: Transaction 0: J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5 -0.000005 SOL",
+          "evidenceIds": [
+            "e7"
+          ]
+        },
+        "claims": [
+          {
+            "id": "c1",
+            "kind": "Derived",
+            "statement": "Multisig 9cS3…Uiua has a time lock of 0 seconds: once proposal EYkF…huJ3 reaches its threshold it can execute at once, with no review window.",
+            "evidenceIds": [
+              "e1",
+              "e3"
+            ],
+            "dependsOn": [],
+            "ruleId": "squads.zero_timelock_execution",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L1"
+          },
+          {
+            "id": "c2",
+            "kind": "Fact",
+            "statement": "Proposed future Token-2022 setTransferFee on mint G1tkXpJ88NXd7vzjKDbUyJsRvP65czQLN74dcg73U3NG: 75 basis points, maximum 2000000 base units. Approval alone does not execute this change.",
+            "evidenceIds": [
+              "e1",
+              "e5",
+              "e6"
+            ],
+            "dependsOn": [],
+            "ruleId": null,
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L0"
+          }
+        ],
+        "evidence": [
+          {
+            "id": "e1",
+            "type": "instruction",
+            "source": "message",
+            "summary": "transaction 0, instruction 1: squads-v4.proposalApprove",
+            "transactionIndex": 0,
+            "instructionPath": [
+              1
+            ],
+            "address": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "data": {
+              "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+              "program": "squads-v4",
+              "name": "proposalApprove",
+              "decoder": "codama",
+              "args": {
+                "args": {
+                  "memo": "Q4 fee update"
+                }
+              },
+              "accounts": [
+                {
+                  "name": "multisig",
+                  "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+                  "signer": false,
+                  "writable": false
+                },
+                {
+                  "name": "member",
+                  "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "signer": true,
+                  "writable": true
+                },
+                {
+                  "name": "proposal",
+                  "address": "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3",
+                  "signer": false,
+                  "writable": true
+                }
+              ]
+            }
+          },
+          {
+            "id": "e3",
+            "type": "account",
+            "source": "rpc",
+            "summary": "Squads multisig 9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua: threshold 2 of 3, time lock 0 s",
+            "transactionIndex": null,
+            "instructionPath": null,
+            "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+            "data": {
+              "threshold": 2,
+              "timeLock": 0,
+              "members": [
+                {
+                  "key": "Ft5fA38o8fekHdzWvnzEAdvjBfQ8kwrvcoLQSkezdEVk",
+                  "mask": 7
+                },
+                {
+                  "key": "J4JtCmKkFDzfCsBm2aiBFDfXSg4Vq74Pu3VQvNQE4VB8",
+                  "mask": 7
+                },
+                {
+                  "key": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "mask": 7
+                }
+              ],
+              "configAuthority": null
+            }
+          },
+          {
+            "id": "e5",
+            "type": "account",
+            "source": "rpc",
+            "summary": "Stored Squads VaultTransaction account decoded from fetched chain state",
+            "transactionIndex": null,
+            "instructionPath": null,
+            "address": "2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC",
+            "data": {
+              "name": "VaultTransaction",
+              "data": {
+                "multisig": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+                "creator": "Ft5fA38o8fekHdzWvnzEAdvjBfQ8kwrvcoLQSkezdEVk",
+                "index": "2",
+                "bump": 251,
+                "vaultIndex": 0,
+                "vaultBump": 252,
+                "ephemeralSignerBumps": {
+                  "base64": ""
+                },
+                "message": {
+                  "numSigners": 1,
+                  "numWritableSigners": 0,
+                  "numWritableNonSigners": 1,
+                  "accountKeys": [
+                    "8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo",
+                    "G1tkXpJ88NXd7vzjKDbUyJsRvP65czQLN74dcg73U3NG",
+                    "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+                  ],
+                  "instructions": [
+                    {
+                      "programIdIndex": 2,
+                      "accountIndexes": {
+                        "base64": "AQA="
+                      },
+                      "data": {
+                        "base64": "GgVLAICEHgAAAAAA"
+                      }
+                    }
+                  ],
+                  "addressTableLookups": []
+                }
+              }
+            }
+          },
+          {
+            "id": "e6",
+            "type": "instruction",
+            "source": "message",
+            "summary": "transaction 0, instruction 1.0: token-2022.setTransferFee",
+            "transactionIndex": 0,
+            "instructionPath": [
+              1,
+              0
+            ],
+            "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+            "data": {
+              "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+              "program": "token-2022",
+              "name": "setTransferFee",
+              "decoder": "codama",
+              "args": {
+                "transferFeeDiscriminator": 5,
+                "transferFeeBasisPoints": 75,
+                "maximumFee": "2000000"
+              },
+              "accounts": [
+                {
+                  "name": "mint",
+                  "address": "G1tkXpJ88NXd7vzjKDbUyJsRvP65czQLN74dcg73U3NG",
+                  "signer": false,
+                  "writable": true
+                },
+                {
+                  "name": "transferFeeConfigAuthority",
+                  "address": "8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo",
+                  "signer": true,
+                  "writable": false
+                }
+              ]
+            }
+          },
+          {
+            "id": "e7",
+            "type": "simulation",
+            "source": "simulation",
+            "summary": "Simulation shows: Transaction 0: J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5 -0.000005 SOL",
+            "transactionIndex": 0,
+            "instructionPath": null,
+            "address": null,
+            "data": {
+              "ok": true,
+              "err": null,
+              "unitsConsumed": 28900,
+              "blockhashReplaced": false,
+              "solChanges": [
+                {
+                  "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "pre": "1100000000",
+                  "post": "1099995000",
+                  "delta": "-5000"
+                }
+              ],
+              "tokenChanges": [],
+              "stateChanges": [],
+              "accountsOmitted": []
+            }
+          }
+        ],
+        "capabilities": {
+          "granted": [],
+          "revoked": []
+        },
+        "preview": [],
+        "counts": {
+          "claims": 2,
+          "evidence": 5,
+          "granted": 0,
+          "revoked": 0,
+          "preview": 0,
+          "byKind": {
+            "Fact": 1,
+            "Derived": 1,
+            "Conditional": 0,
+            "Unknown": 0
+          },
+          "byLevel": {
+            "L0": 1,
+            "L1": 1,
+            "L2": 0,
+            "L3": 0,
+            "L4": 0
+          }
+        },
+        "digest": "sha256:32619da92ce642941c1e506820037a7839f84c2a1eb88fa4eb0ec81ed9be89ec"
+      },
+      "intentContext": {
+        "version": "kelvara-intent-v1",
+        "messageHashes": [
+          "5epVLLXU6THfDigPrNbK8Kd5jc2LyCqjz9vfRnxyAJXD"
+        ],
+        "complex": true,
+        "fallbackId": "intent-1",
+        "historyNote": "History not read; prior outgoing activity is unknown. Familiarity does not establish safety.",
+        "candidates": [
+          {
+            "id": "intent-1",
+            "kind": "fees",
+            "priority": 2,
+            "question": "Did you intend to approve this proposed future token transfer-fee change?",
+            "reasons": [
+              {
+                "id": "intent-1-reason",
+                "text": "Stored Squads transaction 2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC, inner instruction 0: proposed future Token-2022 setTransferFee on mint G1tkXpJ88NXd7vzjKDbUyJsRvP65czQLN74dcg73U3NG: 75 basis points, maximum 2000000 base units. Approval alone does not execute a proposed change.",
+                "claimIds": [],
+                "evidenceIds": [
+                  "e1",
+                  "e5",
+                  "e6"
+                ]
+              }
+            ],
+            "comparison": null
+          }
+        ]
+      },
+      "reads": [
+        {
+          "what": "squads account",
+          "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+          "ok": true
+        },
+        {
+          "what": "squads account",
+          "address": "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3",
+          "ok": true
+        },
+        {
+          "what": "squads transaction pda",
+          "address": "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3",
+          "ok": true
+        },
+        {
+          "what": "squads account",
+          "address": "2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC",
+          "ok": true
+        },
+        {
+          "what": "token state",
+          "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+          "ok": true
+        },
+        {
+          "what": "wallet history",
+          "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+          "ok": true
+        },
+        {
+          "what": "simulation",
+          "address": null,
+          "ok": true
+        }
+      ]
+    },
+    {
+      "role": "admin",
+      "unsignedTransaction": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAUI/iY3PMKE+pExfGdFpsoPjux8Kw+ncMXIiIZ63sdnJ9QWwna4nNfQdnw9Wi12xQspZMYYUQm8S50U1fbCuCSXtRyZeFgLWbvZ0De9wXkoXgxLZM0IhQrv/4sRL5VGxF2rBqfVFxksVo7gioRfc9KXiM8DXDFFshqzRNgGLqlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSNf/Eh6/92paF+AxwA1BsdVcZ2rHiajGaEnJwaoAj+ZfUGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qJTlDAFD0sWLBgRQ3StQ6YkvvUlti7XIA4iIZtQ+9ldWAwQDAQMABAQAAAAFAA1RNCBmZWUgdXBkYXRlBwMGAAIakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+      "report": {
+        "schemaVersion": "kelvara-report-v1",
+        "engineVersion": "0.1.0",
+        "rubrics": {
+          "alertLevels": "alert-levels-v1",
+          "capabilityRisk": "capability-risk-v1"
+        },
+        "session": {
+          "id": "EakA4idadW2N39rbjz47YJ1zjS7dvokMqWuofxrVVCre",
+          "complete": true,
+          "transactions": [
+            {
+              "index": 0,
+              "messageHash": "4Lcd9yhfd7QWf57XQRbP5PaM6igf8maa5SWAqjG4vMWC",
+              "version": "legacy",
+              "label": null
+            }
+          ]
+        },
+        "alert": {
+          "level": "L3",
+          "label": "Critical",
+          "action": "hold_block_default",
+          "claimIds": [
+            "c1",
+            "c2",
+            "c3"
+          ]
+        },
+        "simulation": {
+          "status": "ok",
+          "summary": "Simulation shows: Transaction 0: J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5 -0.000005 SOL",
+          "evidenceIds": [
+            "e13"
+          ]
+        },
+        "claims": [
+          {
+            "id": "c1",
+            "kind": "Fact",
+            "statement": "Proposed setAuthority program.upgrade on udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU: 8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo gives authority to 9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY.",
+            "evidenceIds": [
+              "e1",
+              "e2",
+              "e3"
+            ],
+            "dependsOn": [],
+            "ruleId": "authority.transfer",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L3"
+          },
+          {
+            "id": "c2",
+            "kind": "Fact",
+            "statement": "Transaction 0 starts with AdvanceNonceAccount on nonce account 2Xqx…BfHW (authority J76M…BfD5), so it does not expire: whoever holds the signed bytes can submit them at any later time. It carries Squads proposalApprove: a multisig vote or execution that can be collected now and landed whenever the holder chooses.",
+            "evidenceIds": [
+              "e4",
+              "e5",
+              "e1"
+            ],
+            "dependsOn": [
+              "c1"
+            ],
+            "ruleId": "lifetime.durable_nonce",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L3"
+          },
+          {
+            "id": "c3",
+            "kind": "Fact",
+            "statement": "Nonce account 2Xqx…BfHW was created and funded by 2SvK…R198, who is not its authority J76M…BfD5 and does not sign this session: someone else set up the never-expiring slot this signature fills, for a multisig vote.",
+            "evidenceIds": [
+              "e4",
+              "e6",
+              "e7"
+            ],
+            "dependsOn": [
+              "c2"
+            ],
+            "ruleId": "nonce.staged_by_outsider",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L3"
+          },
+          {
+            "id": "c4",
+            "kind": "Derived",
+            "statement": "Multisig 9cS3…Uiua has a time lock of 0 seconds: once proposal 2ve9…AWot reaches its threshold it can execute at once, with no review window.",
+            "evidenceIds": [
+              "e1",
+              "e8"
+            ],
+            "dependsOn": [],
+            "ruleId": "squads.zero_timelock_execution",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L1"
+          },
+          {
+            "id": "c5",
+            "kind": "Derived",
+            "statement": "Transaction 0 is labeled \"Q4 fee update\" (memo, memo of proposalApprove), but it carries a proposal that, once executed, gives program.upgrade over udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU to 9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY. The label does not mention that power.",
+            "evidenceIds": [
+              "e10",
+              "e1"
+            ],
+            "dependsOn": [
+              "c1"
+            ],
+            "ruleId": "intent.label_mismatch",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L2"
+          },
+          {
+            "id": "c6",
+            "kind": "Derived",
+            "statement": "Simulation of transaction 0 shows no value moving: only the 0.000005 SOL fee leaves the fee payer, 0 tokens move. Yet it carries a proposal that, once executed, gives program.upgrade over udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU to 9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY. That power is not a balance change, so a balance preview cannot show it: the risk is the power, not the amount.",
+            "evidenceIds": [
+              "e11"
+            ],
+            "dependsOn": [
+              "c1"
+            ],
+            "ruleId": "sim.power_without_value",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L1"
+          },
+          {
+            "id": "c7",
+            "kind": "Unknown",
+            "statement": "9xEa…9aCY can deploy any code to program C5P6woe3875rC93DgPo96xhNWRWExnCa7Dx7EivPSssT; what 9xEa…9aCY can call as program.upgrade on udD6…q6zU is unknown (no authority map, simulation diff or authority history). Treat it as full control.",
+            "evidenceIds": [
+              "e12"
+            ],
+            "dependsOn": [
+              "c1"
+            ],
+            "ruleId": "graph.capability_preview",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L0"
+          },
+          {
+            "id": "c8",
+            "kind": "Derived",
+            "statement": "No recovery path: the upgrade authority itself passes to 9xEa…9aCY; nothing above it can undo what it deploys.",
+            "evidenceIds": [],
+            "dependsOn": [
+              "c1"
+            ],
+            "ruleId": "capability.recovery_path",
+            "assumptions": [],
+            "scope": "transaction",
+            "transactionIndices": [
+              0
+            ],
+            "level": "L0"
+          }
+        ],
+        "evidence": [
+          {
+            "id": "e1",
+            "type": "instruction",
+            "source": "message",
+            "summary": "transaction 0, instruction 2: squads-v4.proposalApprove",
+            "transactionIndex": 0,
+            "instructionPath": [
+              2
+            ],
+            "address": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+            "data": {
+              "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+              "program": "squads-v4",
+              "name": "proposalApprove",
+              "decoder": "codama",
+              "args": {
+                "args": {
+                  "memo": "Q4 fee update"
+                }
+              },
+              "accounts": [
+                {
+                  "name": "multisig",
+                  "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+                  "signer": false,
+                  "writable": false
+                },
+                {
+                  "name": "member",
+                  "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "signer": true,
+                  "writable": true
+                },
+                {
+                  "name": "proposal",
+                  "address": "2ve9Rg8fDRxESXKdBxGojJjy8LFSLzRpbcVNwHzpAWot",
+                  "signer": false,
+                  "writable": true
+                }
+              ]
+            }
+          },
+          {
+            "id": "e2",
+            "type": "account",
+            "source": "rpc",
+            "summary": "Stored Squads vault transaction message",
+            "transactionIndex": null,
+            "instructionPath": null,
+            "address": "L43iE47MdTtALjNk6VVfhCFBp1HpuyWT1G5c6ej9sEm",
+            "data": {
+              "numSigners": 1,
+              "numWritableSigners": 0,
+              "numWritableNonSigners": 1,
+              "accountKeys": [
+                "8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo",
+                "udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+                "9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY",
+                "BPFLoaderUpgradeab1e11111111111111111111111"
+              ],
+              "instructions": [
+                {
+                  "programIdIndex": 3,
+                  "accountIndexes": {
+                    "base64": "AQAC"
+                  },
+                  "data": {
+                    "base64": "BAAAAA=="
+                  }
+                }
+              ],
+              "addressTableLookups": []
+            }
+          },
+          {
+            "id": "e3",
+            "type": "instruction",
+            "source": "message",
+            "summary": "transaction 0, instruction 2.0: bpf-loader-upgradeable.setAuthority",
+            "transactionIndex": 0,
+            "instructionPath": [
+              2,
+              0
+            ],
+            "address": "BPFLoaderUpgradeab1e11111111111111111111111",
+            "data": {
+              "programId": "BPFLoaderUpgradeab1e11111111111111111111111",
+              "program": "bpf-loader-upgradeable",
+              "name": "setAuthority",
+              "decoder": "builtin",
+              "args": {},
+              "accounts": [
+                {
+                  "name": "account",
+                  "address": "udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+                  "signer": false,
+                  "writable": true
+                },
+                {
+                  "name": "currentAuthority",
+                  "address": "8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo",
+                  "signer": true,
+                  "writable": false
+                },
+                {
+                  "name": "newAuthority",
+                  "address": "9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY",
+                  "signer": false,
+                  "writable": false
+                }
+              ]
+            }
+          },
+          {
+            "id": "e4",
+            "type": "instruction",
+            "source": "message",
+            "summary": "transaction 0, instruction 0: system.advanceNonceAccount",
+            "transactionIndex": 0,
+            "instructionPath": [
+              0
+            ],
+            "address": "11111111111111111111111111111111",
+            "data": {
+              "programId": "11111111111111111111111111111111",
+              "program": "system",
+              "name": "advanceNonceAccount",
+              "decoder": "codama",
+              "args": {},
+              "accounts": [
+                {
+                  "name": "nonceAccount",
+                  "address": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+                  "signer": false,
+                  "writable": true
+                },
+                {
+                  "name": "recentBlockhashesSysvar",
+                  "address": "SysvarRecentB1ockHashes11111111111111111111",
+                  "signer": false,
+                  "writable": false
+                },
+                {
+                  "name": "nonceAuthority",
+                  "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "signer": true,
+                  "writable": true
+                }
+              ]
+            }
+          },
+          {
+            "id": "e5",
+            "type": "message",
+            "source": "message",
+            "summary": "transaction 0 lifetime token (durable nonce value)",
+            "transactionIndex": 0,
+            "instructionPath": null,
+            "address": null,
+            "data": {
+              "lifetimeToken": "B2DukZyK9tVNvvZUPxPwLS1LK9eFg2VFDpXKvwZAJHXK",
+              "nonceAccount": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+              "nonceAuthority": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5"
+            }
+          },
+          {
+            "id": "e6",
+            "type": "history",
+            "source": "helius",
+            "summary": "oldest transaction of nonce account 2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW: funded by 2SvKdkkg1q5bwSy82m4TAscGdC86TzqmGgywZxdwR198 (createAccount)",
+            "transactionIndex": null,
+            "instructionPath": null,
+            "address": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+            "data": {
+              "address": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+              "signature": "4Da6YxavrZzsEQAwYPeJsxsgVkX5fkVEfZuv3xAzePRssfYK7cmkqnzZKSGw9mVQATpHypFkLz3HthTp8CU4dPJk",
+              "slot": 519827351,
+              "blockTime": 1794094556,
+              "complete": true,
+              "funder": "2SvKdkkg1q5bwSy82m4TAscGdC86TzqmGgywZxdwR198",
+              "method": "createAccount",
+              "feePayer": "2SvKdkkg1q5bwSy82m4TAscGdC86TzqmGgywZxdwR198"
+            }
+          },
+          {
+            "id": "e7",
+            "type": "account",
+            "source": "helius",
+            "summary": "nonce account 2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW: authority J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+            "transactionIndex": null,
+            "instructionPath": null,
+            "address": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+            "data": {
+              "address": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+              "lamports": "1056640",
+              "version": "current",
+              "state": "initialized",
+              "authority": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+              "nonce": "B2DukZyK9tVNvvZUPxPwLS1LK9eFg2VFDpXKvwZAJHXK",
+              "lamportsPerSignature": "5000"
+            }
+          },
+          {
+            "id": "e8",
+            "type": "account",
+            "source": "rpc",
+            "summary": "Squads multisig 9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua: threshold 2 of 3, time lock 0 s",
+            "transactionIndex": null,
+            "instructionPath": null,
+            "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+            "data": {
+              "threshold": 2,
+              "timeLock": 0,
+              "members": [
+                {
+                  "key": "Ft5fA38o8fekHdzWvnzEAdvjBfQ8kwrvcoLQSkezdEVk",
+                  "mask": 7
+                },
+                {
+                  "key": "J4JtCmKkFDzfCsBm2aiBFDfXSg4Vq74Pu3VQvNQE4VB8",
+                  "mask": 7
+                },
+                {
+                  "key": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "mask": 7
+                }
+              ],
+              "configAuthority": null
+            }
+          },
+          {
+            "id": "e10",
+            "type": "instruction",
+            "source": "message",
+            "summary": "transaction 0, instruction 1: memo.memo",
+            "transactionIndex": 0,
+            "instructionPath": [
+              1
+            ],
+            "address": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+            "data": {
+              "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+              "program": "memo",
+              "name": "memo",
+              "decoder": "builtin",
+              "args": {
+                "memo": "Q4 fee update"
+              },
+              "accounts": []
+            }
+          },
+          {
+            "id": "e11",
+            "type": "simulation",
+            "source": "simulation",
+            "summary": "simulated balance changes of transaction 0",
+            "transactionIndex": 0,
+            "instructionPath": null,
+            "address": null,
+            "data": {
+              "ok": true,
+              "blockhashReplaced": false,
+              "solChanges": [
+                {
+                  "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "pre": "1100000000",
+                  "post": "1099995000",
+                  "delta": "-5000"
+                }
+              ],
+              "tokenChanges": [],
+              "stateChanges": [],
+              "accountsOmitted": []
+            }
+          },
+          {
+            "id": "e12",
+            "type": "account",
+            "source": "rpc",
+            "summary": "Program C5P6woe3875rC93DgPo96xhNWRWExnCa7Dx7EivPSssT: upgrade authority 8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo, ProgramData udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+            "transactionIndex": null,
+            "instructionPath": null,
+            "address": "C5P6woe3875rC93DgPo96xhNWRWExnCa7Dx7EivPSssT",
+            "data": {
+              "program": "C5P6woe3875rC93DgPo96xhNWRWExnCa7Dx7EivPSssT",
+              "loader": "BPFLoaderUpgradeab1e11111111111111111111111",
+              "programData": "udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+              "upgradeAuthority": "8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo",
+              "deploySlot": "519712057",
+              "upgradeable": true
+            }
+          },
+          {
+            "id": "e13",
+            "type": "simulation",
+            "source": "simulation",
+            "summary": "Simulation shows: Transaction 0: J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5 -0.000005 SOL",
+            "transactionIndex": 0,
+            "instructionPath": null,
+            "address": null,
+            "data": {
+              "ok": true,
+              "err": null,
+              "unitsConsumed": 15478,
+              "blockhashReplaced": false,
+              "solChanges": [
+                {
+                  "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+                  "pre": "1100000000",
+                  "post": "1099995000",
+                  "delta": "-5000"
+                }
+              ],
+              "tokenChanges": [],
+              "stateChanges": [],
+              "accountsOmitted": []
+            }
+          }
+        ],
+        "capabilities": {
+          "granted": [
+            {
+              "id": "k1",
+              "direction": "granted",
+              "capability": "program.upgrade",
+              "class": "code_control",
+              "holder": "9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY",
+              "target": "udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+              "claimId": "c1",
+              "score": 100,
+              "rank": 1
+            }
+          ],
+          "revoked": [
+            {
+              "id": "k2",
+              "direction": "revoked",
+              "capability": "program.upgrade",
+              "class": "code_control",
+              "holder": "8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo",
+              "target": "udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+              "claimId": "c1",
+              "score": 100,
+              "rank": 1
+            }
+          ]
+        },
+        "preview": [
+          {
+            "id": "p1",
+            "authority": "9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY",
+            "programId": "C5P6woe3875rC93DgPo96xhNWRWExnCa7Dx7EivPSssT",
+            "confidence": "unknown",
+            "deployAnyCode": true,
+            "unlocks": [],
+            "claimId": "c7"
+          }
+        ],
+        "counts": {
+          "claims": 8,
+          "evidence": 12,
+          "granted": 1,
+          "revoked": 1,
+          "preview": 1,
+          "byKind": {
+            "Fact": 3,
+            "Derived": 4,
+            "Conditional": 0,
+            "Unknown": 1
+          },
+          "byLevel": {
+            "L0": 2,
+            "L1": 2,
+            "L2": 1,
+            "L3": 3,
+            "L4": 0
+          }
+        },
+        "digest": "sha256:82ef6b5c935d9c2a5b4d09daf51c756d27c5ee9b884edc0faa4d7be020bc9a85"
+      },
+      "intentContext": {
+        "version": "kelvara-intent-v1",
+        "messageHashes": [
+          "4Lcd9yhfd7QWf57XQRbP5PaM6igf8maa5SWAqjG4vMWC"
+        ],
+        "complex": true,
+        "fallbackId": "intent-1",
+        "historyNote": "History not read; prior outgoing activity is unknown. Familiarity does not establish safety.",
+        "candidates": [
+          {
+            "id": "intent-1",
+            "kind": "authority",
+            "priority": 4,
+            "question": "Did you intend to approve a proposed future transfer of program.upgrade control of udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU to 9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY?",
+            "reasons": [
+              {
+                "id": "intent-1-reason",
+                "text": "Proposed setAuthority program.upgrade on udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU: 8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo gives authority to 9xEax7K4d65iV6z8TJCWmJFr2UtRqgvz1rP9LwYU9aCY.",
+                "claimIds": [
+                  "c1"
+                ],
+                "evidenceIds": [
+                  "e1",
+                  "e2",
+                  "e3"
+                ]
+              }
+            ],
+            "comparison": null
+          },
+          {
+            "id": "intent-2",
+            "kind": "unknown",
+            "priority": 2,
+            "question": "Did you intend to authorize effects that could not be determined?",
+            "reasons": [
+              {
+                "id": "intent-2-reason",
+                "text": "9xEa…9aCY can deploy any code to program C5P6woe3875rC93DgPo96xhNWRWExnCa7Dx7EivPSssT; what 9xEa…9aCY can call as program.upgrade on udD6…q6zU is unknown (no authority map, simulation diff or authority history). Treat it as full control.",
+                "claimIds": [
+                  "c7"
+                ],
+                "evidenceIds": [
+                  "e12"
+                ]
+              }
+            ],
+            "comparison": null
+          }
+        ]
+      },
+      "reads": [
+        {
+          "what": "nonce",
+          "address": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+          "ok": true
+        },
+        {
+          "what": "nonce origin",
+          "address": "2XqxLXeuaGeoViMTKdkv7jhDPoytyEFQbstM75DABfHW",
+          "ok": true
+        },
+        {
+          "what": "squads account",
+          "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+          "ok": true
+        },
+        {
+          "what": "squads account",
+          "address": "2ve9Rg8fDRxESXKdBxGojJjy8LFSLzRpbcVNwHzpAWot",
+          "ok": true
+        },
+        {
+          "what": "squads transaction pda",
+          "address": "2ve9Rg8fDRxESXKdBxGojJjy8LFSLzRpbcVNwHzpAWot",
+          "ok": true
+        },
+        {
+          "what": "squads account",
+          "address": "L43iE47MdTtALjNk6VVfhCFBp1HpuyWT1G5c6ej9sEm",
+          "ok": true
+        },
+        {
+          "what": "token state",
+          "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+          "ok": true
+        },
+        {
+          "what": "wallet history",
+          "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+          "ok": true
+        },
+        {
+          "what": "simulation",
+          "address": null,
+          "ok": true
+        },
+        {
+          "what": "upgrade target",
+          "address": "udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+          "ok": true
+        },
+        {
+          "what": "program of ProgramData",
+          "address": "udD6oMGPgZS2DhLoxa1We5dHatPVYgXtZ5SWD4Eq6zU",
+          "ok": true
+        },
+        {
+          "what": "program",
+          "address": "C5P6woe3875rC93DgPo96xhNWRWExnCa7Dx7EivPSssT",
+          "ok": true
+        }
+      ]
+    }
+  ]
+}

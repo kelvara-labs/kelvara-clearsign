@@ -35,6 +35,8 @@
     "scenario:sweep-local:attack": "node scripts/sweep-local.mjs --attack-only",
     "scenario:e2e-cases": "node scripts/e2e-cases.mjs",
     "demo:serve": "node scripts/demo-serve.mjs",
-    "demo:prepare": "node scripts/demo-prepare.mjs"
+    "demo:prepare": "node scripts/demo-prepare.mjs",
+    "demo:prepare-fees": "node scripts/demo-prepare-fees.mjs",
+    "demo:verify-intent": "esbuild scripts/demo-intent-engine.mjs --bundle --platform=node --format=esm --log-level=warning --outfile=.devnet/fees/intent-engine.mjs && node scripts/demo-verify-intent.mjs"
   }
 }
