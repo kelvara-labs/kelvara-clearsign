@@ -1,6 +1,6 @@
-# Kelvara SignGuard
+# Kelvara ClearSign
 
-A Chrome extension that holds every Solana signing request a page makes until it has shown, with evidence, what that signature authorizes. Simulation-based scanners show what moves now. SignGuard reads who gains control of what, and when it can be used: an upgrade authority handed over through a multisig vote on a durable nonce, a token whose creator can take it back, a request that empties the wallet.
+A Chrome extension that holds every Solana signing request a page makes until it has shown, with evidence, what that signature authorizes. Simulation-based scanners show what moves now. ClearSign reads who gains control of what, and when it can be used: an upgrade authority handed over through a multisig vote on a durable nonce, a token whose creator can take it back, a request that empties the wallet.
 
 The extension never signs, submits or stores wallet secrets, and it fails closed: any engine error, timeout, invalid report or hash mismatch blocks the request.
 
@@ -36,7 +36,7 @@ Needs Node 22+, pnpm 10, the Solana CLI and `cargo-build-sbf` (for the devnet de
     pnpm selfcheck            # all ten gates; --fast runs G1-G4
     pnpm release              # dist/kelvara-signguard.zip (reproducible, no key)
 
-Click the shield icon in Chrome’s toolbar to open the SignGuard popup: connection setup, recent request counts and the latest checks are stored locally. The settings page and signing report use the same dark interface.
+Click the shield icon in Chrome’s toolbar to open the ClearSign popup: connection setup, recent request counts and the latest checks are stored locally. The settings page and signing report use the same dark interface.
 
 The unpacked extension is `packages/extension/dist`: load it with Developer mode, then set the Helius key and network on its options page. The MVP enables full reports for everyone; no license is required.
 
@@ -69,7 +69,7 @@ Connect a devnet wallet. The page shows one shared funded demo account and its l
 
 ## Intent question and optional AI provider
 
-Before you sign, SignGuard asks a question about the verified effects of this exact transaction. Routine transfers and memos use engine templates; prior familiarity never establishes safety. Complex requests can use AI to choose the consequential engine-authored question and evidence. AI cannot supply new transaction facts, change risk levels or authorize signing. Correction choices need no typing and do not change the transaction; changed bytes need a fresh report. L4 blocks remain blocks.
+Before you sign, ClearSign asks a question about the verified effects of this exact transaction. Routine transfers and memos use engine templates; prior familiarity never establishes safety. Complex requests can use AI to choose the consequential engine-authored question and evidence. AI cannot supply new transaction facts, change risk levels or authorize signing. Correction choices need no typing and do not change the transaction; changed bytes need a fresh report. L4 blocks remain blocks.
 
 Open Options and expand **Optional AI provider**. **API URL, API key and model are all collapsed by default**, including after reload. Set a compatible endpoint and model, opt in, then Save provider and Test saved provider. The stored key is never prefilled. Save requests Chrome access only to your chosen host; changing the endpoint requires re-entering its key. No license is required.
 
