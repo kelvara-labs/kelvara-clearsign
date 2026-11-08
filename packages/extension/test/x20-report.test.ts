@@ -86,7 +86,7 @@ describe("what you actually authorize", () => {
     const built = b.build();
     const m = fromReport(built, hashesOf(built));
     if (!m.ok) throw new Error(m.reason);
-    expect(m.report.authorizes).toMatch(/^Could not decode 1 instruction on [A-Za-z0-9 .…-]+; its effects are unknown\.$/);
+    expect(m.report.authorizes).toMatch(/^(Includes 1 [A-Za-z0-9 .-]+ instruction ClearSign couldn't read; its effect is unknown|Calls [A-Za-z0-9…]+, a program ClearSign can't read: what it moves or authorizes is unknown)\.$/);
     expect(m.report.authorizes).not.toMatch(/^Unknown/);
     expect(m.report.details!.instructions[0]).toMatchObject({ name: null, tx: 0, path: "0" });
   });
@@ -100,7 +100,7 @@ describe("what you actually authorize", () => {
   it("decoded facts keep the X19 text; instructions carry IDL names for step 2", async () => {
     const m = await mapped("/first-send/", (n) => n.includes("fact.sol_transfer"));
     expect(m.report.authorizes).toMatch(/^Sends [\d.]+ SOL to \w+\./);
-    expect(m.report.authorizes).not.toContain("Could not decode");
+    expect(m.report.authorizes).not.toMatch(/couldn't read|can't read/);
     const names = m.report.details!.instructions.map((i) => `${i.program} · ${i.name}`);
     expect(names).toContain("System Program · transferSol");
     expect(m.report.details!.changes.join(" ")).toMatch(/Sends [\d.]+ SOL/);

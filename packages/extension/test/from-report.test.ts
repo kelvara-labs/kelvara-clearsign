@@ -133,7 +133,7 @@ describe("fromReport: Drift session", () => {
 
   it("authorizes lists granted and revoked powers; simulation null when not run", () => {
     const r = ok(fromReport(driftReport(), hashes)).report;
-    expect(r.authorizes).toMatch(/^Grants program\.upgrade of 1{32}; protocol\.admin of 1{32}; token\.freeze of an unknown target\. Revokes protocol\.admin of 1{32} \(holder 1{32}\)\. Could not decode 2 instructions on System Program; their effects are unknown\. Could not decode 1 instruction on Squads v4; its effects are unknown\.$/);
+    expect(r.authorizes).toMatch(/^Grants program\.upgrade of 1{32}; protocol\.admin of 1{32}; token\.freeze of an unknown target\. Revokes protocol\.admin of 1{32} \(holder 1{32}\)\. Includes 2 System Program instructions ClearSign couldn't read; their effect is unknown\. Includes 1 Squads v4 instruction ClearSign couldn't read; its effect is unknown\.$/);
     expect(r.simulation).toBeNull();
   });
 

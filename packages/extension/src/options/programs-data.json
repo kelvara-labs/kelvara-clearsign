@@ -110,6 +110,19 @@
   "detail": "on-chain IDL account, hash pinned, but its authority H5U6dy9ch6puEFPY3t8jEaVQnVfYPUDANQkA4XG6peUo is not the upgrade authority J3oBkTkDXU3TcAggJEa3YeBZE5om5yNAdTtLVNXFD47"
  },
  {
+  "name": "jupiter-v6",
+  "title": "Jupiter v6",
+  "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+  "kind": "Anchor IDL",
+  "understands": [
+   "transfers",
+   "account ownership and closing"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "on-chain IDL account, hash pinned, but its authority 9u9iZBWqGsp5hXBxkVZtBTuLSGNAG9gEQLgpuVw39ASg is not the upgrade authority CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ"
+ },
+ {
   "name": "memo",
   "title": "Memo",
   "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",

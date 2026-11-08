@@ -31,19 +31,19 @@ describe("L0 facts as readable text", () => {
     expect(m.report.title).toMatch(/^No risks found · /);
     expect(m.report.authorizes).toContain("Signs a memo: “pumpfun-b9aad98d-72cb-4802-bb81-f656104bf552”.");
     expect(m.report.authorizes).toContain("Sends 50000000 base units (decimals not read) to token account B73ttuVCWzLmTHr5D2MGxMGYVzL4zj8MmSPLvqE8d9qV.");
-    expect(m.report.authorizes).toContain("Sets a priority fee of up to 0.000000006 SOL.");
-    expect(m.report.authorizes).toContain("Pays a network fee of 0.00001 SOL.");
-    expect(m.report.authorizes).toMatch(/No authority, delegate, owner or upgrade permission changes\.$/);
+    expect(m.report.authorizes).toContain("Fees: 0.00001 SOL network + up to 0.000000006 SOL priority.");
+    expect(m.report.authorizes).toContain("Fees: 0.00001 SOL network");
+    expect(m.report.authorizes).toMatch(/No authority, delegate, owner or upgrade permission changes\. Fees: [^.]+\.[0-9]+ SOL network \+ up to [0-9.]+ SOL priority\.$/);
     expect(m.report.authorizes).not.toContain("Unknown");
-    expect(m.report.summary).toBe("This transaction signs a memo, sends tokens and sets a priority fee of up to 0.000000006 SOL. No authority, delegate, owner or upgrade permission changes.");
+    expect(m.report.summary).toBe("This transaction signs a memo and sends tokens. No authority, delegate, owner or upgrade permission changes.");
     expect(m.report.summary).not.toMatch(/claim\(s\)|change\(s\)/);
   });
 
   it("SOL transfer + priority fee (real mainnet)", async () => {
     const r = await fixtureReport("/first-send/", (n) => n.includes("fact.sol_transfer") && n.includes("fact.priority_fee"));
     const m = view(r);
-    expect(m.report.authorizes).toMatch(/^Sends [\d.]+ SOL to \w+\. Sets a priority fee of up to [\d.]+ SOL\. Pays a network fee of 0\.000005 SOL\. No authority/);
-    expect(m.report.summary).toMatch(/^This transaction sends [\d.]+ SOL and sets a priority fee of up to [\d.]+ SOL\. No authority/);
+    expect(m.report.authorizes).toMatch(/^Sends [\d.]+ SOL to \w+\. No authority, delegate, owner or upgrade permission changes\. Fees: 0\.000005 SOL network \+ up to [\d.]+ SOL priority\.$/);
+    expect(m.report.summary).toMatch(/^This transaction sends [\d.]+ SOL\. No authority/);
     expect(m.report.claims.filter((c) => c.rule?.startsWith("fact.")).length).toBe(4);
   });
 

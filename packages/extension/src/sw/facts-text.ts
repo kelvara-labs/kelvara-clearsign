@@ -81,6 +81,11 @@ export function factLines(r: Report): FactLine[] {
         if (amount && to) line = { rule: c.ruleId, tx, text: `Sends ${amount}${m?.[2] ? ` of token ${m[2]}` : ""} to ${to}`, brief: "sends tokens" };
         break;
       }
+      case "fact.swap": {
+        const m = /swaps (up to .+?) for ((?:at least|exactly) .+?) via (\S+) \(.*slippage tolerance (\d+) bps\)/.exec(c.statement);
+        if (m) line = { rule: c.ruleId, tx, text: `Swaps ${m[1]} for ${m[2]} via ${m[3]} (slippage up to ${Number(m[4]) / 100}%)`, brief: `swaps ${m[1]!.replace(/^up to /, "")} for ${m[2]!.replace(/^(at least|exactly) /, "")}` };
+        break;
+      }
       case "fact.priority_fee": {
         const max = derived.maxPriorityFeeLamports;
         if (max === null) line = { rule: c.ruleId, tx, text: "Sets a compute unit price without a limit, so the priority fee depends on the limit the network applies", brief: null };
@@ -104,16 +109,34 @@ export const NO_PERMISSION_TEXT = "No authority, delegate, owner or upgrade perm
 export const hasNoPermissionChange = (r: Report): boolean => r.claims.some((c) => c.ruleId === "fact.no_permission_change");
 
 /** "Signs a memo: “hi”. Sends 0.5 SOL to X. ..." Multi-transaction sessions label each line "Transaction N: ". */
+const FEE_RULES = new Set(["fact.priority_fee", "fact.network_fee"]);
+
+/** "Fees: 0.000005 SOL network + up to 0.000004251 SOL priority." One line for all fee facts. */
+function feeLine(lines: FactLine[]): string | null {
+  const net = lines.find((f) => f.rule === "fact.network_fee")?.text.match(/([\d.]+ SOL)$/)?.[1];
+  const prio = lines.find((f) => f.rule === "fact.priority_fee")?.text.match(/up to ([\d.]+ SOL)$/)?.[1];
+  if (!net && !prio) return null;
+  return `Fees: ${[net ? `${net} network` : null, prio ? `up to ${prio} priority` : null].filter(Boolean).join(" + ")}.`;
+}
+
+/** What the transaction does first, then permissions, then one fee line. Unreadable instructions are described by the caller. */
 export function authorizeFacts(r: Report): string[] {
   const multi = r.session.transactions.length > 1;
-  const lines = factLines(r).map((f) => `${multi && f.tx !== null ? `Transaction ${f.tx}: ` : ""}${f.text}.`);
+  const all = factLines(r);
+  const lines = all.filter((f) => f.rule !== "fact.unknown_instruction" && !FEE_RULES.has(f.rule)).map((f) => `${multi && f.tx !== null ? `Transaction ${f.tx}: ` : ""}${f.text}.`);
   if (hasNoPermissionChange(r)) lines.push(NO_PERMISSION_TEXT);
+  const fees = feeLine(all);
+  if (fees) lines.push(fees);
   return lines;
 }
 
 /** One human sentence from the facts, or null when there are none. */
 export function factSummary(r: Report): string | null {
-  const briefs = [...new Set(factLines(r).map((f) => f.brief).filter((b): b is string => !!b))];
+  const all = factLines(r);
+  const actions = all.filter((f) => !FEE_RULES.has(f.rule) && f.rule !== "fact.unknown_instruction");
+  // Fees are a footnote: they lead the sentence only when the transaction does nothing else ClearSign can name.
+  const source = actions.some((f) => f.brief) || all.some((f) => f.rule === "fact.unknown_instruction") ? actions : all;
+  const briefs = [...new Set(source.map((f) => f.brief).filter((b): b is string => !!b))];
   if (!briefs.length) return null;
   const list = briefs.length === 1 ? briefs[0]! : `${briefs.slice(0, -1).join(", ")} and ${briefs.at(-1)}`;
   const body = `This ${r.session.transactions.length > 1 ? "request" : "transaction"} ${list}.`;

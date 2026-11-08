@@ -132,7 +132,13 @@ function unknownPrograms(r: Report): [string, number][] {
 
 /** "Could not decode 1 instruction on Squads v4; its effects are unknown." One sentence per program. */
 function undecodedText(r: Report): string {
-  return unknownPrograms(r).map(([p, n]) => `Could not decode ${n} instruction${n === 1 ? "" : "s"} on ${p}; ${n === 1 ? "its" : "their"} effects are unknown.`).join(" ");
+  return unknownPrograms(r)
+    .map(([p, n]) =>
+      p.includes("…") || p === "an unknown program"
+        ? `Calls ${p}, a program ClearSign can't read${n > 1 ? ` (${n} instructions)` : ""}: what it moves or authorizes is unknown.`
+        : `Includes ${n} ${p} instruction${n === 1 ? "" : "s"} ClearSign couldn't read; ${n === 1 ? "its" : "their"} effect is unknown.`
+    )
+    .join(" ");
 }
 
 function authorizes(r: Report): string | null {
@@ -140,9 +146,9 @@ function authorizes(r: Report): string | null {
   const list = (caps: Capability[]) => caps.map((c) => `${capPhrase(c)}${c.holder ? ` (holder ${c.holder})` : ""}`).join("; ");
   if (r.capabilities.granted.length) parts.push(`Grants ${list(r.capabilities.granted)}.`);
   if (r.capabilities.revoked.length) parts.push(`Revokes ${list(r.capabilities.revoked)}.`);
-  parts.push(...authorizeFacts(r));
   const unknown = undecodedText(r);
   if (unknown) parts.push(unknown);
+  parts.push(...authorizeFacts(r));
   return parts.length ? clip(parts.join(" "), MAX_TEXT) : null;
 }
 
