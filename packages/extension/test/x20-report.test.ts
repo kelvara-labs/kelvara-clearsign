@@ -18,6 +18,7 @@ class Node_ {
   textContent = "";
   setAttribute(k: string, v: string) { this.attrs[k] = v; }
   append(...kids: (Node_ | string)[]) { this.children.push(...kids); }
+  addEventListener() {}
   get text(): string { return this.children.map((c) => (typeof c === "string" ? c : c.text)).join("") || this.textContent; }
   all(): Node_[] { return this.children.flatMap((c) => (typeof c === "string" ? [] : [c, ...c.all()])); }
 }

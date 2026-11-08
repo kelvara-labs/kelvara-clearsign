@@ -127,13 +127,15 @@ function computeBar(r: ReportView, cb: NonNullable<ReportView["details"]>["instr
   const fmt = (v: number) => `${v.toLocaleString("en-US", { maximumFractionDigits: 9 })} SOL`;
   const rows: HTMLElement[] = [];
   if (limit !== null) {
-    const pct = consumed !== null && limit > 0 ? Math.min(100, (consumed / limit) * 100) : null;
+    const pct = consumed !== null && limit > 0 ? Math.min(100, (consumed / limit) * 100) : 0;
+    const max = `${limit.toLocaleString("en-US")} CU`;
     rows.push(
       el(
         "div",
         { class: "cf-row", "data-compute": "units" },
-        el("div", { class: "cf-line" }, el("span", { class: "cf-label" }, "Compute units"), el("span", { class: "cf-value", title: consumed !== null ? `${consumed.toLocaleString("en-US")} used of ${limit.toLocaleString("en-US")} requested` : `${limit.toLocaleString("en-US")} requested` }, consumed !== null ? `${consumed.toLocaleString("en-US")} of ${limit.toLocaleString("en-US")} CU` : `Limit ${limit.toLocaleString("en-US")} CU`)),
-        pct !== null ? el("div", { class: "cf-bar", "aria-hidden": "true" }, el("i", { style: `width:${pct.toFixed(1)}%` })) : null
+        el("div", { class: "cf-line" }, el("span", { class: "cf-label" }, "Compute units"), el("span", { class: "cf-value", title: consumed !== null ? `${consumed.toLocaleString("en-US")} used of ${limit.toLocaleString("en-US")} requested` : `${limit.toLocaleString("en-US")} requested, usage not simulated` }, consumed !== null ? `${consumed.toLocaleString("en-US")} used` : "Usage not simulated")),
+        el("div", { class: "cf-bar cf-units", role: "img", "aria-label": consumed !== null ? `${consumed.toLocaleString("en-US")} of ${max} used` : `Limit ${max}, usage not simulated` }, el("i", { style: `width:${pct.toFixed(1)}%` })),
+        el("div", { class: "cf-ends", "aria-hidden": "true" }, el("span", {}, "0"), el("span", {}, max))
       )
     );
   }
@@ -244,6 +246,18 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
   return out;
 }
 
+const BUILT_IN_PROGRAMS = new Set(["11111111111111111111111111111111", "ComputeBudget111111111111111111111111111111", "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA", "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb", "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL", "MemoSq4gqABAXKb96qnH8TyPvNuhpXdvZqgexAcCRwL", "Memo1UhkJRfHyvLMcVucJwxXeuD728EqVDDwQDxFMNo", "BPFLoaderUpgradeab1e11111111111111111111111", "AddressLookupTab1e1111111111111111111111111"]);
+/** First named instruction whose program is not a built-in: the program the title is about. */
+function primaryProgram(r: ReportView | null): { id: string; name: string } | null {
+  const i = r?.details?.instructions.find((x) => x.name && x.programId && !BUILT_IN_PROGRAMS.has(x.programId));
+  return i?.programId ? { id: i.programId, name: i.program } : null;
+}
+
+function titleOrb(r: ReportView | null): HTMLElement | null {
+  const p = primaryProgram(r);
+  return p ? orbButton(p.id, p.name) : null;
+}
+
 /** The header: title, level, site and network as rounded pills in one wrapping row. */
 export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
   const title = r?.title ?? v.reason;
@@ -259,7 +273,8 @@ export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement
         el("span", { class: "level-icon", "aria-hidden": "true" }),
         el("h1", { id: "title", class: "pill title-pill" }, el("strong", {}, lead), rest ? el("span", { class: "headline" }, " ", ...withTokens(rest, r?.tokens)) : null),
         el("span", { class: "level-chip pill", "data-kelvara-level": "L0", title: "Alert level L0" }, "L0"),
-        ...pills
+        ...pills,
+        titleOrb(r)
       )
     ];
   }
@@ -272,13 +287,14 @@ export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement
         el("span", { class: "level-icon", "aria-hidden": "true" }),
         el("h1", { id: "title", class: "pill title-pill" }, ...withTokens(rest || title, r?.tokens)),
         el("span", { class: "level-chip pill", "data-kelvara-level": "L1" }, `L1 · ${LEVEL_NAMES[1]}`),
-        ...pills
+        ...pills,
+        titleOrb(r)
       )
     ];
   }
   const badge = el("span", { class: "level pill" }, level === null ? "Blocked · analysis unavailable" : `L${level} · ${LEVEL_NAMES[level]}`);
   if (level !== null) badge.setAttribute("data-kelvara-level", `L${level}`);
-  return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill" }, ...withTokens(title, r?.tokens)), badge, ...pills)];
+  return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill" }, ...withTokens(title, r?.tokens)), badge, ...pills, titleOrb(r))];
 }
 
 /** What the assessment card shows when the worker has no explanation: the report's own one-line summary. */
