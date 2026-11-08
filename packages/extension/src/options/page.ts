@@ -1,4 +1,5 @@
 import { mountAIOptions } from "./ai-page.js";
+import { mountShell } from "./shell.js";
 // Options page: Helius API key, default network, Test button.
 // The key lives only in chrome.storage.local; this page never logs or displays it.
 // All logic is in actions.ts; this file only wires the DOM.
@@ -13,6 +14,7 @@ function el<T extends HTMLElement>(id: string): T {
 }
 
 export async function mountOptions(): Promise<void> {
+  mountShell();
   await mountAIOptions();
   const keyInput = el<HTMLInputElement>("helius-key");
   const network = el<HTMLSelectElement>("network");
