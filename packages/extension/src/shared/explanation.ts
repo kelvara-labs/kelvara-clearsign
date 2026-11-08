@@ -2,7 +2,7 @@
 // renders it, the service worker produces it. It never changes a level, a claim, or any signing control.
 import type { ReportView } from "./report-view.js";
 
-export const EXPLAIN_MAX_SENTENCES = 5;
+export const EXPLAIN_MAX_SENTENCES = 3;
 export const AI_SENTENCE_MAX = 240;
 const OWN_SENTENCE_MAX = 2000;
 const MAX_CLAIM_REFS = 8;
@@ -62,10 +62,18 @@ export function validateAiSentences(raw: unknown, report: ReportView): Sentence[
   return list;
 }
 
-/** ClearSign's own explanation: the engine's explanation text for the risk claims, else the plain summary. */
+const EVIDENCE_PREFIX = /^(Proven from the transaction and on-chain reads|Derived from the decoded instructions|Possible, under the stated assumptions|Not determined):\s*/;
+const oneSentence = (t: string): string => (t.replace(EVIDENCE_PREFIX, "").split(/(?<=[.!?])\s+(?=[A-Z“"])/)[0] ?? t).slice(0, 240);
+
+/** ClearSign's own explanation: at most three short sentences from the key risks or the risk claims, else the plain summary. */
 export function fallbackExplanation(report: ReportView): Explanation {
+  if (report.keyRisks?.length) {
+    const [first, ...rest] = report.keyRisks;
+    const lower = (h: string): string => h.charAt(0).toLowerCase() + h.slice(1);
+    return { source: "signguard", sentences: [{ text: first!.text.slice(0, OWN_SENTENCE_MAX), claimIds: [first!.id] }, ...(rest.length ? [{ text: `It also ${rest.length === 1 ? "has this risk" : "has these risks"}: ${rest.map((k) => lower(k.headline)).join("; ")}.`.slice(0, OWN_SENTENCE_MAX), claimIds: rest.map((k) => k.id) }] : [])] };
+  }
   const risks = report.claims.filter((c) => c.level !== null && c.level !== "L0" && !c.rule?.startsWith("fact."));
-  const own = risks.slice(0, EXPLAIN_MAX_SENTENCES).map((c) => ({ text: c.text.slice(0, OWN_SENTENCE_MAX), claimIds: [c.id] }));
+  const own = risks.slice(0, EXPLAIN_MAX_SENTENCES).map((c) => ({ text: oneSentence(c.text), claimIds: [c.id] }));
   if (own.length) return { source: "signguard", sentences: own };
   const facts = report.claims.filter((c) => c.rule?.startsWith("fact.")).map((c) => c.id).slice(0, MAX_CLAIM_REFS);
   return { source: "signguard", sentences: [{ text: (report.summary || report.title || "ClearSign could not describe this request.").slice(0, OWN_SENTENCE_MAX), claimIds: facts }] };

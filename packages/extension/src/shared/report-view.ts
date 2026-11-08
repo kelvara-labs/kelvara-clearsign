@@ -117,7 +117,16 @@ export interface ReportDetails {
 /** A token named in the report text: the label as written there and its full mint (shown on hover). */
 export interface TokenRef { mint: string; label: string }
 
+/** One alert claim as a headline and a plain sentence (sw/key-risks.ts). */
+export interface KeyRiskView { id: string; headline: string; text: string }
+
 export interface ReportView {
+  /** L2+: the alert claims as short headlines (at most 3) shown first on page 2; `title` is the first headline. */
+  keyRisks?: KeyRiskView[];
+  /** The other alert claims beyond the headline, shown as "+N more risks". */
+  moreRisks?: number;
+  /** The engine's full title, for the hover text of the short one. */
+  fullTitle?: string;
   /** The page imitates this trusted site (sw/impostor.ts): red banner, L4, blocked. */
   impostor?: { name: string; origin: string };
   tokens?: TokenRef[];
@@ -266,7 +275,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : []), ...(Object.hasOwn(x, "tokens") ? ["tokens"] : []), ...(Object.hasOwn(x, "impostor") ? ["impostor"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : []), ...(Object.hasOwn(x, "tokens") ? ["tokens"] : []), ...(Object.hasOwn(x, "impostor") ? ["impostor"] : []), ...(Object.hasOwn(x, "keyRisks") ? ["keyRisks"] : []), ...(Object.hasOwn(x, "moreRisks") ? ["moreRisks"] : []), ...(Object.hasOwn(x, "fullTitle") ? ["fullTitle"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -285,6 +294,9 @@ export function validateReportView(x: unknown): ReportView | null {
   if (Object.hasOwn(x, "routedBy") && !str(x.routedBy, 64)) return null;
   if (Object.hasOwn(x, "trustedSite") && !str(x.trustedSite, 64)) return null;
   if (Object.hasOwn(x, "impostor") && !(plain(x.impostor) && exact(x.impostor, ["name", "origin"]) && str(x.impostor.name, 64) && isOrigin(x.impostor.origin))) return null;
+  if (Object.hasOwn(x, "keyRisks") && !list(x.keyRisks, (k): k is KeyRiskView => plain(k) && exact(k, ["id", "headline", "text"]) && idOk(k.id) && str(k.headline, MAX_SHORT) && str(k.text, 400), 3)) return null;
+  if (Object.hasOwn(x, "moreRisks") && !(Number.isInteger(x.moreRisks) && (x.moreRisks as number) >= 1 && (x.moreRisks as number) <= 64)) return null;
+  if (Object.hasOwn(x, "fullTitle") && !str(x.fullTitle, MAX_SHORT)) return null;
   if (Object.hasOwn(x, "tokens") && !list(x.tokens, (t): t is TokenRef => plain(t) && exact(t, ["mint", "label"]) && str(t.mint, 64) && str(t.label, 64) && t.label.length > 0, 32)) return null;
   return x as unknown as ReportView;
 }

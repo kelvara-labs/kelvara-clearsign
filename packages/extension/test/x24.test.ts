@@ -333,7 +333,7 @@ describe("second screen layout", () => {
         for (let i = 0; i < 80; i++) { if (await frame.evaluate(() => !document.querySelector<HTMLButtonElement>("[data-intent-confirm]")?.disabled)) break; await page.waitForTimeout(100); }
         await frame.click("[data-intent-confirm]");
         await frame.waitForSelector(".review-details, .versus");
-        expect(await frame.locator(".addr").count()).toBeGreaterThan(3);
+        expect(await frame.locator(".addr, .addr-inline").count()).toBeGreaterThan(3);
         expect(await frame.locator("[data-copy-raw]").count()).toBe(1);
         const offenders = await frame.evaluate(() => {
           const limit = document.documentElement.clientWidth;

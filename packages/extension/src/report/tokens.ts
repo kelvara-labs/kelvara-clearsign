@@ -36,7 +36,7 @@ export function roundForReading(exact: string): { text: string; changed: boolean
 export function withTokens(text: string, tokens: readonly TokenRef[] | undefined, doc: Document = document, round = true): (Node | string)[] {
   const byLabel = new Map<string, string | null>([["SOL", null], ...(tokens ?? []).map((t) => [t.label, t.mint] as [string, string | null])]);
   const labels = [...byLabel.keys()].sort((a, b) => b.length - a.length).map(esc).join("|");
-  const re = new RegExp(`(?<![\\w.,])([−+-]?)(\\d[\\d,]*(?:\\.\\d+)?) (${labels})(?![\\w…])|(?<![\\w…])(${labels})(?![\\w…])`, "g");
+  const re = new RegExp(`(?<![\\w.,])([−+-]?)(\\d[\\d,]*(?:\\.\\d+)?) (${labels})(?![\\w…])|(?<![\\w…])(${labels})(?![\\w…])|(?<![1-9A-HJ-NP-Za-km-z])([1-9A-HJ-NP-Za-km-z]{32,44})(?![1-9A-HJ-NP-Za-km-z])`, "g");
   const out: (Node | string)[] = [];
   let last = 0;
   const token = (label: string): HTMLElement => {
@@ -65,7 +65,18 @@ export function withTokens(text: string, tokens: readonly TokenRef[] | undefined
         amount.append(`${rounded.startsWith("<") ? "" : "≈ "}${m[1]}${rounded} `, token(m[3]!));
         out.push(amount);
       }
-    } else out.push(token(m[4]!));
+    } else if (m[4] !== undefined) out.push(token(m[4]));
+    else {
+      const full = m[5]!;
+      const span = doc.createElement("span");
+      span.className = "addr-inline";
+      span.textContent = `${full.slice(0, 4)}…${full.slice(-4)}`;
+      span.setAttribute("title", full);
+      span.setAttribute("aria-label", `Address ${full}`);
+      span.setAttribute("tabindex", "0");
+      span.setAttribute("data-kelvara-address", full);
+      out.push(span);
+    }
   }
   if (last < text.length) out.push(text.slice(last));
   return out;

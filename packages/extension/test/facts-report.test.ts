@@ -54,10 +54,12 @@ describe("L0 facts as readable text", () => {
     expect(m.report.authorizes!.startsWith("Grants ")).toBe(true);
     expect(m.report.authorizes).toMatch(/Signs a memo: “/);
     expect(m.report.authorizes).not.toContain("No authority, delegate, owner or upgrade permission changes.");
-    expect(m.report.title).toBe(m.report.title.replace(" · ", ": "));
+    expect(m.report.title).toBe("Hands program upgrade control to another key");
+    expect(m.report.moreRisks).toBe(2);
+    expect(m.report.fullTitle).toMatch(/^Critical: /);
     expect(m.report.simulation).toMatch(/^The SOL balance of fee payer \w+ changes by −0\.000005 SOL \(network fee 0\.000005 SOL\)$/);
     expect(m.report.summary).not.toMatch(/claim\(s\)|change\(s\)/);
-    expect(m.report.summary).toMatch(/\d+ permissions? granted and \d+ revoked\.$/);
+    expect(m.report.keyRisks!.map((k) => k.headline)).toEqual(["Hands program upgrade control to another key", "Never expires, so it can be submitted later", "Set up by an outside account"]);
   });
 
   it("trap L2 (recorded localnet run): risk claims stay, facts describe the transfers", async () => {
