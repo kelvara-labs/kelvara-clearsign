@@ -1,80 +1,157 @@
-# Kelvara ClearSign
+<p align="center">
+  <img src="docs/assets/cover.png" alt="Kelvara ClearSign: simulators show a balance change, ClearSign shows what you actually authorize" width="100%">
+</p>
 
-A Chrome extension that holds every Solana signing request a page makes until it has shown, with evidence, what that signature authorizes. Simulation-based scanners show what moves now. ClearSign reads who gains control of what, and when it can be used: an upgrade authority handed over through a multisig vote on a durable nonce, a token whose creator can take it back, a request that empties the wallet.
+<h1 align="center">Kelvara ClearSign</h1>
 
-The extension never signs, submits or stores wallet secrets, and it fails closed: any engine error, timeout, invalid report or hash mismatch blocks the request.
+<p align="center">
+  <b>Know what you sign.</b><br>
+  A Chrome extension that holds every Solana signing request until you have seen, with proof, what the signature authorizes and confirmed it matches your intent.
+</p>
 
-## Alert levels
+<p align="center">
+  <a href="#demo-video">Demo video</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#test-playground">Playground</a> ·
+  <a href="#security-model">Security model</a>
+</p>
 
-| Level | Meaning | What the user sees |
+---
+
+## Demo video
+
+<!-- VIDEO PLACEHOLDER: replace the link and thumbnail below once the video is uploaded. -->
+<p align="center">
+  <a href="https://youtu.be/VIDEO_ID_HERE">
+    <img src="docs/assets/cover.png" alt="Watch the 2-minute ClearSign demo" width="720">
+  </a>
+  <br>
+  <i>2-minute demo: coming soon</i>
+</p>
+
+## Why ClearSign
+
+Wallets show bytes. Simulators show a balance change and a fee. Neither explains what runs underneath, how many instructions you sign, or the state you leave behind.
+
+The dangerous transactions often move **zero balance today** and drain you later: a multisig vote that hands over a program's upgrade authority, a durable-nonce transaction that never expires, a token whose creator can take it back.
+
+ClearSign is built for **teams running treasuries and programs on Squads** and for **everyday wallet users**.
+
+| | Balance simulator | ClearSign |
 |---|---|---|
-| L4 Blocked | Obvious scam (Fact claims from a short list: wallet sweep, address poisoning, owner/assign takeover) | Rejected at once with code 4001; the wallet never opens; no Sign anyway |
-| L3 Critical | Control of a program, multisig, mint or protocol admin passes to someone outside the session | Held; Block is the default; Sign anyway needs hold-to-confirm |
-| L2 Warning | Token-2022 trap extensions, unlimited allowance, foreign fee payer | Held; Block and Sign anyway side by side |
-| L1 Notice | Something worth knowing (first send to an address) | Full report; Continue to wallet or Block |
-| L0 Clear | Nothing found | Full report; Continue to wallet or Block |
+| Shows the balance change | Yes | Yes |
+| Names every instruction (from the program's IDL) | No | Yes |
+| Decodes the inner instructions of Squads proposals | No | Yes |
+| Shows permission and authority changes | No | Yes |
+| Flags non-expiring (durable nonce) transactions | No | Yes |
+| Explains slippage and fees in plain language | Partly | Yes |
+| Asks what you meant before the wallet opens | No | Yes |
 
-## Repository
+## How it works
 
-| Path | What it is |
-|---|---|
-| `packages/core` | The engine: ingest and decode, Helius reads, simulation, rules, capability graph, the `kelvara-report-v1` report, explanations |
-| `packages/idls` | Pinned IDL registry, compact roots, curated capability and authority maps |
-| `packages/cli` | `kelvara analyze` and `kelvara replay` (built to `packages/cli/dist/kelvara.mjs`) |
-| `packages/extension` | The MV3 extension: page hook, bridge, service worker running the engine, report UI in a closed shadow root, options, optional AI intent selection |
-| `packages/scenarios` | Localnet and devnet demo scenarios (Squads upgrade hijack, Token-2022 trap, wallet sweep, address poisoning) |
-| `test-dapp` | Test page and test wallet used by the Playwright e2e specs |
-| `tools/selfcheck` | The ten gates (`pnpm selfcheck`) |
-| `fixtures` | Real transactions from Helius mainnet/devnet or executed on localnet, with a manifest |
+1. **Hold.** The extension wraps Wallet Standard and legacy wallet APIs at `document_start`. Every signing call (transactions, messages, Sign-In With Solana) is held. The wallet does not open yet.
+2. **Prove.** The service worker decodes the transaction with pinned IDLs and built-in decoders, simulates it, and reads chain state through Helius. Each finding is a claim graded *Fact*, *Derived* or *Unknown*, with its evidence attached.
+3. **Ask.** Page 1 shows one plain-language question about the most consequential effect, for example *"This 'Q4 fee update' transfers upgrade control of your program to an outside key. Did you intend that?"* An optional AI provider can phrase and choose among engine-authored questions, but it cannot add facts, change risk levels or make signing decisions.
+4. **Decide.** Answer *No, reject* and the wallet never opens. Answer *Yes* and page 2 shows the details: key risks, what changes, the simulation, compute and fees, and every decoded instruction with an Orb link. Only then can the request continue to the wallet.
 
-## Build and check
+**A mismatch between your intent and the proven effects is the alarm.**
 
-Needs Node 22+, pnpm 10, the Solana CLI and `cargo-build-sbf` (for the devnet demo program). Put `HELIUS_API_KEY=...` in `.env` at the repository root; tools and scenarios read it from there. Helius is the only remote RPC.
+### Alert levels
 
-    pnpm install --frozen-lockfile
-    pnpm build
-    pnpm selfcheck            # all ten gates; --fast runs G1-G4
-    pnpm release              # dist/kelvara-signguard.zip (reproducible, no key)
+| Level | Meaning | What you see |
+|---|---|---|
+| **L4 Blocked** | Obvious scam: wallet sweep, address poisoning, owner/assign takeover, impostor site | Rejected at once; the wallet never opens; no Sign anyway |
+| **L3 Critical** | Control of a program, multisig, mint or protocol admin passes outside the session | Held; Block is the default; Sign anyway needs hold-to-confirm |
+| **L2 Warning** | Token-2022 trap extensions, unlimited allowance, foreign fee payer | Held; Block and Sign anyway side by side |
+| **L1 Notice** | Worth knowing, e.g. first send to an address | Full report; Continue or Block |
+| **L0 Clear** | Nothing found | Calm report; Continue or Block |
 
-Click the shield icon in Chrome’s toolbar to open the ClearSign popup: connection setup, recent request counts and the latest checks are stored locally. The settings page and signing report use the same dark interface.
+### Coverage
 
-The unpacked extension is `packages/extension/dist`: load it with Developer mode, then set the Helius key and network on its options page. The MVP enables full reports for everyone; no license is required.
+System, SPL Token, Token-2022, BPF Upgradeable Loader, Squads v4, Drift v2, marginfi v2, Kamino (Lending, Vault, Farms, Scope, Liquidity), Memo, Compute Budget, and the Ed25519 / secp256k1 / secp256r1 signature precompiles. Unknown programs are shown as unknown, never guessed.
 
-Analyze a transaction from the command line:
+### Impostor sites
 
-    node packages/cli/dist/kelvara.mjs analyze --network devnet --wallet <your pubkey> --json <tx.b64>
-    node packages/cli/dist/kelvara.mjs replay <signature> [<signature> ...]
+Trusted dApps (Jupiter, Kamino and others) are matched by exact HTTPS origin. Look-alike domains (`jupiter-swap.app`, `jup.ag.evil.com`, `kam1no.com`, punycode or Cyrillic look-alikes, trusted sites over plain HTTP) are blocked as **L4 Impostor site** before any AI call.
 
-Gates: G1 build, G2 decode, G3 rules, G4 report contract, G5 registry, G6 localnet scenarios, G7 browser e2e, G8 replay, G9 determinism, G10 security. Results and evidence are in SELFCHECK.md; the demo runbook is DEMO.md; dependency licenses are in LICENSES.md.
+## Quick start
 
-## Known limitations
+Requirements: Node 22+, pnpm 10, Chrome 120+. The localnet gates and demo program also need the Solana CLI and `cargo-build-sbf`.
 
-- **Chrome versions.** Requires Chrome 120+; the license requirement has been removed.
-- **Address history cap.** History reads stop at 1,000 signatures per address (30 days). A poisoner address with more history reads as a Conditional L3 instead of a Fact L4.
-- **Unverified IDLs.** No Anchor IDL in the registry meets the "IDL authority equals upgrade authority" rule (Drift's IDL authority differs from its upgrade authority; Squads v4 is immutable). Previews built from these IDLs are labelled lower confidence.
-- **Offline replay.** Without `--live`, replay can't read nonce creators or multisig state, so those claims are Unknown and some sessions read lower than live.
-- **Executed transactions.** Re-analyzing a transaction that already executed uses today's chain state; for example, an executed sweep's wallet is already empty. Fixtures that need the pre-execution state carry a request block with the original bytes and simulation.
-- **Partial execution.** The mixed-simulation branch of `session.partial_execution` has no real multi-transaction fixture yet.
-- **Address poisoning demo.** The poisoning story is shown as CLI output; there is no wallet page for it, and the "real address passes with a notice" half is unscripted.
-- **Cut from the MVP.** On-device free-form AI explanations and the Replay tab remain out of scope. Optional compatible-provider selection of engine-authored intent questions is available; replay is the CLI.
-- **Speed.** p95 analysis is about 235 ms on localnet and about 1.7 s on Helius (budget 3 s). Helius time is sequential RPC round trips.
-- **Bundle size.** The service worker is about 1.6 MB minified (211 KB gzip). It still bundles the raw Anchor IDLs with docs (about 940 KB) for Drift, marginfi and Squads.
-- **Read-only chain analysis.** The extension never signs or submits and uses Helius for chain RPC, with no scanner, price feed or analytics. Optional AI sends a bounded public fact packet to the provider you configure; chain RPC is not redirected to it. With no Helius key, mainnet/devnet analysis blocks and says why.
+```sh
+git clone https://github.com/kelvara-xyz/kelvara-clearsign.git
+cd kelvara-clearsign
+cp .env.example .env          # add your HELIUS_API_KEY (never commit it)
+pnpm install --frozen-lockfile
+pnpm build
+pnpm release                  # dist/kelvara-signguard.zip (reproducible, no key inside)
+```
+
+Load the extension:
+
+1. Open `chrome://extensions` and enable **Developer mode**.
+2. **Load unpacked** → `packages/extension/dist`.
+3. Open ClearSign's **Options**, enter your Helius API key and pick mainnet or devnet.
+4. Optional: under **Intelligence**, configure an OpenAI-compatible endpoint (e.g. `https://api.openai.com/v1/chat/completions` or a local `http://localhost:11434/v1`).
+
+### Command line
+
+```sh
+node packages/cli/dist/kelvara.mjs analyze --network devnet --wallet <pubkey> --json <tx.b64>
+node packages/cli/dist/kelvara.mjs replay <signature> [<signature> ...]
+```
 
 ## Test playground
 
-Open http://localhost:47731 while the demo server is running. It has a benign memo (L0), a Token-2022 trap (L2), a Squads authority hijack (L3), a wallet sweep (L4), and a genuine fee-change proposal (L1), all on devnet. Every action requests a signature preview; the page never submits it.
+A devnet slide deck with five cases: a harmless memo (L0), a Token-2022 trap token (L2), a Squads "Q4 fee update" upgrade-authority hijack (L3), a genuine fee-change proposal (L1) and a wallet sweep (L4). The page only requests previews and never submits.
 
-Connect a devnet wallet. The page shows one shared funded demo account and its local import-file path. Import/select it once and connect to enable all five scenarios, then preview and choose Block. A benign memo can use any funded devnet account. No license is needed. See DEMO.md for setup, `pnpm demo:prepare` to prepare the shared account, and `pnpm demo:serve` startup; run it from the checkout containing the prepared scenario state. The current server runs from the scenarios worktree.
+```sh
+pnpm demo:prepare    # one-time: funds the shared devnet demo account
+pnpm demo:serve      # http://localhost:47731
+```
 
-## Intent question and optional AI provider
+See [DEMO.md](DEMO.md) for the full runbook.
 
-Before you sign, ClearSign asks a question about the verified effects of this exact transaction. Routine transfers and memos use engine templates; prior familiarity never establishes safety. Complex requests can use AI to choose the consequential engine-authored question and evidence. AI cannot supply new transaction facts, change risk levels or authorize signing. Correction choices need no typing and do not change the transaction; changed bytes need a fresh report. L4 blocks remain blocks.
+## Security model
 
-Open Options and expand **Optional AI provider**. **API URL, API key and model are all collapsed by default**, including after reload. Set a compatible endpoint and model, opt in, then Save provider and Test saved provider. The stored key is never prefilled. Save requests Chrome access only to your chosen host; changing the endpoint requires re-entering its key. No license is required.
+- **Never signs, submits or stores wallet secrets.** It fails closed: any engine error, timeout, invalid report or hash mismatch blocks the request.
+- **Helius is the only chain data provider.** There is no scanner, price feed, analytics or telemetry.
+- **The AI is optional and grounded.** It runs only from the service worker, only against the endpoint you configure, and only after you grant host permission. It receives bounded engine-authored facts and questions. It never receives raw transaction bytes, signatures, wallet secrets or your Helius key. Its output is validated against the engine's candidate questions, and it falls back to the deterministic question on any failure.
+- **The content scripts are minimal.** The page hook and bridge contain no engine or Solana libraries.
+- **The release zip is reproducible** and contains no key.
 
-Examples: `https://api.openai.com/v1/chat/completions` with `gpt-4.1-mini`, or a compatible local server such as `http://localhost:11434/v1` with its installed model name. A base URL gets `/chat/completions`; an explicit `/responses` endpoint uses that format. Local servers may use an empty key. Models must return the requested structured selection; unsupported schemas, authentication errors, refusal, timeout or invalid selections retain the deterministic engine question. See the [official Structured Outputs documentation](https://developers.openai.com/api/docs/guides/structured-outputs).
+## Repository layout
 
-Only bounded public engine questions/reasons and the message-hash binding are sent to that provider. Raw transaction bytes, signatures, wallet secrets and unrelated API keys are excluded. Provider requests, including the connection test, run in the service worker. No real provider credential is supplied in this repository; mocked tests are not evidence of a paid live model call.
+| Path | Contents |
+|---|---|
+| `packages/core` | Engine: decode, Helius reads, simulation, rules, capability graph, the `kelvara-report-v1` report |
+| `packages/idls` | Pinned IDL registry, compact roots, capability and authority maps |
+| `packages/cli` | `kelvara analyze` and `kelvara replay` |
+| `packages/extension` | MV3 extension: page hook, bridge, service worker, report UI, popup, options |
+| `packages/scenarios` | Localnet and devnet demo scenarios and the playground |
+| `test-dapp` | Test page, test wallet and Playwright e2e specs |
+| `tools/selfcheck` | The ten quality gates |
+| `fixtures` | Real transactions from Helius or executed on localnet, with a manifest |
 
-For the paired governance demo, run `pnpm demo:prepare-fees` in the prepared scenarios checkout, then `pnpm demo:verify-intent`. The two **Q4 fee update** proposals have the same signed memo: one proposes an actual Token-2022 transfer-fee configuration change; the other proposes transferring program upgrade authority. Questions describe the proposed future effects, not an execution that has not happened. See DEMO.md and the public evidence in `packages/scenarios/demo-assets/s17`.
+## Quality gates
+
+`pnpm selfcheck` runs ten gates: G1 build, G2 decode, G3 rules, G4 report contract, G5 registry, G6 localnet scenarios, G7 browser e2e, G8 replay, G9 determinism, G10 security. `pnpm selfcheck --fast` runs G1–G4. Results and evidence are in [SELFCHECK.md](SELFCHECK.md).
+
+## Known limitations
+
+- History reads stop at 1,000 signatures per address (30 days).
+- Registry IDLs whose IDL authority differs from the upgrade authority (or that are immutable) are labelled lower confidence.
+- Offline replay cannot read nonce creators or multisig state, so those claims are marked Unknown.
+- Re-analyzing an already executed transaction uses today's chain state.
+- Market-specific amounts in some third-party programs are shown in base units when their decimals cannot be proven.
+
+## How this was built
+
+ClearSign was built during a hackathon by a coordinated team of AI agents (engine, extension, scenarios, verifier and designer), each in its own worktree. The operating rules, plan and progress logs are kept in the repo: [CLAUDE.md](CLAUDE.md), [PLAN.md](PLAN.md), [PROGRESS.md](PROGRESS.md) and [`progress/`](progress/).
+
+Third-party code and dependency licenses: [LICENSES.md](LICENSES.md).
+
+## License
+
+Copyright © Kelvara. All rights reserved. The source is public for review and evaluation. No license to use, copy, modify or distribute it is granted.
