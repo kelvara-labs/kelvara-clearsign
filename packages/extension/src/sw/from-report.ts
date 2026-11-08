@@ -94,7 +94,7 @@ const PROGRAM_NAMES: Record<string, string> = {
   BPFLoaderUpgradeab1e11111111111111111111111: "Upgradeable Loader"
 };
 const shortId = (a: string): string => (a.length > 12 ? `${a.slice(0, 4)}…${a.slice(-4)}` : a);
-const programLabel = (programId: string | null, registryName: string | null): string => (programId && PROGRAM_NAMES[programId]) || registryName || (programId ? shortId(programId) : "an unknown program");
+const programLabel = (programId: string | null, registryName: string | null, catalogName: string | null = null): string => (programId && PROGRAM_NAMES[programId]) || registryName || catalogName || (programId ? shortId(programId) : "an unknown program");
 
 interface IxView { tx: number; path: string; program: string; name: string | null; args: unknown; accounts: unknown; programId: string | null }
 
@@ -112,7 +112,7 @@ function instructionViews(r: Report): IxView[] {
     out.push({
       tx: e.transactionIndex,
       path: e.instructionPath.slice(0, 8).join("."),
-      program: programLabel(programId, typeof d.program === "string" ? d.program : null),
+      program: programLabel(programId, typeof d.program === "string" ? d.program : null, typeof d.programLabel === "string" && d.programLabel ? clip(d.programLabel, 60) : null),
       name: typeof d.name === "string" && d.name ? d.name : null,
       args: d.args,
       accounts: d.accounts,

@@ -10,6 +10,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "idls:build": "esbuild scripts/idls-build.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/idls-build.mjs && node dist/scripts/idls-build.mjs",
     "test:registry": "vitest run test/registry.test.ts",
+    "labels:build": "esbuild scripts/labels-build.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/labels-build.mjs && node dist/scripts/labels-build.mjs",
     "fixtures:registry": "esbuild scripts/record-fixtures.ts --bundle --platform=node --format=esm --log-level=warning --outfile=dist/scripts/record-fixtures.mjs && node dist/scripts/record-fixtures.mjs"
   },
   "dependencies": {

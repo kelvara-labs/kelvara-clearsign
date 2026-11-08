@@ -3,6 +3,7 @@
 // report UI's view by fromReport. Fails closed: any throw, timeout, invalid report or hash mismatch
 // rejects with an EngineFailure, and decide() turns that into a blocked verdict, never a pass.
 // Error texts are fixed strings: nothing from an RPC error (which could carry the endpoint URL) is shown.
+import { PROGRAM_LABELS } from "../shared/program-labels.js";
 import { validateIntentContext, type AnalyzeResult, analyzeSession, createRpcAccountReader, createRpcClient, ingestSession, type RpcClient, type Session } from "@kelvara/core";
 import { templateIntent } from "../intent/selection.js";
 import type { SignRequest } from "../shared/protocol.js";
@@ -74,6 +75,7 @@ export async function analyzeRequest(req: SignRequest, url: string, deps: RealEn
       squadsAccounts: reg.squadsAccounts,
       authorityMaps: reg.authorityMaps,
       rpc,
+      state: { programLabels: PROGRAM_LABELS },
       ...(wallet ? { wallet, inventory: true } : {})
     });
     return { report, intentContext };

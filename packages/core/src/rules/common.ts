@@ -13,6 +13,7 @@ export function accountNamed(ix: DecodedInstruction, name: string): string | nul
 
 /** Evidence for one decoded instruction: program, name, args, named accounts. Deduped by the ledger. */
 export function instructionEvidence(ctx: RuleContext, txIndex: number, ix: DecodedInstruction, path: number[] = [ix.index]): string {
+  const programLabel = ix.status !== "named" ? ctx.state.programLabels?.names[ix.programAddress] : undefined;
   const label = ix.status === "named" ? `${ix.programName ?? ix.programAddress}.${ix.name}` : `unknown instruction on ${ix.programAddress}`;
   return ctx.report.addEvidence({
     type: "instruction",
@@ -24,6 +25,7 @@ export function instructionEvidence(ctx: RuleContext, txIndex: number, ix: Decod
     data: {
       programId: ix.programAddress,
       program: ix.programName,
+      ...(programLabel ? { programLabel, labelSource: ctx.state.programLabels!.source } : {}),
       name: ix.name,
       decoder: ix.decoder,
       args: ix.args,

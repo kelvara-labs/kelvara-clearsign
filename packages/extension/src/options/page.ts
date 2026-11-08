@@ -1,4 +1,5 @@
 import { mountAIOptions } from "./ai-page.js";
+import { mountLabels } from "./labels.js";
 import { mountPrograms, mountTrusted } from "./programs.js";
 import { mountShell } from "./shell.js";
 // Options page: Helius API key, default network, Test button.
@@ -17,6 +18,7 @@ function el<T extends HTMLElement>(id: string): T {
 export async function mountOptions(): Promise<void> {
   mountPrograms();
   mountTrusted();
+  mountLabels();
   mountShell();
   await mountAIOptions();
   const keyInput = el<HTMLInputElement>("helius-key");

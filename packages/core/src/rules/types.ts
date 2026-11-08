@@ -19,6 +19,8 @@ export interface NonceFacts {
 
 /** Chain state the rules may use. Missing entries mean "not read", never "safe". */
 export interface RuleState {
+  /** Program display names (E25) from a name list, by program id. Only names for evidence: never decoding, never a level. */
+  programLabels?: { source: string; names: Record<string, string> };
   /** Connected wallet, never inferred from a fee payer or co-signer. Required for L4. */
   wallet?: string;
   /** Raw getAccountInfo results; owners and layouts are checked by rules. */
