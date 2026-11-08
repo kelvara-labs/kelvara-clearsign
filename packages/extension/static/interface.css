@@ -703,7 +703,7 @@ ol, ul { margin: 0; }
 .decision .hint:empty { display: none; }
 .decision button { order: 2; flex: 1 1 0; min-height: 44px; padding: 10px var(--space-4); border-radius: var(--radius-control); border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--text-1); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); font-weight: 650; touch-action: none; user-select: none; transition: background var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
 .decision button:hover:not(:disabled) { background: var(--surface-3); }
-.decision button:disabled { opacity: 0.55; }
+.decision button:disabled { color: var(--text-3); cursor: wait; }
 .decision button:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* Block is a strong neutral primary on L2/L3 (the brand gradient reads as "go"), red on L4/blocked;
@@ -721,7 +721,9 @@ html[data-level="L4"] .decision .block:hover:not(:disabled), html[data-level="bl
 .decision .sign { --progress: 0; position: relative; overflow: hidden; border-color: var(--risk-3-border); color: var(--risk-3-fg); background: linear-gradient(90deg, rgba(255, 159, 110, 0.4) calc(var(--progress) * 100%), transparent 0); }
 html[data-level="L2"] .decision .sign { border-color: var(--border-strong); color: var(--text-1); background: var(--surface-2); }
 .decision .sign[data-armed="false"] { border-style: dashed; color: var(--text-2); cursor: progress; }
-.decision [data-kelvara-action="continue"][data-armed="false"] { opacity: 0.7; }
+/* Never use opacity/filter/transform on decision controls or their ancestors: the anti-clickjacking gate
+   (IntersectionObserver v2 trackVisibility) treats them as hidden and Continue / Sign anyway never arm. */
+.decision [data-kelvara-action="continue"][data-armed="false"] { cursor: progress; box-shadow: inset 0 0 0 1px var(--border-strong); }
 
 /* Site and network pills under the report headline (p.report-context) */
 .report-context { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-3); font-size: 0; }
