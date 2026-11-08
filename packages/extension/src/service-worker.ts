@@ -19,6 +19,7 @@ import {
 import { realEngine } from "./sw/engine.js";
 import { networkFor } from "./sw/endpoint.js";
 import { messageVerdict, reviewMessage } from "./sw/message-review.js";
+import { handleOpenExplorer, openExplorerRequest } from "./sw/explorer.js";
 import { trustedSiteFor } from "./sw/trusted-sites.js";
 import { withContext } from "./sw/report-context.js";
 import { decide } from "./sw/policy.js";
@@ -131,6 +132,10 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
+  if (openExplorerRequest(msg)) {
+    handleOpenExplorer(msg, sender, { id: chrome.runtime.id, reportUrl: reportFrameUrl(chrome.runtime.getURL), optionsUrl: chrome.runtime.getURL("options.html") }, chrome.tabs).then(sendResponse);
+    return true;
+  }
   const providerTest = handleProviderTest(msg, sender, { id: chrome.runtime.id, optionsUrl: chrome.runtime.getURL("options.html") }, {
     get: keys => chrome.storage.local.get(keys), permissions: chrome.permissions, fetch: fetch.bind(globalThis)
   });

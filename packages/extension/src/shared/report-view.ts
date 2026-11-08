@@ -93,6 +93,8 @@ export interface RawInstruction {
 
 export interface InstructionLine {
   raw?: RawInstruction;
+  /** Base58 program id, for the "View on Orb" button. */
+  programId?: string;
   tx: number;
   path: string;
   /** Display name of the program ("System Program") or its address. */
@@ -228,7 +230,8 @@ function isRaw(x: unknown, tx: unknown, path: unknown): x is RawInstruction {
 function isInstructionLine(x: unknown): x is InstructionLine {
   return (
     plain(x) &&
-    exact(x, ["tx", "path", "program", "name", "args", "accounts", ...(Object.hasOwn(x, "raw") ? ["raw"] : [])]) &&
+    exact(x, ["tx", "path", "program", "name", "args", "accounts", ...(Object.hasOwn(x, "raw") ? ["raw"] : []), ...(Object.hasOwn(x, "programId") ? ["programId"] : [])]) &&
+    (!Object.hasOwn(x, "programId") || (typeof x.programId === "string" && B58_HASH.test(x.programId))) &&
     (!Object.hasOwn(x, "raw") || isRaw(x.raw, x.tx, x.path)) &&
     Number.isInteger(x.tx) && (x.tx as number) >= 0 &&
     typeof x.path === "string" && /^[0-9]{1,4}(\.[0-9]{1,4}){0,7}$/.test(x.path) &&

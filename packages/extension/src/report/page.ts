@@ -1,4 +1,5 @@
 import { assessmentCard } from "./intent.js";
+import { orbButton } from "./orb.js";
 import { withTokens } from "./tokens.js";
 import { messageReview } from "./message.js";
 // The report page inside the extension iframe (report.html). Receives the verdict from
@@ -96,7 +97,7 @@ function instructionList(r: ReportView): HTMLElement | null {
     el(
       "li",
       { class: i.name ? "ix" : "ix ix-unknown", "data-ix": `${i.tx}:${i.path}` },
-      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable), i.raw ? copyRawButton(i.raw) : null),
+      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable), i.programId ? orbButton(i.programId, i.program) : null, i.raw ? copyRawButton(i.raw) : null),
       i.args.length || i.accounts.length
         ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, ...(/^\d+$/.test(f.value) ? [Number(f.value).toLocaleString("en-US")] : r.tokens?.some((t) => f.value.includes(t.label)) ? withTokens(f.value, r.tokens, document, false) : [addr(f.value)]))]))
         : null

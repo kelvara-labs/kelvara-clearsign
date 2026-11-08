@@ -1,6 +1,7 @@
 // Options "Recognized by name" list: programs with a display name from the Helius program catalog whose instructions
 // ClearSign does not decode. Static data (packages/idls/labels.json); no network, no engine import.
 import { LABEL_LIST, LABELS_SOURCE } from "../shared/program-labels.js";
+import { orbButton } from "../report/orb.js";
 import { shortId } from "./programs.js";
 
 export interface LabelRow { programId: string; name: string }
@@ -27,7 +28,11 @@ export function mountLabels(root: Document = document, labels: readonly LabelRow
     desc.className = "row-desc";
     desc.textContent = "Name from Helius catalog, not verified decoding";
     text.append(head, desc);
-    row.append(text);
+    const meta = root.createElement("div");
+    meta.className = "row-control inline program-meta";
+    const orb = orbButton(l.programId, l.name, root);
+    if (orb) meta.append(orb);
+    row.append(text, meta);
     return row;
   });
   list.replaceChildren(...rows);

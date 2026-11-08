@@ -1,5 +1,6 @@
 // Options "Programs" section: which programs ClearSign decodes in detail. Static data generated from the bundled
 // registry (scripts/gen-programs.mjs); no network, no settings access, no engine import.
+import { orbButton } from "../report/orb.js";
 import { TRUSTED_SITES, type TrustedSite } from "../sw/trusted-sites.js";
 import data from "./programs-data.json";
 
@@ -47,7 +48,8 @@ export function renderRow(p: ProgramRow, doc: Document = document): HTMLElement 
   const src = cell(doc, "span", "pill", /verified$/i.test(p.verification) ? `${p.source} · ${p.verification}` : p.source);
   src.dataset.verification = p.verification.toLowerCase().replace(/\s+/g, "-");
   src.title = p.detail;
-  meta.append(kind, src);
+  const orb = orbButton(p.programId, p.title, doc);
+  meta.append(kind, src, ...(orb ? [orb] : []));
   row.append(text, meta);
   return row;
 }

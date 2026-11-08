@@ -418,3 +418,17 @@ describe("real Jupiter evidence labels simulation mints", () => {
     expect(JSON.stringify(m.report.details)).not.toContain("token EPjF");
   });
 });
+
+describe("View on Orb on instruction cards", () => {
+  it("each instruction card with a program id carries the button; the worker puts the id on every top-level line", async () => {
+    const { view } = await realSwap(0);
+    const lines = view.details!.instructions;
+    expect(lines.length).toBeGreaterThan(0);
+    expect(lines.every((l) => typeof l.programId === "string")).toBe(true);
+    fakeDoc();
+    const els = (detailsStep({ allow: false, hold: true, level: 0, reason: "r", report: view }, view) as unknown as N[]).flatMap((e) => [e, ...e.all()]);
+    const buttons = els.filter((n) => "data-orb-program" in n.attrs);
+    expect(buttons.map((b) => b.attrs["data-orb-program"])).toEqual(lines.map((l) => l.programId));
+    expect(buttons[0]!.attrs["aria-label"]).toMatch(/^View .+ on Orb$/);
+  });
+});
