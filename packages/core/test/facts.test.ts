@@ -74,7 +74,7 @@ describe("benign facts on real fixtures", () => {
       expect(prio[0]!.statement).toContain(fee.feePayer);
       expect(facts(r, "fact.network_fee")[0]!.statement).toContain("1 signature × 5000 lamports");
       expect(facts(r, "fact.no_permission_change")).toHaveLength(1);
-      expect(explainReport(r).headline).toMatch(/^No risks found: /);
+      expect(explainReport(r).headline).toMatch(/^No risks found · /);
       for (const c of r.claims.filter((c) => c.ruleId?.startsWith("fact."))) {
         expect(c).toMatchObject({ kind: "Fact", level: "L0" });
         expect(c.evidenceIds.length).toBeGreaterThan(0);
@@ -103,7 +103,7 @@ describe("benign facts on real fixtures", () => {
     const r = build(session, memoOnly);
     expect(r.claims.map((c) => c.ruleId)).toEqual(["fact.memo", "fact.network_fee", "fact.no_permission_change"]);
     expect(r.alert.level).toBe("L0");
-    expect(explainReport(r).headline).toBe("No risks found: signs a memo");
+    expect(explainReport(r).headline).toBe("No risks found · signs a memo");
     expect(r.evidence.length).toBeGreaterThan(0);
   });
 

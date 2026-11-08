@@ -22,6 +22,7 @@ import { lamportsText, tokenText, unsigned } from "../util/amounts.js";
 import { readTokenRuleState } from "../rules/read-token-state.js";
 import type { RuleState } from "../rules/types.js";
 import { simulateSessionTransaction, type SimulationResult } from "../simulate/index.js";
+import { readTokenMeta } from "../state/token-meta.js";
 import { readAuthorityHistory } from "../state/authority-history.js";
 import { findAccountOrigin, readNonceAccount, readProgram, readSquadsAccount, type SquadsAccountDecoder } from "../state/reads.js";
 
@@ -41,6 +42,8 @@ export interface AnalyzeOptions {
   history?: boolean;
   /** Read the wallet's full token inventory and exact fees (sweep proof). Default false. */
   inventory?: boolean;
+  /** Read token names (Helius DAS) and decimals for the mints transfers and swaps touch. Default true when online. */
+  tokenNames?: boolean;
   /** Base state merged under what is read (e.g. recorded facts). */
   state?: RuleState;
 }
@@ -240,6 +243,16 @@ export async function analyzeSession(session: Session, opts: AnalyzeOptions): Pr
       if (opts.history !== false) {
         const withHistory = await note("wallet history", wallet, () => readAddressRuleState(rpc, session, decoded, state));
         if (withHistory) state = withHistory;
+      }
+    }
+
+    // Token names and decimals for the mints that transfers and swaps touch (display only; kept out of state.accounts).
+    if (opts.tokenNames !== false) {
+      // Best effort and quiet on failure: a missing name or decimals only leaves addresses and raw units in the text.
+      const meta = await readTokenMeta(rpc, reader, session, decoded, state.accounts ?? {}).catch(() => null);
+      if (meta && Object.keys(meta.tokens).length) {
+        state = { ...state, tokens: { ...state.tokens, ...meta.tokens }, tokenAccountMints: { ...state.tokenAccountMints, ...meta.tokenAccountMints } };
+        reads.push({ what: "token metadata", address: null, ok: true });
       }
     }
 

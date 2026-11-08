@@ -8,7 +8,8 @@ import type { RuleContext, RuleState } from "../rules/types.js";
 import { requestTransfers } from "../rules/address-history.js";
 import { proposalViews, vaultInstructions, arg } from "../rules/squads-session.js";
 import { accountNamed, instructionEvidence } from "../rules/common.js";
-import { isComputeBudget } from "../rules/facts.js";
+import { isAtaCreate, isComputeBudget, isSwap, programCallText, swapDetails } from "../rules/facts.js";
+import { mintOfTokenAccount, tokenAmountText } from "../rules/token-meta.js";
 import { SYSTEM_PROGRAM, TOKEN_PROGRAM, TOKEN_2022_PROGRAM } from "../state/layouts.js";
 import { SQUADS_V4_PROGRAM } from "../decode/squads.js";
 import { MEMO_PROGRAM, MEMO_V1_PROGRAM } from "../decode/builtin.js";
@@ -83,7 +84,7 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     }
   }
   for (const {ix, txIndex, proposed, source, sourceAddress} of instructions) {
-    if (isBudgetSetting(ix)) continue;
+    if (isBudgetSetting(ix) || isAtaCreate(ix)) continue;
     const evidence = report.evidence.filter((e) => (e.transactionIndex === txIndex && e.type === "instruction") || (sourceAddress !== null && e.address === sourceAddress && e.type === "account")).map((e) => e.id);
     if (ix.status === "named" && ix.programAddress === TOKEN_2022_PROGRAM && ix.name === "setTransferFee") {
       const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
@@ -91,13 +92,21 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
         add("unknown", 2, "Did you intend to approve a proposal whose stored contents lack retained source evidence?", `${source}: the stored proposal snapshot is not retained in the report; fee semantics are not established here.`, [], evidence);
       } else if (typeof bp === "number" && Number.isInteger(bp) && bp >= 0 && bp <= 10000 && typeof max === "bigint" && mint) add("fees", 2, proposed ? "Did you intend to approve this proposed future token transfer-fee change?" : "Did you intend to change this token transfer fee?", `${source}: ${proposed ? "proposed future" : "decoded"} Token-2022 setTransferFee on mint ${mint}: ${bp} basis points, maximum ${max} base units. Approval alone does not execute a proposed change.`, [], evidence);
       else add("unknown", 2, "Did you intend to authorize a fee instruction whose arguments are unresolved?", "The decoded fee instruction lacks validated amount or mint arguments.", [], evidence);
-    } else if (ix.status === "unknown") add("unknown", 2, "This calls a program ClearSign can't read. Do you trust this site to run it?", `Program ${ix.programAddress} has no public interface that ClearSign knows, so what this instruction moves or authorizes is unknown.`, [], evidence);
-    else {
+    } else if (ix.status === "unknown") add("unknown", 2, "This calls a program ClearSign can't read. Do you trust this site to run it?", `${state.programLabels?.names[ix.programAddress] ?? "This program"} is not one ClearSign can read, so what this instruction moves or authorizes is unknown.`, [], evidence);
+    else if (isSwap(ix)) {
+      const d = swapDetails({ state }, ix);
+      const tokenEv = report.evidence.filter((e) => e.type === "derivation" && e.address !== null && [d.inMint, d.outMint].includes(e.address) && e.data && typeof e.data === "object" && !Array.isArray(e.data) && e.data.kind === "token").map((e) => e.id);
+      add("swap", 1, `Did you intend to swap up to ${d.inText} for ${d.bound} ${d.outText}?`, `Swaps through Jupiter. You give up to ${d.inText} and receive ${d.bound} ${d.outText}, with a slippage tolerance of ${Number(d.bps) / 100}%. ${d.exactOut ? "The amount received is fixed and the amount paid can rise by the slippage tolerance." : "The amount received can fall below the quote by the slippage tolerance, never below the stated minimum."}`, [], [...evidence, ...tokenEv]);
+    } else {
       const memo = [MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress);
       const transfer = (ix.programAddress === SYSTEM_PROGRAM && ["transferSol", "advanceNonceAccount"].includes(ix.name ?? "")) || ([TOKEN_PROGRAM, TOKEN_2022_PROGRAM].includes(ix.programAddress) && ["transfer", "transferChecked"].includes(ix.name ?? ""));
       const governance = ix.programAddress === SQUADS_V4_PROGRAM && ["proposalApprove", "proposalCreate", "vaultTransactionCreate", "vaultTransactionExecute"].includes(ix.name ?? "");
       const claimed = report.claims.some((c) => c.kind !== "Unknown" && !!c.ruleId && /^(authority\.transfer|token\.|token2022\.|system\.assign_takeover|squads\.config_change)/.test(c.ruleId) && c.evidenceIds.some((id) => report.evidence.some((e) => e.id === id && e.type === "instruction" && e.transactionIndex === txIndex && e.data && typeof e.data === "object" && !Array.isArray(e.data) && e.data.programId === ix.programAddress && e.data.name === ix.name)));
-      if (!memo && !transfer && !governance && !claimed) add("unknown", 2, "Part of this transaction does something ClearSign doesn't interpret. Do you trust this site with it?", `Transaction ${txIndex}, decoded instruction ${ix.index} (${ix.name}) on ${ix.programAddress}: its name is decoded, but its effects are not established by a supported intent template.`, [], evidence);
+      if (!memo && !transfer && !governance && !claimed) {
+        const { title, args } = programCallText({ state }, ix);
+        const [program, action] = title.split(" · ") as [string, string];
+        add("unknown", 2, `Did you intend to ${action.toLowerCase()} on ${program}?`, `${title}.${args ? ` Key values: ${args}.` : ""} ClearSign recognizes this instruction by name but has no deeper description of its effects.`, [], evidence);
+      }
     }
   }
   if (state.wallet) for (const t of requestTransfers({ session, decoded, state }, state.wallet)) {
@@ -106,18 +115,18 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     const transfers = h ? [...h.outgoing, ...(r ? h.counterparties[r]?.transfers ?? [] : [])] : [];
     // HistoryTransfer extraction already excludes failed meta; also reject any known failed signature.
     const count = new Set(transfers.filter((x) => x.from === state.wallet && x.to === r && !failed.has(x.signature) && (h!.read.includes(x.signature) || !!(r && h!.counterparties[r]?.shared.includes(x.signature))) && x.amount > 0n && x.blockTime !== null && Number.isFinite(x.blockTime) && x.blockTime >= h!.since && x.blockTime <= h!.now).map((x) => x.signature)).size;
-    const amount = t.kind === "sol" ? unsigned(lamportsText(t.amount)) : `${t.amount} token base units`;
+    const amount = t.kind === "sol" ? unsigned(lamportsText(t.amount)) : tokenAmountText({ state }, t.amount, accountNamed(t.ix, "mint") ?? mintOfTokenAccount({ state }, accountNamed(t.ix, "source")));
     const recipient = r ?? `unresolved owner of token account ${t.tokenAccount}`;
-    add("transfer", 0, `Did you intend to send ${amount} to ${recipient}?`, `Decoded signed instruction ${t.ix.index} in transaction ${t.txIndex}: ${amount} to ${recipient}. ${h && r ? `${count} successful outgoing transaction(s) to this exact recipient observed in recorded history ${h.since} to ${h.now}${partial ? " (partial)" : ""}.` : "Previous outgoing activity or exact recipient unknown."} Familiarity does not establish safety.`, [], report.evidence.filter((e) => e.transactionIndex === t.txIndex && e.instructionPath?.[0] === t.ix.index).map((e) => e.id));
+    add("transfer", 0, `Did you intend to send ${amount} to ${recipient}?`, `Sends ${amount} to ${recipient}. ${h && r ? `${count} successful outgoing transaction(s) to this exact recipient observed in recorded history ${h.since} to ${h.now}${partial ? " (partial)" : ""}.` : "Previous outgoing activity or exact recipient unknown."} Familiarity does not establish safety.`, [], report.evidence.filter((e) => e.transactionIndex === t.txIndex && e.instructionPath?.[0] === t.ix.index).map((e) => e.id));
   }
-  const effective = instructions.filter(({ix}) => !isBudgetSetting(ix));
+  const effective = instructions.filter(({ix}) => !isBudgetSetting(ix) && !isAtaCreate(ix));
   const onlyMemo = effective.length > 0 && effective.every(({ix}) => ix.status === "named" && [MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress));
-  if (onlyMemo) add("memo", 0, "Did you intend to sign this memo?", `Decoded signed transactions ${report.session.transactions.map((t) => t.index).join(", ")} call only the Memo program. A memo label does not establish semantics for any other instruction.`, [], report.evidence.filter((e) => e.type === "instruction").map((e) => e.id));
-  if (!candidates.length) add("unknown", 2, "Did you intend to authorize these effects?", "The available decoded instructions do not establish a supported routine intent; effects remain unknown.", [], report.evidence.map((e) => e.id));
+  if (onlyMemo) add("memo", 0, "Did you intend to sign this memo?", "This signs a memo and nothing else. A memo is plain text; it moves no funds and gives no one any power.", [], report.evidence.filter((e) => e.type === "instruction").map((e) => e.id));
+  if (!candidates.length) add("unknown", 2, "Did you intend to authorize these effects?", "ClearSign could not establish what this transaction does, so its effects remain unknown.", [], report.evidence.map((e) => e.id));
   candidates.sort((a, b) => b.priority - a.priority);
   const routine = effective.every(({ix}) => ix.status === "named" && ([MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress) || requestTransfers({ session, decoded: [[ix]], state }, state.wallet ?? "").some((t) => t.recipient !== null)));
   if (!routine && candidates.every((c) => c.kind === "transfer" || c.kind === "memo")) {
-    add("unknown", 2, "Did you intend to authorize additional effects beyond this transfer?", "Additional decoded instructions are not covered by a supported routine intent template; their effects remain unresolved here.", [], report.evidence.map((e) => e.id));
+    add("unknown", 2, "Did you intend to authorize additional effects beyond this transfer?", "Other parts of this transaction are not described here, so their effects remain unknown.", [], report.evidence.map((e) => e.id));
     candidates.sort((a, b) => b.priority - a.priority);
   }
   const bounded = candidates.slice(0, 8);

@@ -278,7 +278,7 @@ export async function readTransferHistory(rpc: RpcClient, opts: ReadHistoryOptio
 }
 
 /* eslint-disable @typescript-eslint/no-explicit-any -- DAS asset JSON */
-function assetInfo(a: any): AssetInfo | null {
+export function assetInfo(a: any): AssetInfo | null {
   if (!a || typeof a.id !== "string") return null;
   const meta = a.content?.metadata ?? {};
   const ti = a.token_info ?? {};

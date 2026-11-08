@@ -269,6 +269,8 @@ export {
   type BuildAuthorityMapOptions,
   type CapabilityGraphOptions
 } from "./graph/index.js";
+export { readTokenMeta, tokenSubjects, type TokenMeta, type TokenMetaState } from "./state/token-meta.js";
+export { tokenAmountText, tokenLabel, tokenMeta, tokenEvidence, WRAPPED_SOL_MINT } from "./rules/token-meta.js";
 export { readAuthorityHistory, authorityCallsOfTransaction, type AuthorityHistory, type AuthorityCall, type ReadAuthorityHistoryOptions } from "./state/authority-history.js";
 
 // M4 / E14: one-call analysis (state reads, simulation, rules, capability graph, "what simulation shows").

@@ -1,0 +1,940 @@
+{
+ "network": "mainnet",
+ "inputs": {},
+ "observed": {
+  "tx/mainnet/jupiter-v6/2a5KCPg7Jn5fpg5gqGqfuGoXhb6BEvRs3MDqNmoSKGHXXa12Q6rCU9vCz5t5RqihUMa3LFwy885ayiQPV2eUmeSv.json": 2,
+  "tx/mainnet/jupiter-v6/2kSvoVZAUg5EHQeBcHbkF98tx1aw5wTddkfbbsboXTFQ9831ahfd2zeP8DNVmnCWsm27d1nYLqj6vC5MFUEKhfVS.json": 2,
+  "tx/mainnet/jupiter-v6/3NPAtLekwnGfbhAAz1nMdPedbVgMsHtjQ9ViZ2f7moLjAkwnfSymAwvVDutrZEraCDt4vraYUKY6eTwvw6vkZSoF.json": 1,
+  "tx/mainnet/jupiter-v6/3sEW1hAb1NKRBqNeC4E1Nj1ALK8tfK3gnkEb5RFgw1dcdZzfzYEhGLoDQG2U73bVvPEpBvQVitDgLprU2nqyQFre.json": 2,
+  "tx/mainnet/jupiter-v6/5XywntkKJV2M6bWHHB26azYEePvafQUSdjaPn14q37KhyiRUE6qufDaP4mzyWyEgfpgGqFPAZ8xY6vxGb4X5R55A.json": 0
+ },
+ "calls": [
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "ANL4JMJHE7hbCmSDTbbH12t1HCTGygvVjFfB4XakjRvS",
+     "HBcfNHqcvqzSRzap88a5watecD47YPQk456oN94EV7AK",
+     "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907464,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 1488440,
+      "data": [
+       "BJaaczbbaUjB5RbDP5R79yvmNNRmvUDnen7iKRA1MAL1qbgK11XQVS3vxc1I1aLzCGzKe3KCuRaHrDNaneAgRgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 165
+     },
+     {
+      "lamports": 1488440,
+      "data": [
+       "xvp6877brTo9ZfNqq8l0MbG75MLS9uDkfKYCA0UvXWH1qbgK11XQVS3vxc1I1aLzCGzKe3KCuRaHrDNaneAgRhgHqQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 165
+     },
+     {
+      "lamports": 6979116527,
+      "data": [
+       "AgAAADAPUGBbvrcwh4nmwPvj5KNgIENvbqDK2oAmDbRv9mCE",
+       "base64"
+      ],
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "executable": true,
+      "rentEpoch": 18446744073709552000,
+      "space": 36
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+     "JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907465,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 558873655207,
+      "data": [
+       "AQAAAJj+huiNm+Lqi8HMpIeLKYjCQPUrhCS/tA7Rot3LXhmbVLxs+O0wHwAGAQEAAABicKqKWcWUBbRShshncubNEm6bil06OFNtN/e0FOi2Zw==",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 82
+     },
+     {
+      "lamports": 6461601,
+      "data": [
+       "AQAAAK61Xd8E2u0NRa2hfY4paoiMwuISFwyHGfogMlIGRQ37myiF0EkoAAAGAQEAAACutV3fBNrtDUWtoX2OKWqIjMLiEhcMhxn6IDJSBkUN+w==",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 82
+     }
+    ]
+   }
+  },
+  {
+   "method": "getAssetBatch",
+   "params": {
+    "ids": [
+     "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+     "JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD"
+    ]
+   },
+   "result": [
+    {
+     "interface": "FungibleToken",
+     "id": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "",
+      "files": [
+       {
+        "uri": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "name": "USD Coin",
+       "symbol": "USDC"
+      },
+      "links": {
+       "image": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png"
+      }
+     },
+     "authorities": [
+      {
+       "address": "2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9",
+       "scopes": [
+        "full"
+       ]
+      }
+     ],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "token_info": {
+      "symbol": "USDC",
+      "supply": 8779522911288404,
+      "decimals": 6,
+      "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "price_info": {
+       "price_per_token": 0.9997817,
+       "currency": "USDC"
+      },
+      "mint_authority": "BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG",
+      "freeze_authority": "7dGbd2QZcCKcTndnHcTL8q7SMVXAkp688NTQYwrRCrar"
+     }
+    },
+    {
+     "interface": "FungibleToken",
+     "id": "JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "https://static.jup.ag/jupUSD/metadata.json",
+      "files": [
+       {
+        "uri": "https://static.jup.ag/jupUSD/icon.png",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://static.jup.ag/jupUSD/icon.png",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "description": "JupUSD is the DeFi Dollars for the Next Evolution of Finance",
+       "json_name": "Jupiter USD",
+       "name": "Jupiter USD",
+       "symbol": "JupUSD",
+       "token_standard": "Fungible"
+      },
+      "links": {
+       "image": "https://static.jup.ag/jupUSD/icon.png"
+      }
+     },
+     "authorities": [
+      {
+       "address": "CkzLnD9r4d4ZZofsgNVo2VNunxDmte5YJ4vfAgMfBZNA",
+       "scopes": [
+        "full"
+       ]
+      }
+     ],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "token_info": {
+      "symbol": "JupUSD",
+      "supply": 44297496111259,
+      "decimals": 6,
+      "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "price_info": {
+       "price_per_token": 0.999382,
+       "currency": "USDC"
+      },
+      "mint_authority": "CkzLnD9r4d4ZZofsgNVo2VNunxDmte5YJ4vfAgMfBZNA",
+      "freeze_authority": "CkzLnD9r4d4ZZofsgNVo2VNunxDmte5YJ4vfAgMfBZNA"
+     }
+    }
+   ]
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "7TacjQfbXJuK5P3TNN8QvZKuyrEN1nSQ1oW3RNiKeQ7D",
+     "EPMMkvghR9jyc4miBwwSNMqVhw89mVNvWcV1Dq68qKY5",
+     "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907466,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 1513840,
+      "data": [
+       "pLX/cnhsBvgxMpKbTolmUQAEpYXWzG4ha6uaLMlIsz+LrNskidVmcGddQsNl8kktZQbKv6fp+U3V9DjRS5MXsVW3VhEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgcAAAA=",
+       "base64"
+      ],
+      "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 170
+     },
+     {
+      "lamports": 1513840,
+      "data": [
+       "q0EzH1zk5aJX04KqK+2JGKk5/ua9Ti+M9JrloMMq2i+LrNskidVmcGddQsNl8kktZQbKv6fp+U3V9DjRS5MXsbHkdQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgcAAAA=",
+       "base64"
+      ],
+      "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 170
+     },
+     {
+      "lamports": 6979116527,
+      "data": [
+       "AgAAADAPUGBbvrcwh4nmwPvj5KNgIENvbqDK2oAmDbRv9mCE",
+       "base64"
+      ],
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "executable": true,
+      "rentEpoch": 18446744073709552000,
+      "space": 36
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "C5xph2yL6gMdxmuLGxJBkGpmuDFfyi5fqkBNhvL6pump",
+     "CXWNzqBE98SSmkGgHogJZd9vjsLdgaMAFpVfV22ypump"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907466,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 1295819291,
+      "data": [
+       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtXeyvFKFAwAGAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARIAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKS1/3J4bAb4MTKSm06JZlEABKWF1sxuIWurmizJSLM/EwCLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApLX/cnhsBvgxMpKbTolmUQAEpYXWzG4ha6uaLMlIsz8OAAAAQmlnIFRpdHR5IENvaW4DAAAAQlRDKgAAAGh0dHBzOi8vbWV0YWRhdGEuajd0cmFja2VyLmlvL20vMjQyWHJDVXU2dQAAAAA=",
+       "base64"
+      ],
+      "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 377
+     },
+     {
+      "lamports": 1002697480,
+      "data": [
+       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAjbJA8sRoAwAGAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARIAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKtBMx9c5OWiV9OCqivtiRipOf7mvU4vjPSa5aDDKtovEwClAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAq0EzH1zk5aJX04KqK+2JGKk5/ua9Ti+M9JrloMMq2i8PAAAARXh0cmEgVGhpY2sgSG9lAwAAAEVUSEMAAABodHRwczovL2lwZnMuaW8vaXBmcy9RbVNNWWlEeXFZdmNhQlhrdks0amdVZ2RtaG1NU25DS2tuTXpLUEFqdGIzUHJjAAAAAA==",
+       "base64"
+      ],
+      "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 403
+     }
+    ]
+   }
+  },
+  {
+   "method": "getAssetBatch",
+   "params": {
+    "ids": [
+     "C5xph2yL6gMdxmuLGxJBkGpmuDFfyi5fqkBNhvL6pump",
+     "CXWNzqBE98SSmkGgHogJZd9vjsLdgaMAFpVfV22ypump"
+    ]
+   },
+   "result": [
+    {
+     "interface": "FungibleToken",
+     "id": "C5xph2yL6gMdxmuLGxJBkGpmuDFfyi5fqkBNhvL6pump",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "https://metadata.j7tracker.io/m/242XrCUu6u",
+      "files": [
+       {
+        "uri": "https://axiomtrading-v2.axiom-cdn.io/FQtqFpHSnAUcXrtXpFHL9EpjoF6FAmrXwQpWd1FMpump.webp",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://axiomtrading-v2.axiom-cdn.io/FQtqFpHSnAUcXrtXpFHL9EpjoF6FAmrXwQpWd1FMpump.webp",
+        "mime": "image/webp"
+       }
+      ],
+      "metadata": {
+       "description": "",
+       "json_name": "Big Titty Coin",
+       "name": "Big Titty Coin",
+       "symbol": "BTC"
+      },
+      "links": {
+       "image": "https://axiomtrading-v2.axiom-cdn.io/FQtqFpHSnAUcXrtXpFHL9EpjoF6FAmrXwQpWd1FMpump.webp"
+      }
+     },
+     "authorities": [],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "mint_extensions": {
+      "metadata": {
+       "uri": "https://metadata.j7tracker.io/m/242XrCUu6u",
+       "mint": "C5xph2yL6gMdxmuLGxJBkGpmuDFfyi5fqkBNhvL6pump",
+       "name": "Big Titty Coin",
+       "symbol": "BTC",
+       "update_authority": null,
+       "additional_metadata": []
+      },
+      "metadata_pointer": {
+       "authority": null,
+       "metadata_address": "C5xph2yL6gMdxmuLGxJBkGpmuDFfyi5fqkBNhvL6pump"
+      }
+     },
+     "token_info": {
+      "symbol": "BTC",
+      "supply": 991015329757109,
+      "decimals": 6,
+      "token_program": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "price_info": {
+       "price_per_token": 0.010655428,
+       "currency": "USDC"
+      }
+     }
+    },
+    {
+     "interface": "FungibleToken",
+     "id": "CXWNzqBE98SSmkGgHogJZd9vjsLdgaMAFpVfV22ypump",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "https://ipfs.io/ipfs/QmSMYiDyqYvcaBXkvK4jgUgdmhmMSnCKknMzKPAjtb3Prc",
+      "files": [
+       {
+        "uri": "https://ipfs.io/ipfs/bafkreig3uyv6etcifziv32cbisdvmq7ojkftfw4prwpkdtgobwxz3wz3qy",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://ipfs.io/ipfs/bafkreig3uyv6etcifziv32cbisdvmq7ojkftfw4prwpkdtgobwxz3wz3qy",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "description": "",
+       "json_name": "Extra Thick Hoe",
+       "name": "Extra Thick Hoe",
+       "symbol": "ETH"
+      },
+      "links": {
+       "image": "https://ipfs.io/ipfs/bafkreig3uyv6etcifziv32cbisdvmq7ojkftfw4prwpkdtgobwxz3wz3qy"
+      }
+     },
+     "authorities": [],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "mint_extensions": {
+      "metadata": {
+       "uri": "https://ipfs.io/ipfs/QmSMYiDyqYvcaBXkvK4jgUgdmhmMSnCKknMzKPAjtb3Prc",
+       "mint": "CXWNzqBE98SSmkGgHogJZd9vjsLdgaMAFpVfV22ypump",
+       "name": "Extra Thick Hoe",
+       "symbol": "ETH",
+       "update_authority": null,
+       "additional_metadata": []
+      },
+      "metadata_pointer": {
+       "authority": null,
+       "metadata_address": "CXWNzqBE98SSmkGgHogJZd9vjsLdgaMAFpVfV22ypump"
+      }
+     },
+     "token_info": {
+      "symbol": "ETH",
+      "supply": 959620017336973,
+      "decimals": 6,
+      "token_program": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+      "price_info": {
+       "price_per_token": 0.0011114011,
+       "currency": "USDC"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "FkFeUGt1ZLgcrpmjm8HVv9YyStDJFKb44a8pFZJioJBk",
+     "GmfhD6Vp3uSQRNPvKpm9LCzPi1H2sPLSLFjUcHY2AXkt",
+     "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907467,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 20140483107,
+      "data": [
+       "BpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAGHjpXqSVfYyMKDWxNkx/LXRueJtakCqfIAdTChq5sEbzNEWLAEAAAAAQAAAK3YeRG0z0tu4u/RcqwONPudPTUgIJo9t2K5o9CMxHkMAQEAAADwHR8AAAAAAADodkgXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 165
+     },
+     {
+      "lamports": 65227946,
+      "data": [
+       "BpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAGHjpXqSVfYyMKDWxNkx/LXRueJtakCqfIAdTChq5sEb1n8xgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAABRUBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 165
+     },
+     {
+      "lamports": 6979116527,
+      "data": [
+       "AgAAADAPUGBbvrcwh4nmwPvj5KNgIENvbqDK2oAmDbRv9mCE",
+       "base64"
+      ],
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "executable": true,
+      "rentEpoch": 18446744073709552000,
+      "space": 36
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "So11111111111111111111111111111111111111112"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907468,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 1864695949081,
+      "data": [
+       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 82
+     }
+    ]
+   }
+  },
+  {
+   "method": "getAssetBatch",
+   "params": {
+    "ids": [
+     "So11111111111111111111111111111111111111112"
+    ]
+   },
+   "result": [
+    {
+     "interface": "FungibleToken",
+     "id": "So11111111111111111111111111111111111111112",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "",
+      "files": [
+       {
+        "uri": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "name": "Wrapped SOL",
+       "symbol": "SOL"
+      },
+      "links": {
+       "image": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+      }
+     },
+     "authorities": [
+      {
+       "address": "AqH29mZfQFgRpfwaPoTMWSKJ5kqauoc1FwVBRksZyQrt",
+       "scopes": [
+        "full"
+       ]
+      }
+     ],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "token_info": {
+      "symbol": "SOL",
+      "supply": 0,
+      "decimals": 9,
+      "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "price_info": {
+       "price_per_token": 89.54286,
+       "currency": "USDC"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "7Muc56NBWeDJeZLKYLadUzvQySGx6GwsXFEayPnnWqdn",
+     "8nU1T4xF7XpSvAcn55LAkjqE13Ye3pyewrapvQhEZNce",
+     "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907469,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     null,
+     null,
+     {
+      "lamports": 6979116527,
+      "data": [
+       "AgAAADAPUGBbvrcwh4nmwPvj5KNgIENvbqDK2oAmDbRv9mCE",
+       "base64"
+      ],
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "executable": true,
+      "rentEpoch": 18446744073709552000,
+      "space": 36
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "HxXv2jYVuHdzMJPdWuRGVGPzK43XU4ru9gCtBSoRpump",
+     "So11111111111111111111111111111111111111112"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466907469,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 1066800,
+      "data": [
+       "AAAAAMiqGhcHKSCj5eYP8leko+NSYO6NtjUyV2lF4TQ6teFwAIDGpH6NAwAGAQAAAADIqhoXBykgo+XmD/JXpKPjUmDujbY1MldpReE0OrXhcA==",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 82
+     },
+     {
+      "lamports": 1864695949081,
+      "data": [
+       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 82
+     }
+    ]
+   }
+  },
+  {
+   "method": "getAssetBatch",
+   "params": {
+    "ids": [
+     "HxXv2jYVuHdzMJPdWuRGVGPzK43XU4ru9gCtBSoRpump",
+     "So11111111111111111111111111111111111111112"
+    ]
+   },
+   "result": [
+    {
+     "interface": "FungibleToken",
+     "id": "HxXv2jYVuHdzMJPdWuRGVGPzK43XU4ru9gCtBSoRpump",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "https://ipfs.io/ipfs/bafkreieelxa66clt2ldjyet6p562nfowykdzzv5u47meagovsirmudpfnm",
+      "files": [
+       {
+        "uri": "https://ipfs.io/ipfs/bafkreia6zvo66wrwgnkrvzktxv6mm6d2awq6ibdcl22juetsxhlaoyd3oy",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://ipfs.io/ipfs/bafkreia6zvo66wrwgnkrvzktxv6mm6d2awq6ibdcl22juetsxhlaoyd3oy",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "description": "",
+       "json_name": "bul",
+       "name": "bul",
+       "symbol": "bul",
+       "token_standard": "Fungible"
+      },
+      "links": {
+       "image": "https://ipfs.io/ipfs/bafkreia6zvo66wrwgnkrvzktxv6mm6d2awq6ibdcl22juetsxhlaoyd3oy"
+      }
+     },
+     "authorities": [
+      {
+       "address": "EWJykqJRX3vo1XdGrN7ui5eFkmywWsCk5WFzswdDJzgo",
+       "scopes": [
+        "full"
+       ]
+      }
+     ],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [
+      {
+       "address": "EWJykqJRX3vo1XdGrN7ui5eFkmywWsCk5WFzswdDJzgo",
+       "share": 100,
+       "verified": true
+      }
+     ],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": false,
+     "burnt": false,
+     "token_info": {
+      "symbol": "bul",
+      "supply": 1000000000000000,
+      "decimals": 6,
+      "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "price_info": {
+       "price_per_token": 0.000027738248,
+       "currency": "USDC"
+      }
+     }
+    },
+    {
+     "interface": "FungibleToken",
+     "id": "So11111111111111111111111111111111111111112",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "",
+      "files": [
+       {
+        "uri": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "name": "Wrapped SOL",
+       "symbol": "SOL"
+      },
+      "links": {
+       "image": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+      }
+     },
+     "authorities": [
+      {
+       "address": "AqH29mZfQFgRpfwaPoTMWSKJ5kqauoc1FwVBRksZyQrt",
+       "scopes": [
+        "full"
+       ]
+      }
+     ],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "token_info": {
+      "symbol": "SOL",
+      "supply": 0,
+      "decimals": 9,
+      "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "price_info": {
+       "price_per_token": 89.54286,
+       "currency": "USDC"
+      }
+     }
+    }
+   ]
+  }
+ ]
+}
