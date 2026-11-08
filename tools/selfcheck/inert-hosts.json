@@ -1,13 +1,65 @@
 {
   "_doc": "G10 audited inert host strings (V10; V11 pruned the four zod entries E17 removed with zod/mini). Each entry is one exact occurrence in one bundle file plus a one-line reason why it is never a network target. No wildcards. The sink check (host-sinks.mjs) FAILs any of these that reaches fetch/XHR/WebSocket/EventSource/importScripts/sendBeacon/src/href, allowlisted or not. Owner: verifier; a new entry needs the verifier's review.",
   "entries": [
-    { "string": "https://sola.na/web3invariant", "file": "service-worker.js", "reason": "@solana/errors invariant-violation message text (error map value), shown in errors only" },
-    { "string": "https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name", "file": "service-worker.js", "reason": "@solana/errors HTTP header error message text" },
-    { "string": "https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts", "file": "service-worker.js", "reason": "@solana/errors WebCrypto secure-context error message text" },
-    { "string": "https://github.com/WICG/webcrypto-secure-curves/issues/20", "file": "service-worker.js", "reason": "@solana/errors Ed25519-unsupported help message text" },
-    { "string": "https://github.com/drift-labs/protocol-v2/tree/master/programs/drift/src/state/spot_market.rs#L35", "file": "service-worker.js", "reason": "docs string inside the bundled marginfi-v2 IDL (packages/idls/raw/marginfi-v2.json)" },
-    { "string": "github.com/solana-program/system/blob/e9cb05138ea802b01f1ddf79ea140dcd765c9db6/idl.json", "file": "service-worker.js", "reason": "IDL registry `source` provenance field, printed in report text (core graph/preview.ts), never fetched" },
-    { "string": "github.com/solana-program/token/blob/31646dce3df0a03d468a14913f01b9fd3c3adad0/idl.json", "file": "service-worker.js", "reason": "IDL registry `source` provenance field, printed in report text (core graph/preview.ts), never fetched" },
-    { "string": "github.com/solana-program/token-2022/blob/e6b4af36a3dbdfe6f66aaf0c564427fa56671bb0/idl.json", "file": "service-worker.js", "reason": "IDL registry `source` provenance field, printed in report text (core graph/preview.ts), never fetched" }
+    {
+      "string": "https://sola.na/web3invariant",
+      "file": "service-worker.js",
+      "reason": "@solana/errors invariant-violation message text (error map value), shown in errors only"
+    },
+    {
+      "string": "https://developer.mozilla.org/en-US/docs/Glossary/Forbidden_header_name",
+      "file": "service-worker.js",
+      "reason": "@solana/errors HTTP header error message text"
+    },
+    {
+      "string": "https://developer.mozilla.org/en-US/docs/Web/Security/Secure_Contexts",
+      "file": "service-worker.js",
+      "reason": "@solana/errors WebCrypto secure-context error message text"
+    },
+    {
+      "string": "https://github.com/WICG/webcrypto-secure-curves/issues/20",
+      "file": "service-worker.js",
+      "reason": "@solana/errors Ed25519-unsupported help message text"
+    },
+    {
+      "string": "https://github.com/drift-labs/protocol-v2/tree/master/programs/drift/src/state/spot_market.rs#L35",
+      "file": "service-worker.js",
+      "reason": "docs string inside the bundled marginfi-v2 IDL (packages/idls/raw/marginfi-v2.json)"
+    },
+    {
+      "string": "github.com/solana-program/system/blob/e9cb05138ea802b01f1ddf79ea140dcd765c9db6/idl.json",
+      "file": "service-worker.js",
+      "reason": "IDL registry `source` provenance field, printed in report text (core graph/preview.ts), never fetched"
+    },
+    {
+      "string": "github.com/solana-program/token/blob/31646dce3df0a03d468a14913f01b9fd3c3adad0/idl.json",
+      "file": "service-worker.js",
+      "reason": "IDL registry `source` provenance field, printed in report text (core graph/preview.ts), never fetched"
+    },
+    {
+      "string": "github.com/solana-program/token-2022/blob/e6b4af36a3dbdfe6f66aaf0c564427fa56671bb0/idl.json",
+      "file": "service-worker.js",
+      "reason": "IDL registry `source` provenance field, printed in report text (core graph/preview.ts), never fetched"
+    },
+    {
+      "string": "https://jup.ag/",
+      "file": "service-worker.js",
+      "reason": "X23 trusted-site origin compared against the requesting page origin (user-approved aggregator list); never a network target"
+    },
+    {
+      "string": "https://jup.ag/",
+      "file": "ui.js",
+      "reason": "X23 trusted-site origin compared against the requesting page origin (user-approved aggregator list); never a network target"
+    },
+    {
+      "string": "https://app.velocity.exchange/",
+      "file": "service-worker.js",
+      "reason": "X23 trusted-site origin compared against the requesting page origin (user-approved aggregator list); never a network target"
+    },
+    {
+      "string": "https://app.velocity.exchange/",
+      "file": "ui.js",
+      "reason": "X23 trusted-site origin compared against the requesting page origin (user-approved aggregator list); never a network target"
+    }
   ]
 }
