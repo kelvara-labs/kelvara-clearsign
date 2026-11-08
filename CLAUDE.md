@@ -72,7 +72,8 @@ prompt, and keep working on anything unblocked while you wait.
 
 ## Hard rules (all roles)
 - Network: Helius only (RPC and APIs) for mainnet and devnet; localnet for local tests.
-  No other RPC providers, scanning services, price feeds, analytics, telemetry or remote AI.
+  No other RPC providers, scanning services, price feeds, analytics or telemetry.
+  User-authorized exception (2026-11-08): optional intent-question AI may contact only the user-configured OpenAI-compatible endpoint from the service worker, after explicit configuration/host permission. Chain data remains Helius-only. Never send wallet secrets, API keys for other services, or raw signing bytes to that endpoint. AI cannot change facts, alert levels, or signing decisions.
 - Env file: `.env` exists only in the main checkout, not in worktrees. Load it from
   `$(git rev-parse --path-format=absolute --git-common-dir)/../.env`, which resolves to the
   main checkout from any worktree. Never copy it into a worktree or print its contents.

@@ -485,3 +485,22 @@ Sources
 • Playwright: Chrome extensions
 • Chrome: the Prompt API
 • Nonce Kit on Firefox Add-ons
+
+
+## User scope update — evidence-bound intent review (2026-11-08)
+This user request supersedes the earlier remote-AI prohibition and AI cut only for optional intent-question selection. Chain RPC remains Helius-only. Every transaction still gets the existing report. Put one contextual question in that report; keep existing Cancel/Continue decisions (no extra mandatory checkbox for routine transfers). Offer correction choices without typing by default; a correction cannot modify the transaction, downgrade a rule, or override L4. Changed message bytes require a fresh review.
+
+Settings: API URL, API key and model are all inside an initially collapsed AI-provider section. Support OpenAI-compatible endpoints (HTTPS, and HTTP loopback for local models), an explicit enable choice and a clear disclosure that public engine facts go to the selected provider. Request only the configured host at the user's Save click via optional host permissions; no wildcard runtime permission grant. Keep keys in extension storage only, never in reports/logs/pages/release. Disable redirects for authenticated requests. AI failures/unsupported providers/timeouts/refusals/malformed output use the deterministic question and retain the deterministic report.
+
+AI receives bounded engine-authored candidate questions/reasons and transaction binding, not arbitrary page prompts or raw signed bytes. Its structured output selects a candidate and reason IDs. Validate all selections/references and exact hashes; no invented prose/facts may enter the report, no lower-priority candidate may hide a higher-consequence effect. Label AI-selected versus deterministic output accurately. Routine transfer/memo uses deterministic templates (no AI call). Amounts, exact recipient counts, comparison addresses, completeness and unknown effects come from engine state; successful outgoing transactions to the exact recipient only count, never incoming dust, failed transactions or lookalikes. Partial history is explicit; familiarity is never called safety.
+
+Additive core contract (do not change kelvara-report-v1 schema/digest):
+- AnalyzeResult.intentContext: IntentContext; export buildIntentContext and validateIntentContext plus types from core.
+- IntentContext = {version:"kelvara-intent-v1", messageHashes:string[], complex:boolean, fallbackId:string, historyNote:string, candidates:IntentCandidate[]}.
+- IntentCandidate = {id:string, kind:"transfer"|"authority"|"fees"|"token-risk"|"poisoning"|"memo"|"unknown", priority:0|1|2|3|4, question:string, reasons:IntentReason[], comparison:null|{proposed:string,previous:string,prefix:number,suffix:number}}.
+- IntentReason = {id:string,text:string,claimIds:string[],evidenceIds:string[]}.
+- Caps: <=8 candidates, <=6 reasons/candidate, <=64 tx hashes, IDs <=80 chars, question <=300, reason <=600, historyNote <=600. Fields must have exact keys; unique candidate IDs and reason IDs, hashes match the report. Unknown must remain unknown. Context uses actual decoded instructions/RuleState.history; incomplete read is not new-recipient proof.
+- validateIntentContext(value, expectedHashes) returns IntentContext|null. buildIntentContext/report analysis remains deterministic and browser-safe.
+- Extension ReportView optional intent = {context:IntentContext, selectedId:string, reasonIds:string[], source:"engine"|"ai", status:"template"|"not-configured"|"selected"|"unavailable"|"invalid"}; validate exact shape and refs plus report hashes. Defaults absent for old fixtures; real engine attaches context. AI returned schema selection = {binding:string,candidateId:string,reasonIds:string[]}; binding = messageHashes.join(":"). Selection cannot lower priority below context fallback and cannot omit the chosen candidate's primary reason. No response grants authorization.
+
+Hackathon proof: two real devnet Squads proposals share the exact signed memo "Q4 fee update"; one has a real verified fee-config change, one transfers upgrade authority. Same existing shared test account can approve either. Label the effects precisely as proposed future effects (approval is not execution). Do not fake a fee change with a memo/no-op or invent an instruction ABI; unknown semantics must be shown unknown. Preserve existing playground and provide a reproducible prepare command. Agent never approves wallet prompts or uses Sign anyway.
