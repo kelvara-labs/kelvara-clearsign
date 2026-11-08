@@ -172,14 +172,14 @@ export interface CaptureEntry {
   allow: boolean;
 }
 
-export const test = base.extend<{ ext: Ext }>({
-  // eslint-disable-next-line no-empty-pattern
-  ext: async ({}, use) => {
-    if (!existsSync(path.join(EXT_DIR, "manifest.json"))) throw new Error(`extension not built: ${EXT_DIR}`);
+export const test = base.extend<{ ext: Ext; extDir: string }>({
+  extDir: [EXT_DIR, { option: true }],
+  ext: async ({ extDir }, use) => {
+    if (!existsSync(path.join(extDir, "manifest.json"))) throw new Error(`extension not built: ${extDir}`);
     const context = await chromium.launchPersistentContext("", {
       channel: "chromium",
       headless: true,
-      args: [`--disable-extensions-except=${EXT_DIR}`, `--load-extension=${EXT_DIR}`]
+      args: [`--disable-extensions-except=${extDir}`, `--load-extension=${extDir}`]
     });
     const net = networkGuard(context);
     await net.install();

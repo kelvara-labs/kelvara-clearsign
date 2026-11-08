@@ -11,7 +11,10 @@ export function providerOrigin(value) {
 export function providerRequestAllowed(request, configured, grantedOrigins, redirected = false) {
   if (redirected) return false;
   const origin = providerOrigin(configured);
-  if (!origin || !grantedOrigins.includes(`${origin}/*`)) return false;
+  if (!origin) return false;
+  const c = new URL(configured);
+  // Chrome match patterns carry no port: a granted `scheme://host/*` covers that exact scheme and host on any port.
+  if (!grantedOrigins.includes(`${origin}/*`) && !grantedOrigins.includes(`${c.protocol}//${c.hostname}/*`)) return false;
   try {
     const u = new URL(request);
     return !u.username && !u.password && !u.search && !u.hash && u.origin === origin;

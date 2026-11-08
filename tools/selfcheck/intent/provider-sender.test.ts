@@ -24,12 +24,21 @@ it('rejects foreign/content-script/other-page senders before touching saved prov
   for (const untrusted of [
     {}, { ...sender, id: 'foreign-extension-id' }, { ...sender, url: 'https://dapp.example/options.html' },
     { ...sender, url: `chrome-extension://${id}/popup.html` }, { ...sender, url: `${optionsUrl}?source=page` },
-    { ...sender, url: `${optionsUrl}#fragment` }, { ...sender, tab: { id: 17 } },
-    { ...sender, tab: {} }, { id }, { url: optionsUrl }
+    { ...sender, url: `${optionsUrl}#fragment` }, { ...sender, tab: { id: 17 }, frameId: 3 },
+    { ...sender, frameId: 1 }, { ...sender, tab: {}, frameId: 2 },
+    { id, url: 'https://dapp.example/', tab: { id: 17 }, frameId: 0 }, { id, tab: { id: 17 }, frameId: 0 }, { id }, { url: optionsUrl }
   ]) {
     const d = deps();
     expect(handleProviderTest(request, untrusted, runtime, d.value)).toBeNull();
     expect(d.calls).toEqual({ storage: 0, permissions: 0, network: 0 });
+  }
+});
+
+it('accepts the tab-hosted exact options sender (options_ui open_in_tab) at frameId 0', async () => {
+  for (const hosted of [{ ...sender, tab: { id: 17 }, frameId: 0 }, { ...sender, tab: {}, frameId: 0 }, { ...sender, tab: { id: 17 } }]) {
+    const d = deps();
+    expect(await handleProviderTest(request, hosted, runtime, d.value)).toEqual({ status: 'not-configured' });
+    expect(d.calls.network).toBe(0);
   }
 });
 

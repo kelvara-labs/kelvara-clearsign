@@ -22,3 +22,12 @@ test('provider runtime oracle needs exact configured origin AND observed exact g
   assert.equal(providerRequestAllowed(configured, configured, grants, true), false);
   assert.equal(providerRequestAllowed(configured, 'https://new.example/v1', grants), false);
 });
+
+test('provider oracle accepts Chrome port-less grant only for the exact scheme and host', () => {
+  const configured = 'http://127.0.0.1:41234/v1/chat/completions';
+  assert.equal(providerRequestAllowed(configured, configured, ['http://127.0.0.1/*']), true);
+  for (const grants of [['http://localhost/*'], ['https://127.0.0.1/*'], ['http://*/*'], ['<all_urls>'], ['http://127.0.0.2/*']]) {
+    assert.equal(providerRequestAllowed(configured, configured, grants), false, grants.join());
+  }
+  assert.equal(providerRequestAllowed('http://127.0.0.1:9/v1', configured, ['http://127.0.0.1/*']), false);
+});
