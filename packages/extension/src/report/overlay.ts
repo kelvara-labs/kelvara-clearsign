@@ -24,6 +24,8 @@ export function parseFrameAnswer(data: unknown): boolean | null {
 
 export function showReport(verdict: WorkerVerdict, deadline: number, id?: string): Promise<boolean> {
   const mode = reportMode(verdict);
+  // Orphaned after an extension reload: the report page cannot be loaded, so the request is not approved.
+  if (typeof chrome.runtime?.getURL !== "function") return Promise.resolve(false);
   return new Promise((resolve) => {
     const secret = randomId((a) => crypto.getRandomValues(a));
     const host = document.createElement("div");

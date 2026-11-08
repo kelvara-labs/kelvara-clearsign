@@ -4,7 +4,9 @@ import { installBridge } from "./bridge/bridge.js";
 import { showReport } from "./report/overlay.js";
 
 installBridge(window, {
-  sendToWorker: (msg) => chrome.runtime.sendMessage(msg),
+  // After the extension is reloaded or updated, an already-open page keeps this orphaned script and
+  // chrome.runtime is gone: reject (fail closed, the request is blocked) instead of throwing.
+  sendToWorker: (msg) => (typeof chrome.runtime?.sendMessage === "function" ? chrome.runtime.sendMessage(msg) : Promise.reject(new Error("ClearSign was reloaded; reload this page"))),
   showReport,
   url: () => location.href,
   topFrame: window.top === window,
