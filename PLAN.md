@@ -514,3 +514,6 @@ The service worker keeps a reviewed list of trusted sites (exact HTTPS origins, 
 
 ## User scope update — AI on every request (2026-11-08)
 When the user's AI provider is enabled it explains and selects the intent question for every report, routine memos and transfers included (supersedes "Routine transfer/memo uses deterministic templates (no AI call)"). Disabled or failing providers still fall back to ClearSign's own text; AI never changes facts, levels or controls.
+
+## User scope update — impostor sites (2026-11-08)
+Trusted sites now include https://kamino.com (role lending: green pill only). A request from a page that imitates a trusted site but is not its exact HTTPS origin (brand name in another domain such as jupiter-swap.app or jup.ag.evil.com, look-alike spelling within a small edit distance, homoglyph/punycode forms, the trusted host over http) is treated as an impostor: level L4, red banner "Impostor site: this is not <trusted origin>", no Sign anyway, request blocked. Transactions and message signatures alike. The check only raises levels, never lowers them, and exact trusted origins are never flagged.
