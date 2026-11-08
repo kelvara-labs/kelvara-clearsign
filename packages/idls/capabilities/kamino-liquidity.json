@@ -1,0 +1,570 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "kamino-liquidity",
+  "programId": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/kamino-liquidity.json",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-liquidity.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "entries": [
+    {
+      "instruction": "initializeStrategy",
+      "discriminator": "d0779091b23969fc",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize strategy: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeKaminoReward",
+      "discriminator": "cbd4085a5b766f32",
+      "authority": null,
+      "signers": [
+        "adminAuthority",
+        "rewardVault"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize kamino reward: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "addKaminoRewards",
+      "discriminator": "aeae8ec12f4deb41",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "add kamino rewards: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeGlobalConfig",
+      "discriminator": "71d87a83e1d11637",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize global config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeCollateralInfo",
+      "discriminator": "4a3dd84cf45b1277",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize collateral info: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateCollateralInfo",
+      "discriminator": "4c5e832c893da16e",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update collateral info: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "insertCollateralInfo",
+      "discriminator": "1661044ea6bc33be",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "insert collateral info: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeSharesMetadata",
+      "discriminator": "030fac72c8008320",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize shares metadata: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSharesMetadata",
+      "discriminator": "9b227aa5f589936b",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update shares metadata: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGlobalConfig",
+      "discriminator": "a45482bd6f3afac8",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update global config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "acceptGlobalConfigOwnership",
+      "discriminator": "d13fe797bccc0097",
+      "authority": null,
+      "signers": [
+        "pendingAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "accept global config ownership: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateTreasuryFeeVault",
+      "discriminator": "09f15e5bad4aa677",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "update treasury fee vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateStrategyConfig",
+      "discriminator": "51d9b14128e308a5",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update strategy config: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setRefTickIndexPrice",
+      "discriminator": "12de8f66d351f698",
+      "authority": null,
+      "signers": [
+        "actionsAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "set ref tick index price: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateRewardMapping",
+      "discriminator": "cb2525601755e92a",
+      "authority": null,
+      "signers": [
+        "payer",
+        "rewardVault"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update reward mapping: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "openLiquidityPosition",
+      "discriminator": "cceaccdb065b60f1",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "open liquidity position: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "closeStrategy",
+      "discriminator": "38f7aaf659dd86c8",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "close strategy: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deposit",
+      "discriminator": "f223c68952e1f2b6",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a strategy for shares; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "invest",
+      "discriminator": "0df5b467feb67904",
+      "authority": null,
+      "signers": [
+        "actionsAuthority"
+      ],
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves strategy funds into its liquidity position; permissionless keeper call",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "depositAndInvest",
+      "discriminator": "169dad06bb19566d",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a strategy and invests; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdraw",
+      "discriminator": "b712469c946da122",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems strategy shares for tokens; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "executiveWithdraw",
+      "discriminator": "9f276e8964eacc8d",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "executive withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "collectFeesAndRewards",
+      "discriminator": "71124b08b61f69ba",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.reward",
+      "class": "config",
+      "changes": "collects fees and rewards of a strategy; permissionless",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "swapRewards",
+      "discriminator": "5c29ac1ebe41ae5a",
+      "authority": null,
+      "signers": [
+        "actionsAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "swap rewards: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "checkExpectedVaultsBalances",
+      "discriminator": "4b97bb7d32040b47",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "check expected vaults balances: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "singleTokenDepositAndInvestWithMin",
+      "discriminator": "76868fc0bc158311",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits one token into a strategy and invests; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "singleTokenDepositWithMin",
+      "discriminator": "fa8e66a0480c538b",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits one token into a strategy; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "flashSwapUnevenVaultsStart",
+      "discriminator": "816fae0c0a3c95c1",
+      "authority": null,
+      "signers": [
+        "swapper"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "flash swap uneven vaults start: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "flashSwapUnevenVaultsEnd",
+      "discriminator": "e202be65ca849c14",
+      "authority": null,
+      "signers": [
+        "swapper"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "flash swap uneven vaults end: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "emergencySwap",
+      "discriminator": "49e2f8d705c5d3e5",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "emergency swap: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawFromTreasury",
+      "discriminator": "00a4564c38480caa",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw from treasury: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "permisionlessWithdrawFromTreasury",
+      "discriminator": "a724204f61aab76c",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "permisionless withdraw from treasury: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawFromTopup",
+      "discriminator": "5fe38adcf05f9671",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw from topup: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "changePool",
+      "discriminator": "8ddd7beb230991c9",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "change pool: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "closeProgramAccount",
+      "discriminator": "f50ec0d3632aaabb",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "close program account: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "orcaSwap",
+      "discriminator": "215ef961fafec65d",
+      "authority": null,
+      "signers": [
+        "funder"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "orca swap: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "signTerms",
+      "discriminator": "e22aae8f909f8b01",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.terms",
+      "class": "other",
+      "changes": "records that the signer accepted the terms",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateStrategyAdmin",
+      "discriminator": "0de3a4ec202706ff",
+      "authority": null,
+      "signers": [
+        "pendingAdmin"
+      ],
+      "capability": "kamino.strategy_admin",
+      "class": "admin_control",
+      "changes": "changes a strategy's admin",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "resizeTokenInfos",
+      "discriminator": "1dd37fc0d580c8bb",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "resize token infos: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deprecateCollateralInfo",
+      "discriminator": "8fdd24590c611dad",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "deprecate collateral info: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deprecateStrategy",
+      "discriminator": "494c5f3b26fb75a1",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "deprecate strategy: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resetStrategyPadding",
+      "discriminator": "a863dee719c5ae13",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "reset strategy padding: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "getKtokenPrice",
+      "discriminator": "d76bae9cd49c1682",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "get ktoken price: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": []
+}

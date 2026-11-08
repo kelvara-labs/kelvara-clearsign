@@ -1,0 +1,71 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "kamino-liquidity",
+  "programId": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-liquidity.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "instructions": [
+    {
+      "instruction": "deposit",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a strategy for shares; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "depositAndInvest",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a strategy and invests; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "singleTokenDepositAndInvestWithMin",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits one token into a strategy and invests; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "singleTokenDepositWithMin",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits one token into a strategy; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdraw",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems strategy shares for tokens; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "invest",
+      "authority": null,
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves strategy funds into its liquidity position; permissionless keeper call"
+    },
+    {
+      "instruction": "collectFeesAndRewards",
+      "authority": null,
+      "capability": "kamino.reward",
+      "class": "config",
+      "changes": "collects fees and rewards of a strategy; permissionless"
+    },
+    {
+      "instruction": "signTerms",
+      "authority": null,
+      "capability": "kamino.terms",
+      "class": "other",
+      "changes": "records that the signer accepted the terms"
+    },
+    {
+      "instruction": "updateStrategyAdmin",
+      "authority": null,
+      "capability": "kamino.strategy_admin",
+      "class": "admin_control",
+      "changes": "changes a strategy's admin"
+    }
+  ]
+}

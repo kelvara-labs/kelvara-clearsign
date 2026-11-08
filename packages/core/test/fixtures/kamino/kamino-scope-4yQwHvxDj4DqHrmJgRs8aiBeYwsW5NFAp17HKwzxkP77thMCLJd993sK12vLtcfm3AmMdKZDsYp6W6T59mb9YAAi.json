@@ -1,0 +1,64 @@
+{
+ "schema": "kelvara.fixture.tx/v1",
+ "network": "mainnet",
+ "signature": "4yQwHvxDj4DqHrmJgRs8aiBeYwsW5NFAp17HKwzxkP77thMCLJd993sK12vLtcfm3AmMdKZDsYp6W6T59mb9YAAi",
+ "slot": 466926165,
+ "blockTime": 1794143279,
+ "fetchedAt": "2026-11-08T13:07:59.928Z",
+ "source": "helius:getTransaction",
+ "program": {
+  "slug": "kamino-scope",
+  "programId": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
+  "name": "Kamino Scope"
+ },
+ "encoding": "base64",
+ "transaction": "Acay/AqVsB74OSksl68p99CQGnEtK9VF6j5viz8MgSpTfYwRBFIDtEklMfNYpQwR6vCs96I3rhsOnyppTx4aRg+AAQAEByqqxcZf3Rt7JfxE+dxHTlGOxpDBOzwy82I6541xAqCcIyxpA+CpBOOCbIHzfgChwaJoKCOEXCRj5547dpOIXxXnyy3MZjzCtQ15g2Dn+fGs8g4+n1fb4L1z8yYTlODwpgMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAABqfVFxh70WY12tQEVf3CwMEkxo8hVnWl27rLXwgAAACt5fJnaZvhDKqp3jucpw39HUfpluMJaz3IL4GOp6tdJfGEJUS5jxbdgeenDINNhYYMWLvI21LCH+K8TN/KL14DlHREK1ScvF/HM/QfwZMakPSdA9oIEA/FbLHnLSA+9ZADAwAFAjNjAAADAAkDECcAAAAAAAAGBQEFAgQGDlO6z4PL/saCAQAAAPYAAA==",
+ "sha256": "ae826d0ac8aafd1d3b4ba22b7cd7e505c9c929ff5e2967332c8c2c49eca6b8fe",
+ "version": 0,
+ "meta": {
+  "err": null,
+  "status": {
+   "Ok": null
+  },
+  "fee": 5254,
+  "preBalances": [
+   16718425427,
+   200726442,
+   2396077487,
+   1,
+   0,
+   207630744,
+   21141440
+  ],
+  "postBalances": [
+   16718420173,
+   200726442,
+   2396077487,
+   1,
+   0,
+   207630744,
+   21141440
+  ],
+  "innerInstructions": [],
+  "logMessages": [
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ invoke [1]",
+   "Program log: Instruction: RefreshPriceList",
+   "Program log: tk 246, MostRecentOf: 223775740454238750 to 223769167690162075 | prev_slot: 466925864, new_slot: 466926147, crt_slot: 466926165",
+   "Program HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ consumed 18241 of 25095 compute units",
+   "Program HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ success"
+  ],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "rewards": [],
+  "loadedAddresses": {
+   "writable": [],
+   "readonly": []
+  },
+  "computeUnitsConsumed": 18541,
+  "costUnits": 22832
+ }
+}

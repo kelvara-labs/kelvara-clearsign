@@ -40,11 +40,13 @@ export function tokenSubjects(decoded: DecodedInstruction[][]): { accounts: stri
     if (ix.status !== "named") continue;
     const token = [TOKEN_PROGRAM, TOKEN_2022_PROGRAM].includes(ix.programAddress) && TOKEN_IX.includes(ix.name ?? "");
     const swap = ix.programAddress === JUPITER_V6_PROGRAM && [...SWAP_EXACT_IN, ...SWAP_EXACT_OUT].includes(ix.name as never);
-    if (!token && !swap) continue;
+    // Any other named instruction that carries an amount: its token accounts and mints say what the amount is of.
+    const amounted = !token && !swap && Object.entries(ix.args ?? {}).some(([k, v]) => typeof v === "bigint" && /amount/i.test(k));
+    if (!token && !swap && !amounted) continue;
     for (const a of ix.accounts) {
-      if (!a.address) continue;
-      if (a.name && TOKEN_ACCOUNT_NAMES.includes(a.name)) accounts.add(a.address);
-      else if (a.name && MINT_NAMES.includes(a.name)) mints.add(a.address);
+      if (!a.address || !a.name) continue;
+      if (amounted ? /TokenAccount$/.test(a.name) : TOKEN_ACCOUNT_NAMES.includes(a.name)) accounts.add(a.address);
+      else if (amounted ? /Mint$|^mint$/.test(a.name) : MINT_NAMES.includes(a.name)) mints.add(a.address);
     }
   }
   return { accounts: [...accounts].sort(), mints: [...mints].sort() };

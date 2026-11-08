@@ -17,6 +17,8 @@ export interface ProgramSpec {
   authorityMap?: { review: string; verifiedOverride?: boolean };
   note?: string;
   /** The program has no anchor:idl account: take the IDL Helius serves from the program's on-chain Program Metadata. */
+  /** Bundle only the compact Codama root in the extension (no raw Anchor IDL, no authority map): keeps the service worker small. */
+  rootOnly?: boolean;
   idlFrom?: "helius-program-metadata";
 }
 
@@ -54,6 +56,11 @@ export const PROGRAMS: readonly ProgramSpec[] = [
   },
   { name: "jupiter-v6", programId: "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4", priority: "P1", decoder: "idl", kind: "anchor", capabilities: true, note: "Jupiter v6 aggregator (swaps); IDL from the on-chain anchor:idl account" },
   { name: "velocity", programId: "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P", priority: "P1", decoder: "idl", kind: "anchor", idlFrom: "helius-program-metadata", capabilities: true, note: "Velocity; no anchor:idl account, IDL from the program's on-chain Program Metadata as served by Helius Parsed Events (Orb shows the same IDL)" },
+  { name: "kamino-lending", programId: "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD", priority: "P1", decoder: "idl", kind: "anchor", rootOnly: true, idlFrom: "helius-program-metadata", capabilities: true, note: "Kamino Lending (klend); catalog name kamino_lending; display name is ours, program found in real Kamino transactions" },
+  { name: "kamino-vault", programId: "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd", priority: "P1", decoder: "idl", kind: "anchor", rootOnly: true, idlFrom: "helius-program-metadata", capabilities: true, note: "Kamino Vaults (kvaults); catalog name kamino_vault; every sampled call also invokes Kamino Lending; display name is ours, program found in real Kamino transactions" },
+  { name: "kamino-farms", programId: "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr", priority: "P1", decoder: "idl", kind: "anchor", rootOnly: true, idlFrom: "helius-program-metadata", capabilities: true, note: "Kamino Farms; catalog name farms; invoked by Kamino Lending in sampled kamino.com-style transactions; display name is ours, program found in real Kamino transactions" },
+  { name: "kamino-scope", programId: "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ", priority: "P1", decoder: "idl", kind: "anchor", rootOnly: true, idlFrom: "helius-program-metadata", capabilities: true, note: "Kamino Scope oracle; catalog name scope; appears in sampled Kamino Lending transactions; display name is ours, program found in real Kamino transactions" },
+  { name: "kamino-liquidity", programId: "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc", priority: "P1", decoder: "idl", kind: "anchor", rootOnly: true, idlFrom: "helius-program-metadata", capabilities: true, note: "Kamino Liquidity (yvaults strategies); catalog name yvaults; display name is ours, program found in real Kamino transactions" },
   { name: "memo", programId: "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr", priority: "P1", decoder: "memo", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: false },
   { name: "compute-budget", programId: "ComputeBudget111111111111111111111111111111", priority: "P1", decoder: "computeBudget", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: true },
   { name: "ed25519", programId: "Ed25519SigVerify111111111111111111111111111", priority: "P1", decoder: "sigverify", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts (Solana Ed25519 precompile layout)", capabilities: true },

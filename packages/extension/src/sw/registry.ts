@@ -24,6 +24,11 @@ import rootDrift from "../../../idls/roots/drift-v2.json";
 import rootJupiter from "../../../idls/roots/jupiter-v6.json";
 import rootVelocity from "../../../idls/roots/velocity.json";
 import rootMarginfi from "../../../idls/roots/marginfi-v2.json";
+import rootKaminoLending from "../../../idls/roots/kamino-lending.json";
+import rootKaminoVault from "../../../idls/roots/kamino-vault.json";
+import rootKaminoFarms from "../../../idls/roots/kamino-farms.json";
+import rootKaminoLiquidity from "../../../idls/roots/kamino-liquidity.json";
+import rootKaminoScope from "../../../idls/roots/kamino-scope.json";
 import rawSquads from "../../../idls/raw/squads-v4.json";
 import rawDrift from "../../../idls/raw/drift-v2.json";
 import rawJupiter from "../../../idls/raw/jupiter-v6.json";
@@ -43,6 +48,8 @@ interface ManifestIdl {
   programId: string;
   format: string;
   verified?: boolean;
+  /** Bundled as a compact Codama root only (no raw Anchor IDL, no authority map). */
+  rootOnly?: boolean;
 }
 
 const ROOTS: Record<string, unknown> = {
@@ -53,7 +60,12 @@ const ROOTS: Record<string, unknown> = {
   "drift-v2": rootDrift,
   "jupiter-v6": rootJupiter,
   velocity: rootVelocity,
-  "marginfi-v2": rootMarginfi
+  "marginfi-v2": rootMarginfi,
+  "kamino-lending": rootKaminoLending,
+  "kamino-vault": rootKaminoVault,
+  "kamino-farms": rootKaminoFarms,
+  "kamino-liquidity": rootKaminoLiquidity,
+  "kamino-scope": rootKaminoScope
 };
 const ANCHOR: Record<string, unknown> = { "squads-v4": rawSquads, "drift-v2": rawDrift, "jupiter-v6": rawJupiter, velocity: rawVelocity, "marginfi-v2": rawMarginfi };
 
@@ -68,13 +80,13 @@ export function buildRegistry(): Registry {
     const root = ROOTS[e.name];
     if (!root) throw new Error(`IDL ${e.name} is in packages/idls/manifest.json but not bundled in the extension`);
     const idl = anchor(e) ? ANCHOR[e.name] : undefined;
-    if (anchor(e) && !idl) throw new Error(`Anchor IDL ${e.name} is not bundled in the extension`);
+    if (anchor(e) && !idl && !e.rootOnly) throw new Error(`Anchor IDL ${e.name} is not bundled in the extension`);
     return { name: e.name, programId: e.programId, root: root as RootNode, ...(idl ? { idl: idl as AnchorIdlJson } : {}) };
   });
   const decoder = createDecoder(entries);
   const squadsAccounts = createSquadsDecoder(rawSquads as unknown as AnchorIdlJson);
   const maps = new Map<string, AuthorityMap>();
-  for (const e of idls.filter(anchor))
+  for (const e of idls.filter((x) => anchor(x) && !x.rootOnly))
     maps.set(e.programId, buildAuthorityMap(ANCHOR[e.name] as AnchorIdlJson, { programId: e.programId, source: `packages/idls/raw/${e.name}.json`, verified: e.verified === true }));
   return { decoder, squadsAccounts, authorityMaps: [...maps.values()] };
 }
