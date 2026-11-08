@@ -26,6 +26,8 @@ function manifestForHostScan(text) {
     const m = JSON.parse(text);
     for (const cs of m.content_scripts ?? []) { delete cs.matches; delete cs.exclude_matches; }
     for (const war of m.web_accessible_resources ?? []) delete war.matches;
+    // Optional capability is not an installed host grant; checkPermissions validates its narrow syntax.
+    delete m.optional_host_permissions;
     return JSON.stringify(m);
   } catch { return text; }
 }
@@ -93,11 +95,19 @@ export function checkHosts(bundle, inert = []) {
   const flag = (key, msg) => { if (!bad.has(key)) bad.set(key, msg); };
   for (const msg of validateInertEntries(inert)) flag(msg, msg);
   const used = new Set();
+  const manifestText = [...bundle].find(([n]) => /(^|\/)manifest\.json$/.test(n))?.[1];
+  let providerCapability = false;
+  try { providerCapability = JSON.parse(manifestText?.toString("utf8") ?? "{}").optional_host_permissions?.includes("https://*/*") === true; } catch { /* malformed manifest fails permissions */ }
+  // The built-in default is provider configuration, never an RPC exception. Arbitrary configured
+  // endpoints have no static host allowlist: their exact observed grant is checked at runtime in G7.
+  const defaultProvider = (name, host, sink = false) => providerCapability && host === "api.openai.com"
+    && (fileMatches(name, "service-worker.js") || (!sink && fileMatches(name, "ui.js")));
   let sinks = 0, allowed = 0;
   for (const [name, raw] of textFiles(bundle)) {
     const text = /(^|\/)manifest\.json$/.test(name) ? manifestForHostScan(raw) : raw;
     // 1. Every non-Helius host string needs an audited inert entry.
     for (const o of hostOccurrences(text)) {
+      if (!o.dynamic && defaultProvider(name, o.host)) continue;
       const entry = inert.findIndex((e) => e && e.string === o.str && fileMatches(name, e.file));
       if (entry >= 0) { used.add(entry); allowed++; continue; }
       flag(`${o.str}|${name}`, o.dynamic ? `dynamic host ${o.host} in ${name} ("${o.str}")` : `${o.host} in ${name} ("${o.str}" not in inert-hosts.json)`);
@@ -106,7 +116,7 @@ export function checkHosts(bundle, inert = []) {
     const targets = isJs(name) ? findSinkTargets(text, name) : /\.html?$/i.test(name) ? findHtmlSinkTargets(text) : [];
     sinks += targets.length;
     for (const t of targets) for (const h of t.hosts) {
-      if (h.dynamic ? dynamicOk(h.host) : ALLOWED_HOSTS.has(h.host)) continue;
+      if (h.dynamic ? dynamicOk(h.host) : ALLOWED_HOSTS.has(h.host) || defaultProvider(name, h.host, true)) continue;
       if (NAMESPACE_URIS.some((re) => re.test(h.url))) continue;
       flag(`sink|${h.host}|${name}`, `${h.dynamic ? "dynamic host " : ""}${h.host} reaches ${t.sink} in ${name}:${t.line} (network target; inert allowlist does not apply)`);
     }
@@ -114,7 +124,7 @@ export function checkHosts(bundle, inert = []) {
   const unused = inert.map((e, i) => (used.has(i) ? null : e?.string)).filter(Boolean);
   // Stale entries are noise and would silently pre-approve the string if it came back: name them so they get pruned.
   const note = unused.length ? `; ${unused.length} unused inert entr${unused.length === 1 ? "y" : "ies"} (prune from inert-hosts.json): ${unused.map((u) => `"${u}"`).join(", ")}` : "";
-  const out = result([...bad.values()], `only Helius and localhost reach ${sinks} network sink(s); ${allowed} audited inert string occurrence(s)${note}`);
+  const out = result([...bad.values()], `Helius/localnet and declared default AI provider only at ${sinks} network sink(s); ${allowed} audited inert string occurrence(s)${note}`);
   return Object.assign(out, { unused });
 }
 
@@ -142,7 +152,8 @@ export function checkNoSecrets(bundle, secrets = [], rawArchive = null) {
   for (const [name, buf] of hay) {
     const text = buf.toString("latin1");
     const lower = text.toLowerCase();
-    if (variants.some((s) => text.includes(s) || lower.includes(s.toLowerCase()))) f.push(`HELIUS_API_KEY value (or an encoding of it) in ${name}`);
+    if (variants.some((s) => text.includes(s) || lower.includes(s.toLowerCase()))) f.push(`configured secret value (or an encoding of it) in ${name}`);
+    if (/\bsk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}/.test(text)) f.push(`provider-key pattern in ${name}`);
     if (/api[-_]?key=[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i.test(text)) f.push(`api-key=<uuid> in ${name}`);
     if (/["']?HELIUS_API_KEY["']?\s*[:=]\s*["'][0-9a-f-]{36}["']/i.test(text)) f.push(`HELIUS_API_KEY literal in ${name}`);
   }
@@ -186,8 +197,14 @@ export function checkPermissions(manifest) {
   if (manifest.manifest_version !== 3) f.push(`manifest_version ${manifest.manifest_version} (need 3)`);
   for (const p of manifest.permissions ?? []) if (!MAX_PERMISSIONS.has(p)) f.push(`permission ${p}`);
   for (const p of manifest.optional_permissions ?? []) f.push(`optional permission ${p}`);
-  for (const h of [...(manifest.host_permissions ?? []), ...(manifest.optional_host_permissions ?? [])]) {
+  for (const h of manifest.host_permissions ?? []) {
     if (!ALLOWED_HOST_PERMISSIONS.has(h)) f.push(`host permission ${h}`);
+  }
+  // Arbitrary compatible HTTPS providers require optional capability. The actual runtime grant must
+  // be the exact configured origin; wildcard required host_permissions remain forbidden.
+  const optionalHosts = new Set(["https://*/*", "http://localhost/*", "http://127.0.0.1/*", "http://[::1]/*"]);
+  for (const h of manifest.optional_host_permissions ?? []) {
+    if (!optionalHosts.has(h) && !ALLOWED_HOST_PERMISSIONS.has(h)) f.push(`optional host capability ${h}`);
   }
   for (const cs of manifest.content_scripts ?? []) {
     for (const m of cs.matches ?? []) if (!ALLOWED_CONTENT_MATCHES.has(m)) f.push(`content_scripts match ${m}`);

@@ -7,6 +7,7 @@
 // can before that point, so a regression in what exists FAILs. The runner
 // (tools/selfcheck/src/e2e.mjs) maps any failure to FAIL, else any pending to PENDING (78).
 import { test as base, expect, chromium, type BrowserContext, type Frame, type Page, type Worker } from "../../tools/selfcheck/src/playwright.mjs";
+import { providerOrigin, providerRequestAllowed } from "../../tools/selfcheck/src/provider-policy.mjs";
 import { hasRealEngine as detectRealEngine } from "../../tools/selfcheck/src/engine-readiness.mjs";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
@@ -157,6 +158,8 @@ export interface Ext {
   configure(s: { heliusApiKey?: string; network?: "mainnet" | "devnet" | "localnet" }): Promise<void>;
   /** Entries the service worker logged (captureLog, newest first). */
   captureLog(): Promise<CaptureEntry[]>;
+  /** Refresh runtime oracle only after an options Save gesture; storage alone is not a permission. */
+  approveConfiguredProvider(): Promise<void>;
 }
 
 export interface CaptureEntry {
@@ -194,6 +197,20 @@ export const test = base.extend<{ ext: Ext }>({
           sw.evaluate(async (v) => {
             await (globalThis as unknown as { chrome: { storage: { local: { set(o: object): Promise<void> } } } }).chrome.storage.local.set(v);
           }, s),
+        approveConfiguredProvider: async () => {
+          const state = await sw.evaluate(async () => {
+            const c = (globalThis as unknown as { chrome: {
+              storage: { local: { get(k: string): Promise<Record<string, unknown>> } };
+              permissions: { getAll(): Promise<{ origins?: string[] }> };
+            } }).chrome;
+            const saved = await c.storage.local.get("aiProvider");
+            return { provider: saved.aiProvider as { url?: string; enabled?: boolean } | undefined, grants: (await c.permissions.getAll()).origins ?? [] };
+          });
+          expect(state.provider?.enabled).toBe(true);
+          expect(providerOrigin(state.provider?.url ?? "")).not.toBeNull();
+          expect(providerRequestAllowed(state.provider!.url!, state.provider!.url!, state.grants)).toBe(true);
+          net.approve(state.provider!.url!, state.grants);
+        },
         captureLog: () =>
           sw.evaluate(async () => {
             const c = (globalThis as unknown as { chrome: { storage: { local: { get(k: string): Promise<Record<string, unknown>> } } } }).chrome;
@@ -232,11 +249,19 @@ export function hostAllowedAtRuntime(u: URL): boolean {
  */
 function networkGuard(context: BrowserContext) {
   const seen: string[] = [];
-  const bad = (url: string) => { try { return !hostAllowedAtRuntime(new URL(url)); } catch { return true; } };
+  let provider: { url: string; grants: string[] } | undefined;
+  const bad = (url: string, redirected = false) => {
+    try {
+      if (redirected) return true; // Includes redirects back into Helius/loopback: a provider key must never follow.
+      if (hostAllowedAtRuntime(new URL(url))) return false;
+      return !provider || !providerRequestAllowed(url, provider.url, provider.grants, redirected);
+    } catch { return true; }
+  };
   return {
+    approve: (url: string, grants: string[]) => { provider = { url, grants }; },
     install: async () => {
-      context.on("request", (r) => { if (bad(r.url())) seen.push(`${r.serviceWorker() ? "sw" : "page"} ${r.method()} ${redact(r.url())}`); });
-      await context.route((u) => !hostAllowedAtRuntime(u), (route) => route.abort("blockedbyclient"));
+      context.on("request", (r) => { if (bad(r.url(), !!r.redirectedFrom())) seen.push(`${r.serviceWorker() ? "sw" : "page"} ${r.method()} ${redact(r.url())}`); });
+      await context.route("**/*", (route) => bad(route.request().url(), !!route.request().redirectedFrom()) ? route.abort("blockedbyclient") : route.continue());
     },
     watchSockets: (sw: Worker) => sw.evaluate(() => {
       const g = globalThis as unknown as Record<string, unknown> & { __kelvaraSockets?: string[] };
