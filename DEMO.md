@@ -239,7 +239,7 @@ Not tested by an agent (human only): Solflare imports, clicking in the pages wit
 
 ## Devnet playground hub — one account for all previews
 
-Open **http://localhost:8780** (also http://127.0.0.1:8780). Enable SignGuard and configure devnet/Helius in its options. Manually import **one** dedicated devnet account from the local file shown at the top of the hub, connect it once through Wallet Standard Phantom/Solflare/Backpack, and all four cards become available together. The canonical account is the existing Squads Member A; trap and sweep transactions now use that same actual signer. GOOD also supports another funded devnet wallet. SignGuard can show a report for GOOD as well; inspect the level rather than expecting silence.
+Open **http://localhost:47731** (also http://127.0.0.1:47731). Enable SignGuard and configure devnet/Helius in its options. Manually import **one** dedicated devnet account from the local file shown at the top of the hub, connect it once through Wallet Standard Phantom/Solflare/Backpack, and all four cards become available together. The canonical account is the existing Squads Member A; trap and sweep transactions now use that same actual signer. GOOD also supports another funded devnet wallet. SignGuard can show a report for GOOD as well; inspect the level rather than expecting silence. Set `PORT` to override the default 47731 (the Host/Origin allowlist follows the bound port); 8780 is no longer served.
 
 | Preview | Expected level |
 | --- | --- |
