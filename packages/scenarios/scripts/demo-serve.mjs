@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* global Buffer */
 import { createServer } from 'node:http';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { b58decode, b58encode, compileLegacy, readKeypair } from './lib/tx.mjs';
@@ -10,6 +10,7 @@ import { KEYS, PKG, REPO } from './lib/devnet.mjs';
 import { buildBuy, partialSign } from './trap-local.mjs';
 import { SHARED_STATE, sharedAccount } from './demo-prepare.mjs';
 import { currentSweep, unsignedWire } from './sweep-devnet.mjs';
+import { FEE_STATE, feeApproval } from './demo-prepare-fees.mjs';
 const assets = resolve(dirname(fileURLToPath(import.meta.url)), '../demo');
 export function validateAccount(value) {
   if (typeof value !== 'string' || !/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(value)) throw new Error('Invalid wallet address');
@@ -57,14 +58,17 @@ export async function loadPlayground() {
   const catalog = [
     { id: 'good', title: 'A harmless hello', expected: 'L0', label: 'GOOD · Memo', description: 'A plain memo signed by your connected account. Only the network fee would apply if submitted.', account: null },
     { id: 'trap', title: 'The shiny token trap', expected: 'L2', label: 'BAD · Token-2022', description: 'Buy SHINY: its creator keeps a permanent delegate and freeze authority over your tokens.', account: shared.account },
-    { id: 'admin', title: 'The disguised council vote', expected: 'L3', label: 'BAD · Authority hijack', description: 'A “Q4 fee update” approves a Squads proposal that transfers program upgrade authority to an attacker.', account: shared.account },
+    { id: 'admin', title: 'Q4 fee update', expected: 'L3', label: 'BAD · Authority hijack', description: 'A “Q4 fee update” approves a Squads proposal that transfers program upgrade authority to an attacker.', account: shared.account },
     { id: 'sweep', title: 'The airdrop that takes everything', expected: 'L4', label: 'BAD · Wallet sweep', description: 'A claim drains all SOL and both token balances to a non-signing collector, then closes your token accounts.', account: shared.account }
   ];
+  const fees = existsSync(FEE_STATE) ? JSON.parse(readFileSync(FEE_STATE)) : null;
+  if (fees) catalog.push({ id: 'fees', title: 'Q4 fee update', expected: 'Proposed fee change', label: 'FEE · Council vote', description: 'Approve a real Token-2022 fee proposal: 25 → 75 basis points (0.25% → 0.75%); maximum 1 → 2 tokens (6 decimals). Execution schedules activation two epochs later; approval does not execute it.', account: shared.account });
   const transaction = async (kind, account) => {
     if (kind === 'admin') return { transaction: readFileSync(join(PKG, '.devnet/admin/approval.unsigned.b64'), 'utf8').trim(), durableNonce: admin.nonce.account };
     const { value: bh } = await rpc.call('getLatestBlockhash', [{ commitment: 'confirmed' }]);
     let wire;
-    if (kind === 'good') {
+    if (kind === 'fees' && fees) wire = feeApproval(fees, bh.blockhash);
+    else if (kind === 'good') {
       const compiled = compileLegacy({ feePayer: account, recentBlockhash: bh.blockhash, instructions: [{ programId: 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr', keys: [{ pubkey: account, isSigner: true, isWritable: false }], data: Buffer.from('Hello from SignGuard devnet playground') }] });
       wire = unsignedWire(compiled);
     } else if (kind === 'trap') wire = partialSign(buildBuy({ user: shared.account, seller: trap.seller, mint: trap.token.mint, recentBlockhash: bh.blockhash }).compiled, readKeypair(join(KEYS, 'trap-seller.json')));
