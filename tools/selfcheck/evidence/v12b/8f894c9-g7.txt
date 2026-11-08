@@ -1,0 +1,37 @@
+# G7 e2e  2026-11-08T01:54:25Z  commit 8f894c9  branch HEAD
+Running 29 tests using 1 worker
+
+  ✓   1 test-dapp/e2e/fail-closed.spec.ts:19:1 › held request with no answer is blocked after the 90 s timeout (1.5m)
+  ✓   2 test-dapp/e2e/fail-closed.spec.ts:35:1 › page removing the report UI gets the request blocked (1.5s)
+  ✓   3 test-dapp/e2e/forged-approval.spec.ts:17:3 › ws-register: forged approval is rejected and the wallet is never called (5.9s)
+  ✓   4 test-dapp/e2e/forged-approval.spec.ts:17:3 › ws-app-ready: forged approval is rejected and the wallet is never called (4.9s)
+  ✓   5 test-dapp/e2e/forged-approval.spec.ts:17:3 › legacy: forged approval is rejected and the wallet is never called (4.9s)
+  ✓   6 test-dapp/e2e/hook-paths.spec.ts:26:1 › all three wallet paths are discovered through the hook (956ms)
+  ✓   7 test-dapp/e2e/hook-paths.spec.ts:38:3 › ws-register signTransaction is caught (1.6s)
+  ✓   8 test-dapp/e2e/hook-paths.spec.ts:38:3 › ws-register signAndSendTransaction is caught (3.5s)
+  ✓   9 test-dapp/e2e/hook-paths.spec.ts:38:3 › ws-app-ready signTransaction is caught (1.5s)
+  ✓  10 test-dapp/e2e/hook-paths.spec.ts:38:3 › ws-app-ready signAndSendTransaction is caught (2.5s)
+  ✓  11 test-dapp/e2e/hook-paths.spec.ts:38:3 › legacy signTransaction (object) is caught (1.5s)
+  ✓  12 test-dapp/e2e/hook-paths.spec.ts:38:3 › legacy signTransaction (bytes) is caught (3.5s)
+  ✓  13 test-dapp/e2e/hook-paths.spec.ts:38:3 › legacy signAllTransactions (object) is caught (1.9s)
+  ✓  14 test-dapp/e2e/hook-paths.spec.ts:38:3 › legacy signAndSendTransaction (object) is caught (1.5s)
+  ✓  15 test-dapp/e2e/levels.spec.ts:36:59 › L4 sweep (localnet) is rejected at once with no Sign anyway; wallet never called (1.5s)
+  ✓  16 test-dapp/e2e/levels.spec.ts:36:59 › L4 realistic ATA create + close sweep (localnet) is rejected at once with no Sign anyway; wallet never called (1.4s)
+  ✓  17 test-dapp/e2e/levels.spec.ts:51:1 › L3 admin approval (localnet) is held with Block as default; Block leaves the wallet uncalled (3.5s)
+  ✓  18 test-dapp/e2e/levels.spec.ts:73:3 › ws-register: L3 admin (localnet) Sign anyway needs a hold, then calls the wallet once with identical bytes (11.3s)
+  ✓  19 test-dapp/e2e/levels.spec.ts:73:3 › legacy: L3 admin (localnet) Sign anyway needs a hold, then calls the wallet once with identical bytes (13.4s)
+  ✓  20 test-dapp/e2e/levels.spec.ts:95:1 › L2 trap purchase (localnet) is held with both buttons; Block leaves the wallet uncalled (4.6s)
+  ✓  21 test-dapp/e2e/levels.spec.ts:113:5 › ws-app-ready: benign transfer is held with a full L0/L1 modal; continue decides wallet forwarding (6.9s)
+  ✓  22 test-dapp/e2e/levels.spec.ts:113:5 › ws-app-ready: benign transfer is held with a full L0/L1 modal; block decides wallet forwarding (4.4s)
+  ✓  23 test-dapp/e2e/levels.spec.ts:113:5 › legacy: benign transfer is held with a full L0/L1 modal; continue decides wallet forwarding (6.9s)
+  ✓  24 test-dapp/e2e/levels.spec.ts:113:5 › legacy: benign transfer is held with a full L0/L1 modal; block decides wallet forwarding (4.4s)
+  ✓  25 test-dapp/e2e/report-iframe.spec.ts:16:1 › page-framed report.html gets no channel and cannot approve a held request (8.9s)
+  ✓  26 test-dapp/e2e/v1-wire.spec.ts:30:58 › ws-app-ready: v1 message-first Kamino request is held at L0; continue decides wallet forwarding (6.9s)
+  ✓  27 test-dapp/e2e/v1-wire.spec.ts:30:58 › ws-app-ready: v1 message-first Kamino request is held at L0; block decides wallet forwarding (4.1s)
+  ✓  28 test-dapp/e2e/v1-wire.spec.ts:30:58 › legacy: v1 message-first Kamino request is held at L0; continue decides wallet forwarding (6.9s)
+  ✓  29 test-dapp/e2e/v1-wire.spec.ts:30:58 › legacy: v1 message-first Kamino request is held at L0; block decides wallet forwarding (4.6s)
+
+  29 passed (3.7m)
+G7 PASS    e2e
+SELFCHECK-SUMMARY: 29 e2e cases pass headless
+# exit 0 after 252.4s
