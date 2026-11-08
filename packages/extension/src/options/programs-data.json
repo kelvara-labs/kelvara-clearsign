@@ -1,0 +1,134 @@
+[
+ {
+  "name": "system",
+  "title": "System Program",
+  "programId": "11111111111111111111111111111111",
+  "kind": "Codama",
+  "understands": [
+   "transfers",
+   "account ownership and closing"
+  ],
+  "source": "Official repo",
+  "verification": "Official",
+  "detail": "official Codama IDL from the program's repo at the commit that published the pinned client; native program, no on-chain IDL account"
+ },
+ {
+  "name": "token",
+  "title": "SPL Token",
+  "programId": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+  "kind": "Codama",
+  "understands": [
+   "authority changes",
+   "mint authority",
+   "freezing",
+   "transfers",
+   "delegates and spending limits",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "Official repo",
+  "verification": "Official",
+  "detail": "official Codama IDL from the program's repo at the commit that published the pinned client; native program, no on-chain IDL account"
+ },
+ {
+  "name": "token-2022",
+  "title": "Token-2022",
+  "programId": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
+  "kind": "Codama",
+  "understands": [
+   "authority changes",
+   "mint authority",
+   "freezing",
+   "transfers",
+   "delegates and spending limits",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "Official repo",
+  "verification": "Official",
+  "detail": "official Codama IDL from the program's repo at the commit that published the pinned client; native program, no on-chain IDL account"
+ },
+ {
+  "name": "bpf-loader-upgradeable",
+  "title": "BPF Loader (upgradeable)",
+  "programId": "BPFLoaderUpgradeab1e11111111111111111111111",
+  "kind": "Built-in",
+  "understands": [
+   "program upgrades",
+   "account ownership and closing"
+  ],
+  "source": "Built-in decoder",
+  "verification": "Built in",
+  "detail": "hand-written decoder packages/core/src/decode/builtin.ts"
+ },
+ {
+  "name": "squads-v4",
+  "title": "Squads v4",
+  "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "transfers",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "on-chain IDL account, hash pinned, but the program is immutable (no upgrade authority), so the IDL authority HM5y4mz3Bt9JY9mr1hkyhnvqxSH4H2u2451j7Hc2dtvK cannot be tied to the deployed code"
+ },
+ {
+  "name": "drift-v2",
+  "title": "Drift v2",
+  "programId": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "mint authority",
+   "freezing",
+   "transfers",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "on-chain IDL account, hash pinned, but its authority Fqo8WncpiP55ExPhuWLzMbm1cuYuJpXjhQPnd8ak3Pyn is not the upgrade authority 8jj7zJgdr5bDndc7evM74FMGwzLPmd4u4QxNzFi1BMai"
+ },
+ {
+  "name": "marginfi-v2",
+  "title": "marginfi v2",
+  "programId": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "freezing",
+   "transfers",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "on-chain IDL account, hash pinned, but its authority H5U6dy9ch6puEFPY3t8jEaVQnVfYPUDANQkA4XG6peUo is not the upgrade authority J3oBkTkDXU3TcAggJEa3YeBZE5om5yNAdTtLVNXFD47"
+ },
+ {
+  "name": "memo",
+  "title": "Memo",
+  "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
+  "kind": "Built-in",
+  "understands": [],
+  "source": "Built-in decoder",
+  "verification": "Built in",
+  "detail": "hand-written decoder packages/core/src/decode/builtin.ts"
+ },
+ {
+  "name": "compute-budget",
+  "title": "Compute Budget",
+  "programId": "ComputeBudget111111111111111111111111111111",
+  "kind": "Built-in",
+  "understands": [
+   "fees and compute limits"
+  ],
+  "source": "Built-in decoder",
+  "verification": "Built in",
+  "detail": "hand-written decoder packages/core/src/decode/builtin.ts"
+ }
+]
