@@ -1,8 +1,9 @@
 // Real recorded RPC/state positive cases; explicit synthetic mutations exercise trust boundaries.
 import { describe, expect, it } from "vitest";
-import { analyzeSession, buildIntentContext, validateIntentContext, ReportBuilder, runRules, TOKEN_2022_PROGRAM, MEMO_PROGRAM, type IntentContext, type RuleState, type DecodedInstruction, type ResolvedInstruction, type SquadsMessage } from "../src/index.js";
+import { analyzeSession, buildIntentContext, validateIntentContext, ReportBuilder, runRules, toJsonValue, TOKEN_2022_PROGRAM, MEMO_PROGRAM, type IntentContext, type RuleState, type DecodedInstruction, type ResolvedInstruction, type SquadsMessage } from "../src/index.js";
 import type { Address } from "@solana/kit";
 import { decoder, json, replay, sessionOf, squadsAccounts, type Recording } from "./rules-helpers.js";
+import { addIntentSourceEvidence } from "../src/analyze/intent.js";
 import { requestCase, poisonManifest } from "./address-helpers.js";
 
 const devnet = poisonManifest.cases.find((c) => c.kind === "poisoning" && c.network === "devnet")!;
@@ -149,7 +150,8 @@ describe("evidence-bound intent", () => {
     decoded[0]!.push(memo);
     const build = (state: RuleState) => {
       const builder = new ReportBuilder(session);
-      runRules({session, decoded, state, decoder, report: builder});
+      const ctx = runRules({session, decoded, state, decoder, report: builder});
+      addIntentSourceEvidence(ctx);
       return builder.build();
     };
     const feeReport = build(changed);
@@ -167,6 +169,43 @@ describe("evidence-bound intent", () => {
     const attack = buildIntentContext({session, decoded, state, report: attackReport, decoder});
     expect(attack.candidates[0]?.kind).toBe("authority");
     expect(attack.candidates.some((x) => x.kind === "fees")).toBe(false);
+  });
+
+  it("retains real S17 fetched fee-proposal state and decoded inner instruction as report evidence", async () => {
+    const recorded = json<{approvalWire: string; state: RuleState; approvalInstruction: unknown}>("packages/core/test/fixtures/analyze/fee-proposal-state.json");
+    const state = structuredClone(recorded.state);
+    for (const account of Object.values(state.squads!)) for (const field of ["index", "transactionIndex", "staleTransactionIndex"]) {
+      const value = account.data[field];
+      if (typeof value === "string") account.data[field] = BigInt(value);
+    }
+    const stored = state.squads!["2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC"]!;
+    const message = stored.data.message as SquadsMessage;
+    // JSON serialization of genuine Uint8Array state; restore bytes without altering values.
+    for (const ix of message.instructions) {
+      ix.accountIndexes = Uint8Array.from(Object.values(ix.accountIndexes));
+      ix.data = Uint8Array.from(Object.values(ix.data));
+    }
+    const session = await sessionOf([recorded.approvalWire]);
+    const {report, intentContext: c} = await analyzeSession(session, {decoder, state});
+    expect(c.messageHashes).toEqual(report.session.transactions.map((t) => t.messageHash));
+    expect(report.evidence.find((e) => e.type === "instruction" && e.instructionPath?.length === 1)?.data).toEqual(recorded.approvalInstruction);
+    const fee = c.candidates.find((x) => x.kind === "fees")!;
+    expect(fee).toBeDefined();
+    expect(fee.reasons[0]!.text).toContain("75 basis points, maximum 2000000 base units");
+    const source = report.evidence.find((e) => e.type === "account" && e.address === "2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC")!;
+    expect(source).toBeDefined();
+    expect(source.data).toEqual({name: stored.name, data: toJsonValue(stored.data)});
+    expect(fee.reasons[0]!.evidenceIds).toContain(source.id);
+    const inner = report.evidence.find((e) => e.type === "instruction" && e.instructionPath?.length === 2 && e.data && typeof e.data === "object" && !Array.isArray(e.data) && e.data.name === "setTransferFee")!;
+    expect(inner).toBeDefined();
+    expect(fee.reasons[0]!.evidenceIds).toContain(inner.id);
+    expect(report.claims.some((claim) => claim.kind === "Fact" && claim.evidenceIds.includes(source.id) && claim.evidenceIds.includes(inner.id))).toBe(true);
+    expect((await analyzeSession(session, {decoder, state})).report.digest).toBe(report.digest);
+    // A previously-built approval-only report cannot stand in for the missing stored snapshot.
+    const missingSource = {...report, evidence: report.evidence.filter((e) => e.id !== source.id)};
+    const unavailable = buildIntentContext({session, state, decoded: decoder.decodeSession(session), report: missingSource, decoder});
+    expect(unavailable.candidates.some((x) => x.kind === "fees")).toBe(false);
+    expect(unavailable.candidates.some((x) => x.kind === "unknown")).toBe(true);
   });
 
   it("rejects malformed shapes, caps, duplicate ids, invalid comparisons and stale hash binding", async () => {
