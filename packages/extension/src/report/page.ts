@@ -1,11 +1,12 @@
 import { assessmentCard } from "./intent.js";
+import { withTokens } from "./tokens.js";
 import { messageReview } from "./message.js";
 // The report page inside the extension iframe (report.html). Receives the verdict from
 // the bridge with the per-report secret and a MessagePort, renders it as text only, and
 // answers { allow } on the port. Contract for G7: test-dapp/e2e/README.md.
 import { fallbackExplanation, readExplanation, type Explanation } from "../shared/explanation.js";
 import { isId, SW_EXPLAIN, validateWorkerVerdict, type WorkerVerdict } from "../shared/protocol.js";
-import { rankedCapabilities, type Claim, type EvidenceItem, type ReportView } from "../shared/report-view.js";
+import { rankedCapabilities, type Claim, type EvidenceItem, type RawInstruction, type ReportView } from "../shared/report-view.js";
 import { buttonsFor, HoldGesture, IntentFlow, LEVEL_NAMES, reportMode, statusLine, VisibilityGate } from "./model.js";
 
 type Kids = (Node | string | null | false)[];
@@ -50,7 +51,7 @@ function evidenceCard(e: EvidenceItem): HTMLElement {
   );
 }
 
-function claimCard(c: Claim, evidence: Map<string, EvidenceItem>): HTMLElement {
+function claimCard(c: Claim, evidence: Map<string, EvidenceItem>, tokens?: ReportView["tokens"]): HTMLElement {
   const items = c.evidenceIds.map((id) => evidence.get(id)).filter((e): e is EvidenceItem => !!e);
   const card = el(
     "details",
@@ -58,7 +59,7 @@ function claimCard(c: Claim, evidence: Map<string, EvidenceItem>): HTMLElement {
     c.rule?.startsWith("fact.")
       ? el("summary", {}, el("strong", { class: "claim-title" }, c.title))
       : el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), c.level ? el("span", { class: "claim-level" }, c.level) : null, " ", el("strong", { class: "claim-title" }, c.title)),
-    el("p", { class: "claim-text" }, c.text),
+    el("p", { class: "claim-text" }, ...withTokens(c.text, tokens)),
     c.advice ? el("p", { class: "advice" }, c.advice) : null,
     items.length ? el("div", { class: "explorer" }, ...items.map(evidenceCard)) : el("p", { class: "muted" }, "No evidence attached."),
     c.moreEvidence ? el("p", { class: "muted" }, `and ${c.moreEvidence} more evidence item${c.moreEvidence === 1 ? "" : "s"}`) : null,
@@ -91,14 +92,39 @@ function instructionList(r: ReportView): HTMLElement | null {
     el(
       "li",
       { class: i.name ? "ix" : "ix ix-unknown", "data-ix": `${i.tx}:${i.path}` },
-      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable)),
+      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable), i.raw ? copyRawButton(i.raw) : null),
       i.args.length || i.accounts.length
-        ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, /^\d+$/.test(f.value) ? Number(f.value).toLocaleString("en-US") : addr(f.value))]))
+        ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, ...(/^\d+$/.test(f.value) ? [Number(f.value).toLocaleString("en-US")] : r.tokens?.some((t) => f.value.includes(t.label)) ? withTokens(f.value, r.tokens) : [addr(f.value)]))]))
         : null
     );
   if (!multi) return section("Instructions", el("ol", { class: "instructions" }, ...list.map(line)));
   const txs = [...new Set(list.map((i) => i.tx))];
   return section("Instructions", ...txs.flatMap((t) => [el("h3", {}, `Transaction ${t + 1}`), el("ol", { class: "instructions" }, ...list.filter((i) => i.tx === t).map(line))]));
+}
+
+/** Small "Copy raw" button: copies the instruction as JSON on click only. Not a decision control. */
+export function copyRawButton(raw: RawInstruction, clipboard: () => Pick<Clipboard, "writeText"> | undefined = () => navigator.clipboard): HTMLButtonElement {
+  const b = el("button", { type: "button", class: "copy-raw", "data-copy-raw": `${raw.transaction}:${raw.index}`, "aria-label": "Copy raw instruction as JSON" }, "Copy raw");
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  b.addEventListener("click", () => {
+    void Promise.resolve(clipboard()?.writeText(JSON.stringify(raw, null, 2))).then(
+      () => {
+        b.textContent = "Copied";
+        clearTimeout(timer);
+        timer = setTimeout(() => { b.textContent = "Copy raw"; }, 2000);
+      },
+      () => { b.textContent = "Copy failed"; }
+    );
+  });
+  return b;
+}
+
+/** "You send · −23.18 USDC": who/what split, coloured by direction. */
+function balanceRow(b: string, tokens: ReportView["tokens"]): HTMLElement {
+  const [who, ...rest] = b.split(" · ");
+  const what = rest.join(" · ");
+  const dir = /^You send/.test(b) || what.startsWith("−") ? "out" : /^You receive/.test(b) || what.startsWith("+") ? "in" : "state";
+  return el("li", { "data-balance": "", class: dir }, el("span", { class: "who" }, who ?? b), el("span", { class: "what" }, ...withTokens(what, tokens)));
 }
 
 /** Step 2: simulation, instructions, new states, capability changes, claims with evidence, Ledger hash. */
@@ -111,14 +137,15 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
       el(
         "section",
         { class: "versus" },
-        r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), el("p", {}, r.authorizes)) : null,
+        r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), el("p", {}, ...withTokens(r.authorizes, r.tokens))) : null,
         el(
           "div",
           { class: "simulation" },
           el("h2", {}, "What simulation shows"),
           r.details?.balances?.length
-            ? el("ul", { class: "balances" }, ...r.details.balances.map((b) => { const [who, ...rest] = b.split(" · "); const what = rest.join(" · "); return el("li", { "data-balance": "", class: what.startsWith("−") ? "out" : what.startsWith("+") ? "in" : "state" }, el("span", { class: "who" }, who ?? b), el("span", { class: "what" }, what)); }))
-            : el("p", {}, r.simulation ?? "Not simulated")
+            ? el("ul", { class: "balances" }, ...r.details.balances.map((b) => balanceRow(b, r.tokens)))
+            : el("p", {}, r.simulation ?? "Not simulated"),
+          r.details?.other?.length ? el("details", { class: "other-accounts", "data-other-accounts": "" }, el("summary", {}, `Other accounts (${r.details.other.length})`), el("ul", { class: "balances" }, ...r.details.other.map((b) => balanceRow(b, r.tokens)))) : null
         )
       )
     );
@@ -126,13 +153,13 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
   const ix = instructionList(r);
   if (ix) out.push(ix);
   const changes = r.details?.changes ?? [];
-  if (changes.length) out.push(section("What changes after signing", el("ul", { class: "changes" }, ...changes.map((c) => el("li", {}, c)))));
+  if (changes.length) out.push(section("What changes after signing", el("ul", { class: "changes" }, ...changes.map((c) => el("li", {}, ...withTokens(c, r.tokens))))));
   const caps = rankedCapabilities(r);
   if (caps.length) {
     out.push(
       section(
         r.limited ? "Top finding" : "Permission changes, most dangerous first",
-        el("ol", { class: "caps" }, ...caps.map((c) => el("li", { "data-risk": c.risk }, el("span", { class: "risk" }, c.risk), ` ${c.change === "granted" ? "Grants" : "Revokes"} ${c.authority} → `, addr(c.holder))))
+        el("ol", { class: "caps" }, ...caps.map((c) => el("li", { "data-risk": c.risk }, el("span", { class: "risk" }, c.risk), ` ${c.change === "granted" ? "Grants" : "Revokes"} `, ...withTokens(c.authority, r.tokens), " → ", ...(r.tokens?.some((t) => c.holder.includes(t.label)) ? withTokens(c.holder, r.tokens) : [addr(c.holder)]))))
       )
     );
   }
@@ -151,8 +178,8 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
     const isFact = (c: Claim) => c.kind === "Fact" && !!c.rule?.startsWith("fact.");
     const facts = r.claims.filter(isFact);
     const risks = r.claims.filter((c) => !isFact(c));
-    const factSection = facts.length ? section("What this transaction does", ...facts.map((c) => claimCard(c, byId))) : null;
-    const riskSection = risks.length ? section(r.limited ? "Top finding" : "Findings (open for evidence)", ...risks.map((c) => claimCard(c, byId))) : null;
+    const factSection = facts.length ? section("What this transaction does", ...facts.map((c) => claimCard(c, byId, r.tokens))) : null;
+    const riskSection = risks.length ? section(r.limited ? "Top finding" : "Findings (open for evidence)", ...risks.map((c) => claimCard(c, byId, r.tokens))) : null;
     const first = v.level !== null && v.level <= 1;
     out.push(...[first ? factSection : riskSection, first ? riskSection : factSection].filter((x): x is HTMLElement => !!x));
   }
@@ -231,7 +258,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
 
   // Hold mode is two steps: confirm the intent first, then the review details and the decision controls.
   const stepped = mode === "hold" && !!r;
-  const assessment = stepped ? assessmentCard(r!.message ? undefined : r!.intent, v.level, r!.message ? "Did you intend to sign this message?" : undefined) : null;
+  const assessment = stepped ? assessmentCard(r!.message ? undefined : r!.intent, v.level, r!.message ? "Did you intend to sign this message?" : undefined, r!.tokens) : null;
   const details = el("div", { class: "review-details", "data-report-step": "details" }, ...detailsStep(v, r), r && r.messageHashes.length ? hashLine(r.messageHashes) : null);
   const footer = el("footer", { class: "decision" }, status, block);
   if (assessment) {
@@ -240,7 +267,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
     card.append(assessment.node, details);
   } else {
     card.setAttribute("data-report-current", "details");
-    card.append(...(r ? [el("p", { class: "summary" }, r.summary)] : []), details);
+    card.append(...(r ? [el("p", { class: "summary" }, ...withTokens(r.summary, r.tokens))] : []), details);
   }
 
   const flow = new IntentFlow();

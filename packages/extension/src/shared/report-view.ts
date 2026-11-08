@@ -80,7 +80,19 @@ export interface Claim {
 }
 
 /** One instruction of the request, in order, named from the IDL; name is null when it could not be decoded. */
+/** One instruction exactly as signed (from the message bytes), for the "Copy raw" button. */
+export interface RawInstruction {
+  transaction: number;
+  index: number;
+  programId: string;
+  accounts: { address: string; signer: boolean; writable: boolean }[];
+  /** Instruction data, base64 and base58. */
+  data: string;
+  dataBase58: string;
+}
+
 export interface InstructionLine {
+  raw?: RawInstruction;
   tx: number;
   path: string;
   /** Display name of the program ("System Program") or its address. */
@@ -96,9 +108,15 @@ export interface ReportDetails {
   changes: string[];
   /** Plain balance lines from the simulation, one per account and asset ("You · −23.18 USDC"). */
   balances?: string[];
+  /** Net changes of other owners (pools, routers), per owner and asset; shown collapsed. */
+  other?: string[];
 }
 
+/** A token named in the report text: the label as written there and its full mint (shown on hover). */
+export interface TokenRef { mint: string; label: string }
+
 export interface ReportView {
+  tokens?: TokenRef[];
   intent?: ReportIntent;
   details?: ReportDetails;
   /** Message-signing review (signMessage / signIn); the transaction sections are then empty. */
@@ -191,10 +209,27 @@ function isEvidence(x: unknown): x is EvidenceItem {
   );
 }
 
+const B64_DATA = /^[A-Za-z0-9+/]*={0,2}$/;
+const B58_DATA = /^[1-9A-HJ-NP-Za-km-z]*$/;
+const RAW_DATA_MAX = 2048;
+function isRaw(x: unknown, tx: unknown, path: unknown): x is RawInstruction {
+  return (
+    plain(x) &&
+    exact(x, ["transaction", "index", "programId", "accounts", "data", "dataBase58"]) &&
+    x.transaction === tx && Number.isInteger(x.index) && String(x.index) === path &&
+    typeof x.programId === "string" && B58_HASH.test(x.programId) &&
+    Array.isArray(x.accounts) && x.accounts.length <= 255 &&
+    x.accounts.every((a) => plain(a) && exact(a, ["address", "signer", "writable"]) && typeof a.address === "string" && B58_HASH.test(a.address) && typeof a.signer === "boolean" && typeof a.writable === "boolean") &&
+    typeof x.data === "string" && x.data.length <= RAW_DATA_MAX && B64_DATA.test(x.data) &&
+    typeof x.dataBase58 === "string" && x.dataBase58.length <= RAW_DATA_MAX && B58_DATA.test(x.dataBase58)
+  );
+}
+
 function isInstructionLine(x: unknown): x is InstructionLine {
   return (
     plain(x) &&
-    exact(x, ["tx", "path", "program", "name", "args", "accounts"]) &&
+    exact(x, ["tx", "path", "program", "name", "args", "accounts", ...(Object.hasOwn(x, "raw") ? ["raw"] : [])]) &&
+    (!Object.hasOwn(x, "raw") || isRaw(x.raw, x.tx, x.path)) &&
     Number.isInteger(x.tx) && (x.tx as number) >= 0 &&
     typeof x.path === "string" && /^[0-9]{1,4}(\.[0-9]{1,4}){0,7}$/.test(x.path) &&
     str(x.program, MAX_SHORT) && x.program.length > 0 &&
@@ -204,7 +239,7 @@ function isInstructionLine(x: unknown): x is InstructionLine {
 }
 
 function isDetails(x: unknown): x is ReportDetails {
-  return plain(x) && exact(x, ["instructions", "changes", ...(Object.hasOwn(x, "balances") ? ["balances"] : [])]) && list(x.instructions, isInstructionLine, MAX_ITEMS) && list(x.changes, (v): v is string => str(v, 600), 32) && (!Object.hasOwn(x, "balances") || list(x.balances, (v): v is string => str(v, 300), 32));
+  return plain(x) && exact(x, ["instructions", "changes", ...(Object.hasOwn(x, "balances") ? ["balances"] : []), ...(Object.hasOwn(x, "other") ? ["other"] : [])]) && list(x.instructions, isInstructionLine, MAX_ITEMS) && list(x.changes, (v): v is string => str(v, 600), 32) && (!Object.hasOwn(x, "balances") || list(x.balances, (v): v is string => str(v, 300), 32)) && (!Object.hasOwn(x, "other") || list(x.other, (v): v is string => str(v, 300), 32));
 }
 
 function isClaim(x: unknown): x is Claim {
@@ -226,7 +261,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : []), ...(Object.hasOwn(x, "tokens") ? ["tokens"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -244,6 +279,7 @@ export function validateReportView(x: unknown): ReportView | null {
   if (Object.hasOwn(x, "network") && !oneOf(x.network, REPORT_NETWORKS)) return null;
   if (Object.hasOwn(x, "routedBy") && !str(x.routedBy, 64)) return null;
   if (Object.hasOwn(x, "trustedSite") && !str(x.trustedSite, 64)) return null;
+  if (Object.hasOwn(x, "tokens") && !list(x.tokens, (t): t is TokenRef => plain(t) && exact(t, ["mint", "label"]) && str(t.mint, 64) && str(t.label, 64) && t.label.length > 0, 32)) return null;
   return x as unknown as ReportView;
 }
 

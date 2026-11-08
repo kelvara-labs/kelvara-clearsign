@@ -8,5 +8,5 @@ import { templateIntent, type ReportIntent } from "../intent/selection.js";
 export function routedIntent(context: IntentContext): ReportIntent | undefined {
   const rest = context.candidates.filter((c) => c.kind !== "unknown");
   if (!rest.length) return undefined;
-  return templateIntent({ ...context, candidates: rest, fallbackId: rest[0]!.id, complex: rest.some((c) => c.kind !== "memo" && c.kind !== "transfer") });
+  return templateIntent({ ...context, candidates: rest, fallbackId: rest[0]!.id, complex: rest.some((c) => c.kind !== "memo" && c.kind !== "transfer" && (c.kind as string) !== "swap") });
 }
