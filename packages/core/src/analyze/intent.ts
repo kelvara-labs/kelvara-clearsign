@@ -5,10 +5,10 @@ import type { Decoder } from "../decode/decoder.js";
 import type { Session } from "../ingest/types.js";
 import type { Report } from "../report/schema.js";
 import { ReportBuilder } from "../report/builder.js";
-import type { RuleState } from "../rules/types.js";
+import type { RuleContext, RuleState } from "../rules/types.js";
 import { requestTransfers } from "../rules/address-history.js";
 import { proposalViews, vaultInstructions, arg } from "../rules/squads-session.js";
-import { accountNamed } from "../rules/common.js";
+import { accountNamed, instructionEvidence } from "../rules/common.js";
 import { lookalike } from "../state/history.js";
 import { SYSTEM_PROGRAM, TOKEN_PROGRAM, TOKEN_2022_PROGRAM } from "../state/layouts.js";
 import { SQUADS_V4_PROGRAM } from "../decode/squads.js";
@@ -55,6 +55,32 @@ export function validateIntentContext(value: unknown, expectedHashes: readonly s
   return c;
 }
 
+/** Keep the already-fetched proposal snapshot reachable through a factual decoded-fee claim.
+ * This is internal analysis integration, not an extra RPC read or a new rule/risk rating.
+ */
+export function addIntentSourceEvidence(ctx: RuleContext): void {
+  if (!ctx.decoder) return;
+  for (const p of proposalViews(ctx)) {
+    if (!p.message || p.message.addressTableLookups.length) continue;
+    const call = p.transactionCreate ?? p.executes[0] ?? p.approvals[0];
+    if (!call) continue;
+    for (const raw of vaultInstructions(p.message)) {
+      const ix = ctx.decoder.decodeInstruction(raw);
+      if (ix.status !== "named" || ix.programAddress !== TOKEN_2022_PROGRAM || ix.name !== "setTransferFee") continue;
+      const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
+      if (typeof bp !== "number" || !Number.isInteger(bp) || bp < 0 || bp > 10000 || typeof max !== "bigint" || !mint) continue;
+      const evidenceIds = [instructionEvidence(ctx, call.txIndex, call.ix)];
+      if (p.contentSource === "state" && p.transaction) {
+        const snapshot = ctx.state.squads?.[p.transaction];
+        if (!snapshot || snapshot.name !== "VaultTransaction") continue;
+        evidenceIds.push(ctx.report.addEvidence({type: "account", source: "rpc", address: p.transaction, summary: "Stored Squads VaultTransaction account decoded from fetched chain state", data: {name: snapshot.name, data: snapshot.data}}));
+      } else if (p.contentSource !== "session") continue;
+      evidenceIds.push(instructionEvidence(ctx, call.txIndex, ix, [call.ix.index, raw.index]));
+      ctx.report.addClaim({kind: "Fact", level: "L0", statement: `Proposed future Token-2022 setTransferFee on mint ${mint}: ${bp} basis points, maximum ${max} base units. Approval alone does not execute this change.`, evidenceIds, transactionIndices: [call.txIndex]});
+    }
+  }
+}
+
 export function buildIntentContext(input: {session: Session; decoded: DecodedInstruction[][]; state: RuleState; report: Report; decoder?: Decoder}): IntentContext {
   const { session, decoded, state, report } = input;
   // Matches the browser capture cap. Never silently omit hashes from the binding.
@@ -96,7 +122,9 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     const evidence = report.evidence.filter((e) => (e.transactionIndex === txIndex && e.type === "instruction") || (sourceAddress !== null && e.address === sourceAddress && e.type === "account")).map((e) => e.id);
     if (ix.status === "named" && ix.programAddress === TOKEN_2022_PROGRAM && ix.name === "setTransferFee") {
       const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
-      if (typeof bp === "number" && Number.isInteger(bp) && bp >= 0 && bp <= 10000 && typeof max === "bigint" && mint) add("fees", 2, proposed ? "Did you intend to approve this proposed future token transfer-fee change?" : "Did you intend to change this token transfer fee?", `${source}: ${proposed ? "proposed future" : "decoded"} Token-2022 setTransferFee on mint ${mint}: ${bp} basis points, maximum ${max} base units. Approval alone does not execute a proposed change.`, [], evidence);
+      if (proposed && sourceAddress && !report.evidence.some((e) => e.type === "account" && e.address === sourceAddress && evidence.includes(e.id))) {
+        add("unknown", 2, "Did you intend to approve a proposal whose stored contents lack retained source evidence?", `${source}: the stored proposal snapshot is not retained in the report; fee semantics are not established here.`, [], evidence);
+      } else if (typeof bp === "number" && Number.isInteger(bp) && bp >= 0 && bp <= 10000 && typeof max === "bigint" && mint) add("fees", 2, proposed ? "Did you intend to approve this proposed future token transfer-fee change?" : "Did you intend to change this token transfer fee?", `${source}: ${proposed ? "proposed future" : "decoded"} Token-2022 setTransferFee on mint ${mint}: ${bp} basis points, maximum ${max} base units. Approval alone does not execute a proposed change.`, [], evidence);
       else add("unknown", 2, "Did you intend to authorize a fee instruction whose arguments are unresolved?", "The decoded fee instruction lacks validated amount or mint arguments.", [], evidence);
     } else if (ix.status === "unknown") add("unknown", 2, "Did you intend to authorize an instruction with unknown effects?", `Instruction ${ix.index} in transaction ${txIndex} on ${ix.programAddress} has unknown semantics.`, [], evidence);
     else {

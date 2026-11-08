@@ -2,7 +2,7 @@
 // G9 (M7 / E15): three runs of the full analysis on recorded real RPC give identical report and
 // explanation digests; templates cover every ruleId and keep the template rules (no numbers, no
 // addresses, no "will"). The AI-output validator half of G9 is cut with on-device AI (coordinator, E15).
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   ALL_RULE_IDS,
   analyzeSession,
@@ -22,22 +22,26 @@ const authorityMaps = [
   buildAuthorityMap(json<AnchorIdlJson>("packages/idls/raw/drift-v2.json"), { programId: "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH", source: "packages/idls/raw/drift-v2.json", verified: false }),
   buildAuthorityMap(json<AnchorIdlJson>("packages/scenarios/programs/marginfi_v2.idl.json"), { source: "packages/scenarios/programs/marginfi_v2.idl.json", verified: false })
 ];
-type AnalyzeRecording = Recording & { inputs: { transactions: string[]; wallet?: string; simulate?: boolean; [k: string]: any } };
+type AnalyzeRecording = Recording & { recordedAt: string; inputs: { transactions: string[]; wallet?: string; simulate?: boolean; [k: string]: any } };
 
 /** One fresh run: new replayed RPC client (empty cache), new session parse, full analysis. */
 async function run(name: string): Promise<Report> {
   const r = json<AnalyzeRecording>(`packages/core/test/fixtures/analyze/${name}.json`);
   const { rpc } = replay(r);
   const session = await sessionOf(r.inputs.transactions);
-  const { report } = await analyzeSession(session, {
-    decoder,
-    squadsAccounts,
-    authorityMaps,
-    rpc,
-    ...(r.inputs.wallet ? { wallet: r.inputs.wallet } : {}),
-    ...(r.inputs.simulate === false ? { simulate: false } : {})
-  });
-  return report;
+  // History window time is an analysis input: replay the recorded clock, not wall-clock seconds.
+  const clock = vi.spyOn(Date, "now").mockReturnValue(Date.parse(r.recordedAt));
+  try {
+    const { report } = await analyzeSession(session, {
+      decoder,
+      squadsAccounts,
+      authorityMaps,
+      rpc,
+      ...(r.inputs.wallet ? { wallet: r.inputs.wallet } : {}),
+      ...(r.inputs.simulate === false ? { simulate: false } : {})
+    });
+    return report;
+  } finally { clock.mockRestore(); }
 }
 
 const SCENARIOS = ["admin-local", "trap-local", "drift-replay-mainnet"];
