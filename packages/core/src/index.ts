@@ -282,3 +282,5 @@ export {
   type ClaimExplanation,
   type ReportExplanation
 } from "./explain/index.js";
+
+export { buildIntentContext, validateIntentContext, type IntentContext, type IntentCandidate, type IntentReason } from "./analyze/intent.js";
