@@ -10,7 +10,7 @@ import { readZip, writeZip } from "../src/zip.mjs";
 import {
   checkHosts, validateInertEntries, checkNoSecrets, checkNoRemoteCode, checkPermissions,
   checkDependencyLicenses, licenseForbidden, checkContentScriptsOffline, secretVariants,
-  checkNoPageControl, checkPassThroughUnwritable
+  checkNoPageControl, checkPassThroughUnwritable, checkUiProviderIsolation
 } from "../src/security-checks.mjs";
 
 const FAKE_KEY = "0f0e0d0c-1111-4222-8333-444455556666";
@@ -260,4 +260,18 @@ test('default AI host is scoped to provider-capable SW bundle; dynamic/foreign h
   assert.equal(checkHosts(providerBundle('fetch("https://foreign.example.com/v1")')).status, 'FAIL');
   assert.equal(checkHosts(providerBundle('fetch(`https://${host}/v1`)')).status, 'FAIL');
   assert.equal(checkHosts(bundle({ 'service-worker.js': 'fetch("https://api.openai.com/v1")' })).status, 'FAIL');
+});
+
+
+test('UI may use Helius probe but cannot import model transport directly or indirectly', () => {
+  const src = new Map([['ui.ts', 'import "./options/page.js";'],
+    ['options/page.ts', 'import { probe } from "../sw/probe.js";'],
+    ['sw/probe.ts', 'export const probe = () => fetch("https://mainnet.helius-rpc.com");']]);
+  assert.equal(checkUiProviderIsolation(src).status, 'PASS');
+  src.set('options/page.ts', 'import { testProvider } from "./ai-actions.js";');
+  src.set('options/ai-actions.ts', 'import { selectIntent } from "../intent/client.js";');
+  src.set('intent/client.ts', 'export const selectIntent = () => fetch(endpoint);');
+  assert.equal(checkUiProviderIsolation(src).status, 'FAIL');
+  src.set('options/ai-actions.ts', 'export const testProvider = () => chrome.runtime.sendMessage({type:"test-saved-provider"});');
+  assert.equal(checkUiProviderIsolation(src).status, 'PASS');
 });

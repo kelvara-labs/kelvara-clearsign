@@ -13,7 +13,7 @@ import { ROOT, finish, pass, fail, pending, secretValues } from "./lib.mjs";
 import { readZip } from "./zip.mjs";
 import {
   checkHosts, checkNoSecrets, checkContentScriptsOffline, checkNoRemoteCode, checkPermissions, checkDependencyLicenses,
-  checkNoPageControl, checkPassThroughUnwritable
+  checkNoPageControl, checkPassThroughUnwritable, checkUiProviderIsolation
 } from "./security-checks.mjs";
 
 const arg = (flag) => { const i = process.argv.indexOf(flag); return i > 0 ? path.resolve(ROOT, process.argv[i + 1] ?? "") : null; };
@@ -58,6 +58,7 @@ if (existsSync(EXT_SRC)) {
   } };
   walk(EXT_SRC);
   checks.push(asCheck("passThrough unwritable", checkPassThroughUnwritable(src), "passThrough locked"));
+  checks.push(asCheck("UI model transport isolation", checkUiProviderIsolation(src), "UI no model transport"));
 }
 
 function bundleChecks(bundle, label) {
