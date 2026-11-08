@@ -72,8 +72,8 @@ export async function mountPopup(): Promise<void> {
     const ready = settings.ready;
     node("network-name").textContent = names[settings.network];
     node("guard-status").dataset.state = ready ? "ready" : "setup";
-    node("guard-label").textContent = settings.bypassed ? "Guard bypassed" : ready ? "Ready to review" : "Setup needed";
-    node("guard-title").textContent = ready ? "Sign with clarity." : settings.bypassed ? "Guard is bypassed." : "Before you sign.";
+    node("guard-label").textContent = settings.bypassed ? "Protection bypassed" : ready ? "Ready to review" : "Setup needed";
+    node("guard-title").textContent = ready ? "Sign with clarity." : settings.bypassed ? "Protection is bypassed." : "Before you sign.";
     node("guard-description").textContent = settings.bypassed
       ? "Signing requests are passing through without analysis. Reset extension settings to restore the guard."
       : ready ? "See what moves. Know who gains control. Every signing request gets a closer look."

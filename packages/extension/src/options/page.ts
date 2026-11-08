@@ -49,7 +49,7 @@ export async function mountOptions(): Promise<void> {
       const summary = setupSummary(await store.get([...SETTINGS_KEYS]));
       const ready = view.loaded && summary.ready;
       el("setup-indicator").dataset.ready = String(ready);
-      el("setup-label").textContent = !view.loaded ? "Settings unavailable. Requests remain blocked." : summary.bypassed ? "Guard bypassed. Reinstall the extension to reset settings." : ready ? "Ready to review · Your connection is configured" : "One step left · Add your Helius API key";
+      el("setup-label").textContent = !view.loaded ? "Settings unavailable. Requests remain blocked." : summary.bypassed ? "Protection bypassed. Reinstall the extension to reset settings." : ready ? "Ready to review · Your connection is configured" : "One step left · Add your Helius API key";
     } catch {
       el("setup-indicator").dataset.ready = "false";
       el("setup-label").textContent = "Settings unavailable. Requests remain blocked.";
