@@ -1,0 +1,246 @@
+{
+  "issue": "Pre-E21 fee reason referenced approval only; strict stored-account provenance assertion failed.",
+  "report": {
+    "schemaVersion": "kelvara-report-v1",
+    "engineVersion": "0.1.0",
+    "rubrics": {
+      "alertLevels": "alert-levels-v1",
+      "capabilityRisk": "capability-risk-v1"
+    },
+    "session": {
+      "id": "9F7gS9WrpQAAPC1JaJC7oVxp4MvqGUToiGhDZ9AWnt1V",
+      "complete": true,
+      "transactions": [
+        {
+          "index": 0,
+          "messageHash": "DEibFrKV7sADh4n27MJiWAi9aMg8nv8hdoT7H7pePpUm",
+          "version": "legacy",
+          "label": null
+        }
+      ]
+    },
+    "alert": {
+      "level": "L1",
+      "label": "Notice",
+      "action": "pass_with_notice",
+      "claimIds": [
+        "c1"
+      ]
+    },
+    "simulation": {
+      "status": "ok",
+      "summary": "Simulation shows: Transaction 0: J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5 -0.000005 SOL",
+      "evidenceIds": [
+        "e5"
+      ]
+    },
+    "claims": [
+      {
+        "id": "c1",
+        "kind": "Derived",
+        "statement": "Multisig 9cS3…Uiua has a time lock of 0 seconds: once proposal EYkF…huJ3 reaches its threshold it can execute at once, with no review window.",
+        "evidenceIds": [
+          "e1",
+          "e3"
+        ],
+        "dependsOn": [],
+        "ruleId": "squads.zero_timelock_execution",
+        "assumptions": [],
+        "scope": "transaction",
+        "transactionIndices": [
+          0
+        ],
+        "level": "L1"
+      }
+    ],
+    "evidence": [
+      {
+        "id": "e1",
+        "type": "instruction",
+        "source": "message",
+        "summary": "transaction 0, instruction 1: squads-v4.proposalApprove",
+        "transactionIndex": 0,
+        "instructionPath": [
+          1
+        ],
+        "address": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+        "data": {
+          "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+          "program": "squads-v4",
+          "name": "proposalApprove",
+          "decoder": "codama",
+          "args": {
+            "args": {
+              "memo": "Q4 fee update"
+            }
+          },
+          "accounts": [
+            {
+              "name": "multisig",
+              "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+              "signer": false,
+              "writable": false
+            },
+            {
+              "name": "member",
+              "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+              "signer": true,
+              "writable": true
+            },
+            {
+              "name": "proposal",
+              "address": "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3",
+              "signer": false,
+              "writable": true
+            }
+          ]
+        }
+      },
+      {
+        "id": "e3",
+        "type": "account",
+        "source": "rpc",
+        "summary": "Squads multisig 9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua: threshold 2 of 3, time lock 0 s",
+        "transactionIndex": null,
+        "instructionPath": null,
+        "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+        "data": {
+          "threshold": 2,
+          "timeLock": 0,
+          "members": [
+            {
+              "key": "Ft5fA38o8fekHdzWvnzEAdvjBfQ8kwrvcoLQSkezdEVk",
+              "mask": 7
+            },
+            {
+              "key": "J4JtCmKkFDzfCsBm2aiBFDfXSg4Vq74Pu3VQvNQE4VB8",
+              "mask": 7
+            },
+            {
+              "key": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+              "mask": 7
+            }
+          ],
+          "configAuthority": null
+        }
+      },
+      {
+        "id": "e5",
+        "type": "simulation",
+        "source": "simulation",
+        "summary": "Simulation shows: Transaction 0: J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5 -0.000005 SOL",
+        "transactionIndex": 0,
+        "instructionPath": null,
+        "address": null,
+        "data": {
+          "ok": true,
+          "err": null,
+          "unitsConsumed": 28900,
+          "blockhashReplaced": false,
+          "solChanges": [
+            {
+              "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+              "pre": "1100000000",
+              "post": "1099995000",
+              "delta": "-5000"
+            }
+          ],
+          "tokenChanges": [],
+          "stateChanges": [],
+          "accountsOmitted": []
+        }
+      }
+    ],
+    "capabilities": {
+      "granted": [],
+      "revoked": []
+    },
+    "preview": [],
+    "counts": {
+      "claims": 1,
+      "evidence": 3,
+      "granted": 0,
+      "revoked": 0,
+      "preview": 0,
+      "byKind": {
+        "Fact": 0,
+        "Derived": 1,
+        "Conditional": 0,
+        "Unknown": 0
+      },
+      "byLevel": {
+        "L0": 0,
+        "L1": 1,
+        "L2": 0,
+        "L3": 0,
+        "L4": 0
+      }
+    },
+    "digest": "sha256:6be9703d5b10aca22e1454f3a1d2797479d5c42e7a7dab00c5cfbd6b0a580fc8"
+  },
+  "intentContext": {
+    "version": "kelvara-intent-v1",
+    "messageHashes": [
+      "DEibFrKV7sADh4n27MJiWAi9aMg8nv8hdoT7H7pePpUm"
+    ],
+    "complex": true,
+    "fallbackId": "intent-1",
+    "historyNote": "History not read; prior outgoing activity is unknown. Familiarity does not establish safety.",
+    "candidates": [
+      {
+        "id": "intent-1",
+        "kind": "fees",
+        "priority": 2,
+        "question": "Did you intend to approve this proposed future token transfer-fee change?",
+        "reasons": [
+          {
+            "id": "intent-1-reason",
+            "text": "Stored Squads transaction 2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC, inner instruction 0: proposed future Token-2022 setTransferFee on mint G1tkXpJ88NXd7vzjKDbUyJsRvP65czQLN74dcg73U3NG: 75 basis points, maximum 2000000 base units. Approval alone does not execute a proposed change.",
+            "claimIds": [],
+            "evidenceIds": [
+              "e1"
+            ]
+          }
+        ],
+        "comparison": null
+      }
+    ]
+  },
+  "reads": [
+    {
+      "what": "squads account",
+      "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+      "ok": true
+    },
+    {
+      "what": "squads account",
+      "address": "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3",
+      "ok": true
+    },
+    {
+      "what": "squads transaction pda",
+      "address": "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3",
+      "ok": true
+    },
+    {
+      "what": "squads account",
+      "address": "2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC",
+      "ok": true
+    },
+    {
+      "what": "token state",
+      "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+      "ok": true
+    },
+    {
+      "what": "wallet history",
+      "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+      "ok": true
+    },
+    {
+      "what": "simulation",
+      "address": null,
+      "ok": true
+    }
+  ]
+}

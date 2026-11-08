@@ -18,6 +18,14 @@ const inputs = [
 const proofs = [];
 for (const input of inputs) {
   const session = await ingestSession([{ base64: input.wire, kind: 'auto' }], { reader: createRpcAccountReader(rpc) });
+  const decoded = registry.decoder.decodeSession(session).flat();
+  const memo = decoded.find(ix => ix.programAddress === 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr');
+  assert(memo);
+  assert.equal(new TextDecoder().decode(memo.data), 'Q4 fee update');
+  const approval = decoded.find(ix => ix.name === 'proposalApprove');
+  assert.equal(approval?.args?.args?.memo ?? approval?.args?.memo, 'Q4 fee update');
+  assert.equal(session.transactions[0].signatures[0].signer, fees.member);
+  assert.equal(session.transactions[0].signatures[0].signature, null);
   const result = await analyzeSession(session, { decoder: registry.decoder, squadsAccounts: registry.squadsAccounts, authorityMaps: registry.authorityMaps, rpc, wallet: fees.member });
   const hashes = result.report.session.transactions.map(t => t.messageHash);
   assert(validateIntentContext(result.intentContext, hashes));
