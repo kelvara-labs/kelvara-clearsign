@@ -220,7 +220,7 @@ describe("mint on hover", () => {
     const spans = nodes.filter((n) => n.attrs["data-kelvara-token"] === USDC);
     expect(spans.length).toBeGreaterThanOrEqual(2);
     expect(nodes.some((n) => n.attrs["data-other-accounts"] !== undefined)).toBe(true);
-    expect(nodes.filter((n) => "data-balance" in n.attrs).map((n) => n.text)).toContain("You send≈−23.18 USDC");
+    expect(nodes.filter((n) => "data-balance" in n.attrs).map((n) => n.text)).toContain("You send≈ −23.18 USDC");
   });
 });
 
@@ -372,7 +372,7 @@ describe("rounding for reading", () => {
     const doc = fakeDoc();
     const out = withTokens("You send −23.180052 USDC and pay 0.000005 SOL, receive 0.258554337 SOL", [{ mint: USDC, label: "USDC" }], doc) as (N | string)[];
     const amounts = out.filter((x): x is N => typeof x !== "string" && x.attrs.title !== undefined && x.attrs.title.includes(" ") && x.children.length > 0);
-    expect(amounts.map((a) => [a.attrs.title, a.children[0]])).toEqual([["−23.180052 USDC", "≈−23.18 "], ["0.258554337 SOL", "≈0.2586 "]]);
+    expect(amounts.map((a) => [a.attrs.title, a.children[0]])).toEqual([["−23.180052 USDC", "≈ −23.18 "], ["0.258554337 SOL", "≈ 0.2586 "]]);
     expect(out.some((x) => x === "0.000005")).toBe(true);
   });
 });

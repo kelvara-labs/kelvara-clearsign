@@ -62,7 +62,7 @@ export function withTokens(text: string, tokens: readonly TokenRef[] | undefined
         const amount = doc.createElement("span");
         amount.className = "amount";
         amount.setAttribute("title", `${m[1]}${m[2]} ${m[3]}`);
-        amount.append(`${rounded.startsWith("<") ? "" : "≈"}${m[1]}${rounded} `, token(m[3]!));
+        amount.append(`${rounded.startsWith("<") ? "" : "≈ "}${m[1]}${rounded} `, token(m[3]!));
         out.push(amount);
       }
     } else out.push(token(m[4]!));
