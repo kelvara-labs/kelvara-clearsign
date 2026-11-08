@@ -1,4 +1,4 @@
-/* global window, CustomEvent */
+/* global window, document, CustomEvent */
 // Dev-only: screenshots the devnet playground (static files + mocked /api/scenarios) disconnected and connected.
 //   node preview/shoot-playground.mjs <demoDir> <outDir>
 import { createRequire } from "node:module";
@@ -35,7 +35,8 @@ for (const [w, h] of [[360, 740], [375, 667], [1280, 800]]) {
   const page = await browser.newPage({ viewport: { width: w, height: h } });
   await page.goto("http://127.0.0.1:47742/");
   await page.waitForTimeout(600);
-  await page.screenshot({ path: path.join(out, `playground-disconnected-${w}.png`), fullPage: true });
+  const walk = async (tag) => { for (let i = 0; i < 6; i++) { await page.screenshot({ path: path.join(out, `playground-${tag}-slide${i + 1}-${w}.png`) }); if (i < 5) { await page.click("#next"); await page.waitForTimeout(700); } } await page.evaluate(() => document.getElementById("track").scrollTo({ left: 0, behavior: "instant" })); await page.waitForTimeout(300); };
+  await walk("disconnected");
   await page.evaluate((address) => {
     const wallet = { name: "Phantom (preview)", features: { "standard:connect": { connect: async () => ({ accounts: [{ address, chains: ["solana:devnet"], features: ["solana:signTransaction"] }] }) }, "solana:signTransaction": { signTransaction: async () => { throw new Error("preview"); } } } };
     window.dispatchEvent(new CustomEvent("wallet-standard:register-wallet", { detail: (api) => api.register(wallet) }));
@@ -43,7 +44,7 @@ for (const [w, h] of [[360, 740], [375, 667], [1280, 800]]) {
   await page.selectOption("#wallets", "0");
   await page.click("#connect");
   await page.waitForTimeout(500);
-  await page.screenshot({ path: path.join(out, `playground-connected-${w}.png`), fullPage: true });
+  await walk("connected");
   await page.close();
 }
 await browser.close();
