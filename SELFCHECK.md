@@ -1,6 +1,60 @@
 # Kelvara SignGuard selfcheck — v0.2.1 (always-show policy)
 
-## V12b — 2026-11-08, main `8f894c9`
+## V13 final certification — 2026-11-08, main `a22a51c`
+
+**All ten gates PASS on a fresh plain `git clone` of main `a22a51c4fddb0d8388826e531c0ea230d00f5b94`.** Live G8 also PASSes on the same clone, and two `pnpm release` builds are byte-identical. This supersedes the V12b partial run and the V11 MVP certification below, which are kept as history. `a22a51c` differs from `8f894c9` (V12b) only by the V12b verifier report merge and the coordinator log; the extension and engine sources are the same.
+
+Checkout: `git clone '<main checkout>' <scratch>/v13 && git checkout a22a51c && git clean -xfd`. `.env` and the devnet payer are found through the clone's local-path origin; nothing was copied or printed. `pnpm install --frozen-lockfile`, `pnpm build`, `pnpm release` all exit 0. Run started `2026-11-08T02:00:39Z`, `dirty: false`; git status was empty before and after every run. Playwright used 1 worker. The devnet playground on :8780 stayed up throughout and was not reset. Localnet was stopped after the runs (`localnet:down`, 8899 free).
+
+| Gate | Status | Seconds | Evidence |
+|---|---|---:|---|
+| G1 build / typecheck / lint | PASS | 21.7 | Build, typecheck and lint exit 0 |
+| G2 decode | PASS | 7.6 | 98.02% named; malformed inputs 1000/1000 |
+| G3 rules | PASS | 9.5 | Rule suite exit 0 |
+| G4 contract | PASS | 2.2 | Contract suite exit 0 |
+| G5 registry, cached | PASS | 4.1 | Registry suite exit 0 |
+| G6 localnet | PASS | 25.0 | Real CLI levels/claims, then both attacks and on-chain outcomes |
+| G7 browser e2e | PASS | 237.0 | **29 passed / 0 failed / 0 skipped** (3.5 m, headless, 1 worker) |
+| G8 replay, cached | PASS | 1.0 | Drift fixtures 2HvMSgDE + 4BKBmAJn ok, drift critical; devnet scenarios skipped in cached mode |
+| G8 replay, **live** | PASS | 48.1 | Drift critical (live Helius); admin-devnet 1/1 (32 s), trap-devnet 1/1 (14 s) |
+| G9 determinism | PASS | 2.6 | Determinism suite exit 0 |
+| G10 security | PASS | 2.3 | passThrough locked, hosts ok, no eval, min perms, offline content scripts, no page control, no key in zip or dist, licenses ok |
+
+Full run total: 313 s wall clock (`E2E_WORKERS=1 pnpm selfcheck`, exit 0).
+
+Live G8 devnet spend: payer 2.120592 → 2.104112 devnet SOL (**0.016480 SOL**: admin 0.013896, trap 0.002584), funds recycled from scenario accounts. No wallet GUI or human signing prompt was used.
+
+Evidence: [full run summary](tools/selfcheck/evidence/v13/a22a51c-full.json), [live G8 summary](tools/selfcheck/evidence/v13/a22a51c-live-g8.json), [G7 case list](tools/selfcheck/evidence/v13/a22a51c-g7.txt). No log contains an API key.
+
+### Release
+
+`dist/kelvara-signguard.zip` from `pnpm release` on `a22a51c`: **14 files, 254307 bytes** (1718162 bytes unpacked), extension v0.2.1. Built three times (once after `pnpm build`, twice more after the gate runs), every time with the same SHA-256, which also matches V12b:
+
+```text
+4894a87806ae0fb3b2324ce84647091607362a9bf9e13e685bd6a8c54e0ae4b4
+```
+
+### Commands
+
+```sh
+git clone '<main checkout>' <scratch>/v13
+cd <scratch>/v13
+git checkout a22a51c && git clean -xfd
+pnpm install --frozen-lockfile && pnpm build && pnpm release
+E2E_WORKERS=1 pnpm selfcheck
+pnpm selfcheck --only G8 --live
+pnpm release && sha256sum dist/kelvara-signguard.zip
+pnpm release && sha256sum dist/kelvara-signguard.zip
+pnpm --filter @kelvara/scenarios localnet:down
+```
+
+### Limits
+
+Human-only demo steps (Solflare prompts, devnet browser recording, explorer views) are not certified here; the G7 test wallet is not Solflare. Live G5 was not re-run (cached G5 passed; its last live PASS is E19 on `7b00cbd`, below). Helius availability and chain state may change after these runs.
+
+---
+
+## History: V12b — 2026-11-08, main `8f894c9`
 
 **G7 PASS 29/29 and G10 PASS on a fresh detached checkout of main `8f894c9686e6d5410012b96f1c437a8d48186d0d`** (X12 extension v0.2.1 merged as `9025acd` + V12 always-show G7 cases merged as `8d6f249`). Fast gates G1-G4 also PASS on the same tree. G5, G6, G8 and G9 were not re-run for this change; their last results are the MVP certification below.
 

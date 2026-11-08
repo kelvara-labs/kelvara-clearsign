@@ -1,0 +1,80 @@
+{
+  "startedAt": "2026-11-08T02:00:39Z",
+  "commit": "a22a51c",
+  "branch": "HEAD",
+  "dirty": false,
+  "fast": false,
+  "live": false,
+  "gates": [
+    {
+      "id": "G1",
+      "name": "build",
+      "status": "PASS",
+      "secs": 21.7,
+      "note": ""
+    },
+    {
+      "id": "G2",
+      "name": "decode",
+      "status": "PASS",
+      "secs": 7.6,
+      "note": "98.02%, 1000/1000"
+    },
+    {
+      "id": "G3",
+      "name": "rules",
+      "status": "PASS",
+      "secs": 9.5,
+      "note": ""
+    },
+    {
+      "id": "G4",
+      "name": "contract",
+      "status": "PASS",
+      "secs": 2.2,
+      "note": ""
+    },
+    {
+      "id": "G5",
+      "name": "registry",
+      "status": "PASS",
+      "secs": 4.1,
+      "note": ""
+    },
+    {
+      "id": "G6",
+      "name": "localnet",
+      "status": "PASS",
+      "secs": 25,
+      "note": ""
+    },
+    {
+      "id": "G7",
+      "name": "e2e",
+      "status": "PASS",
+      "secs": 237,
+      "note": "29 e2e cases pass headless"
+    },
+    {
+      "id": "G8",
+      "name": "replay",
+      "status": "PASS",
+      "secs": 1,
+      "note": "drift fixture 2HvMSgDE ok, drift fixture 4BKBmAJn ok, drift critical (cached), admin-devnet skipped (cached), trap-devnet skipped (cached)"
+    },
+    {
+      "id": "G9",
+      "name": "determinism",
+      "status": "PASS",
+      "secs": 2.6,
+      "note": ""
+    },
+    {
+      "id": "G10",
+      "name": "security",
+      "status": "PASS",
+      "secs": 2.3,
+      "note": "passThrough locked, hosts ok, no eval, min perms, cs offline, no page control, no key in zip, hosts ok, no eval, min perms, cs offline, no page control, no key in dist, licenses ok"
+    }
+  ]
+}
