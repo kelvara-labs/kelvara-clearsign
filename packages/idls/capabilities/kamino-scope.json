@@ -1,0 +1,217 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "kamino-scope",
+  "programId": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
+  "kind": "keyword",
+  "checkedAgainst": "packages/idls/roots/kamino-scope.json",
+  "reviewed": null,
+  "entries": [
+    {
+      "instruction": "initialize",
+      "discriminator": "afaf6d1f0d989bed",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "refreshPriceList",
+      "discriminator": "53bacf83cbfec682",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "other",
+      "changes": "refresh price list: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "refreshChainlinkPrice",
+      "discriminator": "6109147348ff048c",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "refresh chainlink price: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "refreshPythLazerPrice",
+      "discriminator": "7a2fb185b1235d76",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "refresh pyth lazer price: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateMappingAndMetadata",
+      "discriminator": "9e519592ce9a5b38",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update mapping and metadata: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resetTwap",
+      "discriminator": "65d81c5c9a4f31bb",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "reset twap: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setAdminCached",
+      "discriminator": "720e69cdd8941e4b",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "set admin cached: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "approveAdminCached",
+      "discriminator": "6595613a304f1069",
+      "authority": null,
+      "signers": [
+        "adminCached"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "approve admin cached: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "createMintMap",
+      "discriminator": "d8dae03c171fc1f3",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "create mint map: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "closeMintMap",
+      "discriminator": "92d4cbefbf682666",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "close mint map: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resumeSuspendedPriceV2",
+      "discriminator": "9fedd1c2fc792b8c",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "resume suspended price v2: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resumeSuspendedPrice",
+      "discriminator": "4e57b6688f8705e3",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "resume suspended price: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "resumeChainlinkxPrice",
+      "discriminator": "88306792e361576c",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "resume chainlinkx price: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "freezePrice",
+      "discriminator": "52b6a6efabbc850e",
+      "authority": null,
+      "signers": [
+        "authority"
+      ],
+      "capability": null,
+      "class": "freeze",
+      "changes": "freeze price: can freeze or thaw balances (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setEmergencyCouncil",
+      "discriminator": "b64c27ac7f2c26cb",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "set emergency council: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setResumeAuthority",
+      "discriminator": "bf98445add5df51e",
+      "authority": null,
+      "signers": [
+        "admin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "set resume authority: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": []
+}

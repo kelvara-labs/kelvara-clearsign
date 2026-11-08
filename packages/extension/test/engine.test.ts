@@ -56,11 +56,11 @@ describe("bundled registry", () => {
 
   it("bundles every program E12's registry.json and manifest.json name (roots, Anchor IDLs)", () => {
     const registry = readIdls<{ programs: { name: string; root: string | null; idl: string | null }[] }>("registry.json").programs;
-    const manifest = readIdls<{ idls: { name: string; format: string }[] }>("manifest.json").idls;
+    const manifest = readIdls<{ idls: { name: string; format: string; rootOnly?: boolean }[] }>("manifest.json").idls;
     const withRoot = registry.filter((p) => p.root !== null).map((p) => p.name).sort();
     expect(manifest.map((e) => e.name).sort()).toEqual(withRoot);
     expect([...BUNDLED.roots].sort()).toEqual(withRoot);
-    expect([...BUNDLED.anchor].sort()).toEqual(manifest.filter((e) => e.format.startsWith("anchor")).map((e) => e.name).sort());
+    expect([...BUNDLED.anchor].sort()).toEqual(manifest.filter((e) => e.format.startsWith("anchor") && !e.rootOnly).map((e) => e.name).sort());
   });
 
   it("builds the same authority maps as the CLI's loadRegistry (Squads, Drift, marginfi demo)", () => {

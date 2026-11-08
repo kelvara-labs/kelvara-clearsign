@@ -46,5 +46,35 @@
     "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
     "decoder": "codama",
     "instructions": 216
+  },
+  {
+    "name": "kamino-lending",
+    "programId": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+    "decoder": "codama",
+    "instructions": 66
+  },
+  {
+    "name": "kamino-vault",
+    "programId": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
+    "decoder": "codama",
+    "instructions": 30
+  },
+  {
+    "name": "kamino-farms",
+    "programId": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+    "decoder": "codama",
+    "instructions": 27
+  },
+  {
+    "name": "kamino-scope",
+    "programId": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
+    "decoder": "codama",
+    "instructions": 16
+  },
+  {
+    "name": "kamino-liquidity",
+    "programId": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
+    "decoder": "codama",
+    "instructions": 43
   }
 ]

@@ -194,19 +194,24 @@ describe("Jupiter v6 swaps on real mainnet fixtures", () => {
 });
 
 describe("program labels (E25)", () => {
-  const KLEND = "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD";
-  const labels = { source: "Helius program catalog (test)", names: { [KLEND]: "Kamino Lending" } };
-
   it("adds the name to evidence of an instruction on a program ClearSign cannot decode; level and claims do not change", async () => {
-    const x = manifestFixtures().find((f) => f.path.includes("/kamino-lending/"))!;
-    const session = x.loaded ? sessionFromRuntime(x.base64, x.loaded) : await sessionOf([x.base64]);
+    // First real fixture with an instruction on a program that has no decoder (any program not in the registry).
+    let found: { session: Awaited<ReturnType<typeof sessionOf>>; program: string } | null = null;
+    for (const x of manifestFixtures()) {
+      const session = x.loaded ? sessionFromRuntime(x.base64, x.loaded) : await sessionOf([x.base64]);
+      const u = decoder.decodeSession(session).flat().find((i) => i.status === "unknown" && i.reason === "program_not_in_registry");
+      if (u) { found = { session, program: u.programAddress }; break; }
+    }
+    expect(found).not.toBeNull();
+    const { session, program } = found!;
+    const labels = { source: "Helius program catalog (test)", names: { [program]: "Test Program" } };
     const plain = analyze(session);
     const named = analyze(session, { programLabels: labels });
-    const onProgram = (r: Report) => r.evidence.filter((e) => e.type === "instruction" && (e.data as { programId?: string }).programId === KLEND);
+    const onProgram = (r: Report) => r.evidence.filter((e) => e.type === "instruction" && (e.data as { programId?: string }).programId === program);
     expect(onProgram(plain).length).toBeGreaterThan(0);
     for (const e of onProgram(plain)) expect(e.data).not.toHaveProperty("programLabel");
     expect(onProgram(named).length).toBe(onProgram(plain).length);
-    for (const e of onProgram(named)) expect(e.data).toMatchObject({ programLabel: "Kamino Lending", labelSource: labels.source, name: null });
+    for (const e of onProgram(named)) expect(e.data).toMatchObject({ programLabel: "Test Program", labelSource: labels.source, name: null });
     expect(named.alert.level).toBe(plain.alert.level);
     expect(named.claims.map((c) => [c.ruleId, c.level])).toEqual(plain.claims.map((c) => [c.ruleId, c.level]));
   });

@@ -1,0 +1,401 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "kamino-vault",
+  "programId": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/kamino-vault.json",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-vault.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "entries": [
+    {
+      "instruction": "initVault",
+      "discriminator": "4d4f559621d9346a",
+      "authority": null,
+      "signers": [
+        "adminAuthority"
+      ],
+      "capability": "kamino.vault_admin",
+      "class": "admin_control",
+      "changes": "creates a vault and makes the signer its admin",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateReserveAllocation",
+      "discriminator": "0536d5704be87525",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update reserve allocation: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateReserveAllocationV2",
+      "discriminator": "c388014f0a7b7964",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update reserve allocation v2: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateReserveAllocationV3",
+      "discriminator": "748eada10bdf8830",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update reserve allocation v3: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deposit",
+      "discriminator": "f223c68952e1f2b6",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a vault for shares; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "depositWithMinSharesOut",
+      "discriminator": "4a7f805004ddc15b",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a vault for at least a minimum of shares; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "buy",
+      "discriminator": "66063d1201daebea",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "buys vault shares; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "buyWithMinSharesOut",
+      "discriminator": "3d8766977c2e90d1",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "buys vault shares for at least a minimum; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdraw",
+      "discriminator": "b712469c946da122",
+      "authority": null,
+      "signers": [
+        "withdrawFromAvailableUser"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems vault shares for tokens; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "sell",
+      "discriminator": "33e685a4017f83ad",
+      "authority": null,
+      "signers": [
+        "withdrawFromAvailableUser"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "sells vault shares; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "invest",
+      "discriminator": "0df5b467feb67904",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves vault funds into reserves; permissionless keeper call",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "investWithMaxAmount",
+      "discriminator": "875cb88945487607",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves vault funds into reserves; permissionless keeper call",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "investV2WithMaxAmount",
+      "discriminator": "7701cf844c7988cb",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves vault funds into reserves; permissionless keeper call",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "updateKlendQueueAccounting",
+      "discriminator": "2d546067abc42881",
+      "authority": null,
+      "signers": [
+        "withdrawTicket"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update klend queue accounting: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateVaultConfig",
+      "discriminator": "7a0315de9effee9d",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": "kamino.vault_admin",
+      "class": "admin_control",
+      "changes": "changes a vault's configuration (admin only)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawPendingFees",
+      "discriminator": "83c2c88caff4d9b7",
+      "authority": null,
+      "signers": [
+        "vaultAdminAuthority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw pending fees: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateAdmin",
+      "discriminator": "a1b028d53cb8b3e4",
+      "authority": null,
+      "signers": [
+        "pendingAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "giveUpPendingFees",
+      "discriminator": "b1c878866ed99351",
+      "authority": null,
+      "signers": [
+        "vaultAdminAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "give up pending fees: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeSharesMetadata",
+      "discriminator": "030fac72c8008320",
+      "authority": null,
+      "signers": [
+        "vaultAdminAuthority"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize shares metadata: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSharesMetadata",
+      "discriminator": "9b227aa5f589936b",
+      "authority": null,
+      "signers": [
+        "vaultAdminAuthority"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "update shares metadata: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawFromAvailable",
+      "discriminator": "1383709baadc2239",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems vault shares from the available balance; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "removeAllocation",
+      "discriminator": "20dcd38dd1e7494c",
+      "authority": null,
+      "signers": [
+        "vaultAdminAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "remove allocation: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initGlobalConfig",
+      "discriminator": "8c88d630570078ff",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init global config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGlobalConfig",
+      "discriminator": "a45482bd6f3afac8",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update global config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGlobalConfigAdmin",
+      "discriminator": "b85717c19ceeaf77",
+      "authority": null,
+      "signers": [
+        "pendingAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update global config admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "addUpdateWhitelistedReserve",
+      "discriminator": "db8b5fcc07b7762d",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "add update whitelisted reserve: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "topupRewards",
+      "discriminator": "7f9331893a896738",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "topup rewards: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawRewards",
+      "discriminator": "0ad6db8bcd16fb15",
+      "authority": null,
+      "signers": [
+        "vaultAdminAuthority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw rewards: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "investInConditionalReserve",
+      "discriminator": "b9cb48bd3d856892",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "invest in conditional reserve: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "redeemInKind",
+      "discriminator": "663abdfcc0db8c59",
+      "authority": null,
+      "signers": [
+        "user"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems vault shares in the underlying positions; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    }
+  ],
+  "authorityTypes": []
+}

@@ -1,0 +1,861 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "kamino-lending",
+  "programId": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/kamino-lending.json",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-lending.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "entries": [
+    {
+      "instruction": "initLendingMarket",
+      "discriminator": "22a2740e65895eef",
+      "authority": null,
+      "signers": [
+        "lendingMarketOwner"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init lending market: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateLendingMarket",
+      "discriminator": "d19d35d261b41f2d",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update lending market: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateLendingMarketOwner",
+      "discriminator": "76e00a3ec4e6b859",
+      "authority": null,
+      "signers": [
+        "lendingMarketOwnerCached"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update lending market owner: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initReserve",
+      "discriminator": "8af547e19904032b",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init reserve: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "cloneReserveConfig",
+      "discriminator": "f405c671110a4721",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "clone reserve config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initFarmsForReserve",
+      "discriminator": "da063ee90121e852",
+      "authority": null,
+      "signers": [
+        "lendingMarketOwner"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init farms for reserve: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateReserveConfig",
+      "discriminator": "3d9464468f6b110d",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update reserve config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "redeemFees",
+      "discriminator": "d727b429ad2ef8dc",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "redeem fees: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawProtocolFee",
+      "discriminator": "9ec99ebd215da267",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw protocol fee: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "seedDepositOnInitReserve",
+      "discriminator": "fec5e476b7ce3ee2",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "seed deposit on init reserve: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "topupReserveRewards",
+      "discriminator": "3fff82d36ed858ad",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "topup reserve rewards: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "socializeLoss",
+      "discriminator": "f54b5b00ec611303",
+      "authority": null,
+      "signers": [
+        "lendingMarketOwner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "socialize loss: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "socializeLossV2",
+      "discriminator": "ee5f62dcbb28cc9a",
+      "authority": null,
+      "signers": [
+        "lendingMarketOwner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "socialize loss v2: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "markObligationForDeleveraging",
+      "discriminator": "a423b6130074f37f",
+      "authority": null,
+      "signers": [
+        "lendingMarketOwner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "mark obligation for deleveraging: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "refreshReserve",
+      "discriminator": "02da8aeb4fc91966",
+      "authority": null,
+      "signers": [],
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes a reserve's price and interest; permissionless",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "refreshReservesBatch",
+      "discriminator": "906e1a67a2ccfc93",
+      "authority": null,
+      "signers": [],
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes reserves; permissionless",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "calculateCtokenExchangeRate",
+      "discriminator": "20fddc0d13a583bc",
+      "authority": null,
+      "signers": [],
+      "capability": null,
+      "class": "config",
+      "changes": "calculate ctoken exchange rate: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "depositReserveLiquidity",
+      "discriminator": "a9c91e7e06cd6644",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits liquidity into a reserve for collateral tokens; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "redeemReserveCollateral",
+      "discriminator": "ea75b57db98edc1d",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems collateral tokens for liquidity; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initObligation",
+      "discriminator": "fb0ae74c1b0b9f60",
+      "authority": null,
+      "signers": [
+        "obligationOwner",
+        "feePayer"
+      ],
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "creates the signer's obligation (lending position)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initObligationFarmsForReserve",
+      "discriminator": "883f0fbad398a8a4",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "creates the farm state of an obligation",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "refreshObligationFarmsForReserve",
+      "discriminator": "8c90fd150a4af803",
+      "authority": null,
+      "signers": [
+        "crank"
+      ],
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes an obligation's farm state; permissionless",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "refreshObligation",
+      "discriminator": "218493e497c04859",
+      "authority": null,
+      "signers": [],
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes an obligation; permissionless",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "depositObligationCollateral",
+      "discriminator": "6cd1044815167685",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "puts collateral into an obligation; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "depositObligationCollateralV2",
+      "discriminator": "8991975ea7710491",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "puts collateral into an obligation; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawObligationCollateral",
+      "discriminator": "2574cd67f3c05cc6",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "takes collateral out of an obligation; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawObligationCollateralV2",
+      "discriminator": "caf97572e7c02f8a",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "takes collateral out of an obligation; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "borrowObligationLiquidity",
+      "discriminator": "797f12cc49f5e141",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.borrow",
+      "class": "other",
+      "changes": "borrows against an obligation's collateral; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "borrowObligationLiquidityV2",
+      "discriminator": "a1808ff5abc7c206",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.borrow",
+      "class": "other",
+      "changes": "borrows against an obligation's collateral; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "repayObligationLiquidity",
+      "discriminator": "91b20de14cf09348",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.repay",
+      "class": "other",
+      "changes": "repays borrowed liquidity; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "repayObligationLiquidityV2",
+      "discriminator": "74aed54cb435d290",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.repay",
+      "class": "other",
+      "changes": "repays borrowed liquidity; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "repayAndWithdrawAndRedeem",
+      "discriminator": "0236980394606dda",
+      "authority": null,
+      "signers": [
+        "repayAccountsOwner",
+        "withdrawAccountsOwner"
+      ],
+      "capability": "kamino.repay",
+      "class": "other",
+      "changes": "repays, withdraws collateral and redeems in one step; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "depositAndWithdraw",
+      "discriminator": "8d99270f403d5854",
+      "authority": null,
+      "signers": [
+        "depositAccountsOwner",
+        "withdrawAccountsOwner"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits and withdraws in one step; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "depositReserveLiquidityAndObligationCollateral",
+      "discriminator": "81c70402de271a2e",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits liquidity and posts it as collateral; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "depositReserveLiquidityAndObligationCollateralV2",
+      "discriminator": "d8e0bf1bcc9766af",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits liquidity and posts it as collateral; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawObligationCollateralAndRedeemReserveCollateral",
+      "discriminator": "4b5d5ddc2296dac4",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "withdraws collateral and redeems it for liquidity; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawObligationCollateralAndRedeemReserveCollateralV2",
+      "discriminator": "eb34779895c51407",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "withdraws collateral and redeems it for liquidity; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "liquidateObligationAndRedeemReserveCollateral",
+      "discriminator": "b1479abce2854a37",
+      "authority": null,
+      "signers": [
+        "liquidator"
+      ],
+      "capability": "kamino.liquidate",
+      "class": "other",
+      "changes": "a liquidator repays part of an unhealthy obligation and receives collateral",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "liquidateObligationAndRedeemReserveCollateralV2",
+      "discriminator": "a2a1238f1ebbb967",
+      "authority": null,
+      "signers": [
+        "liquidationAccountsLiquidator"
+      ],
+      "capability": "kamino.liquidate",
+      "class": "other",
+      "changes": "a liquidator repays part of an unhealthy obligation and receives collateral",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "flashRepayReserveLiquidity",
+      "discriminator": "b97500cb60f5b4ba",
+      "authority": null,
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "kamino.flash",
+      "class": "other",
+      "changes": "repays a flash borrow",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "flashBorrowReserveLiquidity",
+      "discriminator": "87e734a70734d4c1",
+      "authority": null,
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "kamino.flash",
+      "class": "other",
+      "changes": "borrows liquidity that must be repaid in the same transaction",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "requestElevationGroup",
+      "discriminator": "2477fb8122f00793",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "moves an obligation to another elevation group (changes its borrow limits)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "initReferrerTokenState",
+      "discriminator": "742d42943a0dda73",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init referrer token state: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initUserMetadata",
+      "discriminator": "75a9b045c5170fa2",
+      "authority": null,
+      "signers": [
+        "owner",
+        "feePayer"
+      ],
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "creates the signer's user metadata",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawReferrerFees",
+      "discriminator": "ab7679c9e98c17e4",
+      "authority": null,
+      "signers": [
+        "referrer"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw referrer fees: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initReferrerStateAndShortUrl",
+      "discriminator": "a513197f64371f5a",
+      "authority": null,
+      "signers": [
+        "referrer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init referrer state and short url: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "deleteReferrerStateAndShortUrl",
+      "discriminator": "99b9631ce4b3bb96",
+      "authority": null,
+      "signers": [
+        "referrer"
+      ],
+      "capability": null,
+      "class": "account_control",
+      "changes": "delete referrer state and short url: can close, reassign or take over accounts (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setObligationOrder",
+      "discriminator": "5101639cd3534e2e",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "set obligation order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setBorrowOrder",
+      "discriminator": "b1ba2d3deb5b448b",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "set borrow order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "setBorrowOrderV2",
+      "discriminator": "57ff1e049ce6a77e",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "set borrow order v2: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateObligationConfig",
+      "discriminator": "5298d545fa009dbc",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update obligation config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "rolloverFixedTermBorrow",
+      "discriminator": "551e9be1e0ba8d94",
+      "authority": null,
+      "signers": [
+        "rolloverAccountsPayer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "rollover fixed term borrow: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "fillBorrowOrder",
+      "discriminator": "6604a74c83aa5d13",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "fill borrow order: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "fillBorrowOrderV2",
+      "discriminator": "c555c18b285ec28f",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "fill borrow order v2: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initiateObligationOwnershipTransfer",
+      "discriminator": "7f2a51da93ab4c99",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "starts handing an obligation to a new owner",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "approveObligationOwnershipTransfer",
+      "discriminator": "3de3e72ec47c3ca1",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "approves handing an obligation to a new owner",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "acceptObligationOwnership",
+      "discriminator": "f98246b097bbef06",
+      "authority": null,
+      "signers": [
+        "pendingOwner"
+      ],
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "takes ownership of an obligation",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "abortObligationOwnershipTransfer",
+      "discriminator": "67d95341a405c3e3",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "cancels an obligation ownership transfer",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "enqueueToWithdraw",
+      "discriminator": "8671a0cf5a4bd5db",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "enqueue to withdraw: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawQueuedLiquidity",
+      "discriminator": "4295bbc94abfae78",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw queued liquidity: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "recoverInvalidTicketCollateral",
+      "discriminator": "1c30b0669fced2f6",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "config",
+      "changes": "recover invalid ticket collateral: can change non-custodial settings (fees, metadata) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "cancelWithdrawTicket",
+      "discriminator": "b4537a2c78d32f16",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "cancel withdraw ticket: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initGlobalConfig",
+      "discriminator": "8c88d630570078ff",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "init global config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGlobalConfig",
+      "discriminator": "a45482bd6f3afac8",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update global config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGlobalConfigAdmin",
+      "discriminator": "b85717c19ceeaf77",
+      "authority": null,
+      "signers": [
+        "pendingAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update global config admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "idlMissingTypes",
+      "discriminator": "8250269950d4b6fd",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "idl missing types: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": []
+}

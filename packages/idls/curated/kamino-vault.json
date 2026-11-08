@@ -1,0 +1,99 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "kamino-vault",
+  "programId": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-vault.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "instructions": [
+    {
+      "instruction": "deposit",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a vault for shares; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "depositWithMinSharesOut",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits into a vault for at least a minimum of shares; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "buy",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "buys vault shares; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "buyWithMinSharesOut",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "buys vault shares for at least a minimum; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdraw",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems vault shares for tokens; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "sell",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "sells vault shares; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdrawFromAvailable",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems vault shares from the available balance; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "redeemInKind",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems vault shares in the underlying positions; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "invest",
+      "authority": null,
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves vault funds into reserves; permissionless keeper call"
+    },
+    {
+      "instruction": "investWithMaxAmount",
+      "authority": null,
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves vault funds into reserves; permissionless keeper call"
+    },
+    {
+      "instruction": "investV2WithMaxAmount",
+      "authority": null,
+      "capability": "kamino.invest",
+      "class": "other",
+      "changes": "moves vault funds into reserves; permissionless keeper call"
+    },
+    {
+      "instruction": "initVault",
+      "authority": null,
+      "capability": "kamino.vault_admin",
+      "class": "admin_control",
+      "changes": "creates a vault and makes the signer its admin"
+    },
+    {
+      "instruction": "updateVaultConfig",
+      "authority": null,
+      "capability": "kamino.vault_admin",
+      "class": "admin_control",
+      "changes": "changes a vault's configuration (admin only)"
+    }
+  ]
+}

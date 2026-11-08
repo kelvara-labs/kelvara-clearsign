@@ -1,0 +1,67 @@
+{
+ "schema": "kelvara.fixture.tx/v1",
+ "network": "mainnet",
+ "signature": "5QLSGAPEZFxAm5esSe5VVthr6hisF3R1joRdtCKuXxgEpfhPTb3ZRFRe1wTqz6QDJrHPn96HjjtbNENXBrtL8Upg",
+ "slot": 466926156,
+ "blockTime": 1794143277,
+ "fetchedAt": "2026-11-08T13:07:59.716Z",
+ "source": "helius:getTransaction",
+ "program": {
+  "slug": "kamino-farms",
+  "programId": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+  "name": "Kamino Farms"
+ },
+ "encoding": "base64",
+ "transaction": "Adww+KdlkAhjs4BW3VfH5T/8Sq6qPB4YLtEV5UYNYMUz5nf2rngX4ddRLdIcyuuwe8ncWYT5z9GjdGx5KdyFwwGAAQACBQniWq5DclgceV+og41uBwu1BVbwZYN7lbXMMRw/ugxfHXAbeGHK8M9xBdJ/ADjsBcKsaP44VXcgs8cKu4nQxIlERCGh/VYH3IS9zoJGTuEv4wUbcykEwEhpeDfOaFOSJAMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAA2LAQF2PT5R8SbmFW3oXejGEwWbhEaNDaP+iioiUcxwGUdEQrVJy8X8cz9B/BkxqQ9J0D2ggQD8VssectID71kAIDAAUCUMMAAAQDAAIBEEmruEseOMbfAAAAAAAAAAAA",
+ "sha256": "5a4de10cbcc17c03fd8b35dd1740fd24a4321c4962e89c7cf243e1586c759e9e",
+ "version": 0,
+ "meta": {
+  "err": null,
+  "status": {
+   "Ok": null
+  },
+  "fee": 5000,
+  "preBalances": [
+   25901927968,
+   58909484,
+   7294080,
+   1,
+   1141440
+  ],
+  "postBalances": [
+   25901922968,
+   58909484,
+   7294080,
+   1,
+   1141440
+  ],
+  "innerInstructions": [],
+  "logMessages": [
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr invoke [1]",
+   "Program log: Instruction: SetStakeDelegated",
+   "Program log: SetStakeDelegated: prev:12236743926 -> new:0 ts:1794143277",
+   "Program log: farm_operations::refresh_global_rewards ts=1794143277",
+   "Program log: time_passed=633 reward_type=Proportional cumulative_amt=94197363 decimal_adjusted_amt=94197363 oracle_adjusted_amt=94197363 ",
+   "Program log: farm_operations::refresh_global_reward issuing_reward=0 last_ts=1794142644 ts=1794143277",
+   "Program log: time_passed=633 reward_type=Proportional cumulative_amt=785553 decimal_adjusted_amt=785553 oracle_adjusted_amt=785553 ",
+   "Program log: farm_operations::refresh_global_reward issuing_reward=0 last_ts=1794142644 ts=1794143277",
+   "Program log: farm_operations::user_refresh_reward reward_index 0 Global stake 15616484791164 User stake 12236743926 prev_reward_tally 6881453739323891103579118146 rpt 562359871297341971",
+   "Program log: farm_operations::user_refresh_reward reward 0, new_reward_tally (scaled) 6881453739323891103579118146",
+   "Program log: farm_operations::user_refresh_reward reward_index 1 Global stake 15616484791164 User stake 12236743926 prev_reward_tally 48911872558461864807150108 rpt 3997131332832458",
+   "Program log: farm_operations::user_refresh_reward reward 0, new_reward_tally (scaled) 48911872558461864807150108",
+   "Program FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr consumed 26682 of 49850 compute units",
+   "Program FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr success"
+  ],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "rewards": [],
+  "loadedAddresses": {
+   "writable": [],
+   "readonly": []
+  },
+  "computeUnitsConsumed": 26832,
+  "costUnits": 31025
+ }
+}

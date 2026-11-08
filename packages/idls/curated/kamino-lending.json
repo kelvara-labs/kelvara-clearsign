@@ -1,0 +1,232 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "kamino-lending",
+  "programId": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-lending.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "instructions": [
+    {
+      "instruction": "refreshReserve",
+      "authority": null,
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes a reserve's price and interest; permissionless"
+    },
+    {
+      "instruction": "refreshReservesBatch",
+      "authority": null,
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes reserves; permissionless"
+    },
+    {
+      "instruction": "refreshObligation",
+      "authority": null,
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes an obligation; permissionless"
+    },
+    {
+      "instruction": "refreshObligationFarmsForReserve",
+      "authority": null,
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes an obligation's farm state; permissionless"
+    },
+    {
+      "instruction": "depositReserveLiquidity",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits liquidity into a reserve for collateral tokens; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "redeemReserveCollateral",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "redeems collateral tokens for liquidity; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "depositObligationCollateral",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "puts collateral into an obligation; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "depositObligationCollateralV2",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "puts collateral into an obligation; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdrawObligationCollateral",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "takes collateral out of an obligation; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdrawObligationCollateralV2",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "takes collateral out of an obligation; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "borrowObligationLiquidity",
+      "authority": null,
+      "capability": "kamino.borrow",
+      "class": "other",
+      "changes": "borrows against an obligation's collateral; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "borrowObligationLiquidityV2",
+      "authority": null,
+      "capability": "kamino.borrow",
+      "class": "other",
+      "changes": "borrows against an obligation's collateral; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "repayObligationLiquidity",
+      "authority": null,
+      "capability": "kamino.repay",
+      "class": "other",
+      "changes": "repays borrowed liquidity; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "repayObligationLiquidityV2",
+      "authority": null,
+      "capability": "kamino.repay",
+      "class": "other",
+      "changes": "repays borrowed liquidity; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "repayAndWithdrawAndRedeem",
+      "authority": null,
+      "capability": "kamino.repay",
+      "class": "other",
+      "changes": "repays, withdraws collateral and redeems in one step; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "depositAndWithdraw",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits and withdraws in one step; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "depositReserveLiquidityAndObligationCollateral",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits liquidity and posts it as collateral; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "depositReserveLiquidityAndObligationCollateralV2",
+      "authority": null,
+      "capability": "kamino.deposit",
+      "class": "other",
+      "changes": "deposits liquidity and posts it as collateral; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdrawObligationCollateralAndRedeemReserveCollateral",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "withdraws collateral and redeems it for liquidity; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdrawObligationCollateralAndRedeemReserveCollateralV2",
+      "authority": null,
+      "capability": "kamino.withdraw",
+      "class": "other",
+      "changes": "withdraws collateral and redeems it for liquidity; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "liquidateObligationAndRedeemReserveCollateral",
+      "authority": null,
+      "capability": "kamino.liquidate",
+      "class": "other",
+      "changes": "a liquidator repays part of an unhealthy obligation and receives collateral"
+    },
+    {
+      "instruction": "liquidateObligationAndRedeemReserveCollateralV2",
+      "authority": null,
+      "capability": "kamino.liquidate",
+      "class": "other",
+      "changes": "a liquidator repays part of an unhealthy obligation and receives collateral"
+    },
+    {
+      "instruction": "flashBorrowReserveLiquidity",
+      "authority": null,
+      "capability": "kamino.flash",
+      "class": "other",
+      "changes": "borrows liquidity that must be repaid in the same transaction"
+    },
+    {
+      "instruction": "flashRepayReserveLiquidity",
+      "authority": null,
+      "capability": "kamino.flash",
+      "class": "other",
+      "changes": "repays a flash borrow"
+    },
+    {
+      "instruction": "initObligation",
+      "authority": null,
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "creates the signer's obligation (lending position)"
+    },
+    {
+      "instruction": "initUserMetadata",
+      "authority": null,
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "creates the signer's user metadata"
+    },
+    {
+      "instruction": "initObligationFarmsForReserve",
+      "authority": null,
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "creates the farm state of an obligation"
+    },
+    {
+      "instruction": "requestElevationGroup",
+      "authority": null,
+      "capability": "kamino.obligation",
+      "class": "other",
+      "changes": "moves an obligation to another elevation group (changes its borrow limits)"
+    },
+    {
+      "instruction": "initiateObligationOwnershipTransfer",
+      "authority": null,
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "starts handing an obligation to a new owner"
+    },
+    {
+      "instruction": "approveObligationOwnershipTransfer",
+      "authority": null,
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "approves handing an obligation to a new owner"
+    },
+    {
+      "instruction": "acceptObligationOwnership",
+      "authority": null,
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "takes ownership of an obligation"
+    },
+    {
+      "instruction": "abortObligationOwnershipTransfer",
+      "authority": null,
+      "capability": "kamino.obligation_owner",
+      "class": "account_control",
+      "changes": "cancels an obligation ownership transfer"
+    }
+  ]
+}

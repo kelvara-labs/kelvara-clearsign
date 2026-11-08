@@ -1,0 +1,62 @@
+{
+ "schema": "kelvara.fixture.tx/v1",
+ "network": "mainnet",
+ "signature": "5hDnMTrkRZS5MF43hjhrq6coikWjutdQ2cVRS3cT47G6RMJJLdHAesWTm2aNRLBh1FPuzpKetEpS6TRhCYRhC8CF",
+ "slot": 466925687,
+ "blockTime": 1794143175,
+ "fetchedAt": "2026-11-08T13:07:59.502Z",
+ "source": "helius:getTransaction",
+ "program": {
+  "slug": "kamino-liquidity",
+  "programId": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
+  "name": "Kamino Liquidity"
+ },
+ "encoding": "base64",
+ "transaction": "AerApTlCsb3qy9MV0cowKz/zgBEOZgyP6Ac/OZN6dQy+vSk1ITMVH6RLt/Tjseh1lREPXL9G8IV3XbcNE+f83QCAAQAEBhe/gjUz1QwharTMCB78lYWm49wSsKrnAyTgyCafaWKk1RXoRaT298g6RoWk3i1nd6EbhnAGfrmUTPbuj24k+PQDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAan1RcYe9FmNdrUBFX9wsDBJMaPIVZ1pdu6y18IAAAAT2KFuNyy9quf9FcUaSw65h3qFdVOe8+Bix5w4AZRPQPjrvdLQLVoCk2JTs4faWddadTzhzNv7AIQpEkrpyW9NqSAmwk0w+0tDmrQXVKyPHZ0mqDTMziyn7XnVami0eleAwIABQKuKgAAAgAJAxAnAAAAAAAABAQAAQUDDBLej2bTUfaYuKH//wA=",
+ "sha256": "6e6d981666ad47e667d3424e7b1a8162a99c36bb421307e6109cd598873ae7f4",
+ "version": 0,
+ "meta": {
+  "err": null,
+  "status": {
+   "Ok": null
+  },
+  "fee": 5110,
+  "preBalances": [
+   9100874467,
+   29176320,
+   1,
+   0,
+   1141444,
+   187641648
+  ],
+  "postBalances": [
+   9100869357,
+   29176320,
+   1,
+   0,
+   1141444,
+   187641648
+  ],
+  "innerInstructions": [],
+  "logMessages": [
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program 6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc invoke [1]",
+   "Program log: Instruction: SetRefTickIndexPrice",
+   "Program log: Set ref_tick_index_price=-24136 at timestamp=1794143175",
+   "Program 6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc consumed 5088 of 10626 compute units",
+   "Program 6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc success"
+  ],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "rewards": [],
+  "loadedAddresses": {
+   "writable": [],
+   "readonly": []
+  },
+  "computeUnitsConsumed": 5388,
+  "costUnits": 9282
+ }
+}

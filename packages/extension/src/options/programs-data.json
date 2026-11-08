@@ -140,6 +140,78 @@
   "detail": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
  },
  {
+  "name": "kamino-lending",
+  "title": "Kamino Lending",
+  "programId": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "transfers",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
+ },
+ {
+  "name": "kamino-vault",
+  "title": "Kamino Vault",
+  "programId": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "transfers",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
+ },
+ {
+  "name": "kamino-farms",
+  "title": "Kamino Farms",
+  "programId": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "transfers"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
+ },
+ {
+  "name": "kamino-scope",
+  "title": "Kamino Scope",
+  "programId": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "freezing",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
+ },
+ {
+  "name": "kamino-liquidity",
+  "title": "Kamino Liquidity",
+  "programId": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
+  "kind": "Anchor IDL",
+  "understands": [
+   "authority changes",
+   "transfers",
+   "account ownership and closing",
+   "settings changes"
+  ],
+  "source": "On-chain IDL",
+  "verification": "Unverified",
+  "detail": "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
+ },
+ {
   "name": "memo",
   "title": "Memo",
   "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
