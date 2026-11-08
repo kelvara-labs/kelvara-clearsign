@@ -84,6 +84,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
   try {
     const server = createPlayground(await loadPlayground());
     server.on('error', e => { console.error(`[demo] ${e.code ?? 'server error'}`); process.exitCode = 1; });
-    server.listen(8780, '127.0.0.1', () => console.log(`[demo] http://localhost:8780 · devnet · signTransaction only · pid ${process.pid} · cwd ${process.cwd()}`));
+    const port = Number(process.env.PORT) || 47731;
+    server.listen(port, '127.0.0.1', () => console.log(`[demo] http://localhost:${port} · devnet · signTransaction only · pid ${process.pid} · cwd ${process.cwd()}`));
   } catch { console.error('[demo] Missing devnet setup; prepare admin, trap and sweep before starting.'); process.exitCode = 1; }
 }
