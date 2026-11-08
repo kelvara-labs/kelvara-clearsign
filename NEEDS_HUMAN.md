@@ -17,3 +17,7 @@ Open asks for the human. Write the exact ask; keep working on unblocked tasks.
 
 ## Optional AI provider (2026-11-08)
 - Expand Optional AI provider in extension Options to configure API URL, key and model, then enable, Save provider and Test saved provider. All three fields start collapsed and saved keys are never displayed. No real provider key exists in this repo/environment, so live paid-model usage is not yet demonstrated; engine templates continue without a provider. Do not paste provider keys into chat or commit them.
+
+## Program names from Orb (2026-11-08)
+- Orb's display names come from Helius's Wallet Identity API (batch-identity), which returns 403 on the current Helius key: it needs a paid Helius plan. If you want Orb-quality names, upgrade the plan for the key in `.env` and tell the coordinator. Meanwhile E25 uses the free Helius program catalog (describeProgram), less polished names.
+- Please confirm Helius's terms allow bundling program display names in the extension (the docs page does not say). Until you confirm, only short names and program ids are bundled, labelled "name from Helius catalog".
