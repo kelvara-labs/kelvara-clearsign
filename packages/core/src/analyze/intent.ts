@@ -56,6 +56,23 @@ function isOwnTokenAccountSetup(ix: DecodedInstruction): boolean {
   return !!destination && destination === owner;
 }
 
+/** Plain, serious wording for token-control findings: what the creator can do to the user's tokens. */
+function tokenRiskQuestion(ruleId: string): string {
+  if (ruleId === "token2022.permanent_delegate") return "This token's creator can take or burn your tokens at any time. Do you still want to go ahead?";
+  if (ruleId === "token.freeze_authority" || ruleId === "token2022.default_frozen") return "This token's creator can freeze your tokens so you cannot sell or move them. Do you still want to go ahead?";
+  if (ruleId === "token2022.non_transferable") return "You will not be able to sell or send this token. Do you still want to go ahead?";
+  if (ruleId === "token2022.transfer_hook") return "Every transfer of this token runs the creator's own program, which can block or change it. Do you still want to go ahead?";
+  if (ruleId === "token.delegate_granted") return "This gives someone else permission to move your tokens. Did you mean to allow that?";
+  return "This token comes with controls that limit what you can do with it. Do you still want to go ahead?";
+}
+function tokenRiskReason(ruleId: string, statement: string): string {
+  const who = /(?:delegate|authority) ([1-9A-HJ-NP-Za-km-z]{32,44})/.exec(statement)?.[1];
+  const short = who ? `${who.slice(0, 4)}…${who.slice(-4)}` : "the creator";
+  if (ruleId === "token2022.permanent_delegate") return `The token has a permanent delegate (${short}) that can transfer or burn the balance in your account without asking you. ${statement}`;
+  if (ruleId === "token.freeze_authority") return `The token has a freeze authority (${short}) that can lock your account, so you could not sell. ${statement}`;
+  return statement;
+}
+
 export function buildIntentContext(input: {session: Session; decoded: DecodedInstruction[][]; state: RuleState; report: Report; decoder?: Decoder}): IntentContext {
   const { session, decoded, state, report } = input;
   // Matches the browser capture cap. Never silently omit hashes from the binding.
@@ -79,7 +96,7 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
       const ev = report.evidence.find((e) => c.evidenceIds.includes(e.id) && e.type === "derivation" && e.data && typeof e.data === "object" && !Array.isArray(e.data) && "lookalikeOf" in e.data);
       const d = ev?.data as {recipient: string; lookalikeOf: string; prefix: number; suffix: number} | undefined;
       add("poisoning", 4, "Did you intend to pay this exact address rather than the previous recipient it resembles?", c.statement, [c.id], c.evidenceIds, d ? { proposed: d.recipient, previous: d.lookalikeOf, prefix: d.prefix, suffix: d.suffix } : null);
-    } else if (c.ruleId && /^(token2022\.|token\.freeze_authority|token\.delegate_granted)/.test(c.ruleId) && c.kind !== "Unknown") add("token-risk", c.level === "L4" ? 4 : 3, "Did you intend to accept the token controls described here?", c.statement, [c.id], c.evidenceIds);
+    } else if (c.ruleId && /^(token2022\.|token\.freeze_authority|token\.delegate_granted)/.test(c.ruleId) && c.kind !== "Unknown") add("token-risk", c.level === "L4" ? 4 : 3, tokenRiskQuestion(c.ruleId), tokenRiskReason(c.ruleId, c.statement), [c.id], c.evidenceIds);
     else if (c.level === "L4") add("unknown", 4, "Did you intend to authorize the effects in this critical finding?", c.statement, [c.id], c.evidenceIds);
     else if (c.ruleId === "address.dust_sender") add("poisoning", 3, "Did you intend to pay this exact address that previously sent you dust?", c.statement, [c.id], c.evidenceIds);
     else if (c.ruleId === "token.owner_takeover" || c.ruleId === "system.assign_takeover") add("authority", 4, "Did you intend to hand over control of this account?", c.statement, [c.id], c.evidenceIds);
