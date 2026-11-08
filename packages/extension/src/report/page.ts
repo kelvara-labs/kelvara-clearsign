@@ -23,9 +23,13 @@ function addr(value: string): HTMLElement {
   return el("code", { class: "addr", title: value }, el("span", { class: "addr-head" }, value.slice(0, -6)), el("span", { class: "addr-tail" }, value.slice(-6)));
 }
 
-/** Plain-text "site · network" line; the designer styles it. */
-function contextLine(r: ReportView): HTMLElement {
-  return el("p", { class: "report-context" }, r.origin ? el("span", { "data-kelvara-origin": "", "data-kelvara-trusted": String(!!r.trustedSite), role: "note", "aria-label": r.trustedSite ? `Trusted site: ${r.trustedSite}` : "Not on the trusted list", title: r.origin }, r.origin) : null, r.origin && r.network ? " · " : null, r.network ? el("span", { "data-kelvara-network": "", class: `net-${r.network}` }, r.network) : null);
+/** Site and network as pills; part of the header's wrapping pill row. */
+function contextPills(r: ReportView | null): HTMLElement[] {
+  if (!r) return [];
+  return [
+    r.origin ? el("span", { "data-kelvara-origin": "", "data-kelvara-trusted": String(!!r.trustedSite), role: "note", "aria-label": r.trustedSite ? `Trusted site: ${r.trustedSite}` : "Not on the trusted list", title: r.origin }, r.origin) : null,
+    r.network ? el("span", { "data-kelvara-network": "", class: `net-${r.network}` }, r.network) : null
+  ].filter((x): x is HTMLElement => !!x);
 }
 
 function section(title: string, ...kids: Kids): HTMLElement {
@@ -94,7 +98,7 @@ function instructionList(r: ReportView): HTMLElement | null {
       { class: i.name ? "ix" : "ix ix-unknown", "data-ix": `${i.tx}:${i.path}` },
       el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable), i.raw ? copyRawButton(i.raw) : null),
       i.args.length || i.accounts.length
-        ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, ...(/^\d+$/.test(f.value) ? [Number(f.value).toLocaleString("en-US")] : r.tokens?.some((t) => f.value.includes(t.label)) ? withTokens(f.value, r.tokens) : [addr(f.value)]))]))
+        ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, ...(/^\d+$/.test(f.value) ? [Number(f.value).toLocaleString("en-US")] : r.tokens?.some((t) => f.value.includes(t.label)) ? withTokens(f.value, r.tokens, document, false) : [addr(f.value)]))]))
         : null
     );
   if (!multi) return section("Instructions", el("ol", { class: "instructions" }, ...list.map(line)));
@@ -186,23 +190,23 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
   return out;
 }
 
-/** The first line of the report: calm at L0, a small notice at L1, a coloured banner from L2. */
+/** The header: title, level, site and network as rounded pills in one wrapping row. */
 export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
   const title = r?.title ?? v.reason;
-  const context = r && (r.origin || r.network) ? [contextLine(r)] : [];
   const level = v.level;
+  const pills = contextPills(r);
   if (level === 0) {
     const calm = /^No risks found/.test(title);
     const [lead, rest] = calm ? ["No risks found", title.replace(/^No risks found\s*[·:]?\s*/, "").trim()] : (() => { const [a, ...b] = title.split(" · "); return [a ?? title, b.join(" · ")]; })();
     return [
       el(
         "section",
-        { class: calm ? "calm-head" : "calm-head unverified" },
+        { class: calm ? "calm-head report-head" : "calm-head unverified report-head" },
         el("span", { class: "level-icon", "aria-hidden": "true" }),
-        el("h1", { id: "title" }, el("strong", {}, lead), rest ? el("span", { class: "headline" }, ` ${rest}`) : null),
-        el("span", { class: "level-chip", "data-kelvara-level": "L0", title: "Alert level L0" }, "L0")
-      ),
-      ...context
+        el("h1", { id: "title", class: "pill title-pill" }, el("strong", {}, lead), rest ? el("span", { class: "headline" }, " ", ...withTokens(rest, r?.tokens)) : null),
+        el("span", { class: "level-chip pill", "data-kelvara-level": "L0", title: "Alert level L0" }, "L0"),
+        ...pills
+      )
     ];
   }
   if (level === 1) {
@@ -210,17 +214,17 @@ export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement
     return [
       el(
         "section",
-        { class: "notice-line" },
+        { class: "notice-line report-head" },
         el("span", { class: "level-icon", "aria-hidden": "true" }),
-        el("span", { class: "level-chip", "data-kelvara-level": "L1" }, `L1 · ${LEVEL_NAMES[1]}`),
-        el("h1", { id: "title" }, rest || title)
-      ),
-      ...context
+        el("h1", { id: "title", class: "pill title-pill" }, ...withTokens(rest || title, r?.tokens)),
+        el("span", { class: "level-chip pill", "data-kelvara-level": "L1" }, `L1 · ${LEVEL_NAMES[1]}`),
+        ...pills
+      )
     ];
   }
-  const badge = el("span", { class: "level" }, level === null ? "Blocked · analysis unavailable" : `L${level} · ${LEVEL_NAMES[level]}`);
+  const badge = el("span", { class: "level pill" }, level === null ? "Blocked · analysis unavailable" : `L${level} · ${LEVEL_NAMES[level]}`);
   if (level !== null) badge.setAttribute("data-kelvara-level", `L${level}`);
-  return [el("section", { class: "risk-banner" }, el("div", { class: "risk-top" }, el("span", { class: "level-icon", "aria-hidden": "true" }), badge), el("h1", { id: "title" }, title), ...context)];
+  return [el("section", { class: "risk-banner report-head" }, el("span", { class: "level-icon", "aria-hidden": "true" }), el("h1", { id: "title", class: "pill title-pill" }, ...withTokens(title, r?.tokens)), badge, ...pills)];
 }
 
 /** What the assessment card shows when the worker has no explanation: the report's own one-line summary. */
@@ -259,11 +263,12 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   // Hold mode is two steps: confirm the intent first, then the review details and the decision controls.
   const stepped = mode === "hold" && !!r;
   const assessment = stepped ? assessmentCard(r!.message ? undefined : r!.intent, v.level, r!.message ? "Did you intend to sign this message?" : undefined, r!.tokens) : null;
-  const details = el("div", { class: "review-details", "data-report-step": "details" }, ...detailsStep(v, r), r && r.messageHashes.length ? hashLine(r.messageHashes) : null);
+  const details = el("div", { class: "review-details", "data-report-step": "details" }, ...detailsStep(v, r));
   const footer = el("footer", { class: "decision" }, status, block);
   if (assessment) {
     card.setAttribute("data-report-current", "intent");
     details.hidden = true;
+    details.prepend(assessment.explanation);
     card.append(assessment.node, details);
   } else {
     card.setAttribute("data-report-current", "details");

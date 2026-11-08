@@ -201,13 +201,13 @@ afterEach(() => vi.unstubAllGlobals());
 describe("mint on hover", () => {
   it("each label is a span with the full mint in title and accessible text", () => {
     const doc = fakeDoc();
-    const out = withTokens("You send −23.180052 USDC today", [{ mint: USDC, label: "USDC" }], doc) as (N | string)[];
-    expect(out[0]).toBe("You send −23.180052 ");
-    const span = out[1] as N;
+    const out = withTokens("You send −23.18 USDC today", [{ mint: USDC, label: "USDC" }], doc) as (N | string)[];
+    expect(out[0]).toBe("You send −");
+    const span = out[3] as N;
     expect(span.text).toBe("USDC");
     expect(span.attrs.title).toBe(USDC);
     expect(span.attrs["aria-label"]).toBe(`USDC, mint ${USDC}`);
-    expect(out[2]).toBe(" today");
+    expect(out[4]).toBe(" today");
     expect(withTokens("USDCX and xUSDC", [{ mint: USDC, label: "USDC" }], doc)).toEqual(["USDCX and xUSDC"]);
   });
   it("the details step renders balances and the authorize text with hover spans", () => {
@@ -217,7 +217,7 @@ describe("mint on hover", () => {
     const spans = nodes.filter((n) => n.attrs["data-kelvara-token"] === USDC);
     expect(spans.length).toBeGreaterThanOrEqual(2);
     expect(nodes.some((n) => n.attrs["data-other-accounts"] !== undefined)).toBe(true);
-    expect(nodes.filter((n) => "data-balance" in n.attrs).map((n) => n.text)).toContain("You send−23.180052 USDC");
+    expect(nodes.filter((n) => "data-balance" in n.attrs).map((n) => n.text)).toContain("You send−≈23.18 USDC");
   });
 });
 
@@ -228,9 +228,10 @@ describe("Assessment card", () => {
     a.show({ source: "ai", sentences: [{ text: "Hello.", claimIds: [] }] });
     const all = [a.node, ...a.node.all()];
     expect(all.filter((n) => n.tag === "h2")).toHaveLength(1);
-    const head = all.find((n) => n.attrs.class === "assessment-head")!;
-    expect(head.children.map((c) => (c as N).tag)).toEqual(["h2", "p"]);
-    expect(head.all().find((n) => "data-intent-source" in n.attrs)!.textContent).toBe("AI provider");
+    const h = all.find((n) => n.tag === "h2")!;
+    expect(h.textContent).toBe("Intent Assessment");
+    expect(h.attrs["data-explain-source"]).toBe("ai");
+    expect(h.attrs.title).toBe("Written by your AI provider");
     expect(all.some((n) => /Assessment by/.test(n.text))).toBe(false);
   });
   it("renders the swap candidate: question and reasons as text", () => {

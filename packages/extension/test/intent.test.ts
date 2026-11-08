@@ -237,16 +237,18 @@ describe("assessment card (step 1)", () => {
     assessmentCard(templateIntent(routineContext), 1);
     expect(elements.some(e => has(e, "data-intent-question"))).toBe(true);
   });
-  it("captions say who wrote the assessment in plain words", () => {
+  it("one heading; the author is a data attribute and a tooltip, never a second line; citation markers are hidden", () => {
     const elements = fakeDom();
     const a = assessmentCard(templateIntent(context), 2);
-    const caption = elements.find(e => has(e, "data-intent-source"))!;
-    expect(caption.textContent).toBe("Preparing…");
+    const heading = elements.find(e => has(e, "data-intent-source"))!;
+    expect(heading.textContent).toBe("Intent Assessment");
     a.show({ source: "signguard", sentences: [{ text: "One.", claimIds: [] }] });
-    expect(caption.textContent).toBe("ClearSign");
-    a.show({ source: "ai", sentences: [{ text: "Two.", claimIds: [] }] });
-    expect(caption.textContent).toBe("AI provider");
-    expect(elements.find(e => has(e, "data-intent-explain"))!.children.map(c => c.textContent)).toEqual(["Two."]);
+    expect(heading.attrs["data-explain-source"]).toBe("signguard");
+    expect(heading.attrs.title).toBe("Written by ClearSign");
+    a.show({ source: "ai", sentences: [{ text: "Two [c1] more[c2][c3].", claimIds: ["c1"] }] });
+    expect(heading.attrs.title).toBe("Written by your AI provider");
+    expect(elements.find(e => has(e, "data-intent-explain"))!.children.map(c => c.textContent)).toEqual(["Two more."]);
+    expect(elements.filter(e => e.textContent === "Explanation")).toHaveLength(1);
     expect(fallbackExplanation(reportView).source).toBe("signguard");
   });
 });

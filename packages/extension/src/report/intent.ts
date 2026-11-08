@@ -2,6 +2,12 @@ import type { Explanation } from "../shared/explanation.js";
 import type { TokenRef } from "../shared/report-view.js";
 import { withTokens } from "./tokens.js";
 import type { ReportIntent } from "../intent/selection.js";
+function setRich(e: HTMLElement, text: string, tokens?: TokenRef[]): HTMLElement {
+  const parts = withTokens(text, tokens);
+  if (parts.length === 1 && typeof parts[0] === "string") e.textContent = parts[0];
+  else e.append(...parts);
+  return e;
+}
 function node<K extends keyof HTMLElementTagNameMap>(tag: K, text = "", attrs: Record<string, string> = {}): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
   e.textContent = text;
@@ -22,8 +28,10 @@ export interface Assessment {
   node: HTMLElement;
   confirm: HTMLButtonElement;
   reject: HTMLButtonElement;
-  /** Shows the explanation text; the caption names who wrote it. */
+  /** Fills the page-2 Explanation section; the heading tooltip names who wrote it. */
   show(explanation: Explanation): void;
+  /** Page 2 section "Explanation": filled by show(). */
+  explanation: HTMLElement;
 }
 
 /**
@@ -35,21 +43,21 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
   const asking = hasIntentQuestion(intent, level);
   const card = node("section", "", { class: "intent-card assessment", "data-report-step": "intent", "data-intent-status": intent?.status ?? "template" });
   if (asking) card.setAttribute("data-kelvara-intent", "");
-  const caption = node("p", "Preparing…", { class: "eyebrow caption", role: "status", "data-intent-source": intent?.source ?? "engine" });
+  const heading = node("h2", "Intent Assessment", { id: "assessment-title", "data-intent-source": intent?.source ?? "engine", title: "Written by ClearSign" });
   const body = node("div", "", { class: "explanation", "data-intent-explain": "" });
-  const head = node("div", "", { class: "assessment-head" });
-  head.append(node("h2", "Assessment", { id: "assessment-title" }), caption);
-  card.append(head, body);
+  const explanation = node("section", "", { class: "explanation-section", "data-report-explanation": "" });
+  explanation.append(node("h2", "Explanation"), body);
+  card.append(heading);
 
   if (asking) {
     const selected = intent.context.candidates.find((c) => c.id === intent.selectedId)!;
-    const question = node("h3", tokens?.length ? "" : selected.question, { class: "question", "data-intent-question": selected.id });
-    if (tokens?.length) question.append(...withTokens(selected.question, tokens));
+    const question = node("h3", "", { class: "question", "data-intent-question": selected.id });
+    setRich(question, selected.question, tokens);
     card.append(question);
     const reasons = node("ul");
-    for (const id of intent.reasonIds) {
+    for (const id of intent.reasonIds.slice(0, 1)) {
       const reason = selected.reasons.find((r) => r.id === id)!;
-      reasons.append((() => { const li = node("li", tokens?.length ? "" : reason.text, { "data-intent-reason": id }); if (tokens?.length) li.append(...withTokens(reason.text, tokens)); return li; })());
+      reasons.append((() => { const li = node("li", "", { "data-intent-reason": id }); setRich(li, reason.text, tokens); return li; })());
     }
     card.append(reasons);
     if (selected.kind === "transfer" || selected.kind === "poisoning") card.append(node("p", intent.context.historyNote, { class: "muted", "data-intent-history": "" }));
@@ -81,10 +89,16 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
     node: card,
     confirm,
     reject,
-    show(explanation) {
-      caption.textContent = explanation.source === "ai" || intent?.source === "ai" ? "AI provider" : "ClearSign";
-      caption.setAttribute("data-explain-source", explanation.source);
-      body.replaceChildren(...explanation.sentences.map((s) => (() => { const p = node("p", tokens?.length ? "" : s.text, { "data-claim-ids": s.claimIds.join(",") }); if (tokens?.length) p.append(...withTokens(s.text, tokens)); return p; })()));
+    explanation,
+    show(e) {
+      heading.setAttribute("title", e.source === "ai" || intent?.source === "ai" ? "Written by your AI provider" : "Written by ClearSign");
+      heading.setAttribute("data-explain-source", e.source);
+      body.replaceChildren(...e.sentences.map((s) => {
+        const text = s.text.replace(/\s*\[c\d+\]/g, "");
+        const p = node("p", "", { "data-claim-ids": s.claimIds.join(",") });
+        setRich(p, text, tokens);
+        return p;
+      }));
     }
   };
 }

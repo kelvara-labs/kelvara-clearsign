@@ -45,7 +45,7 @@ describe("level presentation", () => {
     const m = await mapped("/memo/", (n) => n.includes("fact.memo"));
     const nodes = tree(levelHeader(verdictOf(0, m.report), m.report));
     expect(nodes.some((n) => (n.attrs.class ?? "").includes("risk-banner"))).toBe(false);
-    expect(nodes.find((n) => n.attrs.class === "calm-head")).toBeTruthy();
+    expect(nodes.find((n) => (n.attrs.class ?? "").startsWith("calm-head"))).toBeTruthy();
     const h1 = nodes.find((n) => n.tag === "h1")!;
     expect(h1.text).toMatch(/^No risks found /);
     expect(h1.attrs.id).toBe("title");
@@ -58,16 +58,16 @@ describe("level presentation", () => {
     fakeDom();
     const m = await mapped("/memo/", (n) => n.includes("fact.memo"));
     const l1 = tree(levelHeader(verdictOf(1, m.report), m.report));
-    expect(l1.some((n) => n.attrs.class === "notice-line")).toBe(true);
+    expect(l1.some((n) => (n.attrs.class ?? "").startsWith("notice-line"))).toBe(true);
     expect(l1.some((n) => (n.attrs.class ?? "").includes("risk-banner"))).toBe(false);
     expect(l1.find((n) => "data-kelvara-level" in n.attrs)!.text).toBe("L1 · Notice");
     for (const [level, text] of [[2, "L2 · Warning"], [3, "L3 · Critical"], [4, "L4 · Blocked"]] as const) {
       const n = tree(levelHeader(verdictOf(level, m.report), m.report));
-      expect(n.some((x) => x.attrs.class === "risk-banner")).toBe(true);
+      expect(n.some((x) => (x.attrs.class ?? "").startsWith("risk-banner"))).toBe(true);
       expect(n.find((x) => "data-kelvara-level" in x.attrs)!.text).toBe(text);
     }
     const blocked = tree(levelHeader(verdictOf(null, null, { hold: false }), null));
-    expect(blocked.some((x) => x.attrs.class === "risk-banner")).toBe(true);
+    expect(blocked.some((x) => (x.attrs.class ?? "").startsWith("risk-banner"))).toBe(true);
     expect(blocked.some((x) => x.text === "Blocked · analysis unavailable")).toBe(true);
   });
 });

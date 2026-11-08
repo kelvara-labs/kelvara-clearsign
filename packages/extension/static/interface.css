@@ -846,3 +846,20 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 .authorize-list { margin: var(--space-2) 0 0; padding-left: var(--space-4); display: grid; gap: var(--space-1); }
 .authorize-list li { font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-1); }
 .authorize-list li:last-child { color: var(--text-2); font-size: var(--fs-body-sm); }
+
+/* Header pills: title, level, site and network in one wrapping row */
+.report-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: 0; border: 0; background: none; box-shadow: none; }
+html[data-level] .card > .risk-banner.report-head { border: 0; background: none; box-shadow: none; padding: 0; margin-top: 0; }
+.report-head .level-icon { display: none; }
+.report-head .pill { display: inline-flex; align-items: center; max-width: 100%; min-width: 0; padding: 4px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); background: var(--surface-1); font-size: var(--fs-label); line-height: var(--lh-label); font-weight: 600; color: var(--text-1); letter-spacing: 0; white-space: normal; margin: 0; }
+.report-head .title-pill { flex: 0 1 auto; display: inline-block; border-color: var(--lv-border); background: var(--lv-bg); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); font-weight: 600; text-transform: none; }
+.report-head .title-pill strong { color: var(--lv-fg); font-weight: 650; }
+.report-head .title-pill .headline { color: var(--text-1); font-weight: 500; }
+.report-head .level-chip, .report-head .level { color: var(--lv-fg); border-color: var(--lv-border); background: var(--lv-bg); font-weight: 700; white-space: nowrap; }
+.report-head [data-kelvara-origin], .report-head [data-kelvara-network] { margin: 0; }
+html[data-level="L4"] .report-head .level { background: var(--risk-4-fg); border-color: var(--risk-4-fg); color: var(--on-risk-4); }
+.card > .report-head { margin-bottom: var(--space-3); }
+.explanation-section { margin-top: var(--space-4); }
+.explanation-section .explanation p { margin: 0 0 var(--space-2); font-size: var(--fs-body-sm); line-height: var(--lh-body-sm); color: var(--text-1); }
+.assessment > h2 { margin: 0 0 var(--space-3); font-size: var(--fs-body); line-height: var(--lh-body); font-weight: 650; letter-spacing: 0; text-transform: none; color: var(--text-1); cursor: help; }
+.amount { cursor: help; }
