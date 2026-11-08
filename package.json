@@ -44,7 +44,8 @@
     "scenario:e2e-cases": "pnpm --filter @kelvara/scenarios scenario:e2e-cases",
     "fixtures:poison": "pnpm --filter @kelvara/scenarios fixtures:poison",
     "demo:serve": "pnpm --filter @kelvara/scenarios demo:serve",
-    "demo:prepare": "pnpm --filter @kelvara/scenarios demo:prepare"
+    "demo:prepare": "pnpm --filter @kelvara/scenarios demo:prepare",
+    "demo:prepare-fees": "pnpm --filter @kelvara/scenarios demo:prepare-fees"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
