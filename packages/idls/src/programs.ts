@@ -5,7 +5,7 @@ export interface ProgramSpec {
   programId: string;
   priority: "P0" | "P0-demo" | "P1";
   /** idl: decoded from a Codama root (native Codama IDL or converted Anchor IDL); loader/memo: hand-written. */
-  decoder: "idl" | "loader" | "memo" | "computeBudget";
+  decoder: "idl" | "loader" | "memo" | "computeBudget" | "sigverify";
   kind?: "codama" | "anchor";
   repo?: string;
   commit?: string;
@@ -55,5 +55,8 @@ export const PROGRAMS: readonly ProgramSpec[] = [
   { name: "jupiter-v6", programId: "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4", priority: "P1", decoder: "idl", kind: "anchor", capabilities: true, note: "Jupiter v6 aggregator (swaps); IDL from the on-chain anchor:idl account" },
   { name: "velocity", programId: "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P", priority: "P1", decoder: "idl", kind: "anchor", idlFrom: "helius-program-metadata", capabilities: true, note: "Velocity; no anchor:idl account, IDL from the program's on-chain Program Metadata as served by Helius Parsed Events (Orb shows the same IDL)" },
   { name: "memo", programId: "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr", priority: "P1", decoder: "memo", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: false },
-  { name: "compute-budget", programId: "ComputeBudget111111111111111111111111111111", priority: "P1", decoder: "computeBudget", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: true }
+  { name: "compute-budget", programId: "ComputeBudget111111111111111111111111111111", priority: "P1", decoder: "computeBudget", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: true },
+  { name: "ed25519", programId: "Ed25519SigVerify111111111111111111111111111", priority: "P1", decoder: "sigverify", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts (Solana Ed25519 precompile layout)", capabilities: true },
+  { name: "secp256k1", programId: "KeccakSecp256k11111111111111111111111111111", priority: "P1", decoder: "sigverify", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts (Solana secp256k1 precompile layout)", capabilities: true },
+  { name: "secp256r1", programId: "Secp256r1SigVerify1111111111111111111111111", priority: "P1", decoder: "sigverify", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts (Solana secp256r1 precompile layout)", capabilities: true }
 ];

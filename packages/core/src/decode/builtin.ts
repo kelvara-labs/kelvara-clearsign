@@ -5,6 +5,8 @@
 // deserializes with trailing bytes allowed, so we do too (and report how many there were).
 // Account lists follow the interface's doc comments, by position.
 
+import { toBase58 } from "../util/encoding.js";
+
 /** Result of a hand-written decoder; null means "not an instruction this program has". Throws on bad args. */
 export interface BuiltinDecoded {
   name: string;
@@ -160,9 +162,76 @@ export function decodeComputeBudgetInstruction(data: Uint8Array): BuiltinDecoded
   return { name: v.name, args: { [v.arg]: v.wide ? r.u64() : r.u32() }, accountNames: [] };
 }
 
+export const ED25519_PROGRAM = "Ed25519SigVerify111111111111111111111111111";
+export const SECP256K1_PROGRAM = "KeccakSecp256k11111111111111111111111111111";
+export const SECP256R1_PROGRAM = "Secp256r1SigVerify1111111111111111111111111";
+export const SIGNATURE_CHECK_INSTRUCTION = "verifySignatures";
+const SELF = 0xffff;
+
+export interface SignatureCheck {
+  /** Signer public key (base58, Ed25519), 33-byte compressed key (hex, secp256r1) or Ethereum address (hex, secp256k1); null when it is not inside this instruction. */
+  signer: string | null;
+  /** Message length in bytes. */
+  messageLength: number;
+  /** True when signature, signer and message are all inside this instruction's own data. */
+  selfContained: boolean;
+  /** Where the signer's key bytes are: byte offset and length, and the instruction of the transaction that holds them (null: this instruction). */
+  keyOffset: number;
+  keyLength: number;
+  keyInstruction: number | null;
+}
+
+const u16 = (d: Uint8Array, o: number): number => d[o]! | (d[o + 1]! << 8);
+const hex = (b: Uint8Array): string => Array.from(b, (x) => x.toString(16).padStart(2, "0")).join("");
+
+/**
+ * Ed25519 and secp256r1 precompiles: u8 signature count, u8 padding, then 14 bytes per signature of little-endian u16
+ * offsets and instruction indexes (signature, public key, message offset and size, message). 0xFFFF means "this
+ * instruction". The precompile fails the transaction when a check fails, so a transaction that lands has verified
+ * every listed signature. Exact structure only: a malformed layout is not decoded.
+ */
+function decodeOffsetsPrecompile(data: Uint8Array, keyLength: number, signatureLength: number, keyText: (key: Uint8Array) => string): BuiltinDecoded | null {
+  const count = data[0];
+  if (!count || data.length < 2 + count * 14 || data[1] !== 0) return null;
+  const checks: SignatureCheck[] = [];
+  for (let i = 0; i < count; i++) {
+    const o = 2 + i * 14;
+    const [sigOff, sigIx, keyOff, keyIx, msgOff, msgLen, msgIx] = [0, 2, 4, 6, 8, 10, 12].map((k) => u16(data, o + k)) as [number, number, number, number, number, number, number];
+    const inside = (off: number, len: number, ix: number) => ix === SELF && off + len <= data.length;
+    if (sigIx === SELF && sigOff + signatureLength > data.length) return null;
+    if (keyIx === SELF && keyOff + keyLength > data.length) return null;
+    if (msgIx === SELF && msgOff + msgLen > data.length) return null;
+    checks.push({ signer: keyIx === SELF ? keyText(data.subarray(keyOff, keyOff + keyLength)) : null, messageLength: msgLen, selfContained: inside(sigOff, signatureLength, sigIx) && inside(keyOff, keyLength, keyIx) && inside(msgOff, msgLen, msgIx), keyOffset: keyOff, keyLength, keyInstruction: keyIx === SELF ? null : keyIx });
+  }
+  return { name: SIGNATURE_CHECK_INSTRUCTION, args: { numSignatures: count, signatures: checks as unknown as Record<string, unknown>[] }, accountNames: [] };
+}
+
+export const decodeEd25519Instruction = (data: Uint8Array): BuiltinDecoded | null => decodeOffsetsPrecompile(data, 32, 64, toBase58);
+export const decodeSecp256r1Instruction = (data: Uint8Array): BuiltinDecoded | null => decodeOffsetsPrecompile(data, 33, 64, hex);
+
+/**
+ * secp256k1 precompile: u8 count, then 11 bytes per signature (u16 signature offset, u8 instruction index, u16 Ethereum
+ * address offset, u8 index, u16 message offset, u16 message size, u8 index). Its indexes name an instruction of the
+ * transaction by position, which a single-instruction decoder cannot resolve, so the signer is read by the caller (facts) from
+ * the transaction; here only the count, message lengths and where the address sits are exact.
+ */
+export function decodeSecp256k1Instruction(data: Uint8Array): BuiltinDecoded | null {
+  const count = data[0];
+  if (!count || data.length < 1 + count * 11) return null;
+  const checks: SignatureCheck[] = [];
+  for (let i = 0; i < count; i++) {
+    const o = 1 + i * 11;
+    checks.push({ signer: null, messageLength: u16(data, o + 8), selfContained: false, keyOffset: u16(data, o + 3), keyLength: 20, keyInstruction: data[o + 5]! });
+  }
+  return { name: SIGNATURE_CHECK_INSTRUCTION, args: { numSignatures: count, signatures: checks as unknown as Record<string, unknown>[] }, accountNames: [] };
+}
+
 export const BUILTIN_PROGRAMS: readonly BuiltinProgram[] = [
   { name: "bpf-loader-upgradeable", programId: UPGRADEABLE_LOADER_PROGRAM, decode: decodeUpgradeableLoaderInstruction },
   { name: "memo", programId: MEMO_PROGRAM, decode: decodeMemoInstruction },
   { name: "memo-v1", programId: MEMO_V1_PROGRAM, decode: decodeMemoInstruction },
-  { name: "compute-budget", programId: COMPUTE_BUDGET_PROGRAM, decode: decodeComputeBudgetInstruction }
+  { name: "compute-budget", programId: COMPUTE_BUDGET_PROGRAM, decode: decodeComputeBudgetInstruction },
+  { name: "ed25519", programId: ED25519_PROGRAM, decode: decodeEd25519Instruction },
+  { name: "secp256k1", programId: SECP256K1_PROGRAM, decode: decodeSecp256k1Instruction },
+  { name: "secp256r1", programId: SECP256R1_PROGRAM, decode: decodeSecp256r1Instruction }
 ];

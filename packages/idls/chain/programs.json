@@ -1,7 +1,7 @@
 {
   "schema": "kelvara.idl-chain/v1",
   "network": "mainnet",
-  "fetchedAt": "2026-11-08T11:39:59.225Z",
+  "fetchedAt": "2026-11-08T12:23:52.315Z",
   "responses": {
     "program:11111111111111111111111111111111": {
       "method": "getAccountInfo",
@@ -18,7 +18,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901574,
+          "slot": 466913844,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -49,7 +49,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901574,
+          "slot": 466913844,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -80,7 +80,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901574,
+          "slot": 466913845,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -111,7 +111,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901574,
+          "slot": 466913845,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -142,7 +142,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901574,
+          "slot": 466913845,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -173,7 +173,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901575,
+          "slot": 466913845,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -204,7 +204,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901575,
+          "slot": 466913845,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -235,7 +235,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901575,
+          "slot": 466913845,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -266,7 +266,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901575,
+          "slot": 466913846,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -297,7 +297,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901575,
+          "slot": 466913846,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -328,7 +328,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901576,
+          "slot": 466913846,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -359,7 +359,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901576,
+          "slot": 466913846,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -390,7 +390,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901576,
+          "slot": 466913847,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -421,7 +421,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901576,
+          "slot": 466913847,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -452,7 +452,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901577,
+          "slot": 466913847,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -483,7 +483,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901577,
+          "slot": 466913847,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -514,7 +514,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901577,
+          "slot": 466913848,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -545,7 +545,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466901577,
+          "slot": 466913848,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -558,6 +558,99 @@
           "executable": true,
           "rentEpoch": 18446744073709552000,
           "space": 22
+        }
+      }
+    },
+    "program:Ed25519SigVerify111111111111111111111111111": {
+      "method": "getAccountInfo",
+      "params": [
+        "Ed25519SigVerify111111111111111111111111111",
+        {
+          "encoding": "base64",
+          "commitment": "finalized",
+          "dataSlice": {
+            "offset": 0,
+            "length": 36
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466913848,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 1,
+          "data": [
+            "ZWQyNTUxOV9wcm9ncmFt",
+            "base64"
+          ],
+          "owner": "NativeLoader1111111111111111111111111111111",
+          "executable": true,
+          "rentEpoch": 18446744073709552000,
+          "space": 15
+        }
+      }
+    },
+    "program:KeccakSecp256k11111111111111111111111111111": {
+      "method": "getAccountInfo",
+      "params": [
+        "KeccakSecp256k11111111111111111111111111111",
+        {
+          "encoding": "base64",
+          "commitment": "finalized",
+          "dataSlice": {
+            "offset": 0,
+            "length": 36
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466913849,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 1,
+          "data": [
+            "c2VjcDI1NmsxX3Byb2dyYW0=",
+            "base64"
+          ],
+          "owner": "NativeLoader1111111111111111111111111111111",
+          "executable": true,
+          "rentEpoch": 18446744073709552000,
+          "space": 17
+        }
+      }
+    },
+    "program:Secp256r1SigVerify1111111111111111111111111": {
+      "method": "getAccountInfo",
+      "params": [
+        "Secp256r1SigVerify1111111111111111111111111",
+        {
+          "encoding": "base64",
+          "commitment": "finalized",
+          "dataSlice": {
+            "offset": 0,
+            "length": 36
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466913849,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 1,
+          "data": [
+            "",
+            "base64"
+          ],
+          "owner": "NativeLoader1111111111111111111111111111111",
+          "executable": true,
+          "rentEpoch": 0,
+          "space": 0
         }
       }
     }
