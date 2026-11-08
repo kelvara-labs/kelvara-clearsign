@@ -1,5 +1,6 @@
 // Options "Programs" section: which programs ClearSign decodes in detail. Static data generated from the bundled
 // registry (scripts/gen-programs.mjs); no network, no settings access, no engine import.
+import { TRUSTED_SITES, type TrustedSite } from "../sw/trusted-sites.js";
 import data from "./programs-data.json";
 
 export interface ProgramRow {
@@ -69,4 +70,25 @@ export function mountPrograms(root: Document = document, programs: ProgramRow[] 
     });
     if (empty) empty.hidden = shown > 0;
   });
+}
+
+export function renderTrusted(t: TrustedSite, doc: Document = document): HTMLElement {
+  const row = doc.createElement("div");
+  row.className = "row trusted-row";
+  row.setAttribute("role", "listitem");
+  row.dataset.trusted = t.origin;
+  const text = doc.createElement("div");
+  text.className = "row-text";
+  const head = cell(doc, "span", "row-title", t.name);
+  head.append(" ", cell(doc, "code", "program-id", t.origin));
+  text.append(head, cell(doc, "p", "row-desc", t.reason));
+  const meta = doc.createElement("div");
+  meta.className = "row-control inline program-meta";
+  meta.append(cell(doc, "span", "pill", t.role));
+  row.append(text, meta);
+  return row;
+}
+
+export function mountTrusted(root: Document = document, sites: readonly TrustedSite[] = TRUSTED_SITES): void {
+  root.querySelector<HTMLElement>("#trusted-list")?.replaceChildren(...sites.map((t) => renderTrusted(t, root)));
 }

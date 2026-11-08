@@ -10,8 +10,9 @@ import type { Endpoint } from "./endpoint.js";
 export type EngineReport = Omit<ReportView, "messageHashes" | "limited"> & { level: 0 | 1 | 2 | 3 | 4 };
 
 export interface EngineLike {
-  /** `hashes`: base58 message hashes the worker computed from the bytes; a real report must cover exactly those. */
-  analyze(req: SignRequest, endpoint: Extract<Endpoint, { ok: true }>, hashes?: readonly string[]): Promise<EngineReport>;
+  /** `routedBy`: name of a trusted aggregator site (sw/trusted-sites.ts), only for display of unreadable routed programs.
+   *  `hashes`: base58 message hashes the worker computed from the bytes; a real report must cover exactly those. */
+  analyze(req: SignRequest, endpoint: Extract<Endpoint, { ok: true }>, hashes?: readonly string[], routedBy?: string): Promise<EngineReport>;
 }
 
 export const stubEngine: EngineLike = {

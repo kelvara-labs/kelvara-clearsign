@@ -24,7 +24,7 @@ function addr(value: string): HTMLElement {
 
 /** Plain-text "site · network" line; the designer styles it. */
 function contextLine(r: ReportView): HTMLElement {
-  return el("p", { class: "report-context" }, r.origin ? el("span", { "data-kelvara-origin": "" }, r.origin) : null, r.origin && r.network ? " · " : null, r.network ? el("span", { "data-kelvara-network": "", class: `net-${r.network}` }, r.network) : null);
+  return el("p", { class: "report-context" }, r.origin ? el("span", { "data-kelvara-origin": "", "data-kelvara-trusted": String(!!r.trustedSite), role: "note", "aria-label": r.trustedSite ? `Trusted site: ${r.trustedSite}` : "Not on the trusted list", title: r.origin }, r.origin) : null, r.origin && r.network ? " · " : null, r.network ? el("span", { "data-kelvara-network": "", class: `net-${r.network}` }, r.network) : null);
 }
 
 function section(title: string, ...kids: Kids): HTMLElement {
@@ -83,6 +83,7 @@ const humanName = (n: string): string => { const w = n.replace(/_/g, " ").replac
 
 /** Instructions in request order: "System Program · transfer", with the decoded arguments and accounts. */
 function instructionList(r: ReportView): HTMLElement | null {
+  const unreadable = r.routedBy ? `Third-party program, routed by ${r.routedBy}` : "Unreadable instruction";
   const list = r.details?.instructions ?? [];
   if (!list.length) return null;
   const multi = r.messageHashes.length > 1;
@@ -90,7 +91,7 @@ function instructionList(r: ReportView): HTMLElement | null {
     el(
       "li",
       { class: i.name ? "ix" : "ix ix-unknown", "data-ix": `${i.tx}:${i.path}` },
-      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : "Unreadable instruction")),
+      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable)),
       i.args.length || i.accounts.length
         ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, /^\d+$/.test(f.value) ? Number(f.value).toLocaleString("en-US") : addr(f.value))]))
         : null

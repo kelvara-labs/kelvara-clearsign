@@ -12,9 +12,9 @@ export function originOf(url: string): string | null {
   }
 }
 
-export function withContext(verdict: WorkerVerdict, url: string, network: ReportNetwork | null): WorkerVerdict {
+export function withContext(verdict: WorkerVerdict, url: string, network: ReportNetwork | null, trustedName?: string | null): WorkerVerdict {
   if (!verdict.report) return verdict;
   const origin = originOf(url);
-  const report = { ...verdict.report, ...(origin ? { origin } : {}), ...(network && REPORT_NETWORKS.includes(network) ? { network } : {}) };
+  const report = { ...verdict.report, ...(origin ? { origin } : {}), ...(origin && trustedName ? { trustedSite: trustedName } : {}), ...(network && REPORT_NETWORKS.includes(network) ? { network } : {}) };
   return { ...verdict, report };
 }

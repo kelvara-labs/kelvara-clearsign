@@ -9,6 +9,7 @@ import type { SignRequest } from "../shared/protocol.js";
 import type { Endpoint } from "./endpoint.js";
 import { EngineFailure } from "./engine-failure.js";
 import type { EngineLike, EngineReport } from "./engine-stub.js";
+import { routedIntent } from "./route-intent.js";
 import { fromReport } from "./from-report.js";
 import { registry, type Registry } from "./registry.js";
 
@@ -84,14 +85,15 @@ export async function analyzeRequest(req: SignRequest, url: string, deps: RealEn
 export function createRealEngine(overrides: Partial<RealEngineDeps> = {}): EngineLike {
   const deps: RealEngineDeps = { ...defaults, ...overrides };
   return {
-    async analyze(req, endpoint: Extract<Endpoint, { ok: true }>, hashes): Promise<EngineReport> {
+    async analyze(req, endpoint: Extract<Endpoint, { ok: true }>, hashes, routedBy): Promise<EngineReport> {
       if (!hashes) throw new EngineFailure("engine error: no message hashes");
       const { report, intentContext } = await withTimeout(analyzeRequest(req, endpoint.url, deps), deps.timeoutMs);
-      const mapped = fromReport(report, hashes);
+      const mapped = fromReport(report, hashes, routedBy);
       if (!mapped.ok) throw new EngineFailure(mapped.reason);
       const validated = validateIntentContext(intentContext, hashes);
       if (!validated) throw new EngineFailure("engine error: intent context failed validation");
-      mapped.report.intent = templateIntent(validated);
+      const intent = mapped.report.routedBy ? routedIntent(validated) : templateIntent(validated);
+      if (intent) mapped.report.intent = intent;
       // decide() adds the worker's own hashes and the license flag back.
       const view: Partial<typeof mapped.report> = { ...mapped.report };
       delete view.messageHashes;
