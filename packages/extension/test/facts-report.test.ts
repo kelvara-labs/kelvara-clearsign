@@ -36,7 +36,7 @@ describe("L0 facts as readable text", () => {
     expect(m.report.authorizes).toMatch(/No authority, delegate, owner or upgrade permission changes\.$/);
     expect(m.report.authorizes).not.toContain("Unknown");
     expect(m.report.summary).toBe("This transaction signs a memo, sends tokens and sets a priority fee of up to 0.000000006 SOL. No authority, delegate, owner or upgrade permission changes.");
-    expect(m.report.summary).not.toMatch(/claim\(s\)/);
+    expect(m.report.summary).not.toMatch(/claim\(s\)|change\(s\)/);
   });
 
   it("SOL transfer + priority fee (real mainnet)", async () => {
@@ -56,8 +56,8 @@ describe("L0 facts as readable text", () => {
     expect(m.report.authorizes).not.toContain("No authority, delegate, owner or upgrade permission changes.");
     expect(m.report.title).toBe(m.report.title.replace(" · ", ": "));
     expect(m.report.simulation).toMatch(/^The SOL balance of fee payer \w+ changes by −0\.000005 SOL \(network fee 0\.000005 SOL\)$/);
-    expect(m.report.summary).not.toMatch(/claim\(s\)/);
-    expect(m.report.summary).toMatch(/granted and \d+ revoked capability change\(s\)\.$/);
+    expect(m.report.summary).not.toMatch(/claim\(s\)|change\(s\)/);
+    expect(m.report.summary).toMatch(/\d+ permissions? granted and \d+ revoked\.$/);
   });
 
   it("trap L2 (recorded localnet run): risk claims stay, facts describe the transfers", async () => {
@@ -76,7 +76,7 @@ describe("L0 facts as readable text", () => {
     const empty = new ReportBuilder(session).build();
     const m = view(empty);
     expect(m.level).toBe(0);
-    expect(m.report.authorizes).toMatch(/^Unknown: /);
+    expect(m.report.authorizes).toBeNull();
     expect(m.report.summary).toContain("could not describe");
   });
 });

@@ -77,3 +77,27 @@ export class VisibilityGate {
     return this.since !== null && now - this.since >= MIN_VISIBLE_MS;
   }
 }
+
+/**
+ * The two steps of a held report. Step "intent" shows the assessment and two choices; only a trusted
+ * "Yes" after the assessment is shown (and the frame is ready) moves to "details", where Continue or
+ * Sign anyway exist. There is no other way to reach them. Block works at all times.
+ */
+export class IntentFlow {
+  step: "intent" | "details" = "intent";
+  private warmed = false;
+  private explained = false;
+  private closed = false;
+  setWarmed(): void { this.warmed = true; }
+  setExplained(): void { this.explained = true; }
+  close(): void { this.closed = true; }
+  get canConfirm(): boolean { return this.warmed && this.explained && !this.closed && this.step === "intent"; }
+  get canReject(): boolean { return this.warmed && !this.closed; }
+  /** Only a trusted user click counts. */
+  confirm(trusted: boolean): boolean {
+    if (!trusted || !this.canConfirm) return false;
+    this.step = "details";
+    return true;
+  }
+  get decisionControls(): boolean { return this.step === "details" && !this.closed; }
+}

@@ -114,7 +114,7 @@ describe("fromReport: Drift session", () => {
     expect(m.report.title).toBe(explainReport(driftReport()).headline);
     expect(m.report.title).toBe("Critical: The transaction does not expire; This signature reaches the multisig threshold");
     expect(m.report.summary).toContain("If the proposal reaches its threshold");
-    expect(m.report.summary).toContain("3 granted and 1 revoked capability change(s).");
+    expect(m.report.summary).toContain("3 permissions granted and 1 revoked.");
     expect(m.report.limited).toBe(false);
     expect(validateReportView(m.report)).not.toBeNull();
   });
@@ -133,7 +133,7 @@ describe("fromReport: Drift session", () => {
 
   it("authorizes lists granted and revoked powers; simulation null when not run", () => {
     const r = ok(fromReport(driftReport(), hashes)).report;
-    expect(r.authorizes).toMatch(/^Grants program\.upgrade of 1{32}; protocol\.admin of 1{32}; token\.freeze of an unknown target\. Revokes protocol\.admin of 1{32} \(holder 1{32}\)\.$/);
+    expect(r.authorizes).toMatch(/^Grants program\.upgrade of 1{32}; protocol\.admin of 1{32}; token\.freeze of an unknown target\. Revokes protocol\.admin of 1{32} \(holder 1{32}\)\. Could not decode 2 instructions on System Program; their effects are unknown\. Could not decode 1 instruction on Squads v4; its effects are unknown\.$/);
     expect(r.simulation).toBeNull();
   });
 

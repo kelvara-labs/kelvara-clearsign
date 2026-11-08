@@ -5,7 +5,7 @@
 //
 // Fail closed while a request is held: Block, Escape, the deadline, the page removing,
 // moving or restyling the host, or the frame never loading all resolve false.
-import { randomId, type WorkerVerdict } from "../shared/protocol.js";
+import { randomId, SW_BIND, type WorkerVerdict } from "../shared/protocol.js";
 import { reportMode, type ReportMode } from "./model.js";
 
 const HOST_BASE = "all:initial!important;position:fixed!important;z-index:2147483647!important;display:block!important;margin:0!important;padding:0!important;border:0!important;opacity:1!important;visibility:visible!important;transform:none!important;filter:none!important;pointer-events:auto!important;";
@@ -22,7 +22,7 @@ export function parseFrameAnswer(data: unknown): boolean | null {
   return keys.length === 1 && keys[0] === "allow" && typeof allow === "boolean" ? allow : null;
 }
 
-export function showReport(verdict: WorkerVerdict, deadline: number): Promise<boolean> {
+export function showReport(verdict: WorkerVerdict, deadline: number, id?: string): Promise<boolean> {
   const mode = reportMode(verdict);
   return new Promise((resolve) => {
     const secret = randomId((a) => crypto.getRandomValues(a));
@@ -34,6 +34,8 @@ export function showReport(verdict: WorkerVerdict, deadline: number): Promise<bo
     frame.setAttribute("style", "border:0;width:100%;height:100%;display:block;color-scheme:normal;background:transparent");
     frame.src = chrome.runtime.getURL(`report.html#${secret}`);
     root.append(frame);
+    // Lets the worker answer this frame's explanation request, and only this frame's (request id + secret + tab).
+    if (id && mode === "hold") void Promise.resolve(chrome.runtime.sendMessage({ type: SW_BIND, id, secret })).catch(() => {});
     const channel = new MessageChannel();
     let settled = false;
     const finish = (allow: boolean) => {
@@ -63,7 +65,7 @@ export function showReport(verdict: WorkerVerdict, deadline: number): Promise<bo
       () => {
         if (settled) return;
         const origin = new URL(frame.src).origin;
-        frame.contentWindow?.postMessage({ secret, verdict, deadline }, origin, [channel.port2]);
+        frame.contentWindow?.postMessage({ secret, verdict, deadline, id }, origin, [channel.port2]);
         frame.focus({ preventScroll: true });
       },
       { once: true }

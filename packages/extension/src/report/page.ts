@@ -1,11 +1,12 @@
-import { intentCard } from "./intent.js";
+import { assessmentCard } from "./intent.js";
 import { messageReview } from "./message.js";
 // The report page inside the extension iframe (report.html). Receives the verdict from
 // the bridge with the per-report secret and a MessagePort, renders it as text only, and
 // answers { allow } on the port. Contract for G7: test-dapp/e2e/README.md.
-import { validateWorkerVerdict, type WorkerVerdict } from "../shared/protocol.js";
+import { fallbackExplanation, readExplanation, type Explanation } from "../shared/explanation.js";
+import { isId, SW_EXPLAIN, validateWorkerVerdict, type WorkerVerdict } from "../shared/protocol.js";
 import { rankedCapabilities, type Claim, type EvidenceItem, type ReportView } from "../shared/report-view.js";
-import { buttonsFor, HoldGesture, LEVEL_NAMES, reportMode, statusLine, VisibilityGate } from "./model.js";
+import { buttonsFor, HoldGesture, IntentFlow, LEVEL_NAMES, reportMode, statusLine, VisibilityGate } from "./model.js";
 
 type Kids = (Node | string | null | false)[];
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string, string> = {}, ...kids: Kids): HTMLElementTagNameMap[K] {
@@ -58,37 +59,66 @@ function claimCard(c: Claim, evidence: Map<string, EvidenceItem>): HTMLElement {
     el("p", { class: "claim-text" }, c.text),
     c.advice ? el("p", { class: "advice" }, c.advice) : null,
     items.length ? el("div", { class: "explorer" }, ...items.map(evidenceCard)) : el("p", { class: "muted" }, "No evidence attached."),
-    c.moreEvidence ? el("p", { class: "muted" }, `and ${c.moreEvidence} more evidence item(s)`) : null,
+    c.moreEvidence ? el("p", { class: "muted" }, `and ${c.moreEvidence} more evidence item${c.moreEvidence === 1 ? "" : "s"}`) : null,
     el("p", { class: "muted" }, el("code", {}, c.rule ? `${c.id} · ${c.rule}` : c.id))
   );
   if (c.rule) card.setAttribute("data-rule", c.rule);
   return card;
 }
 
-function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => void): HTMLElement[] {
+/** "Ledger hash  7vde…x8T": a quiet line; the full value stays in the DOM text, the title and the accessible name. */
+export function hashLine(hashes: string[]): HTMLElement {
+  return el(
+    "p",
+    { class: "ledger-hash" },
+    el("span", { class: "ledger-label" }, hashes.length > 1 ? "Ledger hashes" : "Ledger hash"),
+    ...hashes.map((h) => el("code", { class: "addr", title: h, "aria-label": `Ledger hash ${h}`, "data-kelvara-hash": "" }, el("span", { class: "addr-head" }, h.slice(0, -4)), el("span", { class: "addr-tail" }, h.slice(-4))))
+  );
+}
+
+/** Instructions in request order: "System Program · transfer", with the decoded arguments and accounts. */
+function instructionList(r: ReportView): HTMLElement | null {
+  const list = r.details?.instructions ?? [];
+  if (!list.length) return null;
+  const multi = r.messageHashes.length > 1;
+  const line = (i: (typeof list)[number]) =>
+    el(
+      "li",
+      { class: i.name ? "ix" : "ix ix-unknown", "data-ix": `${i.tx}:${i.path}` },
+      el("strong", {}, i.name ? `${i.program} · ${i.name}` : `Unknown instruction on ${i.program}`),
+      i.args.length || i.accounts.length
+        ? el("dl", { class: "where" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, f.key), el("dd", {}, addr(f.value))]))
+        : null
+    );
+  if (!multi) return section("Instructions", el("ol", { class: "instructions" }, ...list.map(line)));
+  const txs = [...new Set(list.map((i) => i.tx))];
+  return section("Instructions", ...txs.flatMap((t) => [el("h3", {}, `Transaction ${t + 1}`), el("ol", { class: "instructions" }, ...list.filter((i) => i.tx === t).map(line))]));
+}
+
+/** Step 2: simulation, instructions, new states, capability changes, claims with evidence, Ledger hash. */
+export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
   const out: HTMLElement[] = [];
-  if (!r) {
-    out.push(el("p", { class: "summary" }, v.reason));
-    return out;
-  }
-  if (r.message) return [el("p", { class: "summary" }, r.summary), messageReview(r.message)];
-  out.push(el("p", { class: "summary" }, r.summary));
+  if (!r) return [el("p", { class: "summary" }, v.reason)];
+  if (r.message) return [messageReview(r.message)];
   if (r.simulation !== null || r.authorizes !== null) {
     out.push(
       el(
         "section",
         { class: "versus" },
-        el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), el("p", {}, r.authorizes ?? "Unknown")),
+        r.authorizes !== null ? el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), el("p", {}, r.authorizes)) : null,
         el("div", { class: "simulation" }, el("h2", {}, "What simulation shows"), el("p", {}, r.simulation ?? "Not simulated"))
       )
     );
   }
-  if (r.intent) out.push(intentCard(r.intent, onBlock));
+  const ix = instructionList(r);
+  if (ix) out.push(ix);
+  const changes = r.details?.changes ?? [];
+  if (changes.length) out.push(section("What changes after signing", el("ul", { class: "changes" }, ...changes.map((c) => el("li", {}, c)))));
   const caps = rankedCapabilities(r);
   if (caps.length) {
     out.push(
       section(
-        r.limited ? "Top finding" : "Capability changes, most dangerous first",
+        r.limited ? "Top finding" : "Permission changes, most dangerous first",
         el("ol", { class: "caps" }, ...caps.map((c) => el("li", { "data-risk": c.risk }, el("span", { class: "risk" }, c.risk), ` ${c.change === "granted" ? "Grants" : "Revokes"} ${c.authority} → `, addr(c.holder))))
       )
     );
@@ -104,70 +134,146 @@ function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => voi
   }
   if (r.claims.length) {
     const byId = new Map(r.evidence.map((e) => [e.id, e]));
-    // E23 facts ("What this transaction does") come first on L0/L1 and after the risk claims on L2+.
+    // Facts ("What this transaction does") come first on L0/L1 and after the risk findings on L2+.
     const isFact = (c: Claim) => c.kind === "Fact" && !!c.rule?.startsWith("fact.");
     const facts = r.claims.filter(isFact);
     const risks = r.claims.filter((c) => !isFact(c));
     const factSection = facts.length ? section("What this transaction does", ...facts.map((c) => claimCard(c, byId))) : null;
-    const riskSection = risks.length ? section(r.limited ? "Top finding" : "Claims (open for evidence)", ...risks.map((c) => claimCard(c, byId))) : null;
+    const riskSection = risks.length ? section(r.limited ? "Top finding" : "Findings (open for evidence)", ...risks.map((c) => claimCard(c, byId))) : null;
     const first = v.level !== null && v.level <= 1;
     out.push(...[first ? factSection : riskSection, first ? riskSection : factSection].filter((x): x is HTMLElement => !!x));
-  }
-  if (r.messageHashes.length) {
-    out.push(
-      el(
-        "details",
-        { class: "hashes-section" },
-        el("summary", {}, r.messageHashes.length > 1 ? "Message hashes (match on your Ledger)" : "Message hash (match on your Ledger)"),
-        el("ol", { class: "hashes" }, ...r.messageHashes.map((h) => el("li", {}, el("code", { "data-kelvara-hash": "" }, h))))
-      )
-    );
   }
   return out;
 }
 
-function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => void): void {
+/** The first line of the report: calm at L0, a small notice at L1, a coloured banner from L2. */
+export function levelHeader(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
+  const title = r?.title ?? v.reason;
+  const context = r && (r.origin || r.network) ? [contextLine(r)] : [];
+  const level = v.level;
+  if (level === 0) {
+    const rest = title.replace(/^No risks found\s*[·:]?\s*/, "").trim();
+    return [
+      el(
+        "section",
+        { class: "calm-head" },
+        el("span", { class: "level-icon", "aria-hidden": "true" }),
+        el("h1", { id: "title" }, el("strong", {}, "No risks found"), rest ? el("span", { class: "headline" }, ` ${rest}`) : null),
+        el("span", { class: "level-chip", "data-kelvara-level": "L0", title: "Alert level L0" }, "L0")
+      ),
+      ...context
+    ];
+  }
+  if (level === 1) {
+    const rest = title.replace(/^Notice\s*[·:]\s*/, "").trim();
+    return [
+      el(
+        "section",
+        { class: "notice-line" },
+        el("span", { class: "level-icon", "aria-hidden": "true" }),
+        el("span", { class: "level-chip", "data-kelvara-level": "L1" }, `L1 · ${LEVEL_NAMES[1]}`),
+        el("h1", { id: "title" }, rest || title)
+      ),
+      ...context
+    ];
+  }
+  const badge = el("span", { class: "level" }, level === null ? "Blocked · analysis unavailable" : `L${level} · ${LEVEL_NAMES[level]}`);
+  if (level !== null) badge.setAttribute("data-kelvara-level", `L${level}`);
+  return [el("section", { class: "risk-banner" }, el("div", { class: "risk-top" }, el("span", { class: "level-icon", "aria-hidden": "true" }), badge), el("h1", { id: "title" }, title), ...context)];
+}
+
+/** What the assessment card shows when the worker has no explanation: the report's own one-line summary. */
+const localExplanation = (v: WorkerVerdict, r: ReportView | null): Explanation => (r ? fallbackExplanation(r) : { source: "signguard", sentences: [{ text: v.reason, claimIds: [] }] });
+const EXPLAIN_WAIT_MS = 6000;
+
+function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => void, explain: (() => Promise<unknown>) | null): void {
   const mode = reportMode(v);
   const r = v.report;
   const b = buttonsFor(v);
-  const levelText = v.level === null ? "Blocked · analysis unavailable" : `L${v.level} · ${LEVEL_NAMES[v.level]}`;
   const card = el("main", { role: "alertdialog", "aria-labelledby": "title", class: `card mode-${mode}` });
   if (b.modal) card.setAttribute("data-kelvara-modal", "");
   if (r?.limited) card.setAttribute("data-kelvara-limited", "");
   card.setAttribute("aria-modal", "true");
-  const badge = el("span", { class: "level" }, levelText);
-  const banner = el("section", { class: "risk-banner" });
-  if (v.level !== null) badge.setAttribute("data-kelvara-level", `L${v.level}`);
   document.documentElement.dataset.level = v.level === null ? "blocked" : `L${v.level}`;
   const status = el("p", { class: "status", role: "status" });
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
-  banner.append(el("div", { class: "risk-top" }, el("span", { class: "level-icon", "aria-hidden": "true" }), badge), el("h1", { id: "title" }, r?.title ?? v.reason), ...(r && (r.origin || r.network) ? [contextLine(r)] : []));
-  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard")), banner);
+  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard")), ...levelHeader(v, r));
 
   let answered = false;
+  let sign: HTMLButtonElement | null = null;
   const block = el("button", { type: "button", class: "block", "data-kelvara-action": "block" }, b.block);
   const done = (allow: boolean) => {
     if (answered) return;
     answered = true;
+    flow.close();
     block.disabled = true;
     if (sign) sign.disabled = true;
+    if (assessment) assessment.confirm.disabled = assessment.reject.disabled = true;
     status.textContent = allow ? "Sending to your wallet…" : mode === "hold" ? "Blocked." : "Closed.";
     answer(allow);
   };
   block.addEventListener("click", () => done(false));
-  let sign: HTMLButtonElement | null = null;
-  card.append(...renderReport(v, r, () => done(false)));
-  const footer = el("footer", { class: "decision" }, status, block);
 
-  if (b.signAnyway) {
+  // Hold mode is two steps: confirm the intent first, then the review details and the decision controls.
+  const stepped = mode === "hold" && !!r;
+  const assessment = stepped ? assessmentCard(r!.message ? undefined : r!.intent, v.level, r!.message ? "Did you intend to sign this message?" : undefined) : null;
+  const details = el("div", { class: "review-details", "data-report-step": "details" }, ...detailsStep(v, r), r && r.messageHashes.length ? hashLine(r.messageHashes) : null);
+  const footer = el("footer", { class: "decision" }, status, block);
+  if (assessment) {
+    card.setAttribute("data-report-current", "intent");
+    details.hidden = true;
+    card.append(assessment.node, details);
+  } else {
+    card.setAttribute("data-report-current", "details");
+    card.append(...(r ? [el("p", { class: "summary" }, r.summary)] : []), details);
+  }
+
+  const flow = new IntentFlow();
+  const syncChoices = () => {
+    if (!assessment || answered) return;
+    assessment.reject.disabled = !flow.canReject;
+    assessment.confirm.disabled = !flow.canConfirm;
+  };
+  if (assessment) {
+    const local = localExplanation(v, r);
+    let explainedOnce = false;
+    const settle = (e: Explanation) => {
+      if (explainedOnce) return;
+      explainedOnce = true;
+      flow.setExplained();
+      assessment.show(e);
+      syncChoices();
+    };
+    syncChoices();
+    if (explain && r && !r.message) {
+      // Never wait on the provider longer than its own timeout: show SignGuard's text and enable the choices.
+      const safety = setTimeout(() => settle(local), EXPLAIN_WAIT_MS);
+      explain().then((x) => settle(readExplanation(x) ?? local), () => settle(local)).finally(() => clearTimeout(safety));
+    } else {
+      settle(r?.message ? { source: "signguard", sentences: [{ text: r.summary, claimIds: [] }] } : local);
+    }
+    assessment.reject.addEventListener("click", () => done(false));
+    assessment.confirm.addEventListener("click", (e) => {
+      if (answered || !flow.confirm(e.isTrusted)) return;
+      card.setAttribute("data-report-current", "details");
+      assessment.node.hidden = true;
+      details.hidden = false;
+      mountSign();
+      card.scrollTop = 0;
+      block.focus({ preventScroll: true });
+    });
+  }
+
+  function mountSign(): void {
+    if (!b.signAnyway) return;
     const holdMs = b.signAnyway.holdMs;
     const harmless = v.level === 0 || v.level === 1;
     const label = harmless ? "Continue to wallet" : holdMs ? `Hold ${holdMs / 1000} s to sign anyway` : "Sign anyway";
-    sign = el("button", { type: "button", class: "sign", "data-kelvara-action": harmless ? "continue" : "sign-anyway", "data-armed": "false" }, label);
-    if (holdMs) sign.setAttribute("data-hold-ms", String(holdMs));
-    footer.append(sign);
-    const s = sign;
+    const s = el("button", { type: "button", class: "sign", "data-kelvara-action": harmless ? "continue" : "sign-anyway", "data-armed": "false" }, label);
+    sign = s;
+    if (holdMs) s.setAttribute("data-hold-ms", String(holdMs));
+    footer.append(s);
     const hint = el("p", { class: "hint", "aria-live": "polite" });
     footer.append(hint);
 
@@ -242,6 +348,8 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
       });
     }
   }
+
+  if (!assessment) mountSign();
   card.append(footer);
   document.body.replaceChildren(card);
 
@@ -259,7 +367,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   // A newly attached cross-origin iframe can have layout before its compositor hit-test
   // region exists. Keep decisions inert until intersection delivery and a painted frame.
   block.disabled = true;
-  if (sign) sign.disabled = true;
+  if (sign) (sign as HTMLButtonElement).disabled = true;
   let warming = false;
   const ready = new IntersectionObserver((entries) => {
     if (warming || !entries.some((e) => e.isIntersecting)) return;
@@ -268,7 +376,9 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (answered) return;
       block.disabled = false;
-      if (sign) sign.disabled = false;
+      if (sign) (sign as HTMLButtonElement).disabled = false;
+      flow.setWarmed();
+      syncChoices();
       block.focus({ preventScroll: true });
     }));
   });
@@ -296,8 +406,9 @@ export function mountReport(): void {
       port.postMessage({ allow: false });
       return;
     }
+    const id = isId(data.id) ? data.id : null;
     try {
-      render(verdict, deadline, (allow) => port.postMessage({ allow }));
+      render(verdict, deadline, (allow) => port.postMessage({ allow }), id ? () => chrome.runtime.sendMessage({ type: SW_EXPLAIN, id, secret }) : null);
     } catch {
       port.postMessage({ allow: false });
     }

@@ -31,7 +31,7 @@ export interface BridgeDeps {
    * user's choice (false on Block, removal, error or the deadline); otherwise it only
    * shows the report and the result is ignored. Absent: held requests are blocked.
    */
-  showReport?(verdict: WorkerVerdict, deadline: number): Promise<boolean>;
+  showReport?(verdict: WorkerVerdict, deadline: number, id?: string): Promise<boolean>;
   now?(): number;
 }
 
@@ -85,7 +85,7 @@ export function installBridge(win: EventTarget, deps: BridgeDeps): Bridge {
           let allow = false;
           try {
             allow = await Promise.race([
-              deps.showReport(verdict, deadline).then((answer) => answer === true),
+              deps.showReport(verdict, deadline, msg.id).then((answer) => answer === true),
               new Promise<false>((resolve) => { timer = setTimeout(() => resolve(false), remaining); })
             ]);
             allow = allow && (deps.now ?? Date.now)() < deadline;
@@ -97,7 +97,7 @@ export function installBridge(win: EventTarget, deps: BridgeDeps): Bridge {
         }
         // Rejected reports never offer approval.
         try {
-          void deps.showReport?.(verdict, deadline).catch(() => {});
+          void deps.showReport?.(verdict, deadline, msg.id).catch(() => {});
         } catch {
           /* a report failure cannot change a rejection */
         }

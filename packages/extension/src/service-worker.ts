@@ -1,10 +1,13 @@
 import { handleProviderTest } from "./sw/provider-test.js";
 import { enhanceIntent } from "./intent/enhance.js";
+import { ExplainStore, reportFrameUrl } from "./sw/explain.js";
 // Module service worker: validates bridge messages, runs analysis, decides.
 // Never signs, never submits, never stores wallet secrets.
 import {
   SW_ANALYZE,
+  SW_BIND,
   SW_DECIDED,
+  SW_EXPLAIN,
   SW_MESSAGE,
   SW_NOTICE,
   isId,
@@ -70,6 +73,9 @@ const recordDecision = (id: string, allow: boolean) =>
     return log;
   });
 
+const explainStore = new ExplainStore();
+const modelDeps = () => ({ get: (keys: string[]) => chrome.storage.local.get(keys), fetch: fetch.bind(globalThis), permissions: chrome.permissions });
+
 const blocked = (reason: string): WorkerVerdict => ({ allow: false, hold: false, level: null, reason, report: null });
 
 async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdict> {
@@ -77,9 +83,9 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
   const loaded = await loadSettings((keys) => chrome.storage.local.get(keys));
   const deterministic = loaded.ok ? await decide(req, loaded.settings, realEngine) : blocked(loaded.reason);
-  const enhanced = await enhanceIntent(deterministic, {
-    get: keys => chrome.storage.local.get(keys), fetch: fetch.bind(globalThis), permissions: chrome.permissions
-  });
+  // The explanation runs beside the intent selection, so it adds no wait before the report opens.
+  explainStore.start(req.id, deterministic, modelDeps());
+  const enhanced = await enhanceIntent(deterministic, modelDeps());
   const verdict = withContext(enhanced, msg.url, loaded.ok ? networkFor(req.chain, loaded.settings.network) : null);
   await appendLog({
     ts: Date.now(),
@@ -146,7 +152,16 @@ chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
       .then(sendResponse);
     return true;
   }
+  if (m.type === SW_BIND) {
+    explainStore.bind(m.id as string, m.secret, sender.tab?.id);
+    return false;
+  }
+  if (m.type === SW_EXPLAIN) {
+    explainStore.answer(m, sender, { id: chrome.runtime.id, reportUrl: reportFrameUrl(chrome.runtime.getURL) }).catch(() => null).then(sendResponse);
+    return true;
+  }
   if (m.type === SW_DECIDED) {
+    if (isId(m.id)) explainStore.release(m.id);
     if (isId(m.id) && typeof m.allow === "boolean") void recordDecision(m.id, m.allow);
     return false;
   }

@@ -16,7 +16,7 @@ const instruction = "Select one engine-authored intent question and order its re
 export function selectionInput(context: IntentContext): string {
   return JSON.stringify({ binding: context.messageHashes.join(":"), fallbackId: context.fallbackId, candidates: context.candidates.map(c => ({ id: c.id, priority: c.priority, question: c.question, reasons: c.reasons.map(r => ({ id: r.id, text: r.text })) })) });
 }
-async function boundedBody(response: Response): Promise<unknown> {
+export async function boundedBody(response: Response): Promise<unknown> {
   if (!response.body) throw new Error("empty");
   const reader = response.body.getReader();
   const chunks: Uint8Array[] = [];
@@ -35,7 +35,7 @@ async function boundedBody(response: Response): Promise<unknown> {
   for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
   return JSON.parse(new TextDecoder().decode(bytes));
 }
-function outputText(body: unknown, responses: boolean): string | null {
+export function outputText(body: unknown, responses: boolean): string | null {
   if (!body || typeof body !== "object") return null;
   const b = body as Record<string, unknown>;
   if (responses) {
@@ -87,13 +87,15 @@ export async function selectIntent(context: IntentContext, raw: unknown, deps: C
   };
   return Promise.race([work(), timeout]).finally(() => clearTimeout(timer));
 }
-function requestBody(provider: Provider, input: string, responses: boolean): Record<string, unknown> {
+export interface BodySpec { instruction: string; name: string; schema: object; maxTokens: number }
+const INTENT_SPEC: BodySpec = { instruction, name: "intent_selection", schema, maxTokens: 512 };
+export function requestBody(provider: Provider, input: string, responses: boolean, spec: BodySpec = INTENT_SPEC): Record<string, unknown> {
   const common = { model: provider.model, ...(new URL(provider.url).hostname === "api.openai.com" ? { store: false } : {}) };
   return responses ? {
-    ...common, instructions: instruction, input, max_output_tokens: 512,
-    text: { format: { type: "json_schema", name: "intent_selection", strict: true, schema } }
+    ...common, instructions: spec.instruction, input, max_output_tokens: spec.maxTokens,
+    text: { format: { type: "json_schema", name: spec.name, strict: true, schema: spec.schema } }
   } : {
-    ...common, messages: [{ role: "system", content: instruction }, { role: "user", content: input }], max_completion_tokens: 512,
-    response_format: { type: "json_schema", json_schema: { name: "intent_selection", strict: true, schema } }
+    ...common, messages: [{ role: "system", content: spec.instruction }, { role: "user", content: input }], max_completion_tokens: spec.maxTokens,
+    response_format: { type: "json_schema", json_schema: { name: spec.name, strict: true, schema: spec.schema } }
   };
 }

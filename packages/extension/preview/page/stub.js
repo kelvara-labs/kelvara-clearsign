@@ -11,5 +11,9 @@
     captureLog: state === "ready" || state === "setup" && false ? [] : state === "activity" ? log : []
   };
   const local = { get: async () => { if (state === "error") throw new Error("x"); return { ...data }; }, set: async () => {}, remove: async () => {} };
-  window.chrome = { storage: { local }, permissions: { request: async () => true, contains: async () => true }, runtime: { sendMessage: async () => ({}), getURL: (p) => p } };
+  const mode = new URLSearchParams(location.search).get("explain");
+  const explain = () => mode === "ai"
+    ? Promise.resolve({ source: "ai", sentences: [{ text: "This request hands control of the program to an address outside your team.", claimIds: ["x"] }, { text: "Whoever holds that address could later replace the program's code.", claimIds: ["x"] }] })
+    : mode === "slow" ? new Promise(() => {}) : Promise.resolve({});
+  window.chrome = { storage: { local }, permissions: { request: async () => true, contains: async () => true }, runtime: { sendMessage: async (m) => (m && String(m.type).endsWith("/explain") ? explain() : {}), getURL: (p) => p } };
 })();
