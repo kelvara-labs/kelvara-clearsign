@@ -1,0 +1,18 @@
+# G10 security  2026-11-08T01:58:41Z  commit 8f894c9  branch HEAD
+ℹ tests 22
+ℹ pass 22
+ℹ fail 0
+G10 PASS    passThrough unwritable: passThrough read only by sw/settings.ts, sw/policy.ts; nothing writes it
+G10 PASS    hosts [zip]: only Helius and localhost reach 41 network sink(s); 11 audited inert string occurrence(s)
+G10 PASS    no eval/remote code [zip]: no eval, no remote code
+G10 PASS    permissions [zip]: permissions [storage], 4 host(s)
+G10 PASS    content scripts offline [zip]: 2 content script(s) make no network calls
+G10 PASS    no page control [zip]: no externally_connectable, no external listeners, 2 content script(s) never touch storage
+G10 PASS    no API key in zip: no key (checked against .env value, its encodings and patterns)
+G10 PASS    hosts [unpacked]: only Helius and localhost reach 41 network sink(s); 11 audited inert string occurrence(s)
+G10 PASS    no eval/remote code [unpacked]: no eval, no remote code
+G10 PASS    permissions [unpacked]: permissions [storage], 4 host(s)
+G10 PASS    content scripts offline [unpacked]: 2 content script(s) make no network calls
+G10 PASS    no page control [unpacked]: no externally_connectable, no external listeners, 2 content script(s) never touch storage
+G10 PASS    no API key in unpacked dist: no key (checked against .env value, its encodings and patterns)
+G10 PASS    dependency licenses: 77 packages, 6 direct, none AGPL/BUSL/MPL
