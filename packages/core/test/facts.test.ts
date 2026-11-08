@@ -15,7 +15,7 @@ import {
   type Session
 } from "../src/index.js";
 import type { SimulationResult } from "../src/simulate/index.js";
-import { analyze, decoder, manifestFixtures, sessionOf } from "./rules-helpers.js";
+import { analyze, decoder, manifestFixtures, sessionFromRuntime, sessionOf } from "./rules-helpers.js";
 
 const budget = (...bytes: number[]) => new Uint8Array(bytes);
 const u32 = (tag: number, v: number) => budget(tag, v & 255, (v >> 8) & 255, (v >> 16) & 255, (v >>> 24) & 255);
@@ -153,5 +153,42 @@ describe("human simulation text", () => {
     expect(built.simulation.summary).toBe(`Simulation shows: Transaction 0: Your SOL balance changes by -0.00001002 SOL (network fee 0.00001 SOL + priority fee up to 0.00000002 SOL)`);
     const ev = built.evidence.find((e) => e.type === "simulation")!;
     expect((ev.data as { solChanges: { delta: string }[] }).solChanges[0]!.delta).toBe(String(-total));
+  });
+});
+
+describe("Jupiter v6 swaps on real mainnet fixtures", () => {
+  // Every fixture resolves offline: v0 transactions use the runtime's own meta.loadedAddresses (as G3 does).
+  const EXCLUDED: string[] = [];
+  const SWAP_NAMES = ["route", "routeV2", "sharedAccountsRoute", "sharedAccountsRouteV2", "exactOutRoute", "exactOutRouteV2", "sharedAccountsExactOutRoute", "sharedAccountsExactOutRouteV2"];
+
+  it("names every Jupiter instruction and states each swap as an L0 fact without claiming 'no permission change'", async () => {
+    const excluded: string[] = [];
+    const seen = new Set<string>();
+    let swapsStated = 0;
+    const included = manifestFixtures().filter((f) => f.path.includes("/jupiter-v6/"));
+    expect(included.length).toBeGreaterThan(0);
+    for (const x of included) {
+      const session = await (x.loaded ? Promise.resolve(sessionFromRuntime(x.base64, x.loaded)) : sessionOf([x.base64])).catch(() => null);
+      if (!session) { excluded.push(x.path); continue; }
+      const jup = decoder.decodeSession(session).flat().filter((i) => i.programName === "jupiter-v6");
+      expect(jup.length, x.path).toBeGreaterThan(0);
+      for (const ix of jup) {
+        expect(ix.status, `${x.path} ix ${ix.index}`).toBe("named");
+        seen.add(ix.name!);
+      }
+      const r = analyze(session);
+      const swaps = facts(r, "fact.swap");
+      expect(swaps.length, x.path).toBe(jup.filter((i) => SWAP_NAMES.includes(i.name!)).length);
+      for (const c of swaps) {
+        expect(c.level).toBe("L0");
+        expect(c.statement).toMatch(/swaps up to .* for (at least|exactly) .* via Jupiter/);
+        expect(r.alert.claimIds).not.toContain(c.id);
+        swapsStated++;
+      }
+      expect(facts(r, "fact.no_permission_change"), x.path).toEqual([]);
+    }
+    expect(excluded).toEqual(EXCLUDED);
+    expect([...seen]).toEqual(expect.arrayContaining(["route", "routeV2"]));
+    expect(swapsStated).toBeGreaterThan(0);
   });
 });

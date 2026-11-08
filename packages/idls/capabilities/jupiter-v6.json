@@ -1,0 +1,256 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "jupiter-v6",
+  "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/jupiter-v6.json",
+  "reviewed": "E24 (engine), 2026-11-08: names checked against roots/jupiter-v6.json (on-chain IDL, 19 instructions); swap routes act only on the user's own token accounts, operator-only instructions keep their keyword classes",
+  "entries": [
+    {
+      "instruction": "claim",
+      "discriminator": "3ec6d6c1d59f6cd2",
+      "authority": null,
+      "signers": [],
+      "capability": "jupiter.operator",
+      "class": "other",
+      "changes": "Jupiter operator claim of a program-owned wallet balance; not a user flow",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "claimToken",
+      "discriminator": "74ce1bbfa6130049",
+      "authority": "payer",
+      "signers": [
+        "payer"
+      ],
+      "capability": "jupiter.operator",
+      "class": "other",
+      "changes": "Jupiter operator claim of a program-owned token balance; not a user flow",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "closeToken",
+      "discriminator": "1a4aec976840b7f9",
+      "authority": "operator",
+      "signers": [
+        "operator"
+      ],
+      "capability": "jupiter.operator",
+      "class": "account_control",
+      "changes": "Jupiter operator closes a program-owned token account; not a user flow",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawTokenAccountExcessLamports",
+      "discriminator": "927c0e00b5717293",
+      "authority": "operator",
+      "signers": [
+        "operator"
+      ],
+      "capability": "jupiter.operator",
+      "class": "fund_movement",
+      "changes": "Jupiter operator withdraws excess lamports from a program-owned token account; not a user flow",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "createIdempotentAssociatedTokenAccount",
+      "discriminator": "5368c096b4479cc6",
+      "authority": "payer",
+      "signers": [
+        "payer",
+        "owner"
+      ],
+      "capability": "token.account_create",
+      "class": "other",
+      "changes": "creates the associated token account if it does not exist",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "createTokenLedger",
+      "discriminator": "e8f2c5fdf08f8134",
+      "authority": "tokenLedger",
+      "signers": [
+        "tokenLedger",
+        "payer"
+      ],
+      "capability": "swap.ledger",
+      "class": "other",
+      "changes": "creates a scratch ledger account that measures a swap's received amount",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "createTokenAccount",
+      "discriminator": "93f17b64f484ae76",
+      "authority": "user",
+      "signers": [
+        "user"
+      ],
+      "capability": "token.account_create",
+      "class": "other",
+      "changes": "creates a token account for the user (program-derived)",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "closeWsolTokenAccount",
+      "discriminator": "cb816785c57d6b56",
+      "authority": "user",
+      "signers": [
+        "user"
+      ],
+      "capability": "token.closeAccount",
+      "class": "account_control",
+      "changes": "closes the user's wrapped-SOL token account and returns its lamports",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "exactOutRoute",
+      "discriminator": "d033ef977b2bed5c",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "route",
+      "discriminator": "e517cb977ae3ad2a",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "routeWithTokenLedger",
+      "discriminator": "96564774a75d0e68",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "setTokenLedger",
+      "discriminator": "e455b9704e4f4d02",
+      "authority": null,
+      "signers": [],
+      "capability": "swap.ledger",
+      "class": "other",
+      "changes": "records a token balance in the ledger used to measure a swap's received amount",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "sharedAccountsExactOutRoute",
+      "discriminator": "b0d169a89a7d453e",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "sharedAccountsRoute",
+      "discriminator": "c1209b3341d69c81",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "sharedAccountsRouteWithTokenLedger",
+      "discriminator": "e6798f50779f6aaa",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "exactOutRouteV2",
+      "discriminator": "9d8ab85215f4f324",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "routeV2",
+      "discriminator": "bb64facc31c4af14",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "sharedAccountsExactOutRouteV2",
+      "discriminator": "3560e5cad8bbfa18",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "sharedAccountsRouteV2",
+      "discriminator": "d19853937cfed8e9",
+      "authority": "userTransferAuthority",
+      "signers": [
+        "userTransferAuthority"
+      ],
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed",
+      "source": "curated",
+      "confidence": "curated"
+    }
+  ],
+  "authorityTypes": []
+}

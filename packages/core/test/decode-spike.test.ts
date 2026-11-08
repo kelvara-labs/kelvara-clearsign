@@ -45,7 +45,7 @@ async function decodeTx(t: SpikeTx): Promise<DecodedInstruction[]> {
 describe("E2 spike: P0 IDLs to Codama roots", () => {
   it("converts every P0 IDL with Codama (no fallback needed)", () => {
     expect(index.map((i) => [i.name, i.decoder])).toEqual(
-      ["system", "token", "token-2022", "squads-v4", "drift-v2", "marginfi-v2"].map((n) => [n, "codama"])
+      ["system", "token", "token-2022", "squads-v4", "drift-v2", "marginfi-v2", "jupiter-v6"].map((n) => [n, "codama"])
     );
   });
 
