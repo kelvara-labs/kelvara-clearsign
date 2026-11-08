@@ -9,13 +9,10 @@ import { randomId, type WorkerVerdict } from "../shared/protocol.js";
 import { reportMode, type ReportMode } from "./model.js";
 
 const HOST_BASE = "all:initial!important;position:fixed!important;z-index:2147483647!important;display:block!important;margin:0!important;padding:0!important;border:0!important;opacity:1!important;visibility:visible!important;transform:none!important;filter:none!important;pointer-events:auto!important;";
-const HOST_STYLE: Record<Exclude<ReportMode, "silent">, string> = {
+const HOST_STYLE: Record<ReportMode, string> = {
   hold: `${HOST_BASE}inset:0!important;width:100vw!important;height:100vh!important`,
-  info: `${HOST_BASE}inset:0!important;width:100vw!important;height:100vh!important`,
-  notice: `${HOST_BASE}bottom:16px!important;right:16px!important;width:min(380px,calc(100vw - 32px))!important;height:150px!important`
+  info: `${HOST_BASE}inset:0!important;width:100vw!important;height:100vh!important`
 };
-/** The L1 notice closes by itself. */
-export const NOTICE_MS = 12_000;
 
 /** Message from the frame on the port: exactly { allow: boolean }. */
 export function parseFrameAnswer(data: unknown): boolean | null {
@@ -27,7 +24,6 @@ export function parseFrameAnswer(data: unknown): boolean | null {
 
 export function showReport(verdict: WorkerVerdict, deadline: number): Promise<boolean> {
   const mode = reportMode(verdict);
-  if (mode === "silent") return Promise.resolve(verdict.allow);
   return new Promise((resolve) => {
     const secret = randomId((a) => crypto.getRandomValues(a));
     const host = document.createElement("div");
@@ -49,7 +45,7 @@ export function showReport(verdict: WorkerVerdict, deadline: number): Promise<bo
       host.remove();
       resolve(allow && mode === "hold");
     };
-    const life = mode === "notice" ? NOTICE_MS : mode === "hold" ? Math.max(0, deadline - Date.now()) : null;
+    const life = mode === "hold" ? Math.max(0, deadline - Date.now()) : null;
     const timer = life === null ? undefined : setTimeout(() => finish(false), life);
     const observer = new MutationObserver((records) => {
       const tampered =
@@ -68,7 +64,7 @@ export function showReport(verdict: WorkerVerdict, deadline: number): Promise<bo
         if (settled) return;
         const origin = new URL(frame.src).origin;
         frame.contentWindow?.postMessage({ secret, verdict, deadline }, origin, [channel.port2]);
-        if (mode !== "notice") frame.focus();
+        frame.focus({ preventScroll: true });
       },
       { once: true }
     );

@@ -107,10 +107,10 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const r = v.report;
   const b = buttonsFor(v);
   const levelText = v.level === null ? "Blocked · analysis unavailable" : `L${v.level} · ${LEVEL_NAMES[v.level]}`;
-  const card = el("main", { role: mode === "notice" ? "status" : "alertdialog", "aria-labelledby": "title", class: `card mode-${mode}` });
+  const card = el("main", { role: "alertdialog", "aria-labelledby": "title", class: `card mode-${mode}` });
   if (b.modal) card.setAttribute("data-kelvara-modal", "");
   if (r?.limited) card.setAttribute("data-kelvara-limited", "");
-  if (mode !== "notice") card.setAttribute("aria-modal", "true");
+  card.setAttribute("aria-modal", "true");
   const badge = el("span", { class: "level" }, levelText);
   if (v.level !== null) badge.setAttribute("data-kelvara-level", `L${v.level}`);
   document.documentElement.dataset.level = v.level === null ? "blocked" : `L${v.level}`;
@@ -118,7 +118,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
   card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard"), badge), el("h1", { id: "title" }, r?.title ?? v.reason));
-  if (mode !== "notice") card.append(...renderReport(v, r));
+  card.append(...renderReport(v, r));
   card.append(status);
 
   let answered = false;
@@ -137,8 +137,9 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
 
   if (b.signAnyway) {
     const holdMs = b.signAnyway.holdMs;
-    const label = holdMs ? `Hold ${holdMs / 1000} s to sign anyway` : "Sign anyway";
-    sign = el("button", { type: "button", class: "sign", "data-kelvara-action": "sign-anyway", "data-armed": "false" }, label);
+    const harmless = v.level === 0 || v.level === 1;
+    const label = harmless ? "Continue to wallet" : holdMs ? `Hold ${holdMs / 1000} s to sign anyway` : "Sign anyway";
+    sign = el("button", { type: "button", class: "sign", "data-kelvara-action": harmless ? "continue" : "sign-anyway", "data-armed": "false" }, label);
     if (holdMs) sign.setAttribute("data-hold-ms", String(holdMs));
     footer.append(sign);
     const s = sign;
@@ -164,7 +165,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
     }
     const tick = setInterval(setEnabled, 100);
     window.addEventListener("pagehide", () => clearInterval(tick));
-    const blockedHint = () => (hint.textContent = "Sign anyway is off while the report is covered, faded or just opened.");
+    const blockedHint = () => (hint.textContent = `${harmless ? "Continue to wallet" : "Sign anyway"} is off while the report is covered, faded or just opened.`);
 
     let gesture: HoldGesture | null = null;
     if (holdMs) {
@@ -240,7 +241,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
       if (answered) return;
       block.disabled = false;
       if (sign) sign.disabled = false;
-      block.focus();
+      block.focus({ preventScroll: true });
     }));
   });
   ready.observe(card);
@@ -267,6 +268,10 @@ export function mountReport(): void {
       port.postMessage({ allow: false });
       return;
     }
-    render(verdict, deadline, (allow) => port.postMessage({ allow }));
+    try {
+      render(verdict, deadline, (allow) => port.postMessage({ allow }));
+    } catch {
+      port.postMessage({ allow: false });
+    }
   });
 }

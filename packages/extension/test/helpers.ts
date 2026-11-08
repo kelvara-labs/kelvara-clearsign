@@ -38,6 +38,7 @@ export function rig(worker: Worker, opts: { bridge?: boolean; hookFirst?: boolea
       sent.push(m);
       return worker(m);
     },
+    showReport: async () => true,
     url: () => "https://dapp.example/",
     topFrame: true,
     getRandomValues: (a: Uint8Array) => webcrypto.getRandomValues(a)
@@ -49,7 +50,7 @@ export function rig(worker: Worker, opts: { bridge?: boolean; hookFirst?: boolea
   return { win, hook, bridge, sent };
 }
 
-export const allow: Worker = async () => ({ allow: true, hold: false, level: 0, reason: "ok", report: null });
+export const allow: Worker = async () => ({ allow: false, hold: true, level: 0, reason: "ok", report: null });
 export const block: Worker = async () => ({ allow: false, hold: false, level: 4, reason: "sweep", report: null });
 export const never: Worker = () => new Promise(() => {});
 

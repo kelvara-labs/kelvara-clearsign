@@ -71,20 +71,29 @@ export function installBridge(win: EventTarget, deps: BridgeDeps): Bridge {
       .sendToWorker({ type: SW_ANALYZE, request: msg, url: deps.url(), topFrame: deps.topFrame })
       .then(async (res) => {
         const verdict = validateWorkerVerdict(res);
-        if (!verdict) return false;
+        if (!verdict || verdict.allow) return false;
         if (verdict.hold) {
           if (!deps.showReport) return false;
-          const allow = (await deps.showReport(verdict, deadline)) === true;
+          let timer: ReturnType<typeof setTimeout> | undefined;
+          const remaining = Math.max(0, deadline - (deps.now ?? Date.now)());
+          let allow = false;
+          try {
+            allow = await Promise.race([
+              deps.showReport(verdict, deadline).then((answer) => answer === true),
+              new Promise<false>((resolve) => { timer = setTimeout(() => resolve(false), remaining); })
+            ]);
+            allow = allow && (deps.now ?? Date.now)() < deadline;
+          } finally {
+            clearTimeout(timer);
+          }
           deps.sendToWorker({ type: SW_DECIDED, id: msg.id, allow }).catch(() => {});
           return allow;
         }
-        // L1 notice, L4 or failure report: shown, never waited on. L0 and pass-through: silent.
-        if (verdict.level !== 0 && !(verdict.allow && verdict.level === null)) {
-          try {
-            void deps.showReport?.(verdict, deadline).catch(() => {});
-          } catch {
-            /* showing the report never changes the verdict */
-          }
+        // Rejected reports never offer approval.
+        try {
+          void deps.showReport?.(verdict, deadline).catch(() => {});
+        } catch {
+          /* a report failure cannot change a rejection */
         }
         return verdict.allow;
       })

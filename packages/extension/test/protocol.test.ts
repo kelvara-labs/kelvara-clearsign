@@ -31,7 +31,12 @@ describe("strict message shapes", () => {
     expect(validateWorkerVerdict({ allow: true, level: 0, reason: "" })).toBeNull();
     expect(validateWorkerVerdict({ ...v, level: 5 })).toBeNull();
     expect(validateWorkerVerdict({ ...v, allow: "yes" })).toBeNull();
-    // hold only at L2/L3 and never together with allow; L4 never allows
+    for (const level of [0, 1, 2, 3]) {
+      expect(validateWorkerVerdict({ ...v, allow: false, hold: true, level })).not.toBeNull();
+      expect(validateWorkerVerdict({ ...v, allow: true, hold: true, level })).toBeNull();
+    }
+    expect(validateWorkerVerdict({ ...v, allow: false, hold: true, level: null })).toBeNull();
+    // hold only at L0..L3 and never together with allow; L4 never allows
     expect(validateWorkerVerdict({ ...v, allow: false, hold: true, level: 3 })).not.toBeNull();
     expect(validateWorkerVerdict({ ...v, allow: false, hold: true, level: 4 })).toBeNull();
     expect(validateWorkerVerdict({ ...v, allow: true, hold: true, level: 2 })).toBeNull();
@@ -77,13 +82,19 @@ describe("service worker policy", () => {
     expect(v).toMatchObject({ allow: false, hold: false, level: null, reason: expect.stringContaining("no Helius API key set: request held and blocked") });
     expect(v.report?.title).toMatch(/^Blocked/);
   });
-  it("levels: L0/L1 pass, L4 block, L2/L3 held for the user (never allowed by the worker)", async () => {
+  it("levels: L0..L3 held, L4 block for the user (never allowed by the worker)", async () => {
     const pick = (v: { allow: boolean; hold: boolean }) => [v.allow, v.hold];
-    expect(pick(await decide(req, s, engine(0)))).toEqual([true, false]);
-    expect(pick(await decide(req, s, engine(1)))).toEqual([true, false]);
+    expect(pick(await decide(req, s, engine(0)))).toEqual([false, true]);
+    expect(pick(await decide(req, s, engine(1)))).toEqual([false, true]);
     expect(pick(await decide(req, s, engine(2)))).toEqual([false, true]);
     expect(pick(await decide(req, s, engine(3)))).toEqual([false, true]);
     expect(pick(await decide(req, s, engine(4)))).toEqual([false, false]);
+  });
+  it.each([0, 1, 2, 3] as const)("retired passThrough cannot bypass L%s review", async (level) => {
+    const out = await decide(req, { ...s, passThrough: true }, engine(level));
+    expect(out).toMatchObject({ allow: false, hold: true, level });
+    expect(out.report?.messageHashes).toHaveLength(1);
+    expect(out.report?.limited).toBe(false);
   });
   it("an engine report that fails validation blocks", async () => {
     const bad: EngineLike = { analyze: async () => ({ ...view, level: 0, title: "x".repeat(500) }) };

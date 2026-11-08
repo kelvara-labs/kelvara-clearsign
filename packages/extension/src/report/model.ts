@@ -2,15 +2,13 @@
 //   L4 / blocked: report only, no Sign anyway (already rejected with 4001).
 //   L3: held, Block focused by default, Sign anyway needs hold-to-confirm.
 //   L2: held, Block and Sign anyway side by side.
-//   L1: passes, small notice.  L0: passes silently.
+//   L0/L1: full held review with Continue to wallet.
 import type { WorkerVerdict } from "../shared/protocol.js";
 
-export type ReportMode = "hold" | "info" | "notice" | "silent";
+export type ReportMode = "hold" | "info";
 
 export function reportMode(v: Pick<WorkerVerdict, "allow" | "hold" | "level">): ReportMode {
-  if (v.hold && (v.level === 2 || v.level === 3)) return "hold";
-  if (v.level === 0 || (v.allow && v.level === null)) return "silent";
-  if (v.allow && v.level === 1) return "notice";
+  if (!v.allow && v.hold && v.level !== null && v.level <= 3) return "hold";
   return "info";
 }
 
@@ -37,7 +35,6 @@ export function buttonsFor(v: Pick<WorkerVerdict, "allow" | "hold" | "level">): 
 export function statusLine(v: Pick<WorkerVerdict, "allow" | "hold" | "level">, secondsLeft: number): string {
   const mode = reportMode(v);
   if (mode === "hold") return `Your wallet has not been opened. No answer in ${secondsLeft} s means Block.`;
-  if (mode === "notice") return "Passed to your wallet. SignGuard found nothing that needs your approval.";
   return "Request rejected. Your wallet was not opened.";
 }
 
