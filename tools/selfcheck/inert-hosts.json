@@ -60,6 +60,11 @@
       "string": "https://app.velocity.exchange/",
       "file": "ui.js",
       "reason": "X23 trusted-site origin compared against the requesting page origin (user-approved aggregator list); never a network target"
+    },
+    {
+      "string": "https://orbmarkets.io/address/",
+      "file": "service-worker.js",
+      "reason": "X26 navigation target for chrome.tabs.create after sender and base58 program-id validation (Helius Orb explorer, user request); never fetched"
     }
   ]
 }
