@@ -28,7 +28,11 @@ export function createPlayground({ catalog, transaction, shared }) {
     res.setHeader('Referrer-Policy', 'no-referrer');
     res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'");
     const reply = (status, body) => { res.writeHead(status, { 'content-type': 'application/json' }); res.end(JSON.stringify(body)); };
-    if (req.method !== 'GET' || !hosts.includes(req.headers.host) || (req.headers.origin && !origins.includes(req.headers.origin)) || (req.headers['sec-fetch-site'] && !['same-origin', 'none'].includes(req.headers['sec-fetch-site']))) return reply(403, { error: 'Local same-origin GET requests only' });
+    // A top-level page load from a link on another site (Sec-Fetch-Mode navigate, Dest document) is fine for the
+    // static page; the transaction API and assets still require same-origin or a typed URL.
+    const pageLoad = req.url === '/' && req.headers['sec-fetch-mode'] === 'navigate' && req.headers['sec-fetch-dest'] === 'document';
+    const siteOk = !req.headers['sec-fetch-site'] || ['same-origin', 'none'].includes(req.headers['sec-fetch-site']) || pageLoad;
+    if (req.method !== 'GET' || !hosts.includes(req.headers.host) || (req.headers.origin && !origins.includes(req.headers.origin)) || !siteOk) return reply(403, { error: 'Local same-origin GET requests only' });
     const staticRoutes = { '/': ['index.html', 'text/html'], '/app.js': ['app.js', 'text/javascript'], '/style.css': ['style.css', 'text/css'] };
     if (staticRoutes[req.url]) {
       const [file, type] = staticRoutes[req.url];
