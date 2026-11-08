@@ -46,6 +46,16 @@ export function addIntentSourceEvidence(ctx: RuleContext): void {
 /** Fee/priority settings named by the built-in Compute Budget decoder; any other data stays unknown. */
 const isBudgetSetting = isComputeBudget;
 
+/** Token-account housekeeping around swaps: wrap/unwrap SOL, open an account, or close one with the rent going back to
+ * its own owner. Never a question; a close that sends rent elsewhere is not housekeeping (sweep rules cover it). */
+function isOwnTokenAccountSetup(ix: DecodedInstruction): boolean {
+  if (ix.status !== "named" || ![TOKEN_PROGRAM, TOKEN_2022_PROGRAM].includes(ix.programAddress)) return false;
+  if (["syncNative", "initializeAccount", "initializeAccount2", "initializeAccount3", "initializeImmutableOwner"].includes(ix.name ?? "")) return true;
+  if (ix.name !== "closeAccount") return false;
+  const destination = accountNamed(ix, "destination"), owner = accountNamed(ix, "owner");
+  return !!destination && destination === owner;
+}
+
 export function buildIntentContext(input: {session: Session; decoded: DecodedInstruction[][]; state: RuleState; report: Report; decoder?: Decoder}): IntentContext {
   const { session, decoded, state, report } = input;
   // Matches the browser capture cap. Never silently omit hashes from the binding.
@@ -84,7 +94,7 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     }
   }
   for (const {ix, txIndex, proposed, source, sourceAddress} of instructions) {
-    if (isBudgetSetting(ix) || isAtaCreate(ix) || isSignatureCheck(ix)) continue;
+    if (isBudgetSetting(ix) || isAtaCreate(ix) || isSignatureCheck(ix) || isOwnTokenAccountSetup(ix)) continue;
     const evidence = report.evidence.filter((e) => (e.transactionIndex === txIndex && e.type === "instruction") || (sourceAddress !== null && e.address === sourceAddress && e.type === "account")).map((e) => e.id);
     if (ix.status === "named" && ix.programAddress === TOKEN_2022_PROGRAM && ix.name === "setTransferFee") {
       const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
