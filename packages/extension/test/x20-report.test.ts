@@ -215,7 +215,7 @@ describe("explanation", () => {
     expect(v).toEqual(verdictOf(2, r)); // level, hold and controls untouched
   });
 
-  it.each(["invalid", "refusal", "http-error", "redirect", "thrown", "no-provider", "disabled", "no-permission", "routine"])("%s falls back to ClearSign's explanation", async (mode) => {
+  it.each(["invalid", "refusal", "http-error", "redirect", "thrown", "no-provider", "disabled", "no-permission"])("%s falls back to ClearSign's explanation", async (mode) => {
     const r = view();
     const fetchFn = vi.fn<typeof fetch>(async () => {
       if (mode === "invalid") return completion({ sentences: [{ text: "Invented 123456.", claimIds: ["c1"] }] });
@@ -230,7 +230,7 @@ describe("explanation", () => {
     const e = await explainReport(v, d);
     expect(e.source).toBe("signguard");
     expect(JSON.stringify(e)).not.toContain(KEY);
-    if (["no-provider", "disabled", "no-permission", "routine"].includes(mode)) expect(fetchFn).not.toHaveBeenCalled();
+    if (["no-provider", "disabled", "no-permission"].includes(mode)) expect(fetchFn).not.toHaveBeenCalled();
   });
 
   it("a provider that never answers is cut at the timeout", async () => {

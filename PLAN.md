@@ -510,3 +510,7 @@ Every report opens on step 1 "Confirm intent": the level presentation (calm at L
 
 ## User scope update — trusted sites and aggregators (2026-11-08)
 The service worker keeps a reviewed list of trusted sites (exact HTTPS origins, no wildcards), starting with https://jup.ag (role aggregator) and https://app.velocity.exchange (role perp DEX), each with a reason. Every trusted site gets the green site pill; only aggregators get the routing rule below. Aggregators route trades through third-party programs by design, so for a request from a trusted aggregator origin an instruction ClearSign cannot decode is not treated as a risk on its own: the report shows "Routed by <site> through <program>" instead of "Can't fully verify", and no unknown-effects intent question is asked. The trust never lowers the engine level, never hides or downgrades any risk claim (authority, delegate, freeze, sweep, poisoning, durable nonce, Squads), never applies to look-alike or http origins or iframes of other origins, and every report still names the unreadable programs. The list lives in code with a test and is shown on the Options page.
+
+
+## User scope update — AI on every request (2026-11-08)
+When the user's AI provider is enabled it explains and selects the intent question for every report, routine memos and transfers included (supersedes "Routine transfer/memo uses deterministic templates (no AI call)"). Disabled or failing providers still fall back to ClearSign's own text; AI never changes facts, levels or controls.

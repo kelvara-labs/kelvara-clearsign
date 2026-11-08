@@ -11,7 +11,7 @@ export interface EnhanceDeps {
 /** An optional presentation enhancement. Never recompute or accept provider decisions. */
 export async function enhanceIntent(verdict: WorkerVerdict, deps: EnhanceDeps): Promise<WorkerVerdict> {
   const report = verdict.report;
-  if (!report?.intent || !report.intent.context.complex) return verdict;
+  if (!report?.intent) return verdict;
   const intent = validateReportIntent(report.intent, report.messageHashes);
   if (!intent) return verdict;
   try {
