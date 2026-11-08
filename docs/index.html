@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kelvara ClearSign · Know what you sign</title>
+<meta name="description" content="Kelvara ClearSign: a Solana signing guard for Squads teams and wallet users.">
+<link rel="icon" href="assets/icon.png">
+<style>
+  :root {
+    --bg: #07090d; --surface: #131820; --line: rgba(255,255,255,.07); --line-strong: rgba(255,255,255,.14);
+    --text-1: #f1f4f9; --text-2: #a0a9b8; --text-3: #7b8595;
+    --mint: #7ff0d3; --violet: #b3a8ff; --grad: linear-gradient(135deg,#93f6df 0%,#62dcc2 100%);
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); }
+  body { display: grid; place-items: center; overflow: hidden; font-family: var(--sans); color: var(--text-1); }
+
+  /* Fixed 16:9 stage, scaled to fit any window so it records cleanly at 1920x1080. */
+  .stage { position: relative; width: 1920px; height: 1080px; flex: none; transform-origin: center; overflow: hidden;
+    background:
+      radial-gradient(1100px 700px at 50% 42%, rgba(127,240,211,.10), transparent 70%),
+      radial-gradient(800px 500px at 50% 110%, rgba(179,168,255,.08), transparent 70%),
+      var(--bg); }
+  .stage::before { content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(900px 600px at 50% 45%, #000 15%, transparent 75%); }
+
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+  .mark { position: relative; width: 132px; height: 132px; border-radius: 34px; display: grid; place-items: center;
+    background: var(--surface); border: 1px solid var(--line-strong);
+    box-shadow: 0 30px 90px rgba(0,0,0,.6), 0 0 0 10px rgba(127,240,211,.04), 0 0 80px rgba(127,240,211,.18); }
+  .mark img { width: 84px; height: 84px; }
+  .mark::after { content: ""; position: absolute; inset: -22px; border-radius: 48px; border: 1px solid rgba(127,240,211,.18); }
+
+  .by { margin-top: 48px; font-size: 22px; letter-spacing: .32em; text-transform: uppercase; color: var(--text-3); }
+  h1 { margin-top: 14px; font-size: 168px; line-height: 1; letter-spacing: -.045em; font-weight: 700; }
+  h1 em { font-style: normal; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .line { margin-top: 36px; font-size: 44px; letter-spacing: -.015em; color: var(--text-2); }
+  .line b { color: var(--text-1); font-weight: 600; }
+
+  .for { margin-top: 64px; display: flex; gap: 16px; }
+  .chip { display: inline-flex; align-items: center; gap: 12px; padding: 14px 26px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line-strong); font-size: 24px; color: var(--text-2); }
+  .chip i { width: 9px; height: 9px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 12px var(--mint); }
+  .chip:nth-child(2) i { background: var(--violet); box-shadow: 0 0 12px var(--violet); }
+
+  .foot { position: absolute; left: 0; right: 0; bottom: 56px; display: flex; justify-content: center; gap: 40px; font-size: 18px; color: var(--text-3); letter-spacing: .04em; }
+
+  /* Entrance sequence (about 2.4 s). Add ?still to the URL for a static frame. */
+  .a { opacity: 0; transform: translateY(18px); animation: in .9s cubic-bezier(.2,.7,.2,1) forwards; }
+  .a1 { animation-delay: .1s } .a2 { animation-delay: .55s } .a3 { animation-delay: .8s }
+  .a4 { animation-delay: 1.3s } .a5 { animation-delay: 1.75s } .a6 { animation-delay: 2.2s }
+  .mark.a { transform: scale(.85); }
+  @keyframes in { to { opacity: 1; transform: none; } }
+  .still .a, .still .mark.a { animation: none; opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .a, .mark.a { animation: none; opacity: 1; transform: none; } }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="center">
+      <div class="mark a a1"><img src="assets/icon.png" alt=""></div>
+      <p class="by a a2">Kelvara</p>
+      <h1 class="a a3">Clear<em>Sign</em></h1>
+      <p class="line a a4">Simulators show a balance. <b>ClearSign shows what you authorize.</b></p>
+      <div class="for a a5">
+        <span class="chip"><i></i>For Squads teams</span>
+        <span class="chip"><i></i>For everyday wallet users</span>
+      </div>
+    </div>
+    <div class="foot a a6"><span>Solana</span><span>·</span><span>IDL-decoded facts</span><span>·</span><span>AI explains proof</span><span>·</span><span>Wallet opens last</span></div>
+  </div>
+  <script>
+    const stage = document.getElementById("stage");
+    if (new URLSearchParams(location.search).has("still")) document.body.classList.add("still");
+    const fit = () => stage.style.transform = `scale(${Math.min(innerWidth / 1920, innerHeight / 1080)})`;
+    addEventListener("resize", fit); fit();
+  </script>
+</body>
+</html>
