@@ -1,0 +1,169 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "velocity",
+  "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+  "reviewed": "E25 (engine), 2026-11-08: the 23 admin instructions that Velocity shares by name with the Drift v2 curated map (Velocity's IDL is Drift-derived, same upgrade authority); names checked against roots/velocity.json, admin tie by field name as for Drift; every other instruction keeps the low-confidence keyword class",
+  "instructions": [
+    {
+      "instruction": "updateAdmin",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "hands the protocol admin (state.admin) to another key: the step in the replayed Drift attack"
+    },
+    {
+      "instruction": "adminDeposit",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "fund_movement",
+      "changes": "deposits into a user account from an admin token account"
+    },
+    {
+      "instruction": "updatePerpMarketOracle",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "points a perp market at a different oracle (price manipulation)"
+    },
+    {
+      "instruction": "updateSpotMarketOracle",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "points a spot market at a different oracle (price manipulation)"
+    },
+    {
+      "instruction": "updateOracleGuardRails",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "loosens or tightens the oracle sanity checks"
+    },
+    {
+      "instruction": "updateWithdrawGuardThreshold",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes how much can leave a spot market before withdraws are limited"
+    },
+    {
+      "instruction": "updateSpotMarketMarginWeights",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes collateral weights of a spot market"
+    },
+    {
+      "instruction": "updatePerpMarketMarginRatio",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes margin requirements of a perp market"
+    },
+    {
+      "instruction": "updateSpotMarketMaxTokenDeposits",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "config",
+      "changes": "changes a spot market's deposit cap"
+    },
+    {
+      "instruction": "updateExchangeStatus",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses or resumes the whole exchange"
+    },
+    {
+      "instruction": "updateSpotMarketStatus",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses or resumes a spot market"
+    },
+    {
+      "instruction": "updatePerpMarketStatus",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses or resumes a perp market"
+    },
+    {
+      "instruction": "updateSpotMarketPausedOperations",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses chosen operations of a spot market"
+    },
+    {
+      "instruction": "updatePerpMarketPausedOperations",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses chosen operations of a perp market"
+    },
+    {
+      "instruction": "adminUpdateUserStatsPausedOperations",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "freeze",
+      "changes": "pauses chosen operations of a user"
+    },
+    {
+      "instruction": "initializeSpotMarket",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "lists a new spot market (any mint and oracle)"
+    },
+    {
+      "instruction": "initializePerpMarket",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "lists a new perp market"
+    },
+    {
+      "instruction": "deleteInitializedSpotMarket",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "account_control",
+      "changes": "deletes a newly listed spot market and its vaults"
+    },
+    {
+      "instruction": "updatePerpFeeStructure",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "config",
+      "changes": "changes perp trading fees"
+    },
+    {
+      "instruction": "updateSpotFeeStructure",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "config",
+      "changes": "changes spot trading fees"
+    },
+    {
+      "instruction": "updateK",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "changes a perp AMM's liquidity"
+    },
+    {
+      "instruction": "repegAmmCurve",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "re-pegs a perp AMM's price"
+    },
+    {
+      "instruction": "moveAmmPrice",
+      "authority": "admin",
+      "capability": "protocol.admin",
+      "class": "admin_control",
+      "changes": "moves a perp AMM's reserves and price"
+    }
+  ]
+}

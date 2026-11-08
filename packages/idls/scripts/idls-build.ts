@@ -25,6 +25,7 @@ import { buildAuthorityMap, UPGRADEABLE_LOADER_PROGRAM, type AnchorIdlJson } fro
 import { buildCapabilityMap, builtinShape, checkCurated, enumVariants, resolveCurated, rootInstructions, type CuratedFile } from "../src/maps.js";
 import { PROGRAMS, type ProgramSpec } from "../src/programs.js";
 import { compactRoot } from "../src/compact.js";
+import { dropUnresolvablePdas } from "../src/anchor.js";
 import { anchorIdlAddress, heliusCall, heliusMainnetUrl, programChain, type AccountResult, type Recorded } from "../src/chain.js";
 
 const pkgDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -101,6 +102,7 @@ async function fetchAnchor(spec: ProgramSpec): Promise<Pick<ManifestEntry, "form
   const idlAddress = await anchorIdlAddress(spec.programId);
   const r = await rpc("getAccountInfo", [idlAddress, { encoding: "base64", commitment: "finalized" }]);
   const acct = r.result as AccountResult;
+  if (!acct.value && spec.idlFrom === "helius-program-metadata") return fetchProgramMetadataIdl(spec);
   if (!acct.value) throw new Error(`${spec.name}: no anchor:idl account at ${idlAddress}`);
   const data = Buffer.from(acct.value.data[0], "base64");
   const idlAuthority = b58.decode(data.subarray(8, 40));
@@ -117,6 +119,31 @@ async function fetchAnchor(spec: ProgramSpec): Promise<Pick<ManifestEntry, "form
     slot: acct.context.slot,
     idlAddress,
     idlAuthority,
+    sha256: sha256(pretty),
+    inflatedSha256: sha256(text)
+  };
+}
+
+// Programs without an anchor:idl account: the IDL Helius Parsed Events serves from the program's on-chain Program
+// Metadata (list /v1/parsed-events/idl/{id}, newest slot, then /{slot}). The API key goes in a header, never a URL.
+async function fetchProgramMetadataIdl(spec: ProgramSpec): Promise<Pick<ManifestEntry, "format" | "source" | "slot" | "idlAddress" | "idlAuthority" | "sha256" | "inflatedSha256">> {
+  const key = new URL(rpcUrl).searchParams.get("api-key") ?? "";
+  const get = async (suffix: string): Promise<string> => {
+    const res = await fetch(`https://mainnet.helius-rpc.com/v1/parsed-events/idl/${spec.programId}${suffix}`, { headers: { "x-api-key": key } });
+    if (!res.ok) throw new Error(`${spec.name}: parsed-events idl${suffix} -> ${res.status}`);
+    return res.text();
+  };
+  const versions = JSON.parse(await get("")) as { slot: number; sources: string[] }[];
+  const newest = versions.filter((v) => v.sources.includes("program_metadata")).sort((a, b) => b.slot - a.slot)[0];
+  if (!newest) throw new Error(`${spec.name}: no program_metadata IDL version`);
+  const text = await get(`/${newest.slot}`);
+  const json = JSON.parse(text) as { metadata?: { spec?: string } };
+  const pretty = JSON.stringify(json, null, 2) + "\n";
+  writeFileSync(p("raw", `${spec.name}.json`), pretty);
+  return {
+    format: json.metadata?.spec ? `anchor-${json.metadata.spec}` : "anchor-legacy",
+    source: `helius parsed-events idl ${spec.programId} slot ${newest.slot} (source program_metadata; program has no anchor:idl account)`,
+    slot: newest.slot,
     sha256: sha256(pretty),
     inflatedSha256: sha256(text)
   };
@@ -164,7 +191,7 @@ for (const spec of PROGRAMS) {
     if (!old) throw new Error(`${spec.name}: no pin and --offline`);
     const hash = sha256(readFileSync(p("raw", `${spec.name}.json`), "utf8"));
     if (hash !== old.sha256) throw new Error(`${spec.name}: raw/${spec.name}.json does not match its pinned sha256 ${old.sha256}`);
-    pin = { format: old.format, source: old.source, slot: old.slot!, idlAddress: old.idlAddress ?? (await anchorIdlAddress(spec.programId)), idlAuthority: old.idlAuthority!, sha256: old.sha256, inflatedSha256: old.inflatedSha256! };
+    pin = { format: old.format, source: old.source, slot: old.slot!, idlAddress: old.idlAddress ?? (await anchorIdlAddress(spec.programId)), idlAuthority: old.idlAuthority, sha256: old.sha256, inflatedSha256: old.inflatedSha256! };
   } else {
     pin = await fetchAnchor(spec);
   }
@@ -173,7 +200,9 @@ for (const spec of PROGRAMS) {
     ...base,
     ...pin,
     verified: match,
-    verification: match
+    verification: spec.idlFrom === "helius-program-metadata"
+      ? "IDL served by Helius Parsed Events from the program's on-chain Program Metadata (no anchor:idl account); hash pinned, not tied to the deployed binary, so unverified"
+      : match
       ? "on-chain IDL account; its authority equals the program's upgrade authority; hash pinned"
       : base.programData && !base.upgradeAuthority
         ? `on-chain IDL account, hash pinned, but the program is immutable (no upgrade authority), so the IDL authority ${pin.idlAuthority} cannot be tied to the deployed code`
@@ -191,7 +220,7 @@ writeJson(p("manifest.json"), manifest);
 const roots: Record<string, RootNode> = {};
 for (const m of entries) {
   const raw = readJson<unknown>(p("raw", `${m.name}.json`));
-  let root = (m.format === "codama" ? raw : rootNodeFromAnchor(raw as IdlV00 | IdlV01)) as RootNode;
+  let root = (m.format === "codama" ? raw : rootNodeFromAnchor(dropUnresolvablePdas(raw) as IdlV00 | IdlV01)) as RootNode;
   if (root?.kind !== "rootNode") throw new Error(`${m.name}: conversion did not return a rootNode`);
   // Anchor legacy IDLs often omit metadata.address; pin the program id from the manifest.
   if (root.program.publicKey !== m.programId) root = { ...root, program: { ...root.program, publicKey: m.programId } } as RootNode;

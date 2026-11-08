@@ -16,6 +16,8 @@ export interface ProgramSpec {
   /** Write authority/<name>.json from the Anchor IDL. */
   authorityMap?: { review: string; verifiedOverride?: boolean };
   note?: string;
+  /** The program has no anchor:idl account: take the IDL Helius serves from the program's on-chain Program Metadata. */
+  idlFrom?: "helius-program-metadata";
 }
 
 export const PROGRAMS: readonly ProgramSpec[] = [
@@ -51,6 +53,7 @@ export const PROGRAMS: readonly ProgramSpec[] = [
     note: "demo upgrade target (packages/scenarios/programs/marginfi_v2.idl.json is the same IDL account content); also PLAN P1 (heuristic, low confidence)"
   },
   { name: "jupiter-v6", programId: "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4", priority: "P1", decoder: "idl", kind: "anchor", capabilities: true, note: "Jupiter v6 aggregator (swaps); IDL from the on-chain anchor:idl account" },
+  { name: "velocity", programId: "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P", priority: "P1", decoder: "idl", kind: "anchor", idlFrom: "helius-program-metadata", capabilities: true, note: "Velocity; no anchor:idl account, IDL from the program's on-chain Program Metadata as served by Helius Parsed Events (Orb shows the same IDL)" },
   { name: "memo", programId: "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr", priority: "P1", decoder: "memo", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: false },
   { name: "compute-budget", programId: "ComputeBudget111111111111111111111111111111", priority: "P1", decoder: "computeBudget", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: true }
 ];

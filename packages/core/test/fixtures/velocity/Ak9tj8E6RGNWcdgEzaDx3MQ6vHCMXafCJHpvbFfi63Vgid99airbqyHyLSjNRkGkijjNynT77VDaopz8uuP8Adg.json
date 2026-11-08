@@ -1,0 +1,95 @@
+{
+ "schema": "kelvara.fixture.tx/v1",
+ "network": "mainnet",
+ "signature": "Ak9tj8E6RGNWcdgEzaDx3MQ6vHCMXafCJHpvbFfi63Vgid99airbqyHyLSjNRkGkijjNynT77VDaopz8uuP8Adg",
+ "slot": 466901826,
+ "blockTime": 1794138052,
+ "fetchedAt": "2026-11-08T11:40:53.034Z",
+ "source": "helius:getTransaction",
+ "program": {
+  "slug": "velocity",
+  "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+  "name": "Velocity"
+ },
+ "encoding": "base64",
+ "transaction": "AQhnItO3h/SYrzYXrGRRmOTSvMw/XG7fTa+hQhn95YnmJV0YFNCK47jsebQ5JemKvnoF+qr856lWTkFvVxueJwuAAQAMDgsTmnMXjvkiA909VkuRcHCx5bqJMznye0aMzmbbBGuaSDQnfwtNz66nkU0VzV32mh6OVe8Y8Nh1Cf6JMekKqAgDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAN9RtZ8k/u+EvlCj4ONQP8FcHRJJ/SKZPzKcESAAAAADaLeMl2C8d54zU2xZyEPZy2T+qeBuKXZVLefAVj545YqbeHHf650cU6cK331HFl6jdqKRj37h0Baq9wKPQDuGQan1RcYe9FmNdrUBFX9wsDBJMaPIVZ1pdu6y18IAAAAiHOUv0CyDOncgB6t9wbP5olwUjcIrZfjzDvqQ0g39m4L50eZ4HA7JbEb0JOOBr6iHPWf/P9uRJUoUKacVD3VaaBNpEGKaKl/wG0XVo9iDsAi/kAb6Vyh7rSFy4sTnxXQvd3F5Ot0lYI+NZU/YuHlKXEKZJ5L2x6A8PJsD1XuuD3uUsTMU37qPOPYBKXCqdA3zBaOepNo42RiteCQilexj5g8aKfO/J1lzTis0BhhMRcXPijWFk3wzqlntioSvjUczZePwKqOFPmWWLbI2bxUcE8safAwSdjsn+6eG2heVAVqu/Fs8IcjkA3bpyw2cSRdwvDgu0QSRWeoFUrDFOm5wQUCAAUCQA0DAAIACQMAAAAAAAAAAAMAEAEAEAADAFAAAwByADsAAwAEBAAFBg6tAdrtqvUnj6YhoQAAALkBGoJIYXRq7kOg51M4YqyBRrT30phtc4VdgZA5TkZ5uISsGDfY6RA7kenbnzy4+4dxV0aTZ/krXtQXeMe9eGeN1BMPgO/B9IDFYVrz+2c9Qih+mT2p+8NQa25B36MpUIIMLmw7AHXTx5MAeURRwl8GAAMBQgAAAAUAoQtQvR0AAAACIKhXvR0AAAAB5NdJvR0AAAAE+P8MAQB5RFHCXwYABAsPAQ4HAAgJCgsMDQj3F/9B1FrdwgEv8MYvLMQSn8Q0VnamKsJcckMzWt+mIP7oC4Qb8U79WwEfAQA=",
+ "sha256": "88695b05df44c13c830bc9c191f00a938fa1f934fc719a87dea2e1848b95b01b",
+ "version": 0,
+ "meta": {
+  "err": null,
+  "status": {
+   "Ok": null
+  },
+  "fee": 10000,
+  "preBalances": [
+   2929868646,
+   8575040,
+   1,
+   1,
+   1141440,
+   3542640,
+   0,
+   2561280,
+   23489920,
+   1869440,
+   23489920,
+   1869440,
+   32183040,
+   2561280,
+   894080,
+   13084800
+  ],
+  "postBalances": [
+   2929858646,
+   8575040,
+   1,
+   1,
+   1141440,
+   3542640,
+   0,
+   2561280,
+   23489920,
+   1869440,
+   23489920,
+   1869440,
+   32183040,
+   2561280,
+   894080,
+   13084800
+  ],
+  "innerInstructions": [],
+  "logMessages": [
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P invoke [1]",
+   "Program log: Instruction: PostPythLazerOracleUpdate",
+   "Program log: Price updated to 127730191265",
+   "Program log: Posting new lazer update. current ts 1794138051200000 < next_timestamp 1794138052000000",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P consumed 11296 of 199700 compute units",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P success",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P invoke [1]",
+   "Program log: Instruction: UpdatePerpBidAskTwap",
+   "Program log: Invalid Perp 4 MM Oracle: Stale for Margin (oracle_delay=17578379)",
+   "Program log: Invalid Perp 4 MM Oracle: Stale (oracle_delay=17578379), (stale_for_amm_immediate=true, stale_for_amm_low_risk=true, stale_for_margin=true)",
+   "Program log: estimated_bid = None estimated_ask = Some(1320000000)",
+   "Program log: after amm bid twap = 1266745743 -> 1266769666\n        ask twap = 1272008702 -> 1272041373\n        ts = 1794138042 -> 1794138052",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P consumed 45629 of 188404 compute units",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P success"
+  ],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "rewards": [],
+  "loadedAddresses": {
+   "writable": [
+    "AqpaPcu6PYHrYNySrVptnQnwxVCNxWVFuCgCsr8R1eLQ"
+   ],
+   "readonly": [
+    "2etx5NvPNxeMZ7EfHE6GjJfW2imRYEUANehNS1WB4CVW"
+   ]
+  },
+  "computeUnitsConsumed": 57225,
+  "costUnits": 62585
+ }
+}

@@ -1,0 +1,71 @@
+{
+ "schema": "kelvara.fixture.tx/v1",
+ "network": "mainnet",
+ "signature": "5ojLAhLuiXVQkhQFQc2n3auUyiPVWvkNHL9uKsbEsatk7b11EsmGKSqcThzqiQf7oNoCSyEqyG7gqk12S7cKoycD",
+ "slot": 466901824,
+ "blockTime": 1794138052,
+ "fetchedAt": "2026-11-08T11:40:53.081Z",
+ "source": "helius:getTransaction",
+ "program": {
+  "slug": "velocity",
+  "programId": "vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P",
+  "name": "Velocity"
+ },
+ "encoding": "base64",
+ "transaction": "AfBdtCRN5ekrNK7yV5UsI88kkxsKMHZxDQiMGLtTjUOVFAZVX7hWjXXWWB4I0tZDsrWLRZLrynNsOEoE9haBhAqAAQACAwwAzkRydMmb7GgeY3Mm+B7J6p8C8K1rofOG15adxzH3AwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAAANot4yXYLx3njNTbFnIQ9nLZP6p4G4pdlUt58BWPnjlhviGsqzKRYpITIuFCR/xIi9TaBJuKaSNQKzQcxJUuHHAwEABQLIGQAAAQAJAxAnAAAAAAAAAgYABwMEBQZu/////wIEAQCODAOsEQAAAHCoQFHCXwYAP1vUGwAAAAAAAFRTVgUAAAAAcKhAUcJfBgA/W9QbAAAAAAMAxUOcBAAAAABwqEBRwl8GAD9b1BsAAAAAAgCQO2eFAAAAAHCoQFHCXwYAP1vUGwAAAAABL/DGLyzEEp/ENFZ2pirCXHJDM1rfpiD+6AuEG/FO/VsEEA8UEgEA",
+ "sha256": "eb2a0416df849b82b643051f1440561c1f2d96e44338bd343a602ac7c9a28920",
+ "version": 0,
+ "meta": {
+  "err": null,
+  "status": {
+   "Ok": null
+  },
+  "fee": 5066,
+  "preBalances": [
+   3440723834,
+   1,
+   1141440,
+   11748480,
+   11748480,
+   11748480,
+   11748480,
+   13084800
+  ],
+  "postBalances": [
+   3440718768,
+   1,
+   1141440,
+   11748480,
+   11748480,
+   11748480,
+   11748480,
+   13084800
+  ],
+  "innerInstructions": [],
+  "logMessages": [
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+   "Program ComputeBudget111111111111111111111111111111 success",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P invoke [1]",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P consumed 3628 of 6300 compute units",
+   "Program vELoC1audYbSYVRXn1vPaV8Axoa9oU6BYmNGZZBDZ1P success"
+  ],
+  "preTokenBalances": [],
+  "postTokenBalances": [],
+  "rewards": [],
+  "loadedAddresses": {
+   "writable": [
+    "7s5WRWA3GahueLNfNb8bbVnHnxCssK5YjGCR3wP6Aa1t",
+    "FDejXbUrSy6zayBCL5xuk2SXLHZgr8ppfFTLcHbyJorY",
+    "Sozrqx5wyAiRUQKJSmNTQisUT5sJJViK2L13nL9v46k",
+    "Bx7JoyYAmBLDPnEdQsPUEhs2dDu4Ga5PoW5BhhhAcChg"
+   ],
+   "readonly": [
+    "2etx5NvPNxeMZ7EfHE6GjJfW2imRYEUANehNS1WB4CVW"
+   ]
+  },
+  "computeUnitsConsumed": 3928,
+  "costUnits": 7467
+ }
+}

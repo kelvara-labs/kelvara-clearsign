@@ -22,10 +22,12 @@ import rootToken2022 from "../../../idls/roots/token-2022.json";
 import rootSquads from "../../../idls/roots/squads-v4.json";
 import rootDrift from "../../../idls/roots/drift-v2.json";
 import rootJupiter from "../../../idls/roots/jupiter-v6.json";
+import rootVelocity from "../../../idls/roots/velocity.json";
 import rootMarginfi from "../../../idls/roots/marginfi-v2.json";
 import rawSquads from "../../../idls/raw/squads-v4.json";
 import rawDrift from "../../../idls/raw/drift-v2.json";
 import rawJupiter from "../../../idls/raw/jupiter-v6.json";
+import rawVelocity from "../../../idls/raw/velocity.json";
 import rawMarginfi from "../../../idls/raw/marginfi-v2.json";
 
 type RootNode = NonNullable<ProgramEntry["root"]>;
@@ -50,9 +52,10 @@ const ROOTS: Record<string, unknown> = {
   "squads-v4": rootSquads,
   "drift-v2": rootDrift,
   "jupiter-v6": rootJupiter,
+  velocity: rootVelocity,
   "marginfi-v2": rootMarginfi
 };
-const ANCHOR: Record<string, unknown> = { "squads-v4": rawSquads, "drift-v2": rawDrift, "jupiter-v6": rawJupiter, "marginfi-v2": rawMarginfi };
+const ANCHOR: Record<string, unknown> = { "squads-v4": rawSquads, "drift-v2": rawDrift, "jupiter-v6": rawJupiter, velocity: rawVelocity, "marginfi-v2": rawMarginfi };
 
 /** Program names whose files this bundle carries (decoder roots; Anchor IDLs). */
 export const BUNDLED = { roots: Object.keys(ROOTS), anchor: Object.keys(ANCHOR) };
