@@ -23,7 +23,7 @@ function addr(value: string): HTMLElement {
 
 /** Plain-text "site · network" line; the designer styles it. */
 function contextLine(r: ReportView): HTMLElement {
-  return el("p", { class: "report-context" }, r.origin ? el("span", { "data-kelvara-origin": "" }, r.origin) : null, r.origin && r.network ? " · " : null, r.network ? el("span", { "data-kelvara-network": "" }, r.network) : null);
+  return el("p", { class: "report-context" }, r.origin ? el("span", { "data-kelvara-origin": "" }, r.origin) : null, r.origin && r.network ? " · " : null, r.network ? el("span", { "data-kelvara-network": "", class: `net-${r.network}` }, r.network) : null);
 }
 
 function section(title: string, ...kids: Kids): HTMLElement {

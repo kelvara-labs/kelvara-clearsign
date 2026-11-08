@@ -4,6 +4,9 @@ import { analyzeSession, buildIntentContext, ingestSession, ReportBuilder, type 
 import { buildRegistry } from "../src/sw/registry.js";
 import { fromReport } from "../src/sw/from-report.js";
 import { templateIntent } from "../src/intent/selection.js";
+import { reviewMessage, messageVerdict } from "../src/sw/message-review.js";
+import { b64encode } from "../src/shared/codec.js";
+import { MINIMAL_MESSAGE } from "../test/helpers.js";
 import { poisonManifest, requestCase } from "../../core/test/address-helpers.js";
 import { analyze, decoder } from "../../core/test/rules-helpers.js";
 
@@ -121,5 +124,20 @@ ai.report.intent.source = "ai";
 ai.report.intent.status = "selected";
 out["poison-intent-ai"] = ai;
 out["blocked-null"] = { allow: false, hold: false, level: null, reason: "Blocked: request could not be analyzed", report: null };
+const ACCOUNT = "HH7x3VCwrHQKWHLy11TNd6zd3AL1VSzD2nLsAGgUaZez";
+const msgReq = (extra: Record<string, unknown>) => ({ v: 1, kind: "message", id: "0123456789abcdef0123456789abcdef", method: "solana:signMessage", wallet: "Phantom", account: ACCOUNT, chain: null, message: null, signIn: null, ...extra }) as never;
+const NOW = Date.parse("2026-11-08T12:00:00.000Z");
+const deps = { now: () => NOW, isTransaction: (b: Uint8Array) => b.length > 64 && b[0] === 1 };
+const siwsGood = { domain: "dapp.example", address: ACCOUNT, statement: "Welcome", uri: "https://dapp.example/login", version: "1", chainId: "mainnet", nonce: "abcd1234", issuedAt: "2026-11-08T11:59:00.000Z", expirationTime: "2026-11-08T13:00:00.000Z" };
+const review = (req: unknown) => messageVerdict(reviewMessage(req as never, "https://dapp.example/app", deps));
+out["msg-siws-ok"] = review(msgReq({ method: "solana:signIn", signIn: siwsGood }));
+out["msg-siws-mismatch"] = review(msgReq({ method: "solana:signIn", signIn: { ...siwsGood, domain: "evil-airdrop.example", uri: "https://evil-airdrop.example/login" } }));
+out["msg-text"] = review(msgReq({ message: b64encode(new TextEncoder().encode("Please confirm you own this account.\nNonce: 8f2a91")) }));
+out["msg-binary"] = review(msgReq({ message: b64encode(Uint8Array.from([0xff, 0xfe, 0x00, 0x01, 0x9a, 0x42])) }));
+out["msg-hidden-tx"] = review(msgReq({ message: b64encode(Uint8Array.from([1, ...new Uint8Array(64), ...MINIMAL_MESSAGE])) }));
+for (const [name, v] of Object.entries(out)) {
+  const x = v as { report: Record<string, unknown> | null };
+  if (x.report && !x.report.message) { x.report.origin = "https://app.squads.so"; x.report.network = name === "L4" || name.startsWith("poison") || name === "L0-memo" ? "devnet" : "mainnet"; }
+}
 writeFileSync(process.argv[2]!, JSON.stringify(out));
 console.log("wrote", Object.keys(out).join(","));

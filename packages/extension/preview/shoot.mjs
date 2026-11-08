@@ -17,7 +17,7 @@ const server = spawn("node", [path.join(here, "serve.mjs"), site, String(port)],
 await new Promise((r) => setTimeout(r, 600));
 const base = `http://127.0.0.1:${port}`;
 const widths = [[360, 740], [375, 667], [1280, 800]];
-const reports = ["L0-memo", "L1-spl", "L2", "L2-intent", "L3", "L4", "L4-intent", "poison-intent", "poison-intent-ai", "blocked-null"];
+const reports = process.argv[4] === "d2" ? ["L2", "L3", "msg-siws-ok", "msg-siws-mismatch", "msg-text", "msg-binary", "msg-hidden-tx"] : ["L0-memo", "L1-spl", "L2", "L2-intent", "L3", "L4", "L4-intent", "poison-intent", "poison-intent-ai", "blocked-null"];
 const browser = await chromium.launch();
 const shots = [];
 for (const [w, h] of widths) {
@@ -38,6 +38,9 @@ for (const [w, h] of widths) {
   for (const s of ["ready", "setup", "activity", "error"]) await snap(`popup-${s}`, `popup.html?state=${s}`);
   await snap("options", "options.html");
   await snap("options-ai-open", "options.html", (p) => p.evaluate(() => { document.getElementById("ai-provider").open = true; }));
+  await snap("options-setup", "options.html?state=setup");
+  await snap("options-error", "options.html", async (p) => { await p.fill("#helius-key", "bad key!"); await p.click("#test"); await p.waitForTimeout(300); });
+  await snap("options-saved", "options.html", async (p) => { await p.fill("#helius-key", "abcdef12-3456-7890-abcd-ef1234567890"); await p.click("#save"); await p.waitForTimeout(500); });
   await page.close();
 }
 await browser.close();

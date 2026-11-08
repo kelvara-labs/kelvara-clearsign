@@ -1,36 +1,91 @@
 <!doctype html>
 <html lang="en" data-page="options">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SignGuard · Settings</title><link rel="stylesheet" href="interface.css"></head>
-<body><main class="settings-shell">
-  <header class="settings-header"><div class="brand"><img class="brand-mark" src="mark.svg" alt=""><div><div class="brand-word">Sign<span>Guard</span></div><div class="eyebrow">by Kelvara</div></div></div><span class="version">v0.4.1 · MVP</span></header>
-  <div class="page-title"><p class="eyebrow">Your connection, your control</p><h1>A little setup. A clearer signature.</h1><p>Connect SignGuard to Solana. Get the full picture of what your next signature puts in motion.</p></div>
-  <div class="setup-indicator" id="setup-indicator" role="status"><span class="dot"></span><span id="setup-label">Reading your settings…</span></div>
-  <section class="panel settings-card" aria-labelledby="connection-title">
-    <div class="card-heading"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2m2 6a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg><div><h2 id="connection-title">Helius connection</h2><p>Your own RPC. Direct access to chain state.</p></div></div>
-    <label class="field-label" for="helius-key">API key</label>
-    <div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"/><path d="m12 12 8 8m-5-5 3-3m-1 5 3-3"/></svg><input id="helius-key" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Helius API key"><button class="reveal" id="reveal-key" type="button" aria-label="Show API key" aria-pressed="false">Show</button></div>
-    <p class="field-hint" id="key-status"></p>
-    <div class="connection-tools"><button id="test" class="secondary" type="button"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>Test connection</button><button id="clear-key" class="text-button" type="button">Remove saved key</button></div>
-  </section>
-  <section class="panel settings-card" aria-labelledby="network-title">
-    <div class="card-heading"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a17 17 0 0 1 0 18 17 17 0 0 1 0-18Z"/></svg><div><h2 id="network-title">Default network</h2><p>Used when your wallet doesn't specify a chain.</p></div></div>
-    <label class="field-label" for="network">Solana network</label><select id="network"><option value="mainnet">Mainnet · Real assets</option><option value="devnet">Devnet · Demo &amp; testing</option><option value="localnet">Localnet · Local development</option></select>
-    <p class="network-note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9h.01"/></svg><span>Wallet Standard requests use the chain supplied by your wallet. This default applies to legacy providers.</span></p>
-  </section>
-  <details id="ai-provider" class="panel settings-card">
-    <summary>Optional AI provider · Intent question selection</summary>
-    <div class="ai-body">
-    <p>Opt in to send bounded public engine questions, reasons and message-hash binding to your selected provider. No raw transaction bytes, signatures, wallet secrets or page content are sent. Chain data comes only from Helius. The provider cannot change rules, levels or signing controls; failures use engine templates.</p>
-    <label class="field-label" for="ai-url">API URL</label><input id="ai-url" type="url" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="Provider endpoint URL">
-    <p class="field-hint">Full Chat Completions or Responses endpoint. A base URL ending in /v1 is completed automatically to .../chat/completions; the saved URL is shown after Save. HTTPS remote, HTTP loopback only. Changing the endpoint requires re-entering its key.</p>
-    <label class="field-label" for="ai-key">API key</label><input id="ai-key" type="password" autocomplete="new-password" spellcheck="false" maxlength="4096" placeholder="Optional for local inference">
-    <label class="field-label" for="ai-model">Model</label><input id="ai-model" type="text" autocomplete="off" spellcheck="false" maxlength="160" placeholder="gpt-4.1-mini">
-    <label><input id="ai-enabled" type="checkbox"> Enable optional AI selection for complex requests</label>
-    <div class="connection-tools"><button id="ai-save" class="primary" type="button">Save provider</button><button id="ai-test" class="secondary" type="button">Test saved provider</button><button id="ai-delete" class="text-button" type="button">Delete provider and key</button></div>
-    <p id="ai-result" class="result" role="status" aria-live="polite"></p>
-    </div>
-  </details>
-  <div class="form-actions"><button id="save" class="primary" type="button">Save settings<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></button></div>
-  <p id="result" class="result" role="status" aria-live="polite"></p>
-  <footer class="settings-bottom"><span class="privacy"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>Keys stored on your device. Chain requests go to Helius; optional intent selection goes to your chosen provider.</span><span class="mvp-note"><svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg>Full reports. No license needed.</span></footer>
-</main><script type="module" src="ui.js"></script></body></html>
+<body>
+<header class="app-header">
+  <div class="brand"><img class="brand-mark" src="mark.svg" alt=""><span class="brand-word">Sign<span>Guard</span></span><span class="header-sep" aria-hidden="true"></span><h1 class="app-title">Settings</h1></div>
+  <div class="header-right"><span class="status-chip" id="status-chip" data-state="checking" role="status"><span class="dot"></span><span id="status-chip-label">Checking</span></span><span class="app-version" id="app-version">v0.4.1</span></div>
+</header>
+<div class="app-body">
+  <nav class="side" aria-label="Settings sections">
+    <a href="#sec-connection"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-2 2m2 6a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l2-2"/></svg>Connection</a>
+    <a href="#sec-network"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a17 17 0 0 1 0 18 17 17 0 0 1 0-18Z"/></svg>Network</a>
+    <a href="#sec-ai"><svg viewBox="0 0 24 24"><path d="m12 3 1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8L12 3ZM18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8L18 15Z"/></svg>AI provider</a>
+    <a href="#sec-status"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>Status</a>
+    <a href="#sec-about"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9h.01"/></svg>About</a>
+  </nav>
+  <main class="content">
+    <section class="group" id="sec-connection" aria-labelledby="connection-title">
+      <div class="group-head"><div><h2 id="connection-title">Helius connection</h2><p>Chain data comes only from your own Helius key.</p></div><span class="saved-badge" hidden>Saved</span></div>
+      <div class="group-card">
+        <div class="row">
+          <div class="row-text"><label class="row-title" for="helius-key">API key</label><p class="row-desc">Stored on this device. Never shown again after saving.</p></div>
+          <div class="row-control"><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"/><path d="m12 12 8 8m-5-5 3-3m-1 5 3-3"/></svg><input id="helius-key" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your Helius API key" class="mono-input"><button class="reveal" id="reveal-key" type="button" aria-label="Show API key" aria-pressed="false">Show</button></div><p class="field-hint" id="key-status"></p></div>
+        </div>
+        <div class="row">
+          <div class="row-text"><span class="row-title">Connection</span><p class="row-desc">Check the key against the selected network.</p></div>
+          <div class="row-control inline"><button id="test" class="secondary compact" type="button"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>Test connection</button><button id="clear-key" class="text-button" type="button">Remove saved key</button></div>
+        </div>
+        <div class="row row-result"><p id="result" class="result" role="status" aria-live="polite"></p></div>
+      </div>
+    </section>
+
+    <section class="group" id="sec-network" aria-labelledby="network-title">
+      <div class="group-head"><div><h2 id="network-title">Network</h2><p>Used when your wallet does not name a chain.</p></div><span class="saved-badge" hidden>Saved</span></div>
+      <div class="group-card">
+        <div class="row">
+          <div class="row-text"><label class="row-title" for="network">Default network</label><p class="row-desc" id="network-hint">Wallet Standard requests use the chain your wallet supplies. This default applies to legacy providers.</p></div>
+          <div class="row-control"><select id="network"><option value="mainnet">Mainnet · Real assets</option><option value="devnet">Devnet · Demo &amp; testing</option><option value="localnet">Localnet · Local development</option></select></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="group" id="sec-ai" aria-labelledby="ai-title">
+      <div class="group-head"><div><h2 id="ai-title">AI provider</h2><p>Optional. Picks the wording of the intent question; it cannot change facts, levels or controls.</p></div></div>
+      <details id="ai-provider" class="group-card">
+        <summary><span class="row-text"><span class="row-title">Intent question selection</span><span class="row-desc">Uses a provider you configure. Nothing is sent until you enable it.</span></span><span class="pill status-pill" id="ai-status" data-state="off">Off</span></summary>
+        <div class="ai-body">
+          <div class="info-box"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9h.01"/></svg><p>Opt in to send bounded public engine questions, reasons and message-hash binding to your selected provider. No raw transaction bytes, signatures, wallet secrets or page content are sent. Chain data comes only from Helius. The provider cannot change rules, levels or signing controls; failures use engine templates.</p></div>
+          <div class="row">
+            <div class="row-text"><label class="row-title" for="ai-url">API URL</label><p class="row-desc">A full Chat Completions or Responses endpoint. A base URL ending in /v1 is completed automatically to .../chat/completions; the saved URL is shown after Save. HTTPS remote, HTTP loopback only. Changing the endpoint requires re-entering its key.</p></div>
+            <div class="row-control"><input id="ai-url" type="url" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="Provider endpoint URL" class="mono-input"></div>
+          </div>
+          <div class="row">
+            <div class="row-text"><label class="row-title" for="ai-key">API key</label><p class="row-desc">Never prefilled. Optional for local inference.</p></div>
+            <div class="row-control"><input id="ai-key" type="password" autocomplete="new-password" spellcheck="false" maxlength="4096" placeholder="Optional for local inference" class="mono-input"></div>
+          </div>
+          <div class="row">
+            <div class="row-text"><label class="row-title" for="ai-model">Model</label></div>
+            <div class="row-control"><input id="ai-model" type="text" autocomplete="off" spellcheck="false" maxlength="160" placeholder="gpt-4.1-mini" class="mono-input"></div>
+          </div>
+          <div class="row">
+            <div class="row-text"><span class="row-title">Enable optional AI selection for complex requests</span><p class="row-desc">Simple requests always use the built-in question.</p></div>
+            <div class="row-control end"><label class="switch"><input id="ai-enabled" type="checkbox" aria-label="Enable optional AI selection for complex requests"><span class="switch-track" aria-hidden="true"></span></label></div>
+          </div>
+          <div class="row row-actions"><div class="row-control inline"><button id="ai-save" class="primary compact" type="button">Save provider</button><button id="ai-test" class="secondary compact" type="button">Test saved provider</button><button id="ai-delete" class="text-button push-right" type="button">Delete provider and key</button></div></div>
+          <div class="row row-result"><p id="ai-result" class="result" role="status" aria-live="polite"></p></div>
+        </div>
+      </details>
+    </section>
+
+    <section class="group" id="sec-status" aria-labelledby="status-title">
+      <div class="group-head"><div><h2 id="status-title">Status</h2><p>Whether SignGuard can review requests right now.</p></div></div>
+      <div class="group-card">
+        <div class="row"><div class="row-text"><span class="row-title">System</span></div><div class="row-control"><div class="setup-indicator" id="setup-indicator" role="status"><span class="dot"></span><span id="setup-label">Reading your settings…</span></div></div></div>
+        <div class="row"><div class="row-text"><span class="row-title">Coverage and health</span></div><div class="row-control"><p class="empty-line"><svg viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></svg>Coming soon: program coverage and live health checks</p></div></div>
+      </div>
+    </section>
+
+    <section class="group" id="sec-about" aria-labelledby="about-title">
+      <div class="group-head"><div><h2 id="about-title">About</h2></div></div>
+      <div class="group-card">
+        <div class="row"><div class="row-text"><span class="row-title">Version</span></div><div class="row-control"><span class="mono-text" id="about-version">v0.4.1</span></div></div>
+        <div class="row"><div class="row-text"><span class="row-title">Privacy</span></div><div class="row-control"><p class="row-desc">Keys stored on your device. Chain requests go to Helius; optional intent selection goes to your chosen provider.</p></div></div>
+        <div class="row"><div class="row-text"><span class="row-title">Reports</span></div><div class="row-control"><p class="row-desc">Full reports. No license needed.</p></div></div>
+      </div>
+    </section>
+
+    <div class="savebar"><p class="savebar-note">Saves the Helius key and default network.</p><button id="save" class="primary" type="button">Save settings<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></button></div>
+  </main>
+</div>
+<script type="module" src="ui.js"></script></body></html>
