@@ -172,7 +172,7 @@ describe("evidence-bound intent", () => {
   });
 
   it("retains real S17 fetched fee-proposal state and decoded inner instruction as report evidence", async () => {
-    const recorded = json<{approvalWire: string; state: RuleState; approvalInstruction: unknown}>("packages/core/test/fixtures/analyze/fee-proposal-state.json");
+    const recorded = json<{approvalWire: string; state: RuleState; approvalInstruction: unknown}>("packages/core/test/fixtures/intent/fee-proposal-state.json");
     const state = structuredClone(recorded.state);
     for (const account of Object.values(state.squads!)) for (const field of ["index", "transactionIndex", "staleTransactionIndex"]) {
       const value = account.data[field];
