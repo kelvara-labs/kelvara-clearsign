@@ -116,3 +116,11 @@ describe("impostor header", () => {
     expect(els.find((n) => "data-kelvara-level" in n.attrs)!.attrs["data-kelvara-level"]).toBe("L4");
   });
 });
+
+describe("brand tokens are whole parts, not substrings", () => {
+  it("jupyter.org and jupiterbroadcasting-like names that only contain a token are not impostors", async () => {
+    expect(impostorOf("https://jupyter.org/")).toBeNull();
+    expect(impostorOf("https://jupag.com/")).not.toBeNull();
+    expect(impostorOf("https://jupiterswap.app/")).not.toBeNull();
+  });
+});

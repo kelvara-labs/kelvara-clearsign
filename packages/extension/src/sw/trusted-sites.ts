@@ -137,7 +137,11 @@ export function impostorOf(url: unknown): TrustedSite | null {
       if (v.includes(th)) return t;
     }
     const parts = v.split(/[.-]/);
-    for (const token of BRAND_TOKENS) if (parts.some((p) => p.includes(token))) return siteFor(token) ?? TRUSTED_SITES[0]!;
+    // A brand token must be a whole label part or the token plus a typical phishing affix (jupag, jupiterswap,
+    // kamino1): plain substrings such as "jupyter" are other names, not impostors.
+    const AFFIX = /^(?:ag|app|swap|dex|fi|finance|exchange|airdrop|claim|io|x|v\d*|\d+)$/;
+    const brandPart = (p: string, token: string) => p === token || (p.startsWith(token) && AFFIX.test(p.slice(token.length))) || (p.endsWith(token) && AFFIX.test(p.slice(0, -token.length)));
+    for (const token of BRAND_TOKENS) if (parts.some((p) => brandPart(p, token))) return siteFor(token) ?? TRUSTED_SITES[0]!;
     const reg = registrable(v);
     for (const d of TRUSTED_DOMAINS) if (reg !== d && editDistance(reg, d) <= 2) return TRUSTED_SITES.find((t) => new URL(t.origin).hostname.endsWith(d)) ?? null;
   }
