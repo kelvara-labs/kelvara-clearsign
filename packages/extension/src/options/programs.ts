@@ -84,7 +84,7 @@ export function renderTrusted(t: TrustedSite, doc: Document = document): HTMLEle
   text.append(head, cell(doc, "p", "row-desc", t.reason));
   const meta = doc.createElement("div");
   meta.className = "row-control inline program-meta";
-  meta.append(cell(doc, "span", "pill", t.role));
+  meta.append(cell(doc, "span", "pill", t.role === "perp-dex" ? "Perp DEX" : t.role === "aggregator" ? "Aggregator" : t.role));
   row.append(text, meta);
   return row;
 }

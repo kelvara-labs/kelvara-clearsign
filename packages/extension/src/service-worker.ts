@@ -84,7 +84,7 @@ async function handleAnalyze(msg: Record<string, unknown>, sender: { url?: strin
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
   const site = trustedSiteFor(sender.url, sender.tab?.url);
   const loaded = await loadSettings((keys) => chrome.storage.local.get(keys));
-  const deterministic = loaded.ok ? await decide(req, loaded.settings, realEngine, undefined, site?.name) : blocked(loaded.reason);
+  const deterministic = loaded.ok ? await decide(req, loaded.settings, realEngine, undefined, site?.role === "aggregator" ? site.name : undefined) : blocked(loaded.reason);
   // The explanation runs beside the intent selection, so it adds no wait before the report opens.
   explainStore.start(req.id, deterministic, modelDeps());
   const enhanced = await enhanceIntent(deterministic, modelDeps());
