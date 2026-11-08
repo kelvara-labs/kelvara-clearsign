@@ -1,0 +1,142 @@
+{
+  "provenance": {
+    "description": "S17 real devnet fee proposal; subset of existing Helius-backed analysis and its unsigned approval wire, copied read-only without a chain call",
+    "source": "packages/scenarios/.devnet/fees/fees-analysis.json",
+    "sourceSha256": "04a956431eec3b2a39cb65146afb3f179638623b480b61630776b46bf0c97f88",
+    "analysisMessageHashes": [
+      "DEibFrKV7sADh4n27MJiWAi9aMg8nv8hdoT7H7pePpUm"
+    ],
+    "approvalWireSource": "packages/scenarios/.devnet/fees/approval.unsigned.b64 (independently captured unsigned approval; recent blockhash differs from earlier analysis)"
+  },
+  "approvalWire": "AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAMF/iY3PMKE+pExfGdFpsoPjux8Kw+ncMXIiIZ63sdnJ9TJSdTEhKMkMZWVg9tkCQWzkCYhkjbcn1tdPzUXDypkzAVKU1qZKSEGTSTocWDaOHx8NbXdvJK7geQfqEBBBUSNf/Eh6/92paF+AxwA1BsdVcZ2rHiajGaEnJwaoAj+ZfUGgcTOR+IjaLixVV7Ih68JLvx++7Zso/Uvv2jUrJy3qECpXwILJvUqzqHvvvz4Ep3aIn3rxzQG0iPdiE9OvhxGAgIBAA1RNCBmZWUgdXBkYXRlBAMDAAEakCWkiLzYKvgBDQAAAFE0IGZlZSB1cGRhdGU=",
+  "state": {
+    "wallet": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+    "squads": {
+      "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua": {
+        "name": "Multisig",
+        "data": {
+          "createKey": "GvSTPCm1dPLxDbBoYDTiNyfGt27kNF38Ls1qa9bthtUz",
+          "configAuthority": "11111111111111111111111111111111",
+          "threshold": 2,
+          "timeLock": 0,
+          "transactionIndex": "2",
+          "staleTransactionIndex": "0",
+          "rentCollector": null,
+          "bump": 255,
+          "members": [
+            {
+              "key": "Ft5fA38o8fekHdzWvnzEAdvjBfQ8kwrvcoLQSkezdEVk",
+              "permissions": {
+                "mask": 7
+              }
+            },
+            {
+              "key": "J4JtCmKkFDzfCsBm2aiBFDfXSg4Vq74Pu3VQvNQE4VB8",
+              "permissions": {
+                "mask": 7
+              }
+            },
+            {
+              "key": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+              "permissions": {
+                "mask": 7
+              }
+            }
+          ]
+        }
+      },
+      "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3": {
+        "name": "Proposal",
+        "data": {
+          "multisig": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+          "transactionIndex": "2",
+          "status": {
+            "__kind": "Active",
+            "timestamp": "1794115306"
+          },
+          "bump": 255,
+          "approved": [],
+          "rejected": [],
+          "cancelled": []
+        }
+      },
+      "2UQxNHydgszFLemenEB7zNgLkF5r8ombYtQtGYxdrPKC": {
+        "name": "VaultTransaction",
+        "data": {
+          "multisig": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+          "creator": "Ft5fA38o8fekHdzWvnzEAdvjBfQ8kwrvcoLQSkezdEVk",
+          "index": "2",
+          "bump": 251,
+          "vaultIndex": 0,
+          "vaultBump": 252,
+          "ephemeralSignerBumps": {},
+          "message": {
+            "numSigners": 1,
+            "numWritableSigners": 0,
+            "numWritableNonSigners": 1,
+            "accountKeys": [
+              "8i9pZkCqKXbWevZK6m7TFLFbTzFHfQnZqkfZDU32Q8vo",
+              "G1tkXpJ88NXd7vzjKDbUyJsRvP65czQLN74dcg73U3NG",
+              "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+            ],
+            "instructions": [
+              {
+                "programIdIndex": 2,
+                "accountIndexes": {
+                  "0": 1,
+                  "1": 0
+                },
+                "data": {
+                  "0": 26,
+                  "1": 5,
+                  "2": 75,
+                  "3": 0,
+                  "4": 128,
+                  "5": 132,
+                  "6": 30,
+                  "7": 0,
+                  "8": 0,
+                  "9": 0,
+                  "10": 0,
+                  "11": 0
+                }
+              }
+            ],
+            "addressTableLookups": []
+          }
+        }
+      }
+    }
+  },
+  "approvalInstruction": {
+    "programId": "SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf",
+    "program": "squads-v4",
+    "name": "proposalApprove",
+    "decoder": "codama",
+    "args": {
+      "args": {
+        "memo": "Q4 fee update"
+      }
+    },
+    "accounts": [
+      {
+        "name": "multisig",
+        "address": "9cS37YStLN2EzrAj6f7AdZRr3kwiXzruiwyfuXrpUiua",
+        "signer": false,
+        "writable": false
+      },
+      {
+        "name": "member",
+        "address": "J76MW1tikG3C4SyQRcoSytGtnhq6hDjEDRXaCGHGBfD5",
+        "signer": true,
+        "writable": true
+      },
+      {
+        "name": "proposal",
+        "address": "EYkF9NyB28Zq2g8KEiYWGEcQy98f5Z9Y66YHAqbThuJ3",
+        "signer": false,
+        "writable": true
+      }
+    ]
+  }
+}

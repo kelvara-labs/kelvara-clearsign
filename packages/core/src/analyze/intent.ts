@@ -5,11 +5,11 @@ import type { Decoder } from "../decode/decoder.js";
 import type { Session } from "../ingest/types.js";
 import type { Report } from "../report/schema.js";
 import { ReportBuilder } from "../report/builder.js";
-import type { RuleState } from "../rules/types.js";
+import type { RuleContext, RuleState } from "../rules/types.js";
 import { requestTransfers } from "../rules/address-history.js";
 import { proposalViews, vaultInstructions, arg } from "../rules/squads-session.js";
-import { accountNamed } from "../rules/common.js";
-import { dustReason, lookalike } from "../state/history.js";
+import { accountNamed, instructionEvidence } from "../rules/common.js";
+import { lookalike } from "../state/history.js";
 import { SYSTEM_PROGRAM, TOKEN_PROGRAM, TOKEN_2022_PROGRAM } from "../state/layouts.js";
 import { SQUADS_V4_PROGRAM } from "../decode/squads.js";
 import { MEMO_PROGRAM, MEMO_V1_PROGRAM } from "../decode/builtin.js";
@@ -55,6 +55,32 @@ export function validateIntentContext(value: unknown, expectedHashes: readonly s
   return c;
 }
 
+/** Keep the already-fetched proposal snapshot reachable through a factual decoded-fee claim.
+ * This is internal analysis integration, not an extra RPC read or a new rule/risk rating.
+ */
+export function addIntentSourceEvidence(ctx: RuleContext): void {
+  if (!ctx.decoder) return;
+  for (const p of proposalViews(ctx)) {
+    if (!p.message || p.message.addressTableLookups.length) continue;
+    const call = p.transactionCreate ?? p.executes[0] ?? p.approvals[0];
+    if (!call) continue;
+    for (const raw of vaultInstructions(p.message)) {
+      const ix = ctx.decoder.decodeInstruction(raw);
+      if (ix.status !== "named" || ix.programAddress !== TOKEN_2022_PROGRAM || ix.name !== "setTransferFee") continue;
+      const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
+      if (typeof bp !== "number" || !Number.isInteger(bp) || bp < 0 || bp > 10000 || typeof max !== "bigint" || !mint) continue;
+      const evidenceIds = [instructionEvidence(ctx, call.txIndex, call.ix)];
+      if (p.contentSource === "state" && p.transaction) {
+        const snapshot = ctx.state.squads?.[p.transaction];
+        if (!snapshot || snapshot.name !== "VaultTransaction") continue;
+        evidenceIds.push(ctx.report.addEvidence({type: "account", source: "rpc", address: p.transaction, summary: "Stored Squads VaultTransaction account decoded from fetched chain state", data: {name: snapshot.name, data: snapshot.data}}));
+      } else if (p.contentSource !== "session") continue;
+      evidenceIds.push(instructionEvidence(ctx, call.txIndex, ix, [call.ix.index, raw.index]));
+      ctx.report.addClaim({kind: "Fact", level: "L0", statement: `Proposed future Token-2022 setTransferFee on mint ${mint}: ${bp} basis points, maximum ${max} base units. Approval alone does not execute this change.`, evidenceIds, transactionIndices: [call.txIndex]});
+    }
+  }
+}
+
 export function buildIntentContext(input: {session: Session; decoded: DecodedInstruction[][]; state: RuleState; report: Report; decoder?: Decoder}): IntentContext {
   const { session, decoded, state, report } = input;
   // Matches the browser capture cap. Never silently omit hashes from the binding.
@@ -65,8 +91,9 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     candidates.push({ id, kind, priority, question: question.slice(0, 300), reasons: [{ id: `${id}-reason`, text: text.slice(0, 600), claimIds: claimIds.slice(0, 64), evidenceIds: evidenceIds.slice(0, 64) }], comparison });
   };
   const h = state.wallet && state.history?.wallet === state.wallet ? state.history : undefined;
-  const partial = !h || !["window", "end"].includes(h.reach) || h.unread.length > 0 || h.problems.length > 0 || h.signatures.filter((s) => s.err === null).some((s) => !h.read.includes(s.signature)) || Object.values(h.counterparties).some((cp) => !cp.complete);
-  const historyNote = h ? `History window: ${h.since} to ${h.now} (${h.days} days); ${partial ? "partial: unread or unsearched activity remains unknown" : "read within the recorded window"}. Counts include successful outgoing transactions to the exact recipient only, excluding dust; familiarity does not establish safety.` : "History not read; prior outgoing activity is unknown. Familiarity does not establish safety.";
+  const unknownTimes = !!h && [...h.outgoing, ...Object.values(h.counterparties).flatMap((cp) => cp.transfers)].some((t) => t.blockTime === null || !Number.isFinite(t.blockTime));
+  const partial = unknownTimes || !h || !["window", "end"].includes(h.reach) || h.unread.length > 0 || h.problems.length > 0 || h.signatures.filter((s) => s.err === null).some((s) => !h.read.includes(s.signature)) || Object.values(h.counterparties).some((cp) => !cp.complete);
+  const historyNote = h ? `History window: ${h.since} to ${h.now} (${h.days} days); ${partial ? "partial: unread, unsearched, or undated activity remains unknown" : "read within the recorded window"}. Counts include dated successful outgoing transactions to the exact recipient only, including tiny payments; incoming transfers never count. Undated transfers are excluded from the window count; familiarity does not establish safety.` : "History not read; prior outgoing activity is unknown. Familiarity does not establish safety.";
   for (const c of report.claims) {
     if (c.ruleId === "authority.transfer") {
       const cap = report.capabilities.granted.find((k) => k.claimId === c.id);
@@ -95,7 +122,9 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     const evidence = report.evidence.filter((e) => (e.transactionIndex === txIndex && e.type === "instruction") || (sourceAddress !== null && e.address === sourceAddress && e.type === "account")).map((e) => e.id);
     if (ix.status === "named" && ix.programAddress === TOKEN_2022_PROGRAM && ix.name === "setTransferFee") {
       const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
-      if (typeof bp === "number" && Number.isInteger(bp) && bp >= 0 && bp <= 10000 && typeof max === "bigint" && mint) add("fees", 2, proposed ? "Did you intend to approve this proposed future token transfer-fee change?" : "Did you intend to change this token transfer fee?", `${source}: ${proposed ? "proposed future" : "decoded"} Token-2022 setTransferFee on mint ${mint}: ${bp} basis points, maximum ${max} base units. Approval alone does not execute a proposed change.`, [], evidence);
+      if (proposed && sourceAddress && !report.evidence.some((e) => e.type === "account" && e.address === sourceAddress && evidence.includes(e.id))) {
+        add("unknown", 2, "Did you intend to approve a proposal whose stored contents lack retained source evidence?", `${source}: the stored proposal snapshot is not retained in the report; fee semantics are not established here.`, [], evidence);
+      } else if (typeof bp === "number" && Number.isInteger(bp) && bp >= 0 && bp <= 10000 && typeof max === "bigint" && mint) add("fees", 2, proposed ? "Did you intend to approve this proposed future token transfer-fee change?" : "Did you intend to change this token transfer fee?", `${source}: ${proposed ? "proposed future" : "decoded"} Token-2022 setTransferFee on mint ${mint}: ${bp} basis points, maximum ${max} base units. Approval alone does not execute a proposed change.`, [], evidence);
       else add("unknown", 2, "Did you intend to authorize a fee instruction whose arguments are unresolved?", "The decoded fee instruction lacks validated amount or mint arguments.", [], evidence);
     } else if (ix.status === "unknown") add("unknown", 2, "Did you intend to authorize an instruction with unknown effects?", `Instruction ${ix.index} in transaction ${txIndex} on ${ix.programAddress} has unknown semantics.`, [], evidence);
     else {
@@ -111,7 +140,7 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     const failed = new Set(h?.signatures.filter((s) => s.err !== null).map((s) => s.signature));
     const transfers = h ? [...h.outgoing, ...(r ? h.counterparties[r]?.transfers ?? [] : [])] : [];
     // HistoryTransfer extraction already excludes failed meta; also reject any known failed signature.
-    const count = new Set(transfers.filter((x) => x.from === state.wallet && x.to === r && !failed.has(x.signature) && (h!.read.includes(x.signature) || !!(r && h!.counterparties[r]?.shared.includes(x.signature))) && x.amount > 0n && dustReason(x, h!) === null).map((x) => x.signature)).size;
+    const count = new Set(transfers.filter((x) => x.from === state.wallet && x.to === r && !failed.has(x.signature) && (h!.read.includes(x.signature) || !!(r && h!.counterparties[r]?.shared.includes(x.signature))) && x.amount > 0n && x.blockTime !== null && Number.isFinite(x.blockTime) && x.blockTime >= h!.since && x.blockTime <= h!.now).map((x) => x.signature)).size;
     const amount = t.kind === "sol" ? unsigned(lamportsText(t.amount)) : `${t.amount} token base units`;
     const recipient = r ?? `unresolved owner of token account ${t.tokenAccount}`;
     add("transfer", 0, `Did you intend to send ${amount} to ${recipient}?`, `Decoded signed instruction ${t.ix.index} in transaction ${t.txIndex}: ${amount} to ${recipient}. ${h && r ? `${count} successful outgoing transaction(s) to this exact recipient observed in recorded history ${h.since} to ${h.now}${partial ? " (partial)" : ""}.` : "Previous outgoing activity or exact recipient unknown."} Familiarity does not establish safety.`, [], report.evidence.filter((e) => e.transactionIndex === t.txIndex && e.instructionPath?.[0] === t.ix.index).map((e) => e.id));

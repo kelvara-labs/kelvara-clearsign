@@ -18,7 +18,7 @@ export interface PoisonFixture {
   recipient: string;
   lookalikeOf?: string;
   match?: { prefix: number; suffix: number };
-  request: null | { signature: string; slot?: number } | string;
+  request: null | { signature: string; slot?: number; txFixture?: string } | string;
   history: { user: string; asOf: string; includesAnchor: boolean; signatures: { signature: string; slot: number; blockTime: number | null; err: unknown }[] };
   calls: Call[];
   [k: string]: any;
