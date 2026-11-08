@@ -93,7 +93,7 @@ describe("endpoint probe (Test button)", () => {
 
 describe("manifest", () => {
   const m = JSON.parse(readFileSync(new URL("../static/manifest.json", import.meta.url), "utf8"));
-  it("permissions: storage + Helius hosts + localhost:8899 only, module SW, options page", () => {
+  it("required permissions remain storage + Helius/localnet; custom AI hosts are optional", () => {
     expect(m.permissions).toEqual(["storage"]);
     expect(m.host_permissions).toEqual([
       "https://mainnet.helius-rpc.com/*",
@@ -102,7 +102,7 @@ describe("manifest", () => {
       "http://localhost:8899/*"
     ]);
     expect(m.optional_permissions ?? []).toEqual([]);
-    expect(m.optional_host_permissions ?? []).toEqual([]);
+    expect(m.optional_host_permissions).toEqual(["https://*/*", "http://localhost/*", "http://127.0.0.1/*", "http://[::1]/*"]);
     expect(m.background).toEqual({ service_worker: "service-worker.js", type: "module" });
     expect(m.options_ui).toEqual({ page: "options.html", open_in_tab: true });
   });
@@ -110,6 +110,6 @@ describe("manifest", () => {
     const html = readFileSync(new URL("../static/options.html", import.meta.url), "utf8");
     const scripts = [...html.matchAll(/<script\b[^>]*>/g)].map((x) => x[0]);
     expect(scripts).toEqual(['<script type="module" src="ui.js">']);
-    expect(html).not.toMatch(/https?:\/\//);
+    expect(html).not.toMatch(/(?:src|href)="https?:\/\//);
   });
 });

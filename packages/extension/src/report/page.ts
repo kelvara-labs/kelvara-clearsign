@@ -1,3 +1,4 @@
+import { intentCard } from "./intent.js";
 // The report page inside the extension iframe (report.html). Receives the verdict from
 // the bridge with the per-report secret and a MessagePort, renders it as text only, and
 // answers { allow } on the port. Contract for G7: test-dapp/e2e/README.md.
@@ -52,12 +53,13 @@ function claimCard(c: Claim, evidence: Map<string, EvidenceItem>): HTMLElement {
   return card;
 }
 
-function renderReport(v: WorkerVerdict, r: ReportView | null): HTMLElement[] {
+function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => void): HTMLElement[] {
   const out: HTMLElement[] = [];
   if (!r) {
     out.push(el("p", { class: "summary" }, v.reason));
     return out;
   }
+  if (r.intent) out.push(intentCard(r.intent, onBlock));
   out.push(el("p", { class: "summary" }, r.summary));
   if (r.simulation !== null || r.authorizes !== null) {
     out.push(
@@ -118,8 +120,6 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
   card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard"), badge), el("h1", { id: "title" }, r?.title ?? v.reason));
-  card.append(...renderReport(v, r));
-  card.append(status);
 
   let answered = false;
   const block = el("button", { type: "button", class: "block", "data-kelvara-action": "block" }, b.block);
@@ -133,6 +133,8 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   };
   block.addEventListener("click", () => done(false));
   let sign: HTMLButtonElement | null = null;
+  card.append(...renderReport(v, r, () => done(false)));
+  card.append(status);
   const footer = el("footer", {}, block);
 
   if (b.signAnyway) {
@@ -222,10 +224,13 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
 
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") done(false);
-    if (e.key === "Tab" && sign) {
-      // Keep focus inside the two buttons.
-      e.preventDefault();
-      (document.activeElement === block ? sign : block).focus();
+    if (e.key === "Tab") {
+      const focusable = Array.from(card.querySelectorAll<HTMLElement>('button:not(:disabled), summary, [tabindex="0"]')).filter(node => node.getClientRects().length > 0);
+      const index = focusable.indexOf(document.activeElement as HTMLElement);
+      if (focusable.length && (index < 0 || (e.shiftKey ? index === 0 : index === focusable.length - 1))) {
+        e.preventDefault();
+        focusable[e.shiftKey ? focusable.length - 1 : 0]!.focus();
+      }
     }
   });
   // A newly attached cross-origin iframe can have layout before its compositor hit-test

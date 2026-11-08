@@ -1,3 +1,5 @@
+import { handleProviderTest } from "./sw/provider-test.js";
+import { enhanceIntent } from "./intent/enhance.js";
 // Module service worker: validates bridge messages, runs analysis, decides.
 // Never signs, never submits, never stores wallet secrets.
 import {
@@ -67,7 +69,10 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   const req = validateSignRequest(msg.request);
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
   const loaded = await loadSettings((keys) => chrome.storage.local.get(keys));
-  const verdict = loaded.ok ? await decide(req, loaded.settings, realEngine) : blocked(loaded.reason);
+  const deterministic = loaded.ok ? await decide(req, loaded.settings, realEngine) : blocked(loaded.reason);
+  const verdict = await enhanceIntent(deterministic, {
+    get: keys => chrome.storage.local.get(keys), fetch: fetch.bind(globalThis), permissions: chrome.permissions
+  });
   await appendLog({
     ts: Date.now(),
     id: req.id,
@@ -99,7 +104,14 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
-  // Only our own content scripts, inside a tab.
+  const providerTest = handleProviderTest(msg, sender, { id: chrome.runtime.id, optionsUrl: chrome.runtime.getURL("options.html") }, {
+    get: keys => chrome.storage.local.get(keys), permissions: chrome.permissions, fetch: fetch.bind(globalThis)
+  });
+  if (providerTest) {
+    providerTest.then(sendResponse);
+    return true;
+  }
+  // Transaction bridge: only our own content scripts, inside a tab.
   if (sender.id !== chrome.runtime.id || !sender.tab) return false;
   if (!msg || typeof msg !== "object") return false;
   const m = msg as Record<string, unknown>;

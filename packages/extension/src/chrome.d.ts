@@ -21,6 +21,10 @@ declare namespace chrome {
       ): void;
     };
   }
+  namespace permissions {
+    function request(details: { origins: string[] }): Promise<boolean>;
+    function contains(details: { origins: string[] }): Promise<boolean>;
+  }
   namespace tabs {
     function create(props: { url: string; active?: boolean }): Promise<unknown>;
   }
