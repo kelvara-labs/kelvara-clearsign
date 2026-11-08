@@ -48,7 +48,7 @@ describe("analyzeSession on recorded real RPC", () => {
     expect(await squadsTransactionPda(r.inputs.multisig, 1n)).toBe(r.inputs.vaultTransaction);
     expect(report.preview.find((p) => p.deployAnyCode)?.programId).toBe(r.inputs.demoProgram);
     expect(report.simulation.status).toBe("ok");
-    expect(report.simulation.summary).toMatch(/^Simulation shows: Transaction 0: \w+ -0\.000005 SOL$/);
+    expect(report.simulation.summary).toMatch(/^Simulation shows: Transaction 0: The SOL balance of fee payer \w+ changes by -0\.000005 SOL \(network fee 0\.000005 SOL\)$/);
     expect(report.simulation.evidenceIds.every((id) => report.evidence.find((e) => e.id === id)?.type === "simulation")).toBe(true);
   });
 

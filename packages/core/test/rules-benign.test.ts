@@ -8,7 +8,7 @@ import type { Address } from "@solana/kit";
 import { accountFromRpc, parseTransaction, ALL_RULE_IDS as RULE_IDS, type ResolvedAccount, type RuleState, type Session, type SessionTransaction } from "../src/index.js";
 import { poisonManifest, requestCase } from "./address-helpers.js";
 const devnet = poisonManifest.cases.find((c) => c.kind === "poisoning" && c.network === "devnet")!;
-import { analysisTiming, analyze, analyzedState, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, root, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
+import { decoder, analysisTiming, analyze, analyzedState, json, DRIFT_1, DRIFT_2, driftTx, manifestFixtures, recording, root, ruleFixtures, sessionOf, stateFrom } from "./rules-helpers.js";
 import { s9SweepCase } from "./sweep-helpers.js";
 
 /** A one-transaction session resolved from the runtime's loaded addresses (real RPC meta). */
@@ -108,6 +108,18 @@ it("G3: no fixture reaches L4; every implemented ruleId has a positive and a neg
     const r = analyze(s.session, s.state); // throws on any G4 problem
     if(s.expectedL4) expect(r.alert.level,s.name).toBe("L4");
     else expect(r.alert.level, s.name).not.toBe("L4");
+    // E23: facts are descriptive L0 claims; they never move the alert or its claim list.
+    const facts = r.claims.filter((c) => c.ruleId?.startsWith("fact."));
+    for (const c of facts) {
+      expect(c, `${s.name}: ${c.ruleId}`).toMatchObject({ kind: "Fact", level: "L0" });
+      expect(r.alert.claimIds, `${s.name}: ${c.id} in alert`).not.toContain(c.id);
+    }
+    const riskLevel = r.claims.filter((c) => !c.ruleId?.startsWith("fact.")).reduce((m, c) => Math.max(m, Number(c.level.slice(1))), 0);
+    expect(r.alert.level, `${s.name}: facts changed the level`).toBe(`L${riskLevel}`);
+    if (facts.some((c) => c.ruleId === "fact.no_permission_change")) {
+      expect(r.capabilities.granted.length + r.capabilities.revoked.length, `${s.name}: no_permission_change with capabilities`).toBe(0);
+      expect(decoder.decodeSession(s.session).flat().every((ix) => ix.status === "named"), `${s.name}: no_permission_change with an unknown instruction`).toBe(true);
+    }
     levels.set(r.alert.level, (levels.get(r.alert.level) ?? 0) + 1);
     for (const id of new Set(r.claims.map((c) => c.ruleId).filter((x): x is string => !!x))) {
       expect(RULE_IDS, `${s.name}: claim from unregistered ruleId ${id}`).toContain(id);
@@ -119,6 +131,7 @@ it("G3: no fixture reaches L4; every implemented ruleId has a positive and a neg
   for (const [id, count] of fired) {
     console.log(`  ${id}: fires on ${count}/${sessions.length}`);
     expect(count, `${id} never fires`).toBeGreaterThan(0);
-    expect(count, `${id} fires everywhere`).toBeLessThan(sessions.length);
+    // E23 facts are informational L0 claims; the network fee is on every transaction by design.
+    if (!id.startsWith("fact.") || id === "fact.no_permission_change") expect(count, `${id} fires everywhere`).toBeLessThan(sessions.length);
   }
 }, 5_000);

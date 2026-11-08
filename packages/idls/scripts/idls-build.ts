@@ -22,7 +22,7 @@ import type { RootNode } from "@codama/nodes";
 import { rootNodeFromAnchor, type IdlV00, type IdlV01 } from "@codama/nodes-from-anchor";
 import { getBase58Decoder } from "@solana/kit";
 import { buildAuthorityMap, UPGRADEABLE_LOADER_PROGRAM, type AnchorIdlJson } from "@kelvara/core";
-import { buildCapabilityMap, checkCurated, enumVariants, loaderInstructions, resolveCurated, rootInstructions, type CuratedFile } from "../src/maps.js";
+import { buildCapabilityMap, builtinShape, checkCurated, enumVariants, resolveCurated, rootInstructions, type CuratedFile } from "../src/maps.js";
 import { PROGRAMS, type ProgramSpec } from "../src/programs.js";
 import { compactRoot } from "../src/compact.js";
 import { anchorIdlAddress, heliusCall, heliusMainnetUrl, programChain, type AccountResult, type Recorded } from "../src/chain.js";
@@ -213,8 +213,9 @@ for (const spec of PROGRAMS) if (existsSync(p("curated", `${spec.name}.json`))) 
 const errors: string[] = [];
 for (const spec of PROGRAMS) {
   if (!spec.capabilities) continue;
-  const ixs = spec.decoder === "loader" ? loaderInstructions() : rootInstructions(roots[spec.name]!);
-  const checkedAgainst = spec.decoder === "loader" ? "packages/core/src/decode/builtin.ts (hand-written decoder)" : `packages/idls/roots/${spec.name}.json`;
+  const builtin = builtinShape(spec.decoder);
+  const ixs = builtin ? builtin.ixs : rootInstructions(roots[spec.name]!);
+  const checkedAgainst = builtin ? builtin.checkedAgainst : `packages/idls/roots/${spec.name}.json`;
   const curated = curatedFiles[spec.name] ? resolveCurated(curatedFiles[spec.name]!, curatedFiles) : undefined;
   if (curated) errors.push(...checkCurated(curated, ixs, spec.decoder === "idl" && enumVariants(roots[spec.name]!, "authorityType").length ? enumVariants(roots[spec.name]!, "authorityType") : null));
   writeJson(p("capabilities", `${spec.name}.json`), buildCapabilityMap({ program: spec.name, programId: spec.programId, instructions: ixs, checkedAgainst, ...(curated ? { curated } : {}) }));

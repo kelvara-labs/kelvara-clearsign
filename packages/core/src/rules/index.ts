@@ -26,6 +26,7 @@ import { sessionOrderingRule } from "./session-ordering.js";
 import { sessionPartialExecutionRule } from "./session-partial-execution.js";
 import { intentLabelMismatchRule } from "./intent-label-mismatch.js";
 import { simPowerWithoutValueRule } from "./sim-power-without-value.js";
+import { addBenignFacts, FACT_RULE_IDS } from "./facts.js";
 import type { Decoder } from "../decode/decoder.js";
 import { GRAPH_RULE_IDS, runCapabilityGraph } from "../graph/preview.js";
 import type { AuthorityMap } from "../graph/authority-map.js";
@@ -64,7 +65,7 @@ export const RULES: readonly Rule[] = [
 
 /** Every ruleId a claim may carry: the rules' plus the capability graph's (preview, recovery paths). */
 export const RULE_IDS: readonly string[] = RULES.flatMap((r) => r.ruleIds);
-export const ALL_RULE_IDS: readonly string[] = [...RULE_IDS, ...GRAPH_RULE_IDS];
+export const ALL_RULE_IDS: readonly string[] = [...RULE_IDS, ...GRAPH_RULE_IDS, ...FACT_RULE_IDS];
 
 export interface RunRulesInput {
   session: Session;
@@ -77,6 +78,8 @@ export interface RunRulesInput {
   /** Authority maps for the capability preview. The graph runs after the rules unless `graph: false`. */
   authorityMaps?: readonly AuthorityMap[];
   graph?: boolean;
+  /** E23: L0 facts for what the transaction does (after all risk rules, so risk claim ids never move). Default true. */
+  facts?: boolean;
 }
 
 /** Runs every rule over the session, writing claims into `report`. Returns the context (claim keys). */
@@ -86,9 +89,11 @@ export function runRules(input: RunRulesInput): RuleContext {
   const ctx: RuleContext = { session: input.session, decoded, decoder: input.decoder, report: input.report, state: input.state ?? {}, claims: new Map() };
   for (const rule of input.rules ?? RULES) rule.run(ctx);
   if (input.graph !== false) runCapabilityGraph(ctx, { maps: input.authorityMaps });
+  if (input.facts !== false) addBenignFacts(ctx);
   return ctx;
 }
 
+export { FACT_RULE_IDS, transactionFeeFacts, memoText, type TxFeeFacts } from "./facts.js";
 export { readTokenRuleState } from "./read-token-state.js";
 export { readAddressRuleState, requestTransfers, assessRecipient, type RequestTransfer, type RecipientAssessment } from "./address-history.js";
 export { describeConfigAction } from "./squads-config-change.js";

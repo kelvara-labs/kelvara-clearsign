@@ -24,7 +24,7 @@ import {
   type ResolvedInstruction
 } from "@kelvara/core";
 import { anchorIdlAddress, heliusCall, heliusMainnetUrl, programChain, type AccountResult, type Recorded } from "../src/chain.js";
-import { buildCapabilityMap, checkCurated, enumVariants, loaderInstructions, resolveCurated, rootInstructions, type CapabilityMap, type CuratedFile } from "../src/maps.js";
+import { buildCapabilityMap, builtinShape, checkCurated, enumVariants, resolveCurated, rootInstructions, type CapabilityMap, type CuratedFile } from "../src/maps.js";
 import { PROGRAMS } from "../src/programs.js";
 import { compactRoot } from "../src/compact.js";
 
@@ -109,7 +109,8 @@ describe("G5 registry", () => {
         assert.equal(r.capabilities, null);
         continue;
       }
-      const ixs = p.decoder === "loader" ? loaderInstructions() : rootInstructions(roots[p.name]!);
+      const builtin = builtinShape(p.decoder);
+      const ixs = builtin ? builtin.ixs : rootInstructions(roots[p.name]!);
       const c = curated[p.name] ? resolveCurated(curated[p.name]!, curated) : undefined;
       if (c) {
         assert.equal(c.programId, p.programId, `${p.name}: curated program id`);
@@ -117,7 +118,7 @@ describe("G5 registry", () => {
         assert.deepEqual(checkCurated(c, ixs, types.length ? types : null), [], `${p.name}: curated map`);
       }
       const map = json<CapabilityMap>(r.capabilities!);
-      const checkedAgainst = p.decoder === "loader" ? "packages/core/src/decode/builtin.ts (hand-written decoder)" : `packages/idls/roots/${p.name}.json`;
+      const checkedAgainst = builtin ? builtin.checkedAgainst : `packages/idls/roots/${p.name}.json`;
       assert.deepEqual(map, buildCapabilityMap({ program: p.name, programId: p.programId, instructions: ixs, checkedAgainst, ...(c ? { curated: c } : {}) }), `${p.name}: capabilities file is stale (run pnpm idls:build)`);
       assert.equal(map.kind, c ? "curated" : "keyword");
       for (const e of map.entries) {

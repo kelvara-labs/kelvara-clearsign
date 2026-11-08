@@ -136,6 +136,23 @@
       "capabilities": null,
       "capabilityMap": null,
       "authorityMap": null
+    },
+    {
+      "name": "compute-budget",
+      "programId": "ComputeBudget111111111111111111111111111111",
+      "priority": "P1",
+      "decoder": "builtin",
+      "root": null,
+      "rootSha256": null,
+      "idl": null,
+      "sha256": null,
+      "source": "hand-written decoder packages/core/src/decode/builtin.ts",
+      "verified": false,
+      "executable": true,
+      "upgradeAuthority": null,
+      "capabilities": "capabilities/compute-budget.json",
+      "capabilityMap": "curated",
+      "authorityMap": null
     }
   ]
 }
