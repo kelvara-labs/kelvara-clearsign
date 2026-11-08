@@ -1,4 +1,27 @@
-# Kelvara SignGuard selfcheck — v0.2.1 (always-show policy)
+# Kelvara SignGuard selfcheck — v0.3.0 (V14b FAIL: G7)
+
+## V14b re-certification — 2026-11-08, merged main `1481cfa` (team/verifier `08f4cce`) — FAIL (G7)
+
+Fresh plain clone `/tmp/kelvara-v14b`, `git clean -xfd`, `pnpm install --frozen-lockfile && pnpm build && pnpm release`, then `E2E_WORKERS=1 pnpm selfcheck`. No live AI provider key was used; no paid model request was made.
+
+| Gate | Result | Seconds |
+|---|---|---|
+| G1 build | PASS | 32.2 |
+| G2 decode | PASS (98.02%, 1000/1000) | 10.4 |
+| G3 rules | PASS | 13.2 |
+| G4 contract | PASS | 2.9 |
+| G5 registry | PASS | 6.7 |
+| G6 localnet | PASS | 27.3 |
+| G7 e2e | **FAIL** (31 pass, 1 fail of 32) | 329.2 |
+| G8 replay | PASS (cached; live not run) | 1.7 |
+| G9 determinism | PASS | 4.4 |
+| G10 security | PASS (G10 regression from V14 fixed by `1481cfa`) | 3.9 |
+
+**G7 failure:** `intent-provider.spec.ts: actual Chrome options tab can test saved provider through authenticated service worker`. Clicking Test with no provider saved shows "Provider test did not return a valid selection..." instead of "Save a provider before testing it.". Root cause: the manifest has `options_ui.open_in_tab: true`, so real Chrome sets `sender.tab` on messages from the options page, and `handleProviderTest` (`packages/extension/src/sw/provider-test.ts`) rejects `sender.tab !== undefined`. The handler returns null, no response is sent, and the options Test button can never work in real Chrome. Diagnostic only: removing `|| sender.tab !== undefined` makes this spec pass (1/1); the change was reverted and the release rebuilt from unmodified source. Fix is owned by the extension worker. Keep the content-script check by another means, for example require `sender.url === optionsUrl` and reject frames (`sender.frameId !== 0`).
+
+Release determinism: three `pnpm release` runs produced identical `ddca4b9cc4ede738f1440bdda906d9caa2078458e8fd0fc8a53053604464c12c` (14 files, 286872 bytes).
+
+Skipped: live G8 (optional, not run); read-only paired intent proof (devnet playground on localhost:8780 was down and was not started). Localnet stopped; port 8899 confirmed free.
 
 ## V14 intent/provider validation — preparation only
 
