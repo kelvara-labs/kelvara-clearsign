@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kelvara SignGuard",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Holds Solana signing requests and shows what they hand over before your wallet opens.",
   "minimum_chrome_version": "120",
   "permissions": [
@@ -13,6 +13,7 @@
     "https://api.helius.xyz/*",
     "http://localhost:8899/*"
   ],
+  "optional_host_permissions": ["https://*/*", "http://localhost/*", "http://127.0.0.1/*", "http://[::1]/*"],
   "background": {
     "service_worker": "service-worker.js",
     "type": "module"

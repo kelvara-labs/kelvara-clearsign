@@ -3,7 +3,8 @@
 // report UI's view by fromReport. Fails closed: any throw, timeout, invalid report or hash mismatch
 // rejects with an EngineFailure, and decide() turns that into a blocked verdict, never a pass.
 // Error texts are fixed strings: nothing from an RPC error (which could carry the endpoint URL) is shown.
-import { analyzeSession, createRpcAccountReader, createRpcClient, ingestSession, type Report, type RpcClient, type Session } from "@kelvara/core";
+import { validateIntentContext, type AnalyzeResult, analyzeSession, createRpcAccountReader, createRpcClient, ingestSession, type RpcClient, type Session } from "@kelvara/core";
+import { templateIntent } from "../intent/selection.js";
 import type { SignRequest } from "../shared/protocol.js";
 import type { Endpoint } from "./endpoint.js";
 import { EngineFailure } from "./engine-failure.js";
@@ -47,7 +48,7 @@ function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
   return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
 }
 
-export async function analyzeRequest(req: SignRequest, url: string, deps: RealEngineDeps): Promise<Report> {
+export async function analyzeRequest(req: SignRequest, url: string, deps: RealEngineDeps): Promise<Pick<AnalyzeResult, "report" | "intentContext">> {
   let reg: Registry;
   let rpc: RpcClient;
   try {
@@ -67,14 +68,14 @@ export async function analyzeRequest(req: SignRequest, url: string, deps: RealEn
   }
   const wallet = walletFor(req, session);
   try {
-    const { report } = await analyzeSession(session, {
+    const { report, intentContext } = await analyzeSession(session, {
       decoder: reg.decoder,
       squadsAccounts: reg.squadsAccounts,
       authorityMaps: reg.authorityMaps,
       rpc,
       ...(wallet ? { wallet, inventory: true } : {})
     });
-    return report;
+    return { report, intentContext };
   } catch {
     throw new EngineFailure("engine error: analysis failed");
   }
@@ -85,9 +86,12 @@ export function createRealEngine(overrides: Partial<RealEngineDeps> = {}): Engin
   return {
     async analyze(req, endpoint: Extract<Endpoint, { ok: true }>, hashes): Promise<EngineReport> {
       if (!hashes) throw new EngineFailure("engine error: no message hashes");
-      const report = await withTimeout(analyzeRequest(req, endpoint.url, deps), deps.timeoutMs);
+      const { report, intentContext } = await withTimeout(analyzeRequest(req, endpoint.url, deps), deps.timeoutMs);
       const mapped = fromReport(report, hashes);
       if (!mapped.ok) throw new EngineFailure(mapped.reason);
+      const validated = validateIntentContext(intentContext, hashes);
+      if (!validated) throw new EngineFailure("engine error: intent context failed validation");
+      mapped.report.intent = templateIntent(validated);
       // decide() adds the worker's own hashes and the license flag back.
       const view: Partial<typeof mapped.report> = { ...mapped.report };
       delete view.messageHashes;
