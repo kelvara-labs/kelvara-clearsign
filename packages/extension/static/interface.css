@@ -827,3 +827,17 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 .claim[data-claim-kind="fact"] > summary::before { content: "✓"; position: absolute; left: 6px; color: var(--brand-mint); font-weight: 700; }
 .token { border-bottom: 1px dotted var(--text-3); cursor: help; }
 .token:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.ix-head { position: relative; }
+.copy-raw { align-self: flex-start; margin-top: var(--space-1); padding: 2px 10px; min-height: 0; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); background: var(--surface-0); color: var(--text-2); font-size: var(--fs-label); line-height: var(--lh-label); font-weight: 600; cursor: pointer; }
+.copy-raw:hover { color: var(--text-1); border-color: var(--focus); }
+.versus > *, .balances li > *, .ix-args > *, .ix-head > * { min-width: 0; }
+.balances .who, .balances .what { overflow-wrap: anywhere; }
+.balances li { flex-wrap: wrap; }
+.ix-args { grid-template-columns: minmax(96px, auto) minmax(0, 1fr); }
+.other-accounts { margin-top: var(--space-2); }
+.other-accounts > summary { cursor: pointer; font-size: var(--fs-label); line-height: var(--lh-label); color: var(--text-2); }
+.card p, .card li, .card dd, .card dt { min-width: 0; overflow-wrap: anywhere; }
+.balances li { flex-wrap: nowrap; align-items: baseline; }
+.balances .who { flex: none; max-width: 45%; }
+.balances .what { flex: 1 1 0; min-width: 0; }
+.balances li.state .what { color: var(--text-2); font-weight: 400; font-size: var(--fs-label); line-height: var(--lh-label); }

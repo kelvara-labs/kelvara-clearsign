@@ -47,7 +47,7 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
     const reasons = node("ul");
     for (const id of intent.reasonIds) {
       const reason = selected.reasons.find((r) => r.id === id)!;
-      reasons.append((() => { const li = node("li", "", { "data-intent-reason": id }); li.append(...withTokens(reason.text, tokens)); return li; })());
+      reasons.append((() => { const li = node("li", tokens?.length ? "" : reason.text, { "data-intent-reason": id }); if (tokens?.length) li.append(...withTokens(reason.text, tokens)); return li; })());
     }
     card.append(reasons);
     if (selected.kind === "transfer" || selected.kind === "poisoning") card.append(node("p", intent.context.historyNote, { class: "muted", "data-intent-history": "" }));
@@ -82,7 +82,7 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
     show(explanation) {
       caption.textContent = explanation.source === "ai" || intent?.source === "ai" ? "AI provider" : "ClearSign";
       caption.setAttribute("data-explain-source", explanation.source);
-      body.replaceChildren(...explanation.sentences.map((s) => (() => { const p = node("p", "", { "data-claim-ids": s.claimIds.join(",") }); p.append(...withTokens(s.text, tokens)); return p; })()));
+      body.replaceChildren(...explanation.sentences.map((s) => (() => { const p = node("p", tokens?.length ? "" : s.text, { "data-claim-ids": s.claimIds.join(",") }); if (tokens?.length) p.append(...withTokens(s.text, tokens)); return p; })()));
     }
   };
 }

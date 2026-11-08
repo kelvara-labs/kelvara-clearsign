@@ -117,7 +117,7 @@ export const hasNoPermissionChange = (r: Report): boolean => r.claims.some((c) =
 const FEE_RULES = new Set(["fact.priority_fee", "fact.network_fee"]);
 
 /** "Fees: 0.000005 SOL network + up to 0.000004251 SOL priority." One line for all fee facts. */
-function feeLine(lines: FactLine[]): string | null {
+export function feeLine(lines: FactLine[]): string | null {
   const net = lines.find((f) => f.rule === "fact.network_fee")?.text.match(/([\d.]+ SOL)$/)?.[1];
   const prio = lines.find((f) => f.rule === "fact.priority_fee")?.text.match(/up to ([\d.]+ SOL)$/)?.[1];
   if (!net && !prio) return null;

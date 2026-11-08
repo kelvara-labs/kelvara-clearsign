@@ -21,7 +21,8 @@ import {
   VIEW_CAPS
 } from "../shared/report-view.js";
 import { reportMints, relabel, tokenAmountText, tokenLabels, tokenMetas, type TokenMeta } from "./tokens.js";
-import { authorizeFacts, factLines, factSummary, hasNoPermissionChange, humanSimulation, NO_PERMISSION_TEXT } from "./facts-text.js";
+import { netBalances } from "./net-balances.js";
+import { authorizeFacts, feeLine, factLines, factSummary, hasNoPermissionChange, humanSimulation, NO_PERMISSION_TEXT } from "./facts-text.js";
 import { idlPathFor } from "./idl-paths.js";
 
 export type Level = 0 | 1 | 2 | 3 | 4;
@@ -223,6 +224,8 @@ function balanceLines(r: Report, metas: Map<string, TokenMeta>, labels: Map<stri
 /** Step 2 of the report: ordered instructions named from the IDL, and what changes after signing. */
 function reviewDetails(r: Report): ReportDetails {
   const metas = tokenMetas(r), labels = tokenLabels(reportMints(r, metas), metas);
+  const payer = (() => { for (const e of r.evidence) { const d = e.data as Record<string, unknown> | null; if (e.type === "derivation" && d && typeof d.feePayer === "string") return d.feePayer; } return null; })();
+  const net = netBalances(r, payer, metas, labels, feeLine(factLines(r)));
   const ixs = instructionViews(r).slice(0, MAX_ITEMS);
   const multi = r.session.transactions.length > 1;
   const changes: string[] = [];
@@ -234,7 +237,7 @@ function reviewDetails(r: Report): ReportDetails {
   return {
     instructions: ixs.map((i) => ({ tx: i.tx, path: i.path, program: clip(i.program, MAX_SHORT), name: i.name ? clip(i.name, MAX_SHORT) : null, args: tokenArgRows(i.args, i.accounts, metas, labels), accounts: accountRows(i.accounts) })),
     changes: [...new Set(changes)].slice(0, 32),
-    balances: balanceLines(r, metas, labels)
+    ...(net ? { balances: net.balances, ...(net.other.length ? { other: net.other } : {}) } : { balances: balanceLines(r, metas, labels) })
   };
 }
 

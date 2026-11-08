@@ -9,6 +9,8 @@ import type { SignRequest } from "../shared/protocol.js";
 import type { Endpoint } from "./endpoint.js";
 import { EngineFailure } from "./engine-failure.js";
 import type { EngineLike, EngineReport } from "./engine-stub.js";
+import { rawInstructions } from "./raw-instruction.js";
+import type { RawInstruction } from "../shared/report-view.js";
 import { routedIntent } from "./route-intent.js";
 import { fromReport } from "./from-report.js";
 import { registry, type Registry } from "./registry.js";
@@ -49,7 +51,7 @@ function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
   return Promise.race([work, timeout]).finally(() => clearTimeout(timer));
 }
 
-export async function analyzeRequest(req: SignRequest, url: string, deps: RealEngineDeps): Promise<Pick<AnalyzeResult, "report" | "intentContext">> {
+export async function analyzeRequest(req: SignRequest, url: string, deps: RealEngineDeps): Promise<Pick<AnalyzeResult, "report" | "intentContext"> & { raw: Map<string, RawInstruction> }> {
   let reg: Registry;
   let rpc: RpcClient;
   try {
@@ -76,7 +78,7 @@ export async function analyzeRequest(req: SignRequest, url: string, deps: RealEn
       rpc,
       ...(wallet ? { wallet, inventory: true } : {})
     });
-    return { report, intentContext };
+    return { report, intentContext, raw: rawInstructions(session) };
   } catch {
     throw new EngineFailure("engine error: analysis failed");
   }
@@ -87,11 +89,13 @@ export function createRealEngine(overrides: Partial<RealEngineDeps> = {}): Engin
   return {
     async analyze(req, endpoint: Extract<Endpoint, { ok: true }>, hashes, routedBy): Promise<EngineReport> {
       if (!hashes) throw new EngineFailure("engine error: no message hashes");
-      const { report, intentContext } = await withTimeout(analyzeRequest(req, endpoint.url, deps), deps.timeoutMs);
+      const { report, intentContext, raw } = await withTimeout(analyzeRequest(req, endpoint.url, deps), deps.timeoutMs);
       const mapped = fromReport(report, hashes, routedBy);
       if (!mapped.ok) throw new EngineFailure(mapped.reason);
       const validated = validateIntentContext(intentContext, hashes);
       if (!validated) throw new EngineFailure("engine error: intent context failed validation");
+      const details = mapped.report.details;
+      if (details) details.instructions = details.instructions.map((i) => { const r = raw.get(`${i.tx}:${i.path}`); return r ? { ...i, raw: r } : i; });
       const intent = mapped.report.routedBy ? routedIntent(validated) : templateIntent(validated);
       if (intent) mapped.report.intent = intent;
       // decide() adds the worker's own hashes and the license flag back.

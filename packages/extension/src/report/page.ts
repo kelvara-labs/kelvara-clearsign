@@ -6,7 +6,7 @@ import { messageReview } from "./message.js";
 // answers { allow } on the port. Contract for G7: test-dapp/e2e/README.md.
 import { fallbackExplanation, readExplanation, type Explanation } from "../shared/explanation.js";
 import { isId, SW_EXPLAIN, validateWorkerVerdict, type WorkerVerdict } from "../shared/protocol.js";
-import { rankedCapabilities, type Claim, type EvidenceItem, type ReportView } from "../shared/report-view.js";
+import { rankedCapabilities, type Claim, type EvidenceItem, type RawInstruction, type ReportView } from "../shared/report-view.js";
 import { buttonsFor, HoldGesture, IntentFlow, LEVEL_NAMES, reportMode, statusLine, VisibilityGate } from "./model.js";
 
 type Kids = (Node | string | null | false)[];
@@ -92,7 +92,7 @@ function instructionList(r: ReportView): HTMLElement | null {
     el(
       "li",
       { class: i.name ? "ix" : "ix ix-unknown", "data-ix": `${i.tx}:${i.path}` },
-      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable)),
+      el("div", { class: "ix-head" }, el("span", { class: "ix-program" }, i.program), el("strong", { class: "ix-name" }, i.name ? humanName(i.name) : unreadable), i.raw ? copyRawButton(i.raw) : null),
       i.args.length || i.accounts.length
         ? el("dl", { class: "ix-args" }, ...[...i.args, ...i.accounts].flatMap((f) => [el("dt", {}, humanName(f.key)), el("dd", {}, ...(/^\d+$/.test(f.value) ? [Number(f.value).toLocaleString("en-US")] : r.tokens?.some((t) => f.value.includes(t.label)) ? withTokens(f.value, r.tokens) : [addr(f.value)]))]))
         : null
@@ -100,6 +100,31 @@ function instructionList(r: ReportView): HTMLElement | null {
   if (!multi) return section("Instructions", el("ol", { class: "instructions" }, ...list.map(line)));
   const txs = [...new Set(list.map((i) => i.tx))];
   return section("Instructions", ...txs.flatMap((t) => [el("h3", {}, `Transaction ${t + 1}`), el("ol", { class: "instructions" }, ...list.filter((i) => i.tx === t).map(line))]));
+}
+
+/** Small "Copy raw" button: copies the instruction as JSON on click only. Not a decision control. */
+export function copyRawButton(raw: RawInstruction, clipboard: () => Pick<Clipboard, "writeText"> | undefined = () => navigator.clipboard): HTMLButtonElement {
+  const b = el("button", { type: "button", class: "copy-raw", "data-copy-raw": `${raw.transaction}:${raw.index}`, "aria-label": "Copy raw instruction as JSON" }, "Copy raw");
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  b.addEventListener("click", () => {
+    void Promise.resolve(clipboard()?.writeText(JSON.stringify(raw, null, 2))).then(
+      () => {
+        b.textContent = "Copied";
+        clearTimeout(timer);
+        timer = setTimeout(() => { b.textContent = "Copy raw"; }, 2000);
+      },
+      () => { b.textContent = "Copy failed"; }
+    );
+  });
+  return b;
+}
+
+/** "You send · −23.18 USDC": who/what split, coloured by direction. */
+function balanceRow(b: string, tokens: ReportView["tokens"]): HTMLElement {
+  const [who, ...rest] = b.split(" · ");
+  const what = rest.join(" · ");
+  const dir = /^You send/.test(b) || what.startsWith("−") ? "out" : /^You receive/.test(b) || what.startsWith("+") ? "in" : "state";
+  return el("li", { "data-balance": "", class: dir }, el("span", { class: "who" }, who ?? b), el("span", { class: "what" }, ...withTokens(what, tokens)));
 }
 
 /** Step 2: simulation, instructions, new states, capability changes, claims with evidence, Ledger hash. */
@@ -118,8 +143,9 @@ export function detailsStep(v: WorkerVerdict, r: ReportView | null): HTMLElement
           { class: "simulation" },
           el("h2", {}, "What simulation shows"),
           r.details?.balances?.length
-            ? el("ul", { class: "balances" }, ...r.details.balances.map((b) => { const [who, ...rest] = b.split(" · "); const what = rest.join(" · "); return el("li", { "data-balance": "", class: what.startsWith("−") ? "out" : what.startsWith("+") ? "in" : "state" }, el("span", { class: "who" }, who ?? b), el("span", { class: "what" }, ...withTokens(what, r.tokens))); }))
-            : el("p", {}, r.simulation ?? "Not simulated")
+            ? el("ul", { class: "balances" }, ...r.details.balances.map((b) => balanceRow(b, r.tokens)))
+            : el("p", {}, r.simulation ?? "Not simulated"),
+          r.details?.other?.length ? el("details", { class: "other-accounts", "data-other-accounts": "" }, el("summary", {}, `Other accounts (${r.details.other.length})`), el("ul", { class: "balances" }, ...r.details.other.map((b) => balanceRow(b, r.tokens)))) : null
         )
       )
     );
