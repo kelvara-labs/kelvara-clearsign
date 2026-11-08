@@ -4,7 +4,7 @@
 <body>
 <header class="app-header">
   <div class="brand"><img class="brand-mark" src="mark.svg" alt=""><span class="brand-word">Sign<span>Guard</span></span><span class="header-sep" aria-hidden="true"></span><h1 class="app-title">Settings</h1></div>
-  <div class="header-right"><span class="status-chip" id="status-chip" data-state="checking" role="status"><span class="dot"></span><span id="status-chip-label">Checking</span></span><span class="app-version" id="app-version">v0.4.0</span></div>
+  <div class="header-right"><span class="status-chip" id="status-chip" data-state="checking" role="status"><span class="dot"></span><span id="status-chip-label">Checking</span></span><span class="app-version" id="app-version">v0.4.1</span></div>
 </header>
 <div class="app-body">
   <nav class="side" aria-label="Settings sections">
@@ -47,8 +47,8 @@
         <div class="ai-body">
           <div class="info-box"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-9h.01"/></svg><p>Opt in to send bounded public engine questions, reasons and message-hash binding to your selected provider. No raw transaction bytes, signatures, wallet secrets or page content are sent. Chain data comes only from Helius. The provider cannot change rules, levels or signing controls; failures use engine templates.</p></div>
           <div class="row">
-            <div class="row-text"><label class="row-title" for="ai-url">API URL</label><p class="row-desc">A full Chat Completions or Responses endpoint, or a base URL like https://host/v1, which is completed automatically with /chat/completions. HTTPS remote, HTTP loopback only. Changing the endpoint requires re-entering its key.</p></div>
-            <div class="row-control"><input id="ai-url" type="url" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="https://host/v1" class="mono-input"></div>
+            <div class="row-text"><label class="row-title" for="ai-url">API URL</label><p class="row-desc">A full Chat Completions or Responses endpoint. A base URL ending in /v1 is completed automatically to .../chat/completions; the saved URL is shown after Save. HTTPS remote, HTTP loopback only. Changing the endpoint requires re-entering its key.</p></div>
+            <div class="row-control"><input id="ai-url" type="url" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="Provider endpoint URL" class="mono-input"></div>
           </div>
           <div class="row">
             <div class="row-text"><label class="row-title" for="ai-key">API key</label><p class="row-desc">Never prefilled. Optional for local inference.</p></div>
@@ -62,10 +62,7 @@
             <div class="row-text"><span class="row-title">Enable optional AI selection for complex requests</span><p class="row-desc">Simple requests always use the built-in question.</p></div>
             <div class="row-control end"><label class="switch"><input id="ai-enabled" type="checkbox" aria-label="Enable optional AI selection for complex requests"><span class="switch-track" aria-hidden="true"></span></label></div>
           </div>
-          <div class="row">
-            <div class="row-text"><span class="row-title">Provider</span><p class="row-desc">Test uses the saved provider.</p></div>
-            <div class="row-control inline"><button id="ai-save" class="primary compact" type="button">Save provider</button><button id="ai-test" class="secondary compact" type="button">Test saved provider</button><button id="ai-delete" class="text-button" type="button">Delete provider and key</button></div>
-          </div>
+          <div class="row row-actions"><div class="row-control inline"><button id="ai-save" class="primary compact" type="button">Save provider</button><button id="ai-test" class="secondary compact" type="button">Test saved provider</button><button id="ai-delete" class="text-button push-right" type="button">Delete provider and key</button></div></div>
           <div class="row row-result"><p id="ai-result" class="result" role="status" aria-live="polite"></p></div>
         </div>
       </details>
@@ -82,7 +79,7 @@
     <section class="group" id="sec-about" aria-labelledby="about-title">
       <div class="group-head"><div><h2 id="about-title">About</h2></div></div>
       <div class="group-card">
-        <div class="row"><div class="row-text"><span class="row-title">Version</span></div><div class="row-control"><span class="mono-text" id="about-version">v0.4.0</span></div></div>
+        <div class="row"><div class="row-text"><span class="row-title">Version</span></div><div class="row-control"><span class="mono-text" id="about-version">v0.4.1</span></div></div>
         <div class="row"><div class="row-text"><span class="row-title">Privacy</span></div><div class="row-control"><p class="row-desc">Keys stored on your device. Chain requests go to Helius; optional intent selection goes to your chosen provider.</p></div></div>
         <div class="row"><div class="row-text"><span class="row-title">Reports</span></div><div class="row-control"><p class="row-desc">Full reports. No license needed.</p></div></div>
       </div>

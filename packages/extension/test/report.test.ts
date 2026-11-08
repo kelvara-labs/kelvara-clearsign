@@ -208,3 +208,28 @@ describe("bridge: held requests go to the report UI", () => {
     expect((await run(v(level, { allow: true }), show)).allow).toBe(false);
   });
 });
+
+import { originOf, withContext } from "../src/sw/report-context.js";
+
+describe("report origin and network", () => {
+  it("old reports stay valid; origin and network validate exactly", () => {
+    expect(validateReportView(view)).not.toBeNull();
+    expect(validateReportView({ ...view, origin: "https://app.example", network: "devnet" })).not.toBeNull();
+    expect(validateReportView({ ...view, origin: "http://localhost:5174" })).not.toBeNull();
+    for (const bad of ["https://app.example/path", "https://app.example?x=1", "https://u:p@app.example", "app.example", "https://app.example#f", "x".repeat(400), 5])
+      expect(validateReportView({ ...view, origin: bad })).toBeNull();
+    for (const bad of ["testnet", "", null, 1]) expect(validateReportView({ ...view, network: bad })).toBeNull();
+    expect(validateReportView({ ...view, extra: 1 })).toBeNull();
+  });
+  it("the worker adds the origin only (no path or query) and the network; null report untouched", () => {
+    const verdict: WorkerVerdict = { allow: false, hold: true, level: 2, reason: "r", report: view };
+    const out = withContext(verdict, "https://app.example/swap?api-key=SECRET#x", "devnet");
+    expect(out.report).toMatchObject({ origin: "https://app.example", network: "devnet" });
+    expect(JSON.stringify(out)).not.toContain("SECRET");
+    expect(validateReportView(out.report)).not.toBeNull();
+    expect(out.level).toBe(2);
+    expect(withContext({ ...verdict, report: null }, "https://a.example/", "devnet").report).toBeNull();
+    expect(withContext(verdict, "about:blank", null).report).toEqual(view);
+    expect(originOf("http://localhost:5174/a")).toBe("http://localhost:5174");
+  });
+});

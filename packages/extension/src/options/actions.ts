@@ -20,7 +20,15 @@ export interface Outcome {
   kind: Kind;
   /** True when the key field should be emptied (the typed key was stored). */
   clearField: boolean;
+  /** Normalized provider URL that was stored (never the key), for the AI provider card. */
+  url?: string;
 }
+
+/**
+ * Only a stored change (Save, Remove) may sync form inputs from storage. A Test must never
+ * overwrite what the user typed or selected but has not saved.
+ */
+export const syncsInputs = (o: Pick<Outcome, "clearField">): boolean => o.clearField;
 
 export interface View {
   network: Network;
@@ -94,7 +102,8 @@ export async function testConnection(store: Store, keyField: string, network: st
   const net = network === "devnet" || network === "localnet" ? network : "mainnet";
   const endpoint = pickEndpoint(chainFor(net), net, keyForTest(typed, saved));
   const r = await probeEndpoint(endpoint, fetchFn);
-  return { text: r.ms === null ? r.message : `${r.message} (${r.ms} ms)`, kind: r.ok ? "ok" : "err", clearField: false };
+  const label = net[0]!.toUpperCase() + net.slice(1);
+  return { text: `${label}: ${r.ms === null ? r.message : `${r.message} (${r.ms} ms)`}`, kind: r.ok ? "ok" : "err", clearField: false };
 }
 
 // License (PLAN M5): verified offline here before it is stored, and again by the

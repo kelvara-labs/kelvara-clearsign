@@ -20,7 +20,7 @@ export async function saveProvider(store: Store, permissions: Permissions, form:
     // Re-enter the key for every endpoint change; never forward saved auth to a different endpoint.
     if (!next.key && old?.url === next.url) next.key = old.key;
     await store.set({ [AI_STORAGE_KEY]: next });
-    return { text: "Provider saved. Engine rules and transaction bytes remain authoritative.", kind: "ok", clearField: true };
+    return { text: `Saved as ${next.url}. Engine rules and transaction bytes remain authoritative.`, kind: "ok", clearField: true, url: next.url };
   } catch { return error("Provider settings could not be saved. Engine templates remain available. Reload to check saved settings."); }
 }
 export async function deleteProvider(store: Store): Promise<Outcome> {

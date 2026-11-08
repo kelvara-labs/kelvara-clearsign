@@ -11,7 +11,7 @@ const NETWORKS: [string, string, string][] = [
 
 export function mountShell(): void {
   try {
-    const version = `v${chrome.runtime.getManifest().version}`;
+    const version = `v${(chrome.runtime as unknown as { getManifest(): { version: string } }).getManifest().version}`;
     for (const id of ["app-version", "about-version"]) {
       const e = $(id);
       if (e) e.textContent = version;

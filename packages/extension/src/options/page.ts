@@ -5,7 +5,7 @@ import { mountShell } from "./shell.js";
 // All logic is in actions.ts; this file only wires the DOM.
 import { SETTINGS_KEYS, setupSummary } from "../sw/settings.js";
 import type { FetchLike } from "../sw/probe.js";
-import { loadView, removeKey, saveSettings, testConnection, type Outcome, type Store } from "./actions.js";
+import { loadView, removeKey, saveSettings, syncsInputs, testConnection, type Outcome, type Store } from "./actions.js";
 
 function el<T extends HTMLElement>(id: string): T {
   const e = document.getElementById(id);
@@ -39,10 +39,10 @@ export async function mountOptions(): Promise<void> {
     out.textContent = o.text;
     out.dataset.kind = o.kind;
   };
-  const refresh = async () => {
+  const refresh = async (syncInputs = true) => {
     const view = await loadView(store);
     // Settings unreadable: do not let Save overwrite the stored network with a default.
-    if (view.loaded) network.value = view.network;
+    if (view.loaded && syncInputs) network.value = view.network;
     status.textContent = view.status;
     save.disabled = !view.loaded;
     try {
@@ -66,7 +66,7 @@ export async function mountOptions(): Promise<void> {
     }
     if (o.clearField) keyInput.value = "";
     for (const b of buttons) b.disabled = false;
-    await refresh();
+    await refresh(syncsInputs(o));
     show(o);
   };
 

@@ -135,5 +135,9 @@ out["msg-siws-mismatch"] = review(msgReq({ method: "solana:signIn", signIn: { ..
 out["msg-text"] = review(msgReq({ message: b64encode(new TextEncoder().encode("Please confirm you own this account.\nNonce: 8f2a91")) }));
 out["msg-binary"] = review(msgReq({ message: b64encode(Uint8Array.from([0xff, 0xfe, 0x00, 0x01, 0x9a, 0x42])) }));
 out["msg-hidden-tx"] = review(msgReq({ message: b64encode(Uint8Array.from([1, ...new Uint8Array(64), ...MINIMAL_MESSAGE])) }));
+for (const [name, v] of Object.entries(out)) {
+  const x = v as { report: Record<string, unknown> | null };
+  if (x.report && !x.report.message) { x.report.origin = "https://app.squads.so"; x.report.network = name === "L4" || name.startsWith("poison") || name === "L0-memo" ? "devnet" : "mainnet"; }
+}
 writeFileSync(process.argv[2]!, JSON.stringify(out));
 console.log("wrote", Object.keys(out).join(","));
