@@ -187,6 +187,57 @@
       "capabilities": "capabilities/compute-budget.json",
       "capabilityMap": "curated",
       "authorityMap": null
+    },
+    {
+      "name": "ed25519",
+      "programId": "Ed25519SigVerify111111111111111111111111111",
+      "priority": "P1",
+      "decoder": "builtin",
+      "root": null,
+      "rootSha256": null,
+      "idl": null,
+      "sha256": null,
+      "source": "hand-written decoder packages/core/src/decode/builtin.ts (Solana Ed25519 precompile layout)",
+      "verified": false,
+      "executable": true,
+      "upgradeAuthority": null,
+      "capabilities": "capabilities/ed25519.json",
+      "capabilityMap": "curated",
+      "authorityMap": null
+    },
+    {
+      "name": "secp256k1",
+      "programId": "KeccakSecp256k11111111111111111111111111111",
+      "priority": "P1",
+      "decoder": "builtin",
+      "root": null,
+      "rootSha256": null,
+      "idl": null,
+      "sha256": null,
+      "source": "hand-written decoder packages/core/src/decode/builtin.ts (Solana secp256k1 precompile layout)",
+      "verified": false,
+      "executable": true,
+      "upgradeAuthority": null,
+      "capabilities": "capabilities/secp256k1.json",
+      "capabilityMap": "curated",
+      "authorityMap": null
+    },
+    {
+      "name": "secp256r1",
+      "programId": "Secp256r1SigVerify1111111111111111111111111",
+      "priority": "P1",
+      "decoder": "builtin",
+      "root": null,
+      "rootSha256": null,
+      "idl": null,
+      "sha256": null,
+      "source": "hand-written decoder packages/core/src/decode/builtin.ts (Solana secp256r1 precompile layout)",
+      "verified": false,
+      "executable": true,
+      "upgradeAuthority": null,
+      "capabilities": "capabilities/secp256r1.json",
+      "capabilityMap": "curated",
+      "authorityMap": null
     }
   ]
 }

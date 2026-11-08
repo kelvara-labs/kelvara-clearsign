@@ -144,6 +144,7 @@ async function fetchProgramMetadataIdl(spec: ProgramSpec): Promise<Pick<Manifest
     format: json.metadata?.spec ? `anchor-${json.metadata.spec}` : "anchor-legacy",
     source: `helius parsed-events idl ${spec.programId} slot ${newest.slot} (source program_metadata; program has no anchor:idl account)`,
     slot: newest.slot,
+    idlAddress: await anchorIdlAddress(spec.programId),
     sha256: sha256(pretty),
     inflatedSha256: sha256(text)
   };

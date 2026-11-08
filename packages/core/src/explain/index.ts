@@ -179,6 +179,11 @@ export const RULE_TEMPLATES: Readonly<Record<string, RuleTemplate>> = {
     why: "A Jupiter route trades the tokens in your source token account for the tokens in your destination token account; the amounts are the most you give and the least you receive.",
     advice: "Check both tokens, the amounts and the slippage tolerance."
   },
+  "fact.signature_check": {
+    title: "Checks signatures",
+    why: "A signature-verification step makes the transaction fail unless the listed signatures are valid; it moves no funds and grants no permission.",
+    advice: "Nothing to approve here; check the actions it accompanies."
+  },
   "fact.program_call": {
     title: "Calls a program instruction",
     why: "ClearSign reads the instruction's name and values, but has no deeper model of what it moves or authorizes.",
@@ -284,7 +289,7 @@ export function explainClaim(claim: Claim): ClaimExplanation {
 const levelNum = (l: AlertLevel): number => Number(l.slice(1));
 
 /** Strongest fact first: what the transaction does matters more than what it costs. */
-const FACT_ORDER = ["fact.unknown_instruction", "fact.swap", "fact.program_call", "fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
+const FACT_ORDER = ["fact.unknown_instruction", "fact.swap", "fact.program_call", "fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.signature_check", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
 
 /** L0 headline: says what the transaction does; says "No risks found" only when every instruction was understood. */
 function calmHeadline(report: Report, claims: ClaimExplanation[]): string {

@@ -8,7 +8,7 @@ import type { RuleContext, RuleState } from "../rules/types.js";
 import { requestTransfers } from "../rules/address-history.js";
 import { proposalViews, vaultInstructions, arg } from "../rules/squads-session.js";
 import { accountNamed, instructionEvidence } from "../rules/common.js";
-import { isAtaCreate, isComputeBudget, isSwap, programCallText, swapDetails } from "../rules/facts.js";
+import { isAtaCreate, isComputeBudget, isSignatureCheck, isSwap, programCallText, swapDetails } from "../rules/facts.js";
 import { mintOfTokenAccount, tokenAmountText } from "../rules/token-meta.js";
 import { SYSTEM_PROGRAM, TOKEN_PROGRAM, TOKEN_2022_PROGRAM } from "../state/layouts.js";
 import { SQUADS_V4_PROGRAM } from "../decode/squads.js";
@@ -84,7 +84,7 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     }
   }
   for (const {ix, txIndex, proposed, source, sourceAddress} of instructions) {
-    if (isBudgetSetting(ix) || isAtaCreate(ix)) continue;
+    if (isBudgetSetting(ix) || isAtaCreate(ix) || isSignatureCheck(ix)) continue;
     const evidence = report.evidence.filter((e) => (e.transactionIndex === txIndex && e.type === "instruction") || (sourceAddress !== null && e.address === sourceAddress && e.type === "account")).map((e) => e.id);
     if (ix.status === "named" && ix.programAddress === TOKEN_2022_PROGRAM && ix.name === "setTransferFee") {
       const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
@@ -119,7 +119,7 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     const recipient = r ?? `unresolved owner of token account ${t.tokenAccount}`;
     add("transfer", 0, `Did you intend to send ${amount} to ${recipient}?`, `Sends ${amount} to ${recipient}. ${h && r ? `${count} successful outgoing transaction(s) to this exact recipient observed in recorded history ${h.since} to ${h.now}${partial ? " (partial)" : ""}.` : "Previous outgoing activity or exact recipient unknown."} Familiarity does not establish safety.`, [], report.evidence.filter((e) => e.transactionIndex === t.txIndex && e.instructionPath?.[0] === t.ix.index).map((e) => e.id));
   }
-  const effective = instructions.filter(({ix}) => !isBudgetSetting(ix) && !isAtaCreate(ix));
+  const effective = instructions.filter(({ix}) => !isBudgetSetting(ix) && !isAtaCreate(ix) && !isSignatureCheck(ix));
   const onlyMemo = effective.length > 0 && effective.every(({ix}) => ix.status === "named" && [MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress));
   if (onlyMemo) add("memo", 0, "Did you intend to sign this memo?", "This signs a memo and nothing else. A memo is plain text; it moves no funds and gives no one any power.", [], report.evidence.filter((e) => e.type === "instruction").map((e) => e.id));
   if (!candidates.length) add("unknown", 2, "Did you intend to authorize these effects?", "ClearSign could not establish what this transaction does, so its effects remain unknown.", [], report.evidence.map((e) => e.id));

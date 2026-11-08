@@ -1,0 +1,15 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "secp256k1",
+  "programId": "KeccakSecp256k11111111111111111111111111111",
+  "reviewed": "E27 (engine), 2026-11-08: names checked against the hand-written decoder (packages/core/src/decode/builtin.ts); a signature-verification precompile has no accounts, moves no funds and grants no authority: it only fails the transaction when a listed signature is invalid",
+  "instructions": [
+    {
+      "instruction": "verifySignatures",
+      "authority": null,
+      "capability": "signature.verify",
+      "class": "other",
+      "changes": "checks secp256k1 signatures over messages inside this transaction; no permission changes and no funds move"
+    }
+  ]
+}

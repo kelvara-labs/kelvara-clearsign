@@ -160,5 +160,35 @@
   "source": "Built-in decoder",
   "verification": "Built in",
   "detail": "hand-written decoder packages/core/src/decode/builtin.ts"
+ },
+ {
+  "name": "ed25519",
+  "title": "Ed25519",
+  "programId": "Ed25519SigVerify111111111111111111111111111",
+  "kind": "Built-in",
+  "understands": [],
+  "source": "Built-in decoder",
+  "verification": "Built in",
+  "detail": "hand-written decoder packages/core/src/decode/builtin.ts (Solana Ed25519 precompile layout)"
+ },
+ {
+  "name": "secp256k1",
+  "title": "Secp256k1",
+  "programId": "KeccakSecp256k11111111111111111111111111111",
+  "kind": "Built-in",
+  "understands": [],
+  "source": "Built-in decoder",
+  "verification": "Built in",
+  "detail": "hand-written decoder packages/core/src/decode/builtin.ts (Solana secp256k1 precompile layout)"
+ },
+ {
+  "name": "secp256r1",
+  "title": "Secp256r1",
+  "programId": "Secp256r1SigVerify1111111111111111111111111",
+  "kind": "Built-in",
+  "understands": [],
+  "source": "Built-in decoder",
+  "verification": "Built in",
+  "detail": "hand-written decoder packages/core/src/decode/builtin.ts (Solana secp256r1 precompile layout)"
  }
 ]

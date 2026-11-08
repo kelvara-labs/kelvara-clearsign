@@ -1,7 +1,7 @@
 // E7 / G3: no fixture from any program reaches L4, every report validates (G4 checks), and every
 // ruleId implemented so far (rules plus the E11 capability graph: preview, recovery paths) fires on at least one real session and stays silent on at least one.
 // Transactions that use lookup tables are resolved with the runtime's own meta.loadedAddresses.
-import { existsSync } from "node:fs";
+import { existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { beforeAll, expect, it } from "vitest";
 import { accountFromRpc, ALL_RULE_IDS as RULE_IDS, type RuleState, type Session } from "../src/index.js";
@@ -64,6 +64,12 @@ it("G3: no fixture reaches L4; every implemented ruleId has a positive and a neg
   // Executed attack fixtures have explicit expectations; all prior corpus expectations stay intact.
   for (const f of json("packages/core/test/fixtures/rules/e8-localnet.json").cases) {
     sessions.push({name:f.name,session:await sessionOf([f.transaction]),expectedL4:["owner-takeover","close-authority-takeover","assign-takeover","sweep"].includes(f.name),state:{wallet:f.wallet,accounts:Object.fromEntries(Object.entries(f.accounts).map(([a,r])=>[a,accountFromRpc(a,r as Parameters<typeof accountFromRpc>[1])])),fees:{0:BigInt(f.fee)},walletInventory:f.inventory?{complete:true,tokenAccounts:f.inventory.map((a:{pubkey:string})=>a.pubkey)}:undefined}});
+  }
+  // E27: real Velocity transactions (Ed25519 signature checks, oracle and twap updates), recorded over Helius.
+  const velocityDir = path.join(root, "packages/core/test/fixtures/velocity");
+  for (const name of readdirSync(velocityDir).filter((n) => n.endsWith(".json")).sort()) {
+    const fx = json<{ transaction: string; meta: { loadedAddresses?: { writable: string[]; readonly: string[] } } }>(`packages/core/test/fixtures/velocity/${name}`);
+    sessions.push({ name: `velocity/${name.slice(0, 8)}`, session: sessionFromRuntime(fx.transaction, fx.meta.loadedAddresses ?? { writable: [], readonly: [] }) });
   }
   sessions.push(...poisonSessions);
   const prepared = performance.now();

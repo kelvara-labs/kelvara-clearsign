@@ -8,6 +8,7 @@ import {
   classifyInstruction,
   describeInstruction,
   COMPUTE_BUDGET_INSTRUCTIONS,
+  SIGNATURE_CHECK_INSTRUCTION,
   UPGRADEABLE_LOADER_ACCOUNTS,
   UPGRADEABLE_LOADER_INSTRUCTIONS,
   type CapabilityClass
@@ -143,6 +144,7 @@ export function computeBudgetInstructions(): InstructionShape[] {
 export function builtinShape(decoder: string): { ixs: InstructionShape[]; checkedAgainst: string } | null {
   if (decoder === "loader") return { ixs: loaderInstructions(), checkedAgainst: "packages/core/src/decode/builtin.ts (hand-written decoder)" };
   if (decoder === "computeBudget") return { ixs: computeBudgetInstructions(), checkedAgainst: "packages/core/src/decode/builtin.ts (hand-written decoder)" };
+  if (decoder === "sigverify") return { ixs: [{ name: SIGNATURE_CHECK_INSTRUCTION, accounts: [], discriminator: null }], checkedAgainst: "packages/core/src/decode/builtin.ts (hand-written decoder)" };
   return null;
 }
 

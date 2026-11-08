@@ -3,10 +3,11 @@
 // capability graph, so risk claim ids never move, and they never raise the alert level (all are L0).
 // A fact is written only for an instruction the engine fully understands: a named decode on the exact program.
 import type { DecodedInstruction } from "../decode/types.js";
-import { COMPUTE_BUDGET_PROGRAM, MEMO_PROGRAM, MEMO_V1_PROGRAM } from "../decode/builtin.js";
+import { ED25519_PROGRAM, SECP256K1_PROGRAM, SECP256R1_PROGRAM, SIGNATURE_CHECK_INSTRUCTION, type SignatureCheck, COMPUTE_BUDGET_PROGRAM, MEMO_PROGRAM, MEMO_V1_PROGRAM } from "../decode/builtin.js";
 import type { Session } from "../ingest/types.js";
 import { SYSTEM_PROGRAM, TOKEN_PROGRAM, TOKEN_2022_PROGRAM } from "../state/layouts.js";
 import { lamportsText, tokenText, unsigned } from "../util/amounts.js";
+import { toBase58 } from "../util/encoding.js";
 import { accountNamed, instructionEvidence } from "./common.js";
 import { arg } from "./squads-session.js";
 import { recipient as tokenRecipient } from "./token-state.js";
@@ -15,7 +16,7 @@ import { mintOfTokenAccount, tokenAmountText, tokenEvidence, tokenLabel, tokenMe
 export { JUPITER_V6_PROGRAM };
 import type { RuleContext } from "./types.js";
 
-export const FACT_RULE_IDS = ["fact.unknown_instruction", "fact.program_call", "fact.memo", "fact.sol_transfer", "fact.token_transfer", "fact.swap", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"] as const;
+export const FACT_RULE_IDS = ["fact.unknown_instruction", "fact.program_call", "fact.memo", "fact.sol_transfer", "fact.token_transfer", "fact.swap", "fact.signature_check", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"] as const;
 
 export const LAMPORTS_PER_SIGNATURE = 5000n;
 const ATA_PROGRAM = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
@@ -32,6 +33,26 @@ export const isSwap = (ix: DecodedInstruction): boolean =>
   (named(ix, JUPITER_V6_PROGRAM, SWAP_EXACT_OUT) && typeof arg(ix, "outAmount") === "bigint" && typeof arg(ix, "quotedInAmount") === "bigint");
 const BUDGET_NAMES = ["requestHeapFrame", "setComputeUnitLimit", "setComputeUnitPrice", "setLoadedAccountsDataSizeLimit"] as const;
 export const isComputeBudget = (ix: DecodedInstruction): boolean => named(ix, COMPUTE_BUDGET_PROGRAM, BUDGET_NAMES);
+const SIGNATURE_CURVES: Readonly<Record<string, string>> = { [ED25519_PROGRAM]: "Ed25519", [SECP256K1_PROGRAM]: "secp256k1", [SECP256R1_PROGRAM]: "secp256r1" };
+export const isSignatureCheck = (ix: DecodedInstruction): boolean => named(ix, Object.keys(SIGNATURE_CURVES), [SIGNATURE_CHECK_INSTRUCTION]) && Array.isArray(ix.args?.signatures) && ix.args.signatures.length > 0;
+const shortKey = (k: string): string => (k.length > 12 ? `${k.slice(0, 4)}…${k.slice(-4)}` : k);
+/** The signer's key: from the check itself, else from the transaction instruction the precompile points at (the very bytes it verifies). */
+function signerOf(ctx: RuleContext, t: number, ix: DecodedInstruction, c: SignatureCheck): string | null {
+  if (c.signer) return c.signer;
+  const target = ctx.session.transactions[t]?.instructions[c.keyInstruction ?? ix.index];
+  if (!target || c.keyOffset + c.keyLength > target.data.length) return null;
+  const key = target.data.subarray(c.keyOffset, c.keyOffset + c.keyLength);
+  return ix.programAddress === ED25519_PROGRAM ? toBase58(key) : Array.from(key, (x) => x.toString(16).padStart(2, "0")).join("");
+}
+const signatureCheckText = (ctx: RuleContext, t: number, ix: DecodedInstruction): string => {
+  const checks = ix.args!.signatures as unknown as SignatureCheck[];
+  const parts = checks.slice(0, 3).map((c) => {
+    const signer = signerOf(ctx, t, ix, c);
+    return `${signer ? `signer ${shortKey(signer)}` : "signer not read"}, ${c.messageLength}-byte message`;
+  });
+  if (checks.length > 3) parts.push(`${checks.length - 3} more`);
+  return `Transaction ${t} checks ${checks.length} ${SIGNATURE_CURVES[ix.programAddress]} signature${checks.length === 1 ? "" : "s"} (${parts.join("; ")}) inside this transaction; it moves no funds and grants no permission.`;
+};
 export const isAtaCreate = (ix: DecodedInstruction): boolean => named(ix, ATA_PROGRAM, ["createAssociatedToken", "createAssociatedTokenIdempotent"]);
 
 /** Memo text for a statement: control and line-break characters become spaces, bounded, quoted. */
@@ -191,7 +212,7 @@ export function addBenignFacts(ctx: RuleContext): void {
         allBenign = false;
         continue;
       }
-      const understood = isMemo(ix) || isSolTransfer(ix) || isTokenTransfer(ix) || isComputeBudget(ix) || isAtaCreate(ix);
+      const understood = isMemo(ix) || isSolTransfer(ix) || isTokenTransfer(ix) || isComputeBudget(ix) || isAtaCreate(ix) || isSignatureCheck(ix);
       if (!understood) allBenign = false;
       if (!understood) {
         if (ix.status === "unknown") {
@@ -212,6 +233,8 @@ export function addBenignFacts(ctx: RuleContext): void {
       allIxEvidence.push(ev);
       if (isMemo(ix)) {
         report.addClaim({ kind: "Fact", ruleId: "fact.memo", statement: `Transaction ${t} contains a memo that says ${memoText(ix.args!.memo as string)}. A memo is plain text and moves no funds.`, evidenceIds: [ev] });
+      } else if (isSignatureCheck(ix)) {
+        report.addClaim({ kind: "Fact", ruleId: "fact.signature_check", statement: signatureCheckText(ctx, t, ix), evidenceIds: [ev] });
       } else if (isSolTransfer(ix)) {
         const amount = arg(ix, "amount") as bigint;
         report.addClaim({ kind: "Fact", ruleId: "fact.sol_transfer", statement: `Transaction ${t} sends ${sol(amount)} (${amount} lamports) from ${accountNamed(ix, "source") ?? "an unresolved account"} to ${accountNamed(ix, "destination") ?? "an unresolved account"}.`, evidenceIds: [ev] });
@@ -282,7 +305,7 @@ export function addBenignFacts(ctx: RuleContext): void {
     report.addClaim({
       kind: "Fact",
       ruleId: "fact.no_permission_change",
-      statement: `All ${n} instruction${n === 1 ? "" : "s"} in ${session.transactions.length} transaction${session.transactions.length === 1 ? "" : "s"} are fully decoded (memo, compute budget, SOL and token transfers, token account creation) and none grants or revokes a capability: no authority, delegate, owner or upgrade permission changes.`,
+      statement: `All ${n} instruction${n === 1 ? "" : "s"} in ${session.transactions.length} transaction${session.transactions.length === 1 ? "" : "s"} are fully decoded (memo, compute budget, signature checks, SOL and token transfers, token account creation) and none grants or revokes a capability: no authority, delegate, owner or upgrade permission changes.`,
       evidenceIds: allIxEvidence
     });
   }
