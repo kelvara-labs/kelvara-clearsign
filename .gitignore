@@ -12,3 +12,7 @@ test-results/
 .env.*
 .DS_Store
 !.env.example
+
+# Demo video text and materials stay local (user decision)
+VIDEO_SCRIPT.md
+demo-video/
