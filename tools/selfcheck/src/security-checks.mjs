@@ -269,6 +269,27 @@ export function checkPassThroughUnwritable(srcFiles) {
   return result(f, `passThrough read only by ${[...PASS_THROUGH_READERS].join(", ")}; nothing writes it`);
 }
 
+// Model transport belongs to the SW. Options may send a credential-free internal test request;
+// the existing Helius settings probe remains allowed. Catch indirect UI imports of the model client.
+export function checkUiProviderIsolation(srcFiles) {
+  const findings = [];
+  const entry = "ui.ts";
+  const visited = new Set();
+  const visit = (name) => {
+    if (visited.has(name)) return;
+    visited.add(name);
+    const text = srcFiles.get(name);
+    if (typeof text !== "string") return;
+    if (name === "intent/client.ts" || /\bselectIntent\s*\(/.test(text)) findings.push(`UI imports model transport through ${name}`);
+    for (const m of text.matchAll(/(?:from\s*|import\s*(?:\(\s*)?)(["'])(\.[^"']+)\1/g)) {
+      const target = path.posix.normalize(path.posix.join(path.posix.dirname(name), m[2])).replace(/\.js$/, ".ts");
+      visit(target);
+    }
+  };
+  visit(entry);
+  return result(findings, `UI import graph (${visited.size} modules) contains no model transport`);
+}
+
 // Dependency licenses, read offline from node_modules. No AGPL, BUSL or MPL in core or extension.
 const FORBIDDEN_LICENSE = /\b(AGPL|BUSL|BSL-1\.1|MPL|SSPL|GPL)/i;
 function licenseOf(pkg) {
