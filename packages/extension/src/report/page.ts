@@ -14,6 +14,12 @@ function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string,
   return e;
 }
 
+/** Full value stays in the DOM text; CSS shows it middle-truncated (head ellipsis, fixed tail). */
+function addr(value: string): HTMLElement {
+  if (value.length <= 14 || /\s/.test(value)) return el("code", {}, value);
+  return el("code", { class: "addr", title: value }, el("span", { class: "addr-head" }, value.slice(0, -6)), el("span", { class: "addr-tail" }, value.slice(-6)));
+}
+
 function section(title: string, ...kids: Kids): HTMLElement {
   return el("section", {}, el("h2", {}, title), ...kids);
 }
@@ -59,24 +65,24 @@ function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => voi
     out.push(el("p", { class: "summary" }, v.reason));
     return out;
   }
-  if (r.intent) out.push(intentCard(r.intent, onBlock));
   out.push(el("p", { class: "summary" }, r.summary));
   if (r.simulation !== null || r.authorizes !== null) {
     out.push(
       el(
         "section",
         { class: "versus" },
-        el("div", {}, el("h2", {}, "What simulation shows"), el("p", {}, r.simulation ?? "Not simulated")),
-        el("div", {}, el("h2", {}, "What you actually authorize"), el("p", {}, r.authorizes ?? "Unknown"))
+        el("div", { class: "authorize" }, el("h2", {}, "What you actually authorize"), el("p", {}, r.authorizes ?? "Unknown")),
+        el("div", { class: "simulation" }, el("h2", {}, "What simulation shows"), el("p", {}, r.simulation ?? "Not simulated"))
       )
     );
   }
+  if (r.intent) out.push(intentCard(r.intent, onBlock));
   const caps = rankedCapabilities(r);
   if (caps.length) {
     out.push(
       section(
         r.limited ? "Top finding" : "Capability changes, most dangerous first",
-        el("ol", { class: "caps" }, ...caps.map((c) => el("li", { "data-risk": c.risk }, el("span", { class: "risk" }, c.risk), ` ${c.change === "granted" ? "Grants" : "Revokes"} ${c.authority} → `, el("code", {}, c.holder))))
+        el("ol", { class: "caps" }, ...caps.map((c) => el("li", { "data-risk": c.risk }, el("span", { class: "risk" }, c.risk), ` ${c.change === "granted" ? "Grants" : "Revokes"} ${c.authority} → `, addr(c.holder))))
       )
     );
   }
@@ -85,7 +91,7 @@ function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => voi
       section(
         `What ${p.authority} can do`,
         el("p", { class: "muted" }, `Confidence: ${p.confidence}`),
-        p.can.length ? el("ol", {}, ...p.can.map((a) => el("li", {}, el("strong", {}, a.name), a.detail ? ` · ${a.detail}` : ""))) : el("p", {}, "Unknown: not shown as harmless.")
+        p.can.length ? el("ol", { class: "preview-list" }, ...p.can.map((a) => el("li", {}, el("strong", {}, a.name), a.detail ? ` · ${a.detail}` : ""))) : el("p", {}, "Unknown: not shown as harmless.")
       )
     );
   }
@@ -95,8 +101,10 @@ function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => voi
   }
   if (r.messageHashes.length) {
     out.push(
-      section(
-        r.messageHashes.length > 1 ? "Message hashes (match on your Ledger)" : "Message hash (match on your Ledger)",
+      el(
+        "details",
+        { class: "hashes-section" },
+        el("summary", {}, r.messageHashes.length > 1 ? "Message hashes (match on your Ledger)" : "Message hash (match on your Ledger)"),
         el("ol", { class: "hashes" }, ...r.messageHashes.map((h) => el("li", {}, el("code", { "data-kelvara-hash": "" }, h))))
       )
     );
@@ -114,12 +122,14 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   if (r?.limited) card.setAttribute("data-kelvara-limited", "");
   card.setAttribute("aria-modal", "true");
   const badge = el("span", { class: "level" }, levelText);
+  const banner = el("section", { class: "risk-banner" });
   if (v.level !== null) badge.setAttribute("data-kelvara-level", `L${v.level}`);
   document.documentElement.dataset.level = v.level === null ? "blocked" : `L${v.level}`;
   const status = el("p", { class: "status", role: "status" });
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
-  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard"), badge), el("h1", { id: "title" }, r?.title ?? v.reason));
+  banner.append(el("div", { class: "risk-top" }, el("span", { class: "level-icon", "aria-hidden": "true" }), badge), el("h1", { id: "title" }, r?.title ?? v.reason));
+  card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard")), banner);
 
   let answered = false;
   const block = el("button", { type: "button", class: "block", "data-kelvara-action": "block" }, b.block);
@@ -134,8 +144,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   block.addEventListener("click", () => done(false));
   let sign: HTMLButtonElement | null = null;
   card.append(...renderReport(v, r, () => done(false)));
-  card.append(status);
-  const footer = el("footer", {}, block);
+  const footer = el("footer", { class: "decision" }, status, block);
 
   if (b.signAnyway) {
     const holdMs = b.signAnyway.holdMs;
@@ -145,8 +154,8 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
     if (holdMs) sign.setAttribute("data-hold-ms", String(holdMs));
     footer.append(sign);
     const s = sign;
-    const hint = el("p", { class: "hint muted", "aria-live": "polite" });
-    card.append(hint);
+    const hint = el("p", { class: "hint", "aria-live": "polite" });
+    footer.append(hint);
 
     // Anti-clickjacking: Sign anyway works only while nothing covers or fades the report.
     const gate = new VisibilityGate();

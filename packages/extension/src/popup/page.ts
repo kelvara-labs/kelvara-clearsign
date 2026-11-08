@@ -58,7 +58,8 @@ function row(e: Activity): HTMLElement {
   copy.append(host, detail);
   const level = document.createElement("span");
   level.className = "activity-level";
-  level.textContent = e.level === null ? "NO ANALYSIS" : `L${e.level}`;
+  level.textContent = e.level === null ? "No analysis" : `L${e.level}`;
+  level.dataset.lv = e.level === null ? "blocked" : String(e.level);
   li.append(icon, copy, level);
   return li;
 }

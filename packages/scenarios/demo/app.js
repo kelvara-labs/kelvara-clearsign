@@ -1,4 +1,5 @@
 /* global window, document, fetch, CustomEvent, atob */
+const LEVELS = ['Clear', 'Notice', 'Warning', 'Critical', 'Blocked'];
 const wallets = [];
 let selected = null, account = null, scenarios = [], busy = false;
 const $ = s => document.querySelector(s);
@@ -22,12 +23,13 @@ function render() {
     const card = document.createElement('article'); card.className = 'card';
     const head = document.createElement('div'); head.className = 'cardhead';
     const label = document.createElement('span'); label.textContent = c.label;
-    const level = document.createElement('span'); level.className = 'level'; level.textContent = c.id === 'fees' ? 'Proposed future effect' : c.expected + (c.id === 'good' ? ' · Clear' : ' · Expected'); head.append(label,level);
+    const level = document.createElement('span'); level.className = 'level-badge'; const n = /^L([0-4])$/.exec(c.expected)?.[1]; if (n) { card.dataset.lv = n; level.dataset.lv = n; const icon = document.createElement('span'); icon.className = 'level-icon'; icon.setAttribute('aria-hidden', 'true'); level.append(icon); }
+    level.append(c.id === 'fees' ? 'Proposed future effect' : c.expected + ' · ' + (LEVELS[n] ?? 'Expected')); head.append(label,level);
     const title = document.createElement('h2'); title.textContent = c.title;
     const desc = document.createElement('p'); desc.textContent = c.description;
     const compatible = account && account.chains.includes('solana:devnet') && account.features.includes('solana:signTransaction') && (!c.account || account.address === c.account);
     const guidance = document.createElement('div'); guidance.className = 'guidance'; guidance.textContent = !account ? 'Connect a devnet wallet to begin.' : !compatible ? 'Connect the shared demo account shown above to enable all attack previews.' : 'Account matches. Ready for a fresh preview.';
-    const button = document.createElement('button'); button.textContent = c.id === 'fees' ? 'Preview fee proposal approval' : c.id === 'good' ? 'Preview harmless memo' : 'Preview ' + c.expected + ' scenario'; button.disabled = !compatible || busy;
+    const button = document.createElement('button'); button.className = 'primary'; button.textContent = c.id === 'fees' ? 'Preview fee proposal approval' : c.id === 'good' ? 'Preview harmless memo' : 'Preview ' + c.expected + ' scenario'; button.disabled = !compatible || busy;
     button.onclick = () => request(c);
     card.append(head,title,desc,guidance,button); $('#cards').append(card);
   }

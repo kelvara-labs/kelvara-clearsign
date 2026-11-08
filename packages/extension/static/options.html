@@ -19,6 +19,7 @@
   </section>
   <details id="ai-provider" class="panel settings-card">
     <summary>Optional AI provider · Intent question selection</summary>
+    <div class="ai-body">
     <p>Opt in to send bounded public engine questions, reasons and message-hash binding to your selected provider. No raw transaction bytes, signatures, wallet secrets or page content are sent. Chain data comes only from Helius. The provider cannot change rules, levels or signing controls; failures use engine templates.</p>
     <label class="field-label" for="ai-url">API URL</label><input id="ai-url" type="url" autocomplete="off" spellcheck="false" maxlength="2048" placeholder="Provider endpoint URL">
     <p class="field-hint">Full Chat Completions or Responses endpoint; a base URL uses /chat/completions. HTTPS remote, HTTP loopback only. Changing the endpoint requires re-entering its key.</p>
@@ -27,6 +28,7 @@
     <label><input id="ai-enabled" type="checkbox"> Enable optional AI selection for complex requests</label>
     <div class="connection-tools"><button id="ai-save" class="primary" type="button">Save provider</button><button id="ai-test" class="secondary" type="button">Test saved provider</button><button id="ai-delete" class="text-button" type="button">Delete provider and key</button></div>
     <p id="ai-result" class="result" role="status" aria-live="polite"></p>
+    </div>
   </details>
   <div class="form-actions"><button id="save" class="primary" type="button">Save settings<svg viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></svg></button></div>
   <p id="result" class="result" role="status" aria-live="polite"></p>
