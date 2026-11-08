@@ -69,6 +69,8 @@
   --fs-meta: 12px;
   --lh-meta: 16px;
   --track-tight: -0.02em;
+  --gap-block: 20px;
+  --pad-card: 16px;
 
   /* Space (4 px base), radius, elevation, motion */
   --space-1: 4px;
