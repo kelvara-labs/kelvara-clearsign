@@ -1,4 +1,33 @@
-# Kelvara SignGuard selfcheck — v0.3.0 (V14b FAIL: G7)
+# Kelvara SignGuard selfcheck — v0.3.0 (V15: all ten gates PASS)
+
+## V15 AI intent certification — 2026-11-08, merged main `bdb906f` + verifier `52c08ae`
+
+**All ten gates PASS** on fresh plain clone `/tmp/kelvara-v15` of team/verifier `52c08ae` (= main `bdb906f` / V14b merge `84f1145` plus the V15 verifier commit): `git clean -xfd`, `pnpm install --frozen-lockfile && pnpm build && pnpm release`, then `E2E_WORKERS=1 pnpm selfcheck`. No live AI provider and no real provider key was used: every provider case ran against the loopback mock `test-dapp/scripts/mock-provider.mjs` with synthetic key strings. X16 (wallet-hold audit) and D1 (UI redesign) are not part of this run; V16 covers them.
+
+| Gate | Result | Seconds |
+|---|---|---|
+| G1 build | PASS | 25.6 |
+| G2 decode | PASS (98.02%, 1000/1000) | 8.6 |
+| G3 rules | PASS | 13.6 |
+| G4 contract | PASS | 2.6 |
+| G5 registry | PASS | 4.9 |
+| G6 localnet | PASS | 26.7 |
+| G7 e2e | PASS, 47 cases (was 31 + options-tab test; now +15 AI cases) | 374.2 |
+| G8 replay | PASS (cached; live not run) | 1.1 |
+| G9 determinism | PASS | 3.3 |
+| G10 security | PASS | 2.9 |
+
+- Release determinism: three `pnpm release` runs gave identical sha256 `f5e5eae2e379e57d07df3d54c1fc3d65d3d89cedcce68a62cb85aeaf30321bc8` (14 files, 286882 bytes).
+- Read-only paired intent proof: `pnpm demo:verify-intent` PASS against the devnet playground state (fees: L1 "approve this proposed future token transfer-fee change", 75 bp, max 2000000; admin: L3 "approve a proposed future transfer of program.upgrade control"). Run in the clone with only public scenario state copied (fees/scenario.json, admin/approval.unsigned.b64) and the key from env; no devnet mutation, no playground restart.
+- Live G8 not run (optional).
+- Localnet stopped; port 8899 confirmed free.
+
+### Verifier changes in V15
+- Provider-sender oracle corrected (not weakened): `options_ui.open_in_tab` makes Chrome set `sender.tab` for the options page, so the old "tab must be undefined" rule was wrong. `provider-sender.test.ts` now ACCEPTS the tab-hosted exact options sender at frameId 0 and REJECTS: same URL with frameId != 0, content-script style senders (tab + https URL), and every earlier foreign id/URL/query/fragment/missing-field case. The options-tab spec passes.
+- Provider-policy oracle: Chrome match patterns carry no port, so a granted `scheme://host/*` covers that exact scheme and host on any port; wildcards, other hosts, other schemes and other ports of the request are still rejected (unit-tested).
+- New `test-dapp/e2e/intent-ai.spec.ts` (15 cases, one Playwright worker, temp copy of dist with only `http://127.0.0.1/*` added to host_permissions; the release zip and `packages/extension/dist` are unchanged): engine intent card present with source=engine and status=not-configured for l3-admin, l2-trap and l4-sweep; provider saved through the real Options UI, `select-highest` gives source=ai/selected with a question equal to an engine candidate and identical level, buttons, message hashes and claims versus the no-AI run of the same bytes; each of lower-priority, wrong-binding, invented-reason, malformed, refusal, http-500, redirect, slow, oversize falls back to the engine template with the expected invalid/unavailable status, unchanged level/controls, wallet uncalled until Block; request content has only binding/fallbackId/candidates, no transaction bytes or base64, signature-length strings, page URL, signer or key, Authorization only when a synthetic key is configured; a pure System transfer sends no request.
+- Finding for the engine owner (not a failure): a transfer carrying a ComputeBudget instruction (what real wallets send) is classed complex by the engine (an "unknown effects" candidate at priority 2 becomes the fallback), so it is sent to the AI provider and its template question reads as unknown effects. The routine-no-request case therefore uses a real mainnet fixture with a lone System transfer.
+
 
 ## V14b re-certification — 2026-11-08, merged main `1481cfa` (team/verifier `08f4cce`) — FAIL (G7)
 
