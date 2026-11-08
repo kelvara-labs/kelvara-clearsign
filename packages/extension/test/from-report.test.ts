@@ -137,6 +137,20 @@ describe("fromReport: Drift session", () => {
     expect(r.simulation).toBeNull();
   });
 
+  it("uses the catalog name for an undecoded program, but never over a registry name; falls back to the short id", () => {
+    const RAY = "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK";
+    const make = (data: Record<string, unknown>): Report => {
+      const b = new ReportBuilder(session);
+      const e = b.addEvidence({ type: "instruction", source: "message", summary: "instruction 0", transactionIndex: 0, instructionPath: [0], address: RAY, data: data as never });
+      b.addClaim({ kind: "Unknown", statement: "One instruction could not be named.", evidenceIds: [e], level: "L1" });
+      return b.build();
+    };
+    const base = { programId: RAY, program: null, name: null };
+    expect(ok(fromReport(make({ ...base, programLabel: "Raydium CLMM", labelSource: "Helius program catalog" }), hashes)).report.authorizes).toContain("1 Raydium CLMM instruction ClearSign couldn't read");
+    expect(ok(fromReport(make(base), hashes)).report.authorizes).toContain("CAMM…rWqK");
+    expect(ok(fromReport(make({ ...base, program: "squads-v4", programLabel: "Wrong" }), hashes)).report.authorizes).not.toContain("Wrong");
+  });
+
   it("simulation line: ok shows the summary, failed says so", () => {
     expect(ok(fromReport(driftReport({ status: "ok", summary: "0 SOL leaves your wallet.", evidenceIds: [] }), hashes)).report.simulation).toBe(
       "0 SOL leaves your wallet."

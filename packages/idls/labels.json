@@ -1,0 +1,207 @@
+{
+ "schema": "kelvara.program-labels/v1",
+ "source": "Helius program catalog (describeProgram, 2026-11-08)",
+ "fetchedAt": "2026-11-08T11:48:15.182Z",
+ "note": "Names only. Candidates are the programs most used in sampled mainnet blocks; every id was verified as an executable account over Helius. A name never means the program is decoded or safe.",
+ "blocksSampled": 149,
+ "candidates": 600,
+ "verifiedExecutable": 600,
+ "labels": [
+  {
+   "programId": "pAMMBay6oceH9fJKBRHGP5D4bD4sWpmSwMn52FMfXEA",
+   "name": "Pump AMM"
+  },
+  {
+   "programId": "pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ",
+   "name": "Pump Fees"
+  },
+  {
+   "programId": "EtrnLzgbS7nMMy5fbD42kXiUzGg8XQzJ972Xtk1cjWih",
+   "name": "Eternal"
+  },
+  {
+   "programId": "cpamdpZCGKUy5JxQXB4dcpGPiikHawvSWAd6mEn1sGG",
+   "name": "CP AMM"
+  },
+  {
+   "programId": "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P",
+   "name": "Pump"
+  },
+  {
+   "programId": "whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc",
+   "name": "Whirlpool"
+  },
+  {
+   "programId": "tickUcsEQegChaAuo9VYQQztB4ZGApY6ZT4FkULWY6N",
+   "name": "Market Tick"
+  },
+  {
+   "programId": "CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK",
+   "name": "Raydium CLMM"
+  },
+  {
+   "programId": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+   "name": "Lb CLMM"
+  },
+  {
+   "programId": "dbcij3LWUppWqq96dh6gJWwBifmcGfLSB5D4DuSMaqN",
+   "name": "Dynamic Bonding Curve"
+  },
+  {
+   "programId": "HADRoNbLovyqhCsocfYQYB7QdfCAAinN9HTePvBCVDQ8",
+   "name": "Hadron"
+  },
+  {
+   "programId": "FD1amxhTsDpwzoVX41dxp2ygAESURV2zdUACzxM1Dfw9",
+   "name": "Coinflow"
+  },
+  {
+   "programId": "Cargo2VNTPPTi9c1vq1Jw5d3BWUNr18MjRtSupAghKEk",
+   "name": "Cargo"
+  },
+  {
+   "programId": "CcmRKTuZCGJBWQwMHvDYApBRvSZNHqGJXkznqpDTSQUr",
+   "name": "Marketplace"
+  },
+  {
+   "programId": "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj",
+   "name": "Raydium Launchpad"
+  },
+  {
+   "programId": "yoLovHV5eT4DNPMG2Bu1NLmq8nVygEAPrNT1Rx6vWFA",
+   "name": "Winning"
+  },
+  {
+   "programId": "DoVEsk76QybCEHQGzkvYPWLQu9gzNoZZZt3TPiL597e",
+   "name": "Doves"
+  },
+  {
+   "programId": "Send9wszHjEiS3hwKcPeSLsPRu5Gb62iCrJEcG4Mq3b",
+   "name": "Phantom Transfer Program"
+  },
+  {
+   "programId": "HDw2E7P8X1SkCyjvoGsfBGAVUutKcj874bXjHrpVYrVL",
+   "name": "Wormhole Core Bridge Solana"
+  },
+  {
+   "programId": "Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB",
+   "name": "AMM"
+  },
+  {
+   "programId": "QUayE6nexQWYNZAEqfN8FxoNwQDSu3CAzT2qq9J1ArG",
+   "name": "Quay"
+  },
+  {
+   "programId": "BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY",
+   "name": "Bubblegum"
+  },
+  {
+   "programId": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+   "name": "Kamino Lending"
+  },
+  {
+   "programId": "ccvrfu3fSpbnPLiUqdWAt85Zn9nq96ekwGTbHqGtdgQ",
+   "name": "Cc Vrf"
+  },
+  {
+   "programId": "6qFJXFPbmenYRDUuCUnQaHsZNio9WpbAKVMbszLdFwTn",
+   "name": "Llm Payment"
+  },
+  {
+   "programId": "J51H4gevuj9sLwp2qvRQMs4fBvZHWebEVeNhdUdPNR1K",
+   "name": "Tail Trade"
+  },
+  {
+   "programId": "61DFfeTKM7trxYcPQCM78bJ794ddZprZpAwAnLiwTpYH",
+   "name": "Order Engine"
+  },
+  {
+   "programId": "6ZUM1gWBH9hBBNoJoaVAGwSftyZ6CUda6vUZTW9MsJuo",
+   "name": "Bordrless Companion"
+  },
+  {
+   "programId": "CLEANALo6FtS6quqTTEXDGFFTuSKMkeKGgcweeiPRJzK",
+   "name": "Safecinerator"
+  },
+  {
+   "programId": "strmRqUCoQUgGUan5YhzUZa6KqdzwX5L6FpUxfmKg5m",
+   "name": "Timelock"
+  },
+  {
+   "programId": "HEvSKofvBgfaexv23kMabbYqxasxU3mQ4ibBMEmJWHny",
+   "name": "Store"
+  },
+  {
+   "programId": "circAbx64bbsscPbQzZAUvuXpHqrCe6fLMzc2uKXz9g",
+   "name": "Circuit Breaker"
+  },
+  {
+   "programId": "CCTPV2vPZJS2u2BBsUoscuikbYjnpFmbFsvVuJdgUMQe",
+   "name": "Token Messenger Minter v2"
+  },
+  {
+   "programId": "cardWArqhdV5jeRXXjUti7cHAa4mj41Nj3Apc6RPZH2",
+   "name": "Bridge Cards"
+  },
+  {
+   "programId": "PdMDrKEMaX8q7CCJb7NvUCxerBCcsFUa4LjBEynTtEd",
+   "name": "Pumpup"
+  },
+  {
+   "programId": "GfzhrqnKzF3nzPDWTAa1893eJnmpAihvx6MdKRHjpcsA",
+   "name": "Stealth"
+  },
+  {
+   "programId": "save8RQVPMWNTzU18t3GBvBkN9hT7jsGjiCQ28FpD9H",
+   "name": "Bankineco"
+  },
+  {
+   "programId": "storeD7bEkywTTMrje19WRoyrkEhbhrvyjVnLxWih6a",
+   "name": "Ore Lst"
+  },
+  {
+   "programId": "6doghB248px58JSSwG4qejQ46kFMW4AMj7vzJnWZHNZn",
+   "name": "Executor"
+  },
+  {
+   "programId": "RmnXLft1mSEwDgMKu2okYuHkiazxntFFcZFrrcXxYg7",
+   "name": "Rmn Remote"
+  },
+  {
+   "programId": "3EB6JJ2k1yPdg9qokViBdSWq4jaEVG4wiKbS8Pw3FmWQ",
+   "name": "Riverproof"
+  },
+  {
+   "programId": "MCCd7ygQjPaZFtRenN9nfTPjSW5ynJefxZFKDfBwaxu",
+   "name": "Solana Crash House"
+  },
+  {
+   "programId": "BSwp6bEBihVLdqJRKGgzjcGLHkcTuzmSo1TQkHepzH8p",
+   "name": "Bonkswap"
+  },
+  {
+   "programId": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+   "name": "Farms"
+  },
+  {
+   "programId": "opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb",
+   "name": "Openbook v2"
+  },
+  {
+   "programId": "xmm9LkUX7yWLoMNEpeGwxtVF8BZjJsNUih5bqx1in1Z",
+   "name": "Carbium Xmm"
+  },
+  {
+   "programId": "CiQPQrmQh6BPhb9k7dFnsEs5gKPgdrvNKFc5xie5xVGd",
+   "name": "Transfer Hook"
+  },
+  {
+   "programId": "SPLxh1LVZzEkX99H6rqYizhytLWPZVV296zyYDPagv2",
+   "name": "Ephemeral SPL Token"
+  },
+  {
+   "programId": "CLoseukDtTCoUe5ECMjiLABYTCtC94qJz9LpN8tSHPM4",
+   "name": "Closer Protocol v1"
+  }
+ ]
+}

@@ -51,7 +51,7 @@ describe("options Programs section", () => {
     expect(first.getAttribute("aria-label")).toContain(PROGRAMS[0]!.programId);
     expect(first.textContent).toBe(shortId(PROGRAMS[0]!.programId));
     expect(rows.find((r) => r.dataset.program === "memo")?.textContent).toContain("Instruction names only");
-    expect(byId.get("programs-search")!.hidden).toBe(true);
+    expect(byId.get("programs-search")!.hidden).toBe(registry.programs.length <= 10);
   });
   it("filter shows the search box above 10 programs and hides non-matches", () => {
     const { doc, byId } = fakeDoc();
