@@ -8,7 +8,7 @@ import { reviewMessage, messageVerdict } from "../src/sw/message-review.js";
 import { b64encode } from "../src/shared/codec.js";
 import { MINIMAL_MESSAGE } from "../test/helpers.js";
 import { poisonManifest, requestCase } from "../../core/test/address-helpers.js";
-import { analyze, decoder } from "../../core/test/rules-helpers.js";
+import { analyze, decoder, sessionFromRuntime } from "../../core/test/rules-helpers.js";
 
 const fx = (p: string) => new URL(`../../../fixtures/${p}`, import.meta.url);
 const manifest = JSON.parse(readFileSync(fx("tx/manifest.json"), "utf8")) as { fixtures: { path: string; e2e?: string }[] };
@@ -19,6 +19,13 @@ async function fromFixture(pathPart: string) {
   const entry = manifest.fixtures.find((f) => f.e2e === pathPart || f.path.includes(pathPart))!;
   const tx = JSON.parse(readFileSync(fx(entry.path), "utf8")) as { transaction: string };
   const session = await ingestSession([{ base64: tx.transaction, kind: "wire" }]);
+  return analyzed(session, pathPart);
+}
+async function fromRuntime(file: URL, name: string) {
+  const f = JSON.parse(readFileSync(file, "utf8")) as { transaction: string; meta: { loadedAddresses?: { writable: string[]; readonly: string[] } } };
+  return analyzed(sessionFromRuntime(f.transaction, f.meta.loadedAddresses ?? { writable: [], readonly: [] }), name);
+}
+async function analyzed(session: Session, pathPart: string) {
   const result = await analyzeSession(session, { decoder: reg.decoder, squadsAccounts: reg.squadsAccounts, authorityMaps: reg.authorityMaps, rpc });
   const m = fromReport(result.report, result.intentContext.messageHashes);
   if (!m.ok) throw new Error(`${pathPart}: ${m.reason}`);
@@ -102,6 +109,10 @@ const l2 = await fromFixture("l2-trap");
 const l4 = await fromFixture("l4-sweep");
 const memo = await fromFixture("memo/");
 const spl = await fromFixture("spl-token/");
+const jup = await fromRuntime(fx(manifest.fixtures.find((f) => f.path.includes("jupiter-v6/"))!.path), "jupiter");
+const vel = await fromRuntime(new URL("../../core/test/fixtures/velocity/316PMRR4pcZtEw9taNrJYC9peZ6sSQUFRKkNfzHywCqnnF7UWNEwBG4inZXnzHyZZ8y4CJkimCqFffcUu8hDfVp9.json", import.meta.url), "velocity");
+out["jupiter"] = verdict(jup.m.level, { ...(jup.m.report as object), intent: templateIntent(jup.context as never) }, (jup.m.report as { title: string }).title);
+out["velocity"] = verdict(vel.m.level, { ...(vel.m.report as object), intent: templateIntent(vel.context as never) }, (vel.m.report as { title: string }).title);
 console.log("levels", { l3: l3.m.level, l2: l2.m.level, l4: l4.m.level, memo: memo.m.level, spl: spl.m.level });
 
 const poisonCase = poisonManifest.cases.find((c) => c.kind === "poisoning" && c.network === "devnet")!;

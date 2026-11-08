@@ -21,6 +21,7 @@ for (const l of ["risk-0", "risk-1", "risk-2", "risk-3", "risk-4", "risk-blocked
   const fg = l === "risk-blocked" ? "risk-blocked-fg" : `${l}-fg`;
   for (const s of ["surface-1", "surface-2"]) pairs.push([fg, s, 4.5]);
 }
+for (const s of ["surface-1", "surface-2"]) pairs.push(["brand-violet", s, 4.5]);
 const rows = [];
 let bad = 0;
 for (const [t, s, need] of pairs) {
@@ -30,7 +31,7 @@ for (const [t, s, need] of pairs) {
   rows.push(`| ${t} | ${s} | ${r.toFixed(2)} | ${need} | ${r >= need ? "pass" : "FAIL"} |`);
 }
 // on-colour pairs: dark text on the brand gradient stops and on solid risk-4
-for (const stop of ["#80efd3", "#89c6f7", "#ab9aff"]) {
+for (const stop of ["#93f6df", "#62dcc2"]) {
   const r = ratio(solid("on-brand"), parse(stop));
   if (r < 4.5) bad++;
   rows.push(`| on-brand | gradient ${stop} | ${r.toFixed(2)} | 4.5 | ${r >= 4.5 ? "pass" : "FAIL"} |`);
@@ -44,6 +45,13 @@ for (const l of [0, 1, 2, 3, 4]) {
   const r = ratio(solid(`risk-${l}-fg`), bg);
   if (r < 4.5) bad++;
   rows.push(`| risk-${l}-fg | risk-${l}-bg on surface-1 | ${r.toFixed(2)} | 4.5 | ${r >= 4.5 ? "pass" : "FAIL"} |`);
+}
+// accent text on its own soft tint, and the violet devnet chip, composited over surface-2
+for (const [fgName, bgName, over2] of [["brand-mint", "accent-soft", "surface-1"], ["brand-mint", "accent-soft", "surface-2"]]) {
+  const bg = over(parse(tok[bgName]), solid(over2));
+  const r = ratio(solid(fgName), bg);
+  if (r < 4.5) bad++;
+  rows.push(`| ${fgName} | ${bgName} on ${over2} | ${r.toFixed(2)} | 4.5 | ${r >= 4.5 ? "pass" : "FAIL"} |`);
 }
 console.log("| foreground | background | ratio | needs | result |\n|---|---|---|---|---|\n" + rows.join("\n"));
 process.exit(bad ? 1 : 0);
