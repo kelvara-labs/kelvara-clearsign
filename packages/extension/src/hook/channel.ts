@@ -4,7 +4,9 @@ import {
   DECISION_TIMEOUT_MS,
   HOOK_READY_EVENT,
   type Chain,
+  type MessageMethod,
   type NoticeMethod,
+  type SignInInput,
   type SignMethod,
   decisionEventName,
   parseDecision,
@@ -22,10 +24,21 @@ export interface HoldRequest {
   txs: string[];
 }
 
+export interface MessageHoldRequest {
+  method: MessageMethod;
+  wallet: string;
+  account: string | null;
+  chain: Chain | null;
+  message: string | null;
+  signIn: SignInInput | null;
+}
+
 export interface HookChannel {
   readonly paired: boolean;
   /** Resolves true only on an explicit allow from the extension; false on block, timeout or no channel. */
   hold(req: HoldRequest): Promise<boolean>;
+  /** Same as hold, for a message-signing call. */
+  holdMessage(req: MessageHoldRequest): Promise<boolean>;
   notice(method: NoticeMethod, wallet: string): void;
 }
 
@@ -64,28 +77,31 @@ export function pairHook(win: HookWindow, timeoutMs = DECISION_TIMEOUT_MS): Hook
     get paired() {
       return channel !== null;
     },
-    hold(req) {
-      if (channel === null) return Promise.resolve(false);
-      const ch = channel;
-      return new p.Promise<boolean>((resolve) => {
-        const id = randomId(p.getRandomValues);
-        const timer = p.setTimeout(() => {
-          if (pending[id]) {
-            delete pending[id];
-            resolve(false);
-          }
-        }, timeoutMs);
-        pending[id] = (allow) => {
-          p.clearTimeout(timer);
-          resolve(allow);
-        };
-        p.emit(win, requestEventName(ch), p.stringify({ v: 1, kind: "sign", id, ...req }));
-      });
-    },
+    hold: (req) => request("sign", req),
+    holdMessage: (req) => request("message", req),
     notice(method, wallet) {
       if (channel === null) return;
       const id = randomId(p.getRandomValues);
       p.emit(win, requestEventName(channel), p.stringify({ v: 1, kind: "notice", id, method, wallet }));
     }
   };
+
+  function request(kind: "sign" | "message", req: HoldRequest | MessageHoldRequest): Promise<boolean> {
+    if (channel === null) return Promise.resolve(false);
+    const ch = channel;
+    return new p.Promise<boolean>((resolve) => {
+      const id = randomId(p.getRandomValues);
+      const timer = p.setTimeout(() => {
+        if (pending[id]) {
+          delete pending[id];
+          resolve(false);
+        }
+      }, timeoutMs);
+      pending[id] = (allow) => {
+        p.clearTimeout(timer);
+        resolve(allow);
+      };
+      p.emit(win, requestEventName(ch), p.stringify({ v: 1, kind, id, ...req }));
+    });
+  }
 }

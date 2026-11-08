@@ -170,8 +170,6 @@ describe("Wallet Standard: held until Continue", () => {
   });
 
   it.each([
-    ["solana:signMessage", "signMessage", { message: new Uint8Array([1]) }],
-    ["solana:signIn", "signIn", {}],
     ["phantom:signAllAndSend", "doIt", {}],
     ["vendor:ops", "approveThing", {}],
     ["vendor:signBatch", "run", {}]
@@ -280,11 +278,7 @@ describe("legacy providers: held until Continue", () => {
   });
 
   it.each([
-    ["signMessage", (s: Legacy & Record<string, Fn>) => s.signMessage(new Uint8Array([1]))],
-    ["signIn", (s: Legacy & Record<string, Fn>) => s.signIn({})],
     ["signAndSendTransactionV0 (unknown signing-named method)", (s: Legacy & Record<string, Fn>) => s.signAndSendTransactionV0(wireTx())],
-    ["request:signMessage", (s: Legacy & Record<string, Fn>) => s.request({ method: "signMessage", params: { message: "abc" } })],
-    ["request:signIn", (s: Legacy & Record<string, Fn>) => s.request({ method: "signIn", params: {} })],
     ["request:vendorApproveSomething", (s: Legacy & Record<string, Fn>) => s.request({ method: "vendorApproveSomething" })],
     ["request without a method name that can be analyzed", (s: Legacy & Record<string, Fn>) => s.request({ method: "signTransaction", params: {} })]
   ])("%s is blocked fail-closed and never reaches the wallet", async (_n, call) => {
@@ -325,7 +319,7 @@ describe("legacy providers: held until Continue", () => {
       isPhantom = true;
       publicKey = null;
       async signTransaction(tx: unknown) { log.push("signTransaction"); return tx; }
-      async signMessage() { log.push("signMessage"); return {}; }
+      async signMessage(...a: unknown[]) { log.push(`signMessage${a.length}`); return {}; }
     }
     const inst = new P();
     r.g.solana = inst;
@@ -337,7 +331,11 @@ describe("legacy providers: held until Continue", () => {
     r.reports[0]!(true);
     await pending;
     expect(log).toEqual(["signTransaction"]);
-    await expect(proto.signMessage.call(inst)).rejects.toEqual(rejected);
+    const m = proto.signMessage.call(inst, new Uint8Array([1])).catch(() => "x");
+    await r.tick();
+    expect(log).toEqual(["signTransaction"]);
+    r.reports[1]!(false);
+    await m;
     expect(log).toEqual(["signTransaction"]);
   });
 

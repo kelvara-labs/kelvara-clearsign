@@ -2,7 +2,7 @@ import { webcrypto } from "node:crypto";
 import { installBridge, type Bridge } from "../src/bridge/bridge.js";
 import { installHook, type InstalledHook } from "../src/hook/install.js";
 import type { HookWindow } from "../src/hook/pristine.js";
-import type { AnalyzeMessage, NoticeMessage } from "../src/shared/protocol.js";
+import type { AnalyzeMessage, MessageReviewMessage, NoticeMessage } from "../src/shared/protocol.js";
 
 export function makeWin(): HookWindow {
   const win = new EventTarget() as HookWindow;
@@ -20,21 +20,21 @@ export function makeWin(): HookWindow {
   return win;
 }
 
-export type Worker = (msg: AnalyzeMessage | NoticeMessage) => Promise<unknown>;
+export type Worker = (msg: AnalyzeMessage | MessageReviewMessage | NoticeMessage) => Promise<unknown>;
 
 export interface Rig {
   win: HookWindow;
   hook: InstalledHook;
   bridge: Bridge | null;
-  sent: (AnalyzeMessage | NoticeMessage)[];
+  sent: (AnalyzeMessage | MessageReviewMessage | NoticeMessage)[];
 }
 
 /** Bridge first (manifest order), then hook, like Chrome at document_start. */
 export function rig(worker: Worker, opts: { bridge?: boolean; hookFirst?: boolean; timeoutMs?: number } = {}): Rig {
   const win = makeWin();
-  const sent: (AnalyzeMessage | NoticeMessage)[] = [];
+  const sent: (AnalyzeMessage | MessageReviewMessage | NoticeMessage)[] = [];
   const deps = {
-    sendToWorker: (m: AnalyzeMessage | NoticeMessage) => {
+    sendToWorker: (m: AnalyzeMessage | MessageReviewMessage | NoticeMessage) => {
       sent.push(m);
       return worker(m);
     },

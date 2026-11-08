@@ -42,6 +42,16 @@ export type SignMethod = (typeof SIGN_METHODS)[number];
 export const NOTICE_METHODS = ["solana:signMessage", "legacy:signMessage"] as const;
 export type NoticeMethod = (typeof NOTICE_METHODS)[number];
 
+/** Message-signing calls: held and reviewed like transactions (the wallet is never called before the decision). */
+export const MESSAGE_METHODS = ["solana:signMessage", "solana:signIn", "legacy:signMessage", "legacy:signIn"] as const;
+export type MessageMethod = (typeof MESSAGE_METHODS)[number];
+export const MAX_MESSAGE_BYTES = 8192;
+export const MAX_SIGNIN_TEXT = 2048;
+export const MAX_SIGNIN_RESOURCES = 16;
+export const SIGNIN_STRING_FIELDS = ["domain", "address", "statement", "uri", "version", "chainId", "nonce", "issuedAt", "expirationTime", "notBefore", "requestId"] as const;
+/** solana:signIn input as the hook read it: only these keys, strings only (resources: list of strings). */
+export type SignInInput = { [K in (typeof SIGNIN_STRING_FIELDS)[number]]?: string } & { resources?: string[] };
+
 export const CHAINS = ["solana:mainnet", "solana:devnet", "solana:testnet", "solana:localnet"] as const;
 export type Chain = (typeof CHAINS)[number];
 
@@ -57,6 +67,21 @@ export interface SignRequest {
   account: string | null;
   chain: Chain | null;
   txs: string[]; // base64 wire transactions
+}
+
+/** hook -> bridge: hold this message-signing call until the extension decides. */
+export interface MessageRequest {
+  v: 1;
+  kind: "message";
+  id: string;
+  method: MessageMethod;
+  wallet: string;
+  account: string | null;
+  chain: Chain | null;
+  /** base64 of the bytes to sign (signMessage), else null. */
+  message: string | null;
+  /** The sign-in input (signIn), else null. */
+  signIn: SignInInput | null;
 }
 
 /** hook -> bridge: a message-signing call passed through; tell the user. */
@@ -76,7 +101,7 @@ export interface Decision {
   allow: boolean;
 }
 
-export type HookMessage = SignRequest | Notice;
+export type HookMessage = SignRequest | Notice | MessageRequest;
 
 /** Channel ids and request ids: 32 lowercase hex chars (128 bits). */
 const ID_RE = /^[0-9a-f]{32}$/;
@@ -160,11 +185,36 @@ export function validateNotice(o: unknown): Notice | null {
   return o as unknown as Notice;
 }
 
+export function validateSignInInput(x: unknown): x is SignInInput {
+  if (!isPlainObject(x)) return false;
+  const allowed: readonly string[] = [...SIGNIN_STRING_FIELDS, "resources"];
+  for (const [k, v] of Object.entries(x)) {
+    if (!allowed.includes(k)) return false;
+    if (k === "resources") {
+      if (!Array.isArray(v) || v.length > MAX_SIGNIN_RESOURCES || !v.every((r) => typeof r === "string" && r.length <= MAX_SIGNIN_TEXT)) return false;
+    } else if (typeof v !== "string" || v.length > MAX_SIGNIN_TEXT) return false;
+  }
+  return true;
+}
+
+export function validateMessageRequest(o: unknown): MessageRequest | null {
+  if (!isPlainObject(o)) return null;
+  if (!hasExactKeys(o, ["v", "kind", "id", "method", "wallet", "account", "chain", "message", "signIn"])) return null;
+  if (o.v !== PROTOCOL_VERSION || o.kind !== "message" || !isId(o.id)) return null;
+  if (typeof o.method !== "string" || !(MESSAGE_METHODS as readonly string[]).includes(o.method)) return null;
+  if (!isWalletName(o.wallet) || !(o.account === null || isAddress(o.account)) || !(o.chain === null || isChain(o.chain))) return null;
+  const isSignIn = o.method.endsWith("signIn");
+  if (isSignIn) return o.message === null && validateSignInInput(o.signIn) ? (o as unknown as MessageRequest) : null;
+  const ok = typeof o.message === "string" && o.message.length > 0 && o.message.length <= Math.ceil(MAX_MESSAGE_BYTES / 3) * 4 && o.message.length % 4 === 0 && B64_RE.test(o.message);
+  return ok && o.signIn === null ? (o as unknown as MessageRequest) : null;
+}
+
 export function parseHookMessage(raw: unknown): HookMessage | null {
   const o = parse(raw);
   if (!o) return null;
   if (o.kind === "sign") return validateSignRequest(o);
   if (o.kind === "notice") return validateNotice(o);
+  if (o.kind === "message") return validateMessageRequest(o);
   return null;
 }
 
@@ -187,6 +237,15 @@ export function parseHandshake(raw: unknown): string | null {
 
 export const SW_ANALYZE = "kelvara-signguard/analyze";
 export const SW_NOTICE = "kelvara-signguard/notice";
+export const SW_MESSAGE = "kelvara-signguard/message";
+
+export interface MessageReviewMessage {
+  type: typeof SW_MESSAGE;
+  request: MessageRequest;
+  /** Read by the bridge from its own location, never from the page's message. */
+  url: string;
+  topFrame: boolean;
+}
 
 export interface AnalyzeMessage {
   type: typeof SW_ANALYZE;

@@ -1,4 +1,5 @@
 import { validateReportIntent, type ReportIntent } from "../intent/selection.js";
+import { validateMessageReview, type MessageReview } from "./message-view.js";
 // What the report UI shows. The service worker builds it (from the engine stub now,
 // from @kelvara/core's report after the hour-24 checkpoint), the bridge passes it to the
 // extension iframe, and the iframe validates it again before rendering it as text only.
@@ -75,6 +76,8 @@ export interface Claim {
 
 export interface ReportView {
   intent?: ReportIntent;
+  /** Message-signing review (signMessage / signIn); the transaction sections are then empty. */
+  message?: MessageReview;
   /** Risk header: one line, what is at stake. */
   title: string;
   summary: string;
@@ -174,7 +177,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -186,6 +189,7 @@ export function validateReportView(x: unknown): ReportView | null {
   if (!x.claims.every((c) => c.evidenceIds.every((id) => ids.has(id)))) return null;
   if (!list(x.messageHashes, (h): h is string => typeof h === "string" && B58_HASH.test(h))) return null;
   if (Object.hasOwn(x, "intent") && !validateReportIntent(x.intent, x.messageHashes as string[])) return null;
+  if (Object.hasOwn(x, "message") && !validateMessageReview(x.message)) return null;
   return x as unknown as ReportView;
 }
 

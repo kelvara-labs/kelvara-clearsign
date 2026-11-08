@@ -5,13 +5,16 @@ import { enhanceIntent } from "./intent/enhance.js";
 import {
   SW_ANALYZE,
   SW_DECIDED,
+  SW_MESSAGE,
   SW_NOTICE,
   isId,
+  validateMessageRequest,
   validateNotice,
   validateSignRequest,
   type WorkerVerdict
 } from "./shared/protocol.js";
 import { realEngine } from "./sw/engine.js";
+import { messageVerdict, reviewMessage } from "./sw/message-review.js";
 import { decide } from "./sw/policy.js";
 import { SETTINGS_KEYS, loadSettings, readSettings } from "./sw/settings.js";
 
@@ -27,6 +30,8 @@ interface LogEntry {
   wallet: string;
   chain: string | null;
   txCount: number;
+  /** "message": a signMessage / signIn review (no transactions). */
+  kind?: "message";
   level: number | null;
   allow: boolean;
   /** Held for the user; allow is false until the user chooses Sign anyway. */
@@ -89,6 +94,17 @@ async function handleAnalyze(msg: Record<string, unknown>): Promise<WorkerVerdic
   return verdict;
 }
 
+async function handleMessage(msg: Record<string, unknown>): Promise<WorkerVerdict> {
+  const req = validateMessageRequest(msg.request);
+  if (!req || typeof msg.url !== "string") return blocked("malformed request");
+  const verdict = messageVerdict(reviewMessage(req, msg.url));
+  await appendLog({
+    ts: Date.now(), id: req.id, url: msg.url.slice(0, 512), method: req.method, wallet: req.wallet, chain: req.chain,
+    txCount: 0, kind: "message", level: verdict.level, allow: verdict.allow, hold: verdict.hold, reason: verdict.reason
+  });
+  return verdict;
+}
+
 // First install with no key (or unreadable settings): open the options page so the user can fix it.
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason !== "install") return;
@@ -120,6 +136,12 @@ chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
       .catch(() => blocked("service worker error"))
       .then(sendResponse);
     return true; // async response
+  }
+  if (m.type === SW_MESSAGE) {
+    handleMessage(m)
+      .catch(() => blocked("service worker error"))
+      .then(sendResponse);
+    return true;
   }
   if (m.type === SW_DECIDED) {
     if (isId(m.id) && typeof m.allow === "boolean") void recordDecision(m.id, m.allow);

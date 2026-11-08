@@ -8,6 +8,7 @@ interface Activity {
   hold: boolean;
   decided?: "user";
   wallet: string;
+  kind?: "message";
 }
 
 function node(id: string): HTMLElement {
@@ -54,7 +55,7 @@ function row(e: Activity): HTMLElement {
   catch { host.textContent = "Signing request"; }
   const detail = document.createElement("small");
   const outcome = tone === "blocked" ? "Blocked" : tone === "review" ? "Held for review" : "Passed to wallet";
-  detail.textContent = `${outcome} · ${age(e.ts)}`;
+  detail.textContent = `${e.kind === "message" ? "Message · " : ""}${outcome} · ${age(e.ts)}`;
   copy.append(host, detail);
   const level = document.createElement("span");
   level.className = "activity-level";

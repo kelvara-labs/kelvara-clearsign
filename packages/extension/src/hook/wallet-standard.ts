@@ -5,9 +5,10 @@
 // We listen first on both (capture listeners at document_start), stop the original
 // event and re-dispatch one whose register() wraps every wallet before the app sees it.
 import { txToBytes } from "../shared/codec.js";
-import type { SignMethod } from "../shared/protocol.js";
+import type { SignInInput as SignInInputT, SignMethod } from "../shared/protocol.js";
 import { cleanWalletName, rejection, type Guard } from "./guard.js";
 import { pristine, type HookWindow, type Pristine } from "./pristine.js";
+import { messageBytes, readSignIn } from "./message.js";
 import { isSigningFeature, isSigningName } from "./signing.js";
 
 /** The one account every input names (input.account.address), else null. Only a hint: never throws. */
@@ -31,6 +32,10 @@ type Obj = Record<PropertyKey, unknown>;
 const SIGN_FEATURES: Record<string, { fn: string; method: SignMethod }> = {
   "solana:signTransaction": { fn: "signTransaction", method: "solana:signTransaction" },
   "solana:signAndSendTransaction": { fn: "signAndSendTransaction", method: "solana:signAndSendTransaction" }
+};
+const MESSAGE_FEATURES: Record<string, { fn: string; method: "solana:signMessage" | "solana:signIn" }> = {
+  "solana:signMessage": { fn: "signMessage", method: "solana:signMessage" },
+  "solana:signIn": { fn: "signIn", method: "solana:signIn" }
 };
 /** Fail-closed stand-in: the wallet is never called, the dApp sees a user rejection. */
 const blocked: Fn = async () => {
@@ -62,7 +67,44 @@ export function installWalletStandardHook(win: HookWindow, guard: Guard): Wallet
     return copy;
   }
 
-  function wrapFeatures(features: unknown, walletName: string): unknown {
+  /** The wallet's only account, as a hint; null when it exposes none or several. */
+  function soleAccount(wallet: Obj): string | null {
+    const accounts = safeGet(p, wallet, "accounts");
+    if (!Array.isArray(accounts) || accounts.length !== 1) return null;
+    const a = accounts[0];
+    const address = typeof a === "object" && a !== null ? safeGet(p, a, "address") : undefined;
+    return typeof address === "string" ? address : null;
+  }
+
+  function messageWrapper(orig: Fn, owner: object, method: "solana:signMessage" | "solana:signIn", walletName: string, wallet: Obj): Fn {
+    return async function (...inputs: unknown[]) {
+      let payload: { message: Uint8Array } | { signIn: SignInInputT };
+      let forwarded: unknown[];
+      let account: string | null;
+      try {
+        if (method === "solana:signMessage") {
+          if (inputs.length !== 1 || typeof inputs[0] !== "object" || inputs[0] === null) throw new Error("one input expected");
+          const message = messageBytes(safeGet(p, inputs[0], "message"));
+          payload = { message };
+          forwarded = [{ ...(inputs[0] as object), message: message.slice() }];
+          account = inputAccount(p, inputs);
+        } else {
+          if (inputs.length > 1) throw new Error("one input expected");
+          const signIn = readSignIn(p, inputs[0]);
+          payload = { signIn };
+          forwarded = inputs.length ? [{ ...(inputs[0] as object), ...signIn }] : [];
+          account = soleAccount(wallet);
+        }
+      } catch {
+        throw rejection(); // cannot see what would be signed: fail closed
+      }
+      const allow = await guard.holdMessage(method, walletName, null, account, payload);
+      if (!allow) throw rejection();
+      return p.apply(orig, owner, forwarded);
+    };
+  }
+
+  function wrapFeatures(features: unknown, walletName: string, wallet: Obj): unknown {
     if (!features || typeof features !== "object") return features;
     const hit = featureCache.get(features);
     if (hit) return hit;
@@ -72,10 +114,15 @@ export function installWalletStandardHook(win: HookWindow, guard: Guard): Wallet
       const spec = SIGN_FEATURES[key]!;
       out[key] = wrapFeature(out[key], spec.fn, (orig, owner) => signWrapper(orig, owner, spec.method, walletName));
     }
-    // Message signing, sign-in and any vendor/unknown signing feature cannot be analyzed as a
-    // transaction: they never reach the wallet. Only standard:* and non-signing names pass.
+    // Message signing is held and reviewed; any other vendor/unknown signing feature cannot be analyzed:
+    // it never reaches the wallet. Only standard:* and non-signing names pass.
+    for (const key of Object.keys(MESSAGE_FEATURES)) {
+      if (!(key in out)) continue;
+      const spec = MESSAGE_FEATURES[key]!;
+      out[key] = wrapFeature(out[key], spec.fn, (orig, owner) => messageWrapper(orig, owner, spec.method, walletName, wallet));
+    }
     for (const key of p.ownKeys(out)) {
-      if (typeof key !== "string" || key in SIGN_FEATURES || !(key in out)) continue;
+      if (typeof key !== "string" || key in SIGN_FEATURES || key in MESSAGE_FEATURES || !(key in out)) continue;
       const feature = out[key];
       if (!feature || typeof feature !== "object") continue;
       const all = isSigningFeature(key);
@@ -123,12 +170,12 @@ export function installWalletStandardHook(win: HookWindow, guard: Guard): Wallet
     const fd = findDescriptor(p, w, "features");
     if (fd && fd.owner === w && fd.desc.configurable === false && "value" in fd.desc && fd.desc.writable === false) {
       // A Proxy may not change a frozen data property: build a forwarding shim instead.
-      wrapped = makeShim(p, w, { features: () => wrapFeatures(safeGet(p, w, "features"), name) });
+      wrapped = makeShim(p, w, { features: () => wrapFeatures(safeGet(p, w, "features"), name, w) });
     } else {
       wrapped = new Proxy(w, {
         get(target, prop) {
           const value = p.get(target, prop, target); // receiver = target: keeps #private getters working
-          if (prop === "features") return wrapFeatures(value, name);
+          if (prop === "features") return wrapFeatures(value, name, w);
           return value;
         }
       });

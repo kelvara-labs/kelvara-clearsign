@@ -7,9 +7,11 @@ import {
   DECISION_TIMEOUT_MS,
   SW_ANALYZE,
   SW_DECIDED,
+  SW_MESSAGE,
   SW_NOTICE,
   type AnalyzeMessage,
   type DecidedMessage,
+  type MessageReviewMessage,
   type NoticeMessage,
   type WorkerVerdict,
   decisionEventName,
@@ -20,7 +22,7 @@ import {
 } from "../shared/protocol.js";
 
 export interface BridgeDeps {
-  sendToWorker(msg: AnalyzeMessage | NoticeMessage | DecidedMessage): Promise<unknown>;
+  sendToWorker(msg: AnalyzeMessage | MessageReviewMessage | NoticeMessage | DecidedMessage): Promise<unknown>;
   url(): string;
   topFrame: boolean;
   getRandomValues(a: Uint8Array): Uint8Array;
@@ -68,7 +70,11 @@ export function installBridge(win: EventTarget, deps: BridgeDeps): Bridge {
     // The hook rejects at arrival + 90 s on its own; the report closes at the same moment.
     const deadline = (deps.now ?? Date.now)() + DECISION_TIMEOUT_MS;
     deps
-      .sendToWorker({ type: SW_ANALYZE, request: msg, url: deps.url(), topFrame: deps.topFrame })
+      .sendToWorker(
+        msg.kind === "message"
+          ? { type: SW_MESSAGE, request: msg, url: deps.url(), topFrame: deps.topFrame }
+          : { type: SW_ANALYZE, request: msg, url: deps.url(), topFrame: deps.topFrame }
+      )
       .then(async (res) => {
         const verdict = validateWorkerVerdict(res);
         if (!verdict || verdict.allow) return false;
