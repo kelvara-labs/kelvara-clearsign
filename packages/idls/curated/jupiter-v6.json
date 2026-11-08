@@ -1,0 +1,141 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "jupiter-v6",
+  "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+  "reviewed": "E24 (engine), 2026-11-08: names checked against roots/jupiter-v6.json (on-chain IDL, 19 instructions); swap routes act only on the user's own token accounts, operator-only instructions keep their keyword classes",
+  "instructions": [
+    {
+      "instruction": "route",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "routeV2",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "routeWithTokenLedger",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "exactOutRoute",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "exactOutRouteV2",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "sharedAccountsRoute",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "sharedAccountsRouteV2",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "sharedAccountsRouteWithTokenLedger",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "sharedAccountsExactOutRoute",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "sharedAccountsExactOutRouteV2",
+      "authority": "userTransferAuthority",
+      "capability": "swap.route",
+      "class": "other",
+      "changes": "swaps tokens through a route plan on the user's own token accounts; no permission is granted or changed"
+    },
+    {
+      "instruction": "createTokenLedger",
+      "authority": "tokenLedger",
+      "capability": "swap.ledger",
+      "class": "other",
+      "changes": "creates a scratch ledger account that measures a swap's received amount"
+    },
+    {
+      "instruction": "setTokenLedger",
+      "authority": null,
+      "capability": "swap.ledger",
+      "class": "other",
+      "changes": "records a token balance in the ledger used to measure a swap's received amount"
+    },
+    {
+      "instruction": "createTokenAccount",
+      "authority": "user",
+      "capability": "token.account_create",
+      "class": "other",
+      "changes": "creates a token account for the user (program-derived)"
+    },
+    {
+      "instruction": "createIdempotentAssociatedTokenAccount",
+      "authority": "payer",
+      "capability": "token.account_create",
+      "class": "other",
+      "changes": "creates the associated token account if it does not exist"
+    },
+    {
+      "instruction": "closeWsolTokenAccount",
+      "authority": "user",
+      "capability": "token.closeAccount",
+      "class": "account_control",
+      "changes": "closes the user's wrapped-SOL token account and returns its lamports"
+    },
+    {
+      "instruction": "claim",
+      "authority": null,
+      "capability": "jupiter.operator",
+      "class": "other",
+      "changes": "Jupiter operator claim of a program-owned wallet balance; not a user flow"
+    },
+    {
+      "instruction": "claimToken",
+      "authority": "payer",
+      "capability": "jupiter.operator",
+      "class": "other",
+      "changes": "Jupiter operator claim of a program-owned token balance; not a user flow"
+    },
+    {
+      "instruction": "closeToken",
+      "authority": "operator",
+      "capability": "jupiter.operator",
+      "class": "account_control",
+      "changes": "Jupiter operator closes a program-owned token account; not a user flow"
+    },
+    {
+      "instruction": "withdrawTokenAccountExcessLamports",
+      "authority": "operator",
+      "capability": "jupiter.operator",
+      "class": "fund_movement",
+      "changes": "Jupiter operator withdraws excess lamports from a program-owned token account; not a user flow"
+    }
+  ]
+}

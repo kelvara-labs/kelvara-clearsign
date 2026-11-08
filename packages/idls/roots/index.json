@@ -34,5 +34,11 @@
     "programId": "MFv2hWf31Z9kbCa1snEPYctwafyhdvnV7FZnsebVacA",
     "decoder": "codama",
     "instructions": 91
+  },
+  {
+    "name": "jupiter-v6",
+    "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+    "decoder": "codama",
+    "instructions": 19
   }
 ]

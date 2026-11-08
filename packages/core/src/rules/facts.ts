@@ -12,9 +12,10 @@ import { arg } from "./squads-session.js";
 import { mintAccount, recipient as tokenRecipient, tokenAccount } from "./token-state.js";
 import type { RuleContext } from "./types.js";
 
-export const FACT_RULE_IDS = ["fact.unknown_instruction", "fact.memo", "fact.sol_transfer", "fact.token_transfer", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"] as const;
+export const FACT_RULE_IDS = ["fact.unknown_instruction", "fact.memo", "fact.sol_transfer", "fact.token_transfer", "fact.swap", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"] as const;
 
 export const LAMPORTS_PER_SIGNATURE = 5000n;
+export const JUPITER_V6_PROGRAM = "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4";
 const ATA_PROGRAM = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 const MEMO_TEXT_MAX = 200;
 
@@ -24,6 +25,11 @@ const named = (ix: DecodedInstruction, program: string | readonly string[], name
 const isMemo = (ix: DecodedInstruction): boolean => named(ix, [MEMO_PROGRAM, MEMO_V1_PROGRAM], ["memo"]) && typeof ix.args?.memo === "string";
 const isSolTransfer = (ix: DecodedInstruction): boolean => named(ix, SYSTEM_PROGRAM, ["transferSol"]) && typeof arg(ix, "amount") === "bigint";
 const isTokenTransfer = (ix: DecodedInstruction): boolean => named(ix, [TOKEN_PROGRAM, TOKEN_2022_PROGRAM], ["transfer", "transferChecked"]) && typeof arg(ix, "amount") === "bigint";
+const SWAP_EXACT_IN = ["route", "routeV2", "sharedAccountsRoute", "sharedAccountsRouteV2"] as const;
+const SWAP_EXACT_OUT = ["exactOutRoute", "exactOutRouteV2", "sharedAccountsExactOutRoute", "sharedAccountsExactOutRouteV2"] as const;
+const isSwap = (ix: DecodedInstruction): boolean =>
+  (named(ix, JUPITER_V6_PROGRAM, SWAP_EXACT_IN) && typeof arg(ix, "inAmount") === "bigint" && typeof arg(ix, "quotedOutAmount") === "bigint") ||
+  (named(ix, JUPITER_V6_PROGRAM, SWAP_EXACT_OUT) && typeof arg(ix, "outAmount") === "bigint" && typeof arg(ix, "quotedInAmount") === "bigint");
 const BUDGET_NAMES = ["requestHeapFrame", "setComputeUnitLimit", "setComputeUnitPrice", "setLoadedAccountsDataSizeLimit"] as const;
 export const isComputeBudget = (ix: DecodedInstruction): boolean => named(ix, COMPUTE_BUDGET_PROGRAM, BUDGET_NAMES);
 const isAtaCreate = (ix: DecodedInstruction): boolean => named(ix, ATA_PROGRAM, ["createAssociatedToken", "createAssociatedTokenIdempotent"]);
@@ -83,6 +89,38 @@ export function transactionFeeFacts(session: Session, decoded: DecodedInstructio
 
 const sol = (lamports: bigint): string => unsigned(lamportsText(lamports));
 
+const BPS = 10_000n;
+const slippageBps = (ix: DecodedInstruction): bigint => {
+  const v = arg(ix, "slippageBps");
+  return typeof v === "bigint" || typeof v === "number" ? BigInt(v) : 0n;
+};
+
+/** One side of a swap: the amount in the mint's units when its decimals were read, else base units. */
+function swapSide(ctx: RuleContext, amount: bigint, mint: string | null): string {
+  const decimals = mint ? mintAccount(ctx, mint)?.decimals ?? null : null;
+  const amountText = decimals === null ? `${amount} base units` : unsigned(tokenText(amount, decimals));
+  return `${amountText} of ${mint ? `token mint ${mint}` : "an unread token"}`;
+}
+
+function swapStatement(ctx: RuleContext, t: number, ix: DecodedInstruction): string {
+  const exactOut = (SWAP_EXACT_OUT as readonly string[]).includes(ix.name ?? "");
+  const srcAcct = accountNamed(ix, "userSourceTokenAccount") ?? accountNamed(ix, "sourceTokenAccount");
+  const dstAcct = accountNamed(ix, "userDestinationTokenAccount") ?? accountNamed(ix, "destinationTokenAccount");
+  const inMint = accountNamed(ix, "sourceMint") ?? tokenAccount(ctx, srcAcct)?.mint ?? null;
+  const outMint = accountNamed(ix, "destinationMint") ?? tokenAccount(ctx, dstAcct)?.mint ?? null;
+  const bps = slippageBps(ix);
+  const slip = `slippage tolerance ${bps} bps`;
+  const via = `via Jupiter (token accounts ${srcAcct ?? "unresolved"} to ${dstAcct ?? "unresolved"}; ${slip})`;
+  if (exactOut) {
+    const quotedIn = arg(ix, "quotedInAmount") as bigint, out = arg(ix, "outAmount") as bigint;
+    const maxIn = (quotedIn * (BPS + bps)) / BPS;
+    return `Transaction ${t} swaps up to ${swapSide(ctx, maxIn, inMint)} for exactly ${swapSide(ctx, out, outMint)} ${via}.`;
+  }
+  const inAmount = arg(ix, "inAmount") as bigint, quotedOut = arg(ix, "quotedOutAmount") as bigint;
+  const minOut = (quotedOut * (BPS - (bps > BPS ? BPS : bps))) / BPS;
+  return `Transaction ${t} swaps up to ${swapSide(ctx, inAmount, inMint)} for at least ${swapSide(ctx, minOut, outMint)} ${via}.`;
+}
+
 export function addBenignFacts(ctx: RuleContext): void {
   const { report, decoded, session, state } = ctx;
   const fees = transactionFeeFacts(session, decoded);
@@ -95,6 +133,13 @@ export function addBenignFacts(ctx: RuleContext): void {
     const ixs = decoded[t] ?? [];
     for (const ix of ixs) {
       anyInstruction = true;
+      if (isSwap(ix)) {
+        const ev = instructionEvidence(ctx, t, ix);
+        allIxEvidence.push(ev);
+        report.addClaim({ kind: "Fact", ruleId: "fact.swap", statement: swapStatement(ctx, t, ix), evidenceIds: [ev] });
+        allBenign = false;
+        continue;
+      }
       const understood = isMemo(ix) || isSolTransfer(ix) || isTokenTransfer(ix) || isComputeBudget(ix) || isAtaCreate(ix);
       if (!understood) allBenign = false;
       if (!understood) {

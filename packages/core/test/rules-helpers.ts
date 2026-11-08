@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { RootNode } from "@codama/nodes";
+import type { Address } from "@solana/kit";
 import {
   analyzeSession,
   createDecoder,
@@ -14,13 +15,16 @@ import {
   readNonceAccount,
   readSquadsAccount,
   ingestSession,
+  parseTransaction,
   ReportBuilder,
   runRules,
   validateReport,
   type AnchorIdlJson,
   type Report,
+  type ResolvedAccount,
   type RuleState,
-  type Session
+  type Session,
+  type SessionTransaction
 } from "../src/index.js";
 
 export const here = path.dirname(fileURLToPath(import.meta.url));
@@ -132,4 +136,38 @@ export async function analyzedState(name: "admin-local" | "trap-local" | "sweep-
   const { rpc } = replay(r);
   const out = await analyzeSession(await sessionOf(r.inputs.transactions), { decoder, squadsAccounts, rpc, ...(r.inputs.wallet ? { wallet: r.inputs.wallet } : {}), ...(r.inputs.inventory ? { inventory: true } : {}) });
   return { report: out.report, state: out.state, rec: r };
+}
+
+/** A one-transaction session resolved from the runtime's loaded addresses (real RPC meta). */
+export function sessionFromRuntime(base64: string, loaded: { writable: string[]; readonly: string[] }): Session {
+  const p = parseTransaction({ base64, kind: "wire" });
+  const h = p.header;
+  const n = p.staticAccounts.length;
+  const staticWritable = (i: number) => (i < h.numSignerAccounts ? i < h.numSignerAccounts - h.numReadonlySignerAccounts : i < n - h.numReadonlyNonSignerAccounts);
+  const accounts: ResolvedAccount[] = [
+    ...p.staticAccounts.map((address, index) => ({ index, address, signer: index < h.numSignerAccounts, writable: staticWritable(index), source: { kind: "static" as const } })),
+    ...[...loaded.writable, ...loaded.readonly].map((address, j) => ({
+      index: n + j,
+      address: address as Address,
+      signer: false,
+      writable: j < loaded.writable.length,
+      source: { kind: "static" as const }
+    }))
+  ];
+  const tx: SessionTransaction = {
+    ...p,
+    index: 0,
+    compiledInstructions: p.instructions,
+    accounts,
+    instructions: p.instructions.map((ix, index) => ({
+      index,
+      programIdIndex: ix.programIdIndex,
+      programAddress: accounts[ix.programIdIndex]!.address!,
+      accounts: ix.accountIndices.map((i) => accounts[i]!),
+      data: ix.data
+    })),
+    lookupProblems: [],
+    complete: true
+  };
+  return { id: p.messageHash, transactions: [tx], lookupTables: {}, complete: true };
 }

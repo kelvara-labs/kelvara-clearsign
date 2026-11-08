@@ -68,6 +68,10 @@ export function normalizeCodamaValue(v: unknown, depth = 0): unknown {
   return v;
 }
 
+const ANCHOR_EVENT_CPI = [0xe4, 0x45, 0xa5, 0x2e, 0x51, 0xcb, 0x9a, 0x1d];
+/** Anchor's emit_cpi: the program calls itself with these 8 bytes, then the event; it moves nothing. */
+const isAnchorEventCpi = (data: Uint8Array): boolean => data.length >= 8 && ANCHOR_EVENT_CPI.every((b, i) => data[i] === b);
+
 function fromHex(s: string): Uint8Array {
   if (s.length % 2 !== 0 || /[^0-9a-f]/i.test(s)) throw new Error("bad hex");
   return Uint8Array.from({ length: s.length / 2 }, (_, i) => parseInt(s.slice(2 * i, 2 * i + 2), 16));
@@ -154,6 +158,9 @@ export function createDecoder(entries: readonly ProgramEntry[], options: Decoder
       } catch {
         return unknown(ix, reg.name, "args_did_not_decode");
       }
+    }
+    if (reg.fallback && isAnchorEventCpi(ix.data)) {
+      return { index: ix.index, programAddress: ix.programAddress, programName: reg.name, status: "named", decoder: "anchor-fallback", name: "emitCpi", args: { eventData: ix.data.subarray(8) }, accounts: baseAccounts(ix), data: ix.data };
     }
     return unknown(ix, reg.name, sawError ? "decoder_error" : "no_matching_instruction");
   }

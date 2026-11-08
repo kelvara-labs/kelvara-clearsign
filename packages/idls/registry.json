@@ -121,6 +121,23 @@
       "authorityMap": "authority/marginfi-v2.json"
     },
     {
+      "name": "jupiter-v6",
+      "programId": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+      "priority": "P1",
+      "decoder": "codama",
+      "root": "roots/jupiter-v6.json",
+      "rootSha256": "b5f1c6ef2788349a9827a75d86c19f13f30298f39946baeb26637dd17075f49c",
+      "idl": "raw/jupiter-v6.json",
+      "sha256": "49e1e01f9b8aaf3aa90a4a90e5824e3625a8dd7f28fa47f34afb4dde974690e0",
+      "source": "anchor:idl account C88XWfp26heEmDkmfSzeXP7Fd7GQJ2j9dDTUsyiZbUTa (Helius mainnet)",
+      "verified": false,
+      "executable": true,
+      "upgradeAuthority": "CvQZZ23qYDWF2RUpxYJ8y9K4skmuvYEEjH7fK58jtipQ",
+      "capabilities": "capabilities/jupiter-v6.json",
+      "capabilityMap": "curated",
+      "authorityMap": null
+    },
+    {
       "name": "memo",
       "programId": "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr",
       "priority": "P1",

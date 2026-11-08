@@ -1,7 +1,7 @@
 {
   "schema": "kelvara.idl-chain/v1",
   "network": "mainnet",
-  "fetchedAt": "2026-11-07T17:04:01.393Z",
+  "fetchedAt": "2026-11-08T11:22:13.007Z",
   "responses": {
     "program:11111111111111111111111111111111": {
       "method": "getAccountInfo",
@@ -18,7 +18,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589499,
+          "slot": 466896595,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -49,7 +49,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589499,
+          "slot": 466896595,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -80,7 +80,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589499,
+          "slot": 466896596,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -111,7 +111,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589500,
+          "slot": 466896596,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -142,7 +142,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589500,
+          "slot": 466896596,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -173,7 +173,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589500,
+          "slot": 466896596,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -204,7 +204,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589500,
+          "slot": 466896597,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -235,7 +235,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589500,
+          "slot": 466896597,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -266,7 +266,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589501,
+          "slot": 466896597,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -297,7 +297,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589501,
+          "slot": 466896597,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -328,7 +328,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589501,
+          "slot": 466896597,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -359,7 +359,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589501,
+          "slot": 466896598,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -372,6 +372,68 @@
           "executable": false,
           "rentEpoch": 18446744073709552000,
           "space": 10485760
+        }
+      }
+    },
+    "program:JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4": {
+      "method": "getAccountInfo",
+      "params": [
+        "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+        {
+          "encoding": "base64",
+          "commitment": "finalized",
+          "dataSlice": {
+            "offset": 0,
+            "length": 36
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466896598,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 6979116527,
+          "data": [
+            "AgAAADAPUGBbvrcwh4nmwPvj5KNgIENvbqDK2oAmDbRv9mCE",
+            "base64"
+          ],
+          "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+          "executable": true,
+          "rentEpoch": 18446744073709552000,
+          "space": 36
+        }
+      }
+    },
+    "programData:JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4": {
+      "method": "getAccountInfo",
+      "params": [
+        "4Ec7ZxZS6Sbdg5UGSLHbAnM7GQHp2eFd4KYWRexAipQT",
+        {
+          "encoding": "base64",
+          "commitment": "finalized",
+          "dataSlice": {
+            "offset": 0,
+            "length": 45
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466896598,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 14693376760,
+          "data": [
+            "AwAAAKXMlRsAAAAAAbEe+teWj6Z0MSjxc2hlsqQaHI6/h5QpWLZN6DqDii95",
+            "base64"
+          ],
+          "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+          "executable": false,
+          "rentEpoch": 18446744073709552000,
+          "space": 2892269
         }
       }
     },
@@ -390,7 +452,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466589502,
+          "slot": 466896598,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {
@@ -421,7 +483,7 @@
       ],
       "result": {
         "context": {
-          "slot": 466872553,
+          "slot": 466896598,
           "apiVersion": "4.3.0-alpha.2"
         },
         "value": {

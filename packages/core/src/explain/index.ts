@@ -174,6 +174,11 @@ export const RULE_TEMPLATES: Readonly<Record<string, RuleTemplate>> = {
     why: "Tokens leave the sender's token account for the recipient once the transaction lands.",
     advice: "Check the amount, the token and the full recipient address."
   },
+  "fact.swap": {
+    title: "Swaps tokens",
+    why: "A Jupiter route trades the tokens in your source token account for the tokens in your destination token account; the amounts are the most you give and the least you receive.",
+    advice: "Check both tokens, the amounts and the slippage tolerance."
+  },
   "fact.priority_fee": {
     title: "Pays a priority fee",
     why: "A unit limit and price make the fee payer pay extra so the transaction is processed sooner; this is a fee, not a permission.",
@@ -271,7 +276,7 @@ export function explainClaim(claim: Claim): ClaimExplanation {
 const levelNum = (l: AlertLevel): number => Number(l.slice(1));
 
 /** Strongest fact first: what the transaction does matters more than what it costs. */
-const FACT_ORDER = ["fact.unknown_instruction", "fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
+const FACT_ORDER = ["fact.unknown_instruction", "fact.swap", "fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
 
 /** L0 headline: says what the transaction does; says "No risks found" only when every instruction was understood. */
 function calmHeadline(report: Report, claims: ClaimExplanation[]): string {
