@@ -28,7 +28,7 @@ function addr(value: string): HTMLElement {
 function contextPills(r: ReportView | null): HTMLElement[] {
   if (!r) return [];
   return [
-    r.origin ? el("span", { "data-kelvara-origin": "", "data-kelvara-trusted": String(!!r.trustedSite), role: "note", "aria-label": r.trustedSite ? `Trusted site: ${r.trustedSite}` : "Not on the trusted list", title: r.origin }, r.origin) : null,
+    r.origin ? el("span", { "data-kelvara-origin": "", "data-kelvara-trusted": String(!!r.trustedSite), ...(r.impostor ? { "data-kelvara-impostor": "true" } : {}), role: "note", "aria-label": r.impostor ? `Impostor of ${r.impostor.name}` : r.trustedSite ? `Trusted site: ${r.trustedSite}` : "Not on the trusted list", title: r.origin }, r.origin) : null,
     r.network ? el("span", { "data-kelvara-network": "", class: `net-${r.network}` }, r.network) : null
   ].filter((x): x is HTMLElement => !!x);
 }
