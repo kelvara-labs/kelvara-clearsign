@@ -1,4 +1,5 @@
 import { intentCard } from "./intent.js";
+import { messageReview } from "./message.js";
 // The report page inside the extension iframe (report.html). Receives the verdict from
 // the bridge with the per-report secret and a MessagePort, renders it as text only, and
 // answers { allow } on the port. Contract for G7: test-dapp/e2e/README.md.
@@ -65,6 +66,7 @@ function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => voi
     out.push(el("p", { class: "summary" }, v.reason));
     return out;
   }
+  if (r.message) return [el("p", { class: "summary" }, r.summary), messageReview(r.message)];
   out.push(el("p", { class: "summary" }, r.summary));
   if (r.simulation !== null || r.authorizes !== null) {
     out.push(

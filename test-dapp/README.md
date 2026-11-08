@@ -108,6 +108,16 @@ Assertions via `/last`: `authorization` is `null` unless a key was configured; `
 
 The fixture wallet offers, besides the transaction features: `solana:signMessage`, `solana:signIn`, the vendor-prefixed signing feature `fixture:signBlob` (Wallet Standard) and legacy `signMessage`/`signIn`. API: `kelvaraTestDapp.signMessage(path, text)`, `.signIn(path)`, `.signVendor(path)`.
 
-Extension policy under test: transaction methods are held until a trusted Continue, then forwarded exactly once with the analyzed bytes; message signing, `signIn` and any vendor/unknown signing-named feature or method are rejected with 4001 before the wallet is called (the wallet's `messageCount` and `timeline` stay empty). `standard:*` features and `connect` pass.
+Extension policy under test: transaction methods are held until a trusted Continue, then forwarded exactly once with the analyzed bytes; message signing (`signMessage`, `signIn`) is held and reviewed like a transaction (see below), and any vendor/unknown signing-named feature or method is rejected with 4001 before the wallet is called (the wallet's `timeline` stays empty). `standard:*` features and `connect` pass.
 
-`calls().timeline` lists every call that reached the wallet (any method): `{ n, path, method, at, mono }` (`at` = Date.now(), `mono` = performance.now()). For ordering assertions, compare the first `timeline[].at` with the moment the report's Continue was clicked: the wallet entry must come after. A rejected call leaves `timeline` empty. Message-like calls (`signMessage`, `signIn`, `fixture:signBlob`) also appear in `messages`; transactions in `calls`/`count`.
+`calls().timeline` lists every call that reached the wallet (any method): `{ n, path, method, at, mono }` (`at` = Date.now(), `mono` = performance.now()). For ordering assertions, compare the first `timeline[].at` with the moment the report's Continue was clicked: the wallet entry must come after. A rejected call leaves `timeline` empty. Message-like calls (`signMessage`, `signIn`) also appear in `messages`; transactions in `calls`/`count`.
+
+## Message review samples (X17)
+
+`signMessage` and `signIn` are now held and reviewed (not blocked): the wallet is called only after Continue. Page helpers:
+
+- `kelvaraTestDapp.signSample(path, kind, txBase64?)` — `kind`: `siws` (valid sign-in text for this page and account, expect L1 `siws.ok`), `siws-domain-mismatch` (L3), `siws-expired` (L2), `text` (L1 `message.text`), `binary` (L3 `message.binary`), `tx` (a serialized transaction passed as a message; pass a fixture's base64; L4 `message.hidden-tx`, no Sign anyway).
+- `kelvaraTestDapp.signIn(path, input?)` — `solana:signIn` (legacy: `provider.signIn`) with a valid input for this page; `input` overrides fields, e.g. `{ domain: "evil.example" }` (L3).
+- `kelvaraTestDapp.signMessage(path, text)` as before.
+- `calls().timeline` records when the wallet actually ran; an L4 or Blocked message leaves it empty. The report frame marks the view with `data-kelvara-message-review`, `data-message-kind`, `data-message-rule` and `data-message-field="<name>"`.
+`signVendor` (`fixture:signBlob`) stays blocked with 4001.

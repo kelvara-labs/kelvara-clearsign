@@ -7,9 +7,10 @@
 //   - late injection is trapped with property setters on window and window.phantom,
 //     plus a rescan driven by a MutationObserver and a few timed passes.
 import { b58decode, b58encode, bytesEqual, messageToWireTx, txToBytes } from "../shared/codec.js";
-import type { SignMethod } from "../shared/protocol.js";
+import type { MessageMethod, SignInInput, SignMethod } from "../shared/protocol.js";
 import { cleanWalletName, rejection, type Guard } from "./guard.js";
-import { pristine, type HookWindow } from "./pristine.js";
+import { pristine, type HookWindow, type Pristine } from "./pristine.js";
+import { messageBytes, readSignIn } from "./message.js";
 import { isSigningName } from "./signing.js";
 import { findDescriptor, makeShim, safeGet } from "./wallet-standard.js";
 
@@ -35,6 +36,7 @@ const LEGACY_KEYS = [
 type Plan =
   | { kind: "pass" }
   | { kind: "sign"; method: SignMethod; txs: Uint8Array[]; forward: unknown[] }
+  | { kind: "message"; method: MessageMethod; payload: { message: Uint8Array } | { signIn: SignInInput }; forward: unknown[] }
   | { kind: "reject" };
 
 const isByteView = (x: unknown): boolean => ArrayBuffer.isView(x) && !(x instanceof DataView);
@@ -50,8 +52,16 @@ function fromMessage(m: unknown): Uint8Array {
 }
 
 /** Decide what a legacy call does, and extract its transaction bytes. Throws on unreadable input. */
-export function classify(key: string, args: unknown[]): Plan {
+export function classify(key: string, args: unknown[], p: Pristine): Plan {
   switch (key) {
+    case "signMessage": {
+      const message = messageBytes(args[0]);
+      return { kind: "message", method: "legacy:signMessage", payload: { message }, forward: [message.slice(), ...args.slice(1)] };
+    }
+    case "signIn": {
+      const signIn = readSignIn(p, args[0]);
+      return { kind: "message", method: "legacy:signIn", payload: { signIn }, forward: args.length ? [{ ...(args[0] as object), ...signIn }, ...args.slice(1)] : [] };
+    }
     case "signTransaction":
     case "signAndSendTransaction":
     case "sendTransaction": {
@@ -71,6 +81,14 @@ export function classify(key: string, args: unknown[]): Plan {
       const req = args[0] as { method?: unknown; params?: Obj } | undefined;
       const m = req && typeof req === "object" ? req.method : undefined;
       const params = (req?.params ?? {}) as Obj;
+      if (m === "signMessage") {
+        const message = messageBytes(params.message, true);
+        return { kind: "message", method: "legacy:signMessage", payload: { message }, forward: args };
+      }
+      if (m === "signIn") {
+        const signIn = readSignIn(p, req?.params);
+        return { kind: "message", method: "legacy:signIn", payload: { signIn }, forward: args };
+      }
       if (m === "signTransaction" || m === "signAndSendTransaction" || m === "sendTransaction") {
         const tx = "message" in params ? fromMessage(params.message) : txToBytes(params.transaction);
         return { kind: "sign", method: `legacy:${m}`, txs: [tx], forward: args };
@@ -89,12 +107,18 @@ export function classify(key: string, args: unknown[]): Plan {
   }
 }
 
-function safeClassify(key: string, args: unknown[]): Plan {
+function safeClassify(key: string, args: unknown[], p: Pristine): Plan {
   try {
-    return classify(key, args);
+    return classify(key, args, p);
   } catch {
     return { kind: "reject" };
   }
+}
+
+type Payload = { message: Uint8Array } | { signIn: SignInInput };
+function samePayload(p: Pristine, a: Payload, b: Payload): boolean {
+  if ("message" in a || "message" in b) return "message" in a && "message" in b && bytesEqual(a.message, b.message);
+  return p.stringify(a.signIn) === p.stringify(b.signIn);
 }
 
 export interface LegacyHook {
@@ -148,14 +172,24 @@ export function installLegacyHook(win: HookWindow, guard: Guard): LegacyHook {
     const wrapper = function (this: unknown, ...args: unknown[]): unknown {
       const provider = fixed ?? (this && (typeof this === "object" || typeof this === "function") ? (this as object) : null);
       if (!provider) return p.Promise.reject(rejection());
-      const plan = safeClassify(key, args);
+      const plan = safeClassify(key, args, p);
       if (plan.kind === "pass") return p.apply(orig, provider, args);
       if (plan.kind === "reject") return p.Promise.reject(rejection());
+      if (plan.kind === "message") {
+        return (async () => {
+          const allow = await guard.holdMessage(plan.method, walletName(provider, label), null, providerAccount(provider), plan.payload);
+          if (!allow) throw rejection();
+          // The page may have changed the arguments during the hold.
+          const again = safeClassify(key, args, p);
+          if (again.kind !== "message" || !samePayload(p, again.payload, plan.payload)) throw rejection();
+          return p.apply(orig, provider, plan.forward);
+        })();
+      }
       return (async () => {
         const allow = await guard.hold(plan.method, walletName(provider, label), null, plan.txs, providerAccount(provider));
         if (!allow) throw rejection();
         // The page may have changed the transaction object during the hold.
-        const again = safeClassify(key, args);
+        const again = safeClassify(key, args, p);
         if (again.kind !== "sign" || again.txs.length !== plan.txs.length) throw rejection();
         for (let i = 0; i < plan.txs.length; i++) if (!bytesEqual(again.txs[i]!, plan.txs[i]!)) throw rejection();
         return p.apply(orig, provider, plan.forward);

@@ -183,14 +183,15 @@ describe("Wallet Standard", () => {
     expect(w.calls.length).toBe(0);
   });
 
-  it("signMessage never reaches the wallet (blocked fail-closed, no analyzable bytes)", async () => {
+  it("signMessage is held for review, then forwarded once with the same bytes", async () => {
     const r = rig(allow);
     const app = startApp(r.win);
     const w = new FixtureWallet();
     registerWallet(r.win, w);
     const f = (app[0] as { features: Record<string, { signMessage: (i: unknown) => Promise<unknown> }> }).features["solana:signMessage"]!;
-    await expect(f.signMessage({ message: new Uint8Array([1, 2]) })).rejects.toEqual(rejected);
-    expect(w.messageCalls).toBe(0);
+    await f.signMessage({ message: new Uint8Array([104, 105]) });
+    expect(w.messageCalls).toBe(1);
+    expect(r.sent[0]).toMatchObject({ type: "kelvara-signguard/message", request: { method: "solana:signMessage", message: "aGk=" } });
   });
 
   it("wraps a frozen wallet with a frozen own features property", async () => {

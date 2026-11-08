@@ -9,6 +9,7 @@
 // The app always calls the wallet object it was handed by register(), so whatever the
 // extension's hook put in the way is what gets called.
 import { b64decode, b64encode } from "./bytes.js";
+import { sampleMessage, signInInput, type MessageSample } from "./messages.js";
 import { startForging, type ForgeReport } from "./forge.js";
 import { FixtureStandardWallet, FixtureTxObject, makeLegacyProvider, type LegacyProvider } from "./providers.js";
 import { FixtureKey, FixtureWalletCore, WALLET_PATHS, type CallLog, type WalletPath } from "./wallet.js";
@@ -64,9 +65,17 @@ export interface TestDappApi {
   discovered: Record<WalletPath, { found: boolean; wrapped: boolean; name: string | null }>;
   sign(args: SignArgs): Promise<SignResult>;
   signMessage(path: WalletPath, text: string): Promise<SignResult>;
-  /** solana:signIn (legacy: provider.signIn). The extension must reject it with 4001 before the wallet is called. */
-  signIn(path: WalletPath): Promise<SignResult>;
-  /** Vendor-prefixed signing feature `fixture:signBlob` (legacy: not offered, returns an error). Same expectation as signIn. */
+  /**
+   * solana:signIn (legacy: provider.signIn), held and reviewed by the extension. Default input is a valid sign-in for
+   * this page and account; `input` overrides fields (e.g. { domain: "evil.example" }).
+   */
+  signIn(path: WalletPath, input?: Record<string, string>): Promise<SignResult>;
+  /**
+   * signMessage with a ready-made sample: siws (valid for this page), siws-domain-mismatch, siws-expired, text, binary,
+   * or tx (a serialized transaction passed as a message; needs txBase64). Read calls().timeline to see when the wallet ran.
+   */
+  signSample(path: WalletPath, kind: MessageSample, txBase64?: string): Promise<SignResult>;
+  /** Vendor-prefixed signing feature `fixture:signBlob` (legacy: not offered, returns an error). The extension rejects it with 4001 before the wallet is called. */
   signVendor(path: WalletPath): Promise<SignResult>;
   /** Snapshot of the call log. count === 0 means the wallet was never called. */
   calls(): CallLog;
@@ -114,6 +123,7 @@ async function main(): Promise<void> {
     signMessage: async () => ({ ok: false, error: { name: "NotReady", message: "test dApp not ready", code: null } }),
     calls: () => ({ count: 0, byPath: { "ws-register": 0, "ws-app-ready": 0, legacy: 0 }, calls: [], messageCount: 0, messages: [], timeline: [] }),
     signIn: async () => ({ ok: false, error: { name: "NotReady", message: "test dApp not ready", code: null } }),
+    signSample: async () => ({ ok: false, error: { name: "NotReady", message: "test dApp not ready", code: null } }),
     signVendor: async () => ({ ok: false, error: { name: "NotReady", message: "test dApp not ready", code: null } }),
     reset: () => {},
     lastForge: null
@@ -239,9 +249,9 @@ async function main(): Promise<void> {
     }
   }
 
-  async function signMessage(path: WalletPath, text: string): Promise<SignResult> {
+  const signMessage = (path: WalletPath, text: string) => signMessageBytes(path, new TextEncoder().encode(text));
+  async function signMessageBytes(path: WalletPath, msg: Uint8Array): Promise<SignResult> {
     try {
-      const msg = new TextEncoder().encode(text);
       if (path === "legacy") {
         const out = await legacyProvider().signMessage(msg);
         return { ok: true, signed: [], signatures: [b64encode(out.signature)] };
@@ -258,17 +268,17 @@ async function main(): Promise<void> {
     }
   }
 
-  async function viaFeature(path: WalletPath, key: string, fn: string, input: object): Promise<SignResult> {
+  async function viaFeature(path: WalletPath, key: string, fn: string, input: Record<string, unknown>): Promise<SignResult> {
     try {
       if (path === "legacy") {
         if (key !== "solana:signIn") throw new Error("no vendor feature on legacy");
-        const out = await legacyProvider().signIn({ domain: "test-dapp" });
+        const out = await legacyProvider().signIn(input);
         return { ok: true, signed: [], signatures: [b64encode(out.signature)] };
       }
       const w = seen[path];
       if (!w) throw new Error(`no wallet discovered on ${path}`);
       const account = await connectWs(w);
-      const out = (await (w.features[key]![fn] as Fn)({ account, ...input })) as { signature: Uint8Array }[];
+      const out = (await (w.features[key]![fn] as Fn)(key === "solana:signIn" ? input : { account, ...input })) as { signature: Uint8Array }[];
       return { ok: true, signed: [], signatures: out.map((o) => b64encode(o.signature)) };
     } catch (e) {
       return { ok: false, error: errorOf(e) };
@@ -282,7 +292,15 @@ async function main(): Promise<void> {
   };
   api.sign = sign;
   api.signMessage = signMessage;
-  api.signIn = (path) => viaFeature(path, "solana:signIn", "signIn", { domain: "test-dapp" });
+  api.signIn = (path, input) =>
+    viaFeature(path, "solana:signIn", "signIn", { ...signInInput({ host: location.host, origin: location.origin }, core.account.address), ...input });
+  api.signSample = async (path, kind, txBase64) => {
+    try {
+      return await signMessageBytes(path, sampleMessage(kind, { host: location.host, origin: location.origin }, core.account.address, txBase64));
+    } catch (e) {
+      return { ok: false, error: errorOf(e) };
+    }
+  };
   api.signVendor = (path) => viaFeature(path, "fixture:signBlob", "signBlob", { blob: new Uint8Array([1, 2, 3]) });
   api.calls = () => structuredClone(core.log);
   api.reset = () => core.reset();
