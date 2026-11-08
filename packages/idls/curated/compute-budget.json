@@ -1,0 +1,12 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "compute-budget",
+  "programId": "ComputeBudget111111111111111111111111111111",
+  "reviewed": "E23 (engine), 2026-11-08: names checked against the hand-written decoder (packages/core/src/decode/builtin.ts); the four instructions take no accounts and grant no authority",
+  "instructions": [
+    { "instruction": "requestHeapFrame", "authority": null, "capability": "compute.budget", "class": "other", "changes": "asks for a larger heap for this transaction only; no permission changes" },
+    { "instruction": "setComputeUnitLimit", "authority": null, "capability": "compute.budget", "class": "other", "changes": "sets the compute unit limit for this transaction only; no permission changes" },
+    { "instruction": "setComputeUnitPrice", "authority": null, "capability": "compute.budget", "class": "other", "changes": "sets the priority fee per compute unit, paid by the fee payer; no permission changes" },
+    { "instruction": "setLoadedAccountsDataSizeLimit", "authority": null, "capability": "compute.budget", "class": "other", "changes": "sets the loaded accounts data limit for this transaction only; no permission changes" }
+  ]
+}

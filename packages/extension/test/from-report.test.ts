@@ -114,7 +114,7 @@ describe("fromReport: Drift session", () => {
     expect(m.report.title).toBe(explainReport(driftReport()).headline);
     expect(m.report.title).toBe("Critical: The transaction does not expire; This signature reaches the multisig threshold");
     expect(m.report.summary).toContain("If the proposal reaches its threshold");
-    expect(m.report.summary).toContain("4 claim(s), 3 granted and 1 revoked capability change(s).");
+    expect(m.report.summary).toContain("3 granted and 1 revoked capability change(s).");
     expect(m.report.limited).toBe(false);
     expect(validateReportView(m.report)).not.toBeNull();
   });
@@ -190,7 +190,7 @@ describe("fromReport: Drift session", () => {
   it("an empty report is L0 Clear", () => {
     const m = ok(fromReport(new ReportBuilder(session).build(), hashes));
     expect(m.level).toBe(0);
-    expect(m.report.title).toBe("Clear: no finding reaches a notice level");
+    expect(m.report.title).toBe("Clear · nothing above notice level found; not every instruction is understood");
   });
 
   it("license limiter still applies after mapping: top finding is the upgrade authority", () => {

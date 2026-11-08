@@ -7,6 +7,7 @@ import {
   CAPABILITY_CLASSES,
   classifyInstruction,
   describeInstruction,
+  COMPUTE_BUDGET_INSTRUCTIONS,
   UPGRADEABLE_LOADER_ACCOUNTS,
   UPGRADEABLE_LOADER_INSTRUCTIONS,
   type CapabilityClass
@@ -130,6 +131,19 @@ export function loaderInstructions(): InstructionShape[] {
     accounts: (UPGRADEABLE_LOADER_ACCOUNTS[name] ?? []).map((a) => ({ name: a, signer: signers[name]?.includes(a) ?? false })),
     discriminator: hexOfNumber(i, "u32")
   }));
+}
+
+/** Compute Budget has no IDL: names come from the hand-written decoder (borsh u8 tag 1..4); no accounts, no signers. */
+export function computeBudgetInstructions(): InstructionShape[] {
+  const tags = [1, 2, 3, 4];
+  return COMPUTE_BUDGET_INSTRUCTIONS.map((name, i) => ({ name, accounts: [], discriminator: hexOfNumber(tags[i]!, "u8") }));
+}
+
+/** Instructions and provenance text of a hand-written decoder program. */
+export function builtinShape(decoder: string): { ixs: InstructionShape[]; checkedAgainst: string } | null {
+  if (decoder === "loader") return { ixs: loaderInstructions(), checkedAgainst: "packages/core/src/decode/builtin.ts (hand-written decoder)" };
+  if (decoder === "computeBudget") return { ixs: computeBudgetInstructions(), checkedAgainst: "packages/core/src/decode/builtin.ts (hand-written decoder)" };
+  return null;
 }
 
 /** Codama root enum variant names of a defined type (e.g. Token's authorityType). */

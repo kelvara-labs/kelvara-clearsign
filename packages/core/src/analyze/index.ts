@@ -17,8 +17,8 @@ import { validateReport } from "../report/validate.js";
 import type { RpcClient } from "../rpc/client.js";
 import { createRpcAccountReader, type RpcAccountReader } from "../rpc/methods.js";
 import { readAddressRuleState } from "../rules/address-history.js";
-import { runRules } from "../rules/index.js";
-import { lamportsText, tokenText } from "../util/amounts.js";
+import { runRules, transactionFeeFacts, type TxFeeFacts } from "../rules/index.js";
+import { lamportsText, tokenText, unsigned } from "../util/amounts.js";
 import { readTokenRuleState } from "../rules/read-token-state.js";
 import type { RuleState } from "../rules/types.js";
 import { simulateSessionTransaction, type SimulationResult } from "../simulate/index.js";
@@ -118,8 +118,23 @@ function rulesPass(session: Session, decoded: DecodedInstruction[][], opts: Anal
   return report;
 }
 
+/** Payer-facing text for one SOL balance change; splits the fee payer's change into fees and transfers only when it adds up exactly. */
+function solChangeText(address: string, delta: bigint, fee: TxFeeFacts | undefined, wallet?: string): string {
+  const raw = lamportsText(delta);
+  if (!fee || address !== fee.feePayer) return `${address} ${raw}`;
+  const subject = address === wallet ? "Your SOL balance" : `The SOL balance of fee payer ${address}`;
+  const sol = (l: bigint) => unsigned(lamportsText(l));
+  const prio = fee.maxPriorityFee;
+  const feeParts = [`network fee ${sol(fee.baseFee)}`, ...(prio !== null && prio > 0n ? [`priority fee up to ${sol(prio)}`] : [])];
+  if (prio === null) return `${address} ${raw}`;
+  const total = fee.baseFee + prio;
+  if (delta === -total) return `${subject} changes by ${raw} (${feeParts.join(" + ")})`;
+  if (fee.solSentByPayer > 0n && delta === -(total + fee.solSentByPayer)) return `${subject} changes by ${raw} (${[`${sol(fee.solSentByPayer)} sent`, ...feeParts].join(" + ")})`;
+  return `${address} ${raw}`;
+}
+
 /** Short, factual "what simulation shows" line per transaction, each backed by a simulation evidence. */
-export function addSimulationSummary(report: ReportBuilder, sims: Record<number, SimulationResult>, txCount: number): void {
+export function addSimulationSummary(report: ReportBuilder, sims: Record<number, SimulationResult>, txCount: number, fees: readonly TxFeeFacts[] = [], wallet?: string): void {
   const idx = Object.keys(sims).map(Number).sort((a, b) => a - b);
   if (!idx.length) return;
   const lines: string[] = [];
@@ -132,7 +147,7 @@ export function addSimulationSummary(report: ReportBuilder, sims: Record<number,
       failed++;
       parts.push(`fails (${JSON.stringify(s.err)})`);
     } else {
-      for (const c of s.solChanges) parts.push(`${c.address} ${lamportsText(c.delta)}`);
+      for (const c of s.solChanges) parts.push(solChangeText(c.address, c.delta, fees.find((f) => f.txIndex === t), wallet));
       for (const c of s.tokenChanges) parts.push(`${c.owner} ${tokenText(c.delta, c.decimals)} of mint ${c.mint}`);
       for (const c of s.stateChanges) parts.push(`${c.field} of ${c.address}: ${c.before ?? "none"} -> ${c.after ?? "none"}`);
       if (!parts.length) parts.push("no balance or authority changes in the accounts read");
@@ -270,7 +285,7 @@ export async function analyzeSession(session: Session, opts: AnalyzeOptions): Pr
 
   const report = rulesPass(session, decoded, opts, state);
   addIntentSourceEvidence({ session, decoded, state, decoder: opts.decoder, report, claims: new Map() });
-  if (state.simulations) addSimulationSummary(report, state.simulations, session.transactions.length);
+  if (state.simulations) addSimulationSummary(report, state.simulations, session.transactions.length, transactionFeeFacts(session, decoded), state.wallet);
   const built = report.build();
   const v = validateReport(built);
   if (!v.ok) throw new Error(`engine produced an invalid report: ${v.problems.join("; ")}`);

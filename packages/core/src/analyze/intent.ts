@@ -8,6 +8,7 @@ import type { RuleContext, RuleState } from "../rules/types.js";
 import { requestTransfers } from "../rules/address-history.js";
 import { proposalViews, vaultInstructions, arg } from "../rules/squads-session.js";
 import { accountNamed, instructionEvidence } from "../rules/common.js";
+import { isComputeBudget } from "../rules/facts.js";
 import { SYSTEM_PROGRAM, TOKEN_PROGRAM, TOKEN_2022_PROGRAM } from "../state/layouts.js";
 import { SQUADS_V4_PROGRAM } from "../decode/squads.js";
 import { MEMO_PROGRAM, MEMO_V1_PROGRAM } from "../decode/builtin.js";
@@ -41,12 +42,8 @@ export function addIntentSourceEvidence(ctx: RuleContext): void {
   }
 }
 
-const COMPUTE_BUDGET_PROGRAM = "ComputeBudget111111111111111111111111111111";
-const BUDGET_LENGTHS: Record<number, number> = {1: 5, 2: 5, 3: 9, 4: 5};
-/** Known fee/priority settings only: heap frame, unit limit, unit price, loaded accounts size limit. Anything else stays unknown. */
-function isBudgetSetting(ix: DecodedInstruction): boolean {
-  return ix.programAddress === COMPUTE_BUDGET_PROGRAM && ix.data.length > 0 && BUDGET_LENGTHS[ix.data[0]!] === ix.data.length;
-}
+/** Fee/priority settings named by the built-in Compute Budget decoder; any other data stays unknown. */
+const isBudgetSetting = isComputeBudget;
 
 export function buildIntentContext(input: {session: Session; decoded: DecodedInstruction[][]; state: RuleState; report: Report; decoder?: Decoder}): IntentContext {
   const { session, decoded, state, report } = input;

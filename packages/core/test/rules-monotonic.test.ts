@@ -28,7 +28,7 @@ function append(session: Session, more: Session): Session {
 }
 const ruleLevels = (r: Report) => {
   const m = new Map<string, number>();
-  for (const c of r.claims) if (c.ruleId) m.set(c.ruleId, Math.max(m.get(c.ruleId) ?? 0, LEVEL[c.level]));
+  for (const c of r.claims) if (c.ruleId && !c.ruleId.startsWith("fact.")) m.set(c.ruleId, Math.max(m.get(c.ruleId) ?? 0, LEVEL[c.level]));
   return m;
 };
 

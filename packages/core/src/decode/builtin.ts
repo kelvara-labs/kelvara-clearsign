@@ -139,8 +139,30 @@ export function decodeMemoInstruction(data: Uint8Array): BuiltinDecoded {
   return { name: "memo", args: { memo }, accountNames: [], restAccountName: "signer" };
 }
 
+export const COMPUTE_BUDGET_PROGRAM = "ComputeBudget111111111111111111111111111111";
+
+/** Tag -> name, data length (tag byte included) and argument. Anything else (including the deprecated tag 0) is not decoded. */
+const COMPUTE_BUDGET_VARIANTS: Readonly<Record<number, { name: string; length: number; arg: string; wide?: boolean }>> = {
+  1: { name: "requestHeapFrame", length: 5, arg: "bytes" },
+  2: { name: "setComputeUnitLimit", length: 5, arg: "units" },
+  3: { name: "setComputeUnitPrice", length: 9, arg: "microLamports", wide: true },
+  4: { name: "setLoadedAccountsDataSizeLimit", length: 5, arg: "bytes" }
+};
+
+/** Compute Budget instruction names, in tag order. */
+export const COMPUTE_BUDGET_INSTRUCTIONS: readonly string[] = Object.values(COMPUTE_BUDGET_VARIANTS).map((v) => v.name);
+
+/** Compute Budget: borsh enum, u8 tag then one little-endian u32 (u64 for the unit price). Exact lengths; no accounts. */
+export function decodeComputeBudgetInstruction(data: Uint8Array): BuiltinDecoded | null {
+  const v = COMPUTE_BUDGET_VARIANTS[data[0] ?? -1];
+  if (!v || data.length !== v.length) return null;
+  const r = new Reader(data.subarray(1));
+  return { name: v.name, args: { [v.arg]: v.wide ? r.u64() : r.u32() }, accountNames: [] };
+}
+
 export const BUILTIN_PROGRAMS: readonly BuiltinProgram[] = [
   { name: "bpf-loader-upgradeable", programId: UPGRADEABLE_LOADER_PROGRAM, decode: decodeUpgradeableLoaderInstruction },
   { name: "memo", programId: MEMO_PROGRAM, decode: decodeMemoInstruction },
-  { name: "memo-v1", programId: MEMO_V1_PROGRAM, decode: decodeMemoInstruction }
+  { name: "memo-v1", programId: MEMO_V1_PROGRAM, decode: decodeMemoInstruction },
+  { name: "compute-budget", programId: COMPUTE_BUDGET_PROGRAM, decode: decodeComputeBudgetInstruction }
 ];

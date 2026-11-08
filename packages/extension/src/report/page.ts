@@ -53,7 +53,7 @@ function claimCard(c: Claim, evidence: Map<string, EvidenceItem>): HTMLElement {
   const items = c.evidenceIds.map((id) => evidence.get(id)).filter((e): e is EvidenceItem => !!e);
   const card = el(
     "details",
-    { class: "claim", "data-claim": c.id },
+    { class: "claim", "data-claim": c.id, "data-claim-kind": c.kind.toLowerCase() },
     el("summary", {}, el("span", { class: `kind kind-${c.kind}` }, c.kind), c.level ? el("span", { class: "claim-level" }, c.level) : null, " ", el("strong", { class: "claim-title" }, c.title)),
     el("p", { class: "claim-text" }, c.text),
     c.advice ? el("p", { class: "advice" }, c.advice) : null,
@@ -104,7 +104,14 @@ function renderReport(v: WorkerVerdict, r: ReportView | null, onBlock: () => voi
   }
   if (r.claims.length) {
     const byId = new Map(r.evidence.map((e) => [e.id, e]));
-    out.push(section(r.limited ? "Top finding" : "Claims (open for evidence)", ...r.claims.map((c) => claimCard(c, byId))));
+    // E23 facts ("What this transaction does") come first on L0/L1 and after the risk claims on L2+.
+    const isFact = (c: Claim) => c.kind === "Fact" && !!c.rule?.startsWith("fact.");
+    const facts = r.claims.filter(isFact);
+    const risks = r.claims.filter((c) => !isFact(c));
+    const factSection = facts.length ? section("What this transaction does", ...facts.map((c) => claimCard(c, byId))) : null;
+    const riskSection = risks.length ? section(r.limited ? "Top finding" : "Claims (open for evidence)", ...risks.map((c) => claimCard(c, byId))) : null;
+    const first = v.level !== null && v.level <= 1;
+    out.push(...[first ? factSection : riskSection, first ? riskSection : factSection].filter((x): x is HTMLElement => !!x));
   }
   if (r.messageHashes.length) {
     out.push(
