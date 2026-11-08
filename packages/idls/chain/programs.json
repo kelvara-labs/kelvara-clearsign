@@ -405,6 +405,37 @@
           "space": 74800
         }
       }
+    },
+    "program:ComputeBudget111111111111111111111111111111": {
+      "method": "getAccountInfo",
+      "params": [
+        "ComputeBudget111111111111111111111111111111",
+        {
+          "encoding": "base64",
+          "commitment": "finalized",
+          "dataSlice": {
+            "offset": 0,
+            "length": 36
+          }
+        }
+      ],
+      "result": {
+        "context": {
+          "slot": 466872553,
+          "apiVersion": "4.3.0-alpha.2"
+        },
+        "value": {
+          "lamports": 1,
+          "data": [
+            "Y29tcHV0ZV9idWRnZXRfcHJvZ3JhbQ==",
+            "base64"
+          ],
+          "owner": "NativeLoader1111111111111111111111111111111",
+          "executable": true,
+          "rentEpoch": 18446744073709552000,
+          "space": 22
+        }
+      }
     }
   }
 }

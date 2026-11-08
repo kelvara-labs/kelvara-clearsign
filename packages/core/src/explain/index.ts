@@ -154,6 +154,36 @@ export const RULE_TEMPLATES: Readonly<Record<string, RuleTemplate>> = {
     why: "Simulation shows only a fee or a normal purchase, but the transaction also grants control that a balance preview cannot show.",
     advice: "Read what you authorize, not only what the simulation shows."
   },
+  "fact.memo": {
+    title: "Signs a memo",
+    why: "A memo is plain text recorded with the transaction; it moves no funds and gives no one any power.",
+    advice: "Check that the text is what you expect to put your name to."
+  },
+  "fact.sol_transfer": {
+    title: "Sends SOL",
+    why: "SOL leaves the sender's account for the recipient once the transaction lands.",
+    advice: "Check the amount and the full recipient address."
+  },
+  "fact.token_transfer": {
+    title: "Sends tokens",
+    why: "Tokens leave the sender's token account for the recipient once the transaction lands.",
+    advice: "Check the amount, the token and the full recipient address."
+  },
+  "fact.priority_fee": {
+    title: "Pays a priority fee",
+    why: "A unit limit and price make the fee payer pay extra so the transaction is processed sooner; this is a fee, not a permission.",
+    advice: "Check that the fee is acceptable for what you are doing."
+  },
+  "fact.network_fee": {
+    title: "Pays the network fee",
+    why: "Every transaction pays a fee per signature, taken from the fee payer.",
+    advice: "Check who the fee payer is."
+  },
+  "fact.no_permission_change": {
+    title: "Changes no permissions",
+    why: "Every instruction is understood and none grants or revokes an authority, delegate, owner or upgrade permission.",
+    advice: "This covers permissions only; still check amounts and recipients."
+  },
   "graph.capability_preview": {
     title: "What the new authority can do",
     why: "These are the instructions the new authority can call once it holds the power, ranked by the damage they can do.",
@@ -235,6 +265,17 @@ export function explainClaim(claim: Claim): ClaimExplanation {
 
 const levelNum = (l: AlertLevel): number => Number(l.slice(1));
 
+/** Strongest fact first: what the transaction does matters more than what it costs. */
+const FACT_ORDER = ["fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
+
+/** L0 headline: says what the transaction does; says "No risks found" only when every instruction was understood. */
+function calmHeadline(report: Report, claims: ClaimExplanation[]): string {
+  const strongest = FACT_ORDER.map((id) => claims.find((c) => c.ruleId === id)).find((c) => !!c);
+  const allUnderstood = claims.some((c) => c.ruleId === "fact.no_permission_change");
+  const head = allUnderstood ? "No risks found" : `${report.alert.label}: nothing above notice level found; not every instruction is understood`;
+  return strongest ? `${head}: ${strongest.title.charAt(0).toLowerCase()}${strongest.title.slice(1)}` : head;
+}
+
 /** The default explanation of a report: templates only, deterministic. */
 export function explainReport(report: Report): ReportExplanation {
   const byId = new Map(report.claims.map((c) => [c.id, c]));
@@ -247,7 +288,7 @@ export function explainReport(report: Report): ReportExplanation {
     .map(({ c }) => c);
   const claims = [...alertIds.map((id) => byId.get(id)!), ...rest].map(explainClaim);
   const titles = [...new Set(claims.filter((c) => alertSet.has(c.claimId)).map((c) => c.title))];
-  const headline = titles.length ? `${report.alert.label}: ${titles.join("; ")}` : `${report.alert.label}: nothing above notice level found`;
+  const headline = titles.length ? `${report.alert.label}: ${titles.join("; ")}` : calmHeadline(report, claims);
   const body: Omit<ReportExplanation, "digest"> = { version: EXPLAIN_VERSION, reportDigest: report.digest, headline, claims };
   return { ...body, digest: canonicalDigest(body) };
 }

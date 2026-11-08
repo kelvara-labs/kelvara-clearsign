@@ -248,7 +248,7 @@ describe("evidence-bound intent", () => {
       withUnknown[0]!.push({...withUnknown[0]![0]!, index: 99, programAddress: "Vote111111111111111111111111111111111111111" as Address, programName: null, data: new Uint8Array([7, 7])});
       expect(context(session, state, withUnknown).complex).toBe(true);
       const badBudget = structuredClone(decoded);
-      badBudget[0]![0]!.data = new Uint8Array([0, 1, 2]);
+      badBudget[0]![0] = {...badBudget[0]![0]!, status: "unknown", name: null, args: null, data: new Uint8Array([0, 1, 2])};
       expect(context(session, state, badBudget).complex).toBe(true);
       checked++;
     }

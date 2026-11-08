@@ -5,7 +5,7 @@ export interface ProgramSpec {
   programId: string;
   priority: "P0" | "P0-demo" | "P1";
   /** idl: decoded from a Codama root (native Codama IDL or converted Anchor IDL); loader/memo: hand-written. */
-  decoder: "idl" | "loader" | "memo";
+  decoder: "idl" | "loader" | "memo" | "computeBudget";
   kind?: "codama" | "anchor";
   repo?: string;
   commit?: string;
@@ -50,5 +50,6 @@ export const PROGRAMS: readonly ProgramSpec[] = [
     },
     note: "demo upgrade target (packages/scenarios/programs/marginfi_v2.idl.json is the same IDL account content); also PLAN P1 (heuristic, low confidence)"
   },
-  { name: "memo", programId: "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr", priority: "P1", decoder: "memo", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: false }
+  { name: "memo", programId: "MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr", priority: "P1", decoder: "memo", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: false },
+  { name: "compute-budget", programId: "ComputeBudget111111111111111111111111111111", priority: "P1", decoder: "computeBudget", builtinSource: "hand-written decoder packages/core/src/decode/builtin.ts", capabilities: true }
 ];
