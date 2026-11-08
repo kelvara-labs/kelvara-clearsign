@@ -119,3 +119,34 @@ for (const [role, level] of [["l2-trap", "L2"], ["l3-admin", "L3"], ["l4-sweep",
     expect((await calls(page)).count).toBe(0);
   });
 }
+
+for (const role of ["l2-trap", "l3-admin", "l4-sweep"] as const) {
+  test(`${role}: decision buttons and all ancestors are fully opaque with no filter or transform (IntersectionObserver v2 gate)`, async ({ ext }) => {
+    if (!hasRealEngine()) pending("real engine not wired into the extension");
+    if (CASES_MISSING) pending(`localnet cases unavailable: ${CASES_MISSING}`);
+    if (!hasReportUi()) pending("report UI not landed");
+    const c = await localCase(role);
+    const page = await openDapp(ext, "localnet");
+    const p = startSign(page, { path: "ws-app-ready", txs: [c.tx], chain: c.chain, account: c.signer });
+    const m = await waitForModal(ext, 45_000);
+    expect(m, `${role}: no report modal`).not.toBeNull();
+    const bad = await m!.evaluate(() => {
+      const out: string[] = [];
+      const buttons = document.querySelectorAll("[data-kelvara-action]");
+      for (const b of Array.from(buttons)) {
+        for (let n: Element | null = b; n; n = n.parentElement) {
+          const s = getComputedStyle(n);
+          const tag = `${b.getAttribute("data-kelvara-action")} <- ${n.tagName.toLowerCase()}.${n.className}`;
+          if (s.opacity !== "1") out.push(`${tag} opacity=${s.opacity}`);
+          if (s.filter !== "none") out.push(`${tag} filter=${s.filter}`);
+          if (s.transform !== "none") out.push(`${tag} transform=${s.transform}`);
+        }
+      }
+      return { out, count: buttons.length };
+    });
+    expect(bad.out, `${role}: non-opaque or transformed ancestors`).toEqual([]);
+    const block = m!.locator(SEL.block).first();
+    if (await block.count()) { await block.click(); expectRejected(await within(p, 10_000), `${role} Block`); }
+    expect((await calls(page)).count).toBe(0);
+  });
+}
