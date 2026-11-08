@@ -19,6 +19,7 @@ import {
   type Risk,
   VIEW_CAPS
 } from "../shared/report-view.js";
+import { authorizeFacts, factSummary, humanSimulation } from "./facts-text.js";
 import { idlPathFor } from "./idl-paths.js";
 
 export type Level = 0 | 1 | 2 | 3 | 4;
@@ -80,18 +81,30 @@ function rankCapabilities(r: Report): CapabilityChange[] {
     }));
 }
 
+/** Programs and instruction count the report can name when nothing was decoded into facts. */
+function undecoded(r: Report): string {
+  const ix = r.evidence.filter((e) => e.type === "instruction");
+  const programs = [...new Set(ix.map((e) => String((e.data as { programId?: unknown } | null)?.programId ?? e.address ?? "")).filter(Boolean))];
+  const n = ix.length;
+  if (!n) return "Unknown: this report does not describe what the instructions do. Treat it as unchecked.";
+  return `Unknown: ${n} instruction${n === 1 ? "" : "s"} could not be described${programs.length ? ` (program${programs.length === 1 ? "" : "s"} ${programs.join(", ")})` : ""}. Treat them as unchecked.`;
+}
+
 function authorizes(r: Report): string | null {
   const parts: string[] = [];
   const list = (caps: Capability[]) => caps.map((c) => `${capPhrase(c)}${c.holder ? ` (holder ${c.holder})` : ""}`).join("; ");
   if (r.capabilities.granted.length) parts.push(`Grants ${list(r.capabilities.granted)}.`);
   if (r.capabilities.revoked.length) parts.push(`Revokes ${list(r.capabilities.revoked)}.`);
-  return parts.length ? clip(parts.join(" "), MAX_TEXT) : null;
+  const facts = authorizeFacts(r);
+  parts.push(...facts);
+  if (!parts.length) parts.push(undecoded(r));
+  return clip(parts.join(" "), MAX_TEXT);
 }
 
 function simulationLine(r: Report): string | null {
   const s = r.simulation;
   if (s.status === "not_run") return null;
-  return clip(s.status === "failed" ? `Simulation failed: ${s.summary}` : s.summary, MAX_TEXT);
+  return clip(s.status === "failed" ? `Simulation failed: ${s.summary}` : humanSimulation(s.summary, r.session.transactions.length), MAX_TEXT);
 }
 
 /** Preview entries, "can deploy any code" first (stable), each entry's unlocks in rubric order. */
@@ -215,12 +228,17 @@ function claimsAndEvidence(r: Report, ex: ReportExplanation): { claims: ViewClai
 function header(r: Report, ex: ReportExplanation): { title: string; summary: string } {
   const byId = new Map(r.claims.map((c) => [c.id, c]));
   const top = r.alert.claimIds.map((id) => byId.get(id)!);
-  const tally = `${r.counts.claims} claim(s), ${r.counts.granted} granted and ${r.counts.revoked} revoked capability change(s).`;
-  if (top.length === 0) return { title: `${r.alert.label}: no finding reaches a notice level`, summary: tally };
+  // Counts only as a small secondary sentence, and only when something changed.
+  const g = r.counts.granted, v = r.counts.revoked;
+  const tally = g + v > 0 ? `${g} granted and ${v} revoked capability change(s).` : "";
+  if (top.length === 0) {
+    const human = factSummary(r) ?? "No finding reaches a notice level, but SignGuard could not describe what this request does.";
+    return { title: clip(ex.headline.replace(/^([^:]+): /, "$1 · "), MAX_SHORT), summary: clip(`${human} ${tally}`.trim(), MAX_TEXT) };
+  }
   return {
     // Template headline: the alert label and the rule titles of the alert claims (engine explainReport).
     title: clip(ex.headline, MAX_SHORT),
-    summary: clip(`${top.map((c) => sentence(c.statement)).join(" ")} ${tally}`, MAX_TEXT)
+    summary: clip(`${top.map((c) => sentence(c.statement)).join(" ")} ${tally}`.trim(), MAX_TEXT)
   };
 }
 
