@@ -231,4 +231,27 @@ describe("evidence-bound intent", () => {
     expect(validateIntentContext(c, [...hashes].reverse().concat(hashes))).toBeNull();
     expect(validateIntentContext(null, hashes)).toBeNull();
   });
+  it("treats real wallet transfers carrying ComputeBudget settings as routine; unknown programs and undecodable budget data stay complex", async () => {
+    const BUDGET = "ComputeBudget111111111111111111111111111111";
+    let checked = 0;
+    for (const c of poisonManifest.cases.filter((x) => x.kind === "first-send")) {
+      const {session, state} = await requestCase(c);
+      const decoded = decoder.decodeSession(session);
+      const flat = decoded.flat();
+      if (!flat.some((ix) => ix.programAddress === BUDGET) || flat.length !== 3 || flat[2]!.name !== "transferSol") continue;
+      const base = context(session, state, decoded);
+      expect(base.complex).toBe(false);
+      expect(base.candidates[0]?.kind).toBe("transfer");
+      expect(base.fallbackId).toBe(base.candidates[0]!.id);
+      expect(base.candidates.some((x) => x.kind === "unknown")).toBe(false);
+      const withUnknown = structuredClone(decoded);
+      withUnknown[0]!.push({...withUnknown[0]![0]!, index: 99, programAddress: "Vote111111111111111111111111111111111111111" as Address, programName: null, data: new Uint8Array([7, 7])});
+      expect(context(session, state, withUnknown).complex).toBe(true);
+      const badBudget = structuredClone(decoded);
+      badBudget[0]![0]!.data = new Uint8Array([0, 1, 2]);
+      expect(context(session, state, badBudget).complex).toBe(true);
+      checked++;
+    }
+    expect(checked).toBeGreaterThan(0);
+  });
 });

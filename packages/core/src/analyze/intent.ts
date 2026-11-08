@@ -41,6 +41,13 @@ export function addIntentSourceEvidence(ctx: RuleContext): void {
   }
 }
 
+const COMPUTE_BUDGET_PROGRAM = "ComputeBudget111111111111111111111111111111";
+const BUDGET_LENGTHS: Record<number, number> = {1: 5, 2: 5, 3: 9, 4: 5};
+/** Known fee/priority settings only: heap frame, unit limit, unit price, loaded accounts size limit. Anything else stays unknown. */
+function isBudgetSetting(ix: DecodedInstruction): boolean {
+  return ix.programAddress === COMPUTE_BUDGET_PROGRAM && ix.data.length > 0 && BUDGET_LENGTHS[ix.data[0]!] === ix.data.length;
+}
+
 export function buildIntentContext(input: {session: Session; decoded: DecodedInstruction[][]; state: RuleState; report: Report; decoder?: Decoder}): IntentContext {
   const { session, decoded, state, report } = input;
   // Matches the browser capture cap. Never silently omit hashes from the binding.
@@ -79,6 +86,7 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     }
   }
   for (const {ix, txIndex, proposed, source, sourceAddress} of instructions) {
+    if (isBudgetSetting(ix)) continue;
     const evidence = report.evidence.filter((e) => (e.transactionIndex === txIndex && e.type === "instruction") || (sourceAddress !== null && e.address === sourceAddress && e.type === "account")).map((e) => e.id);
     if (ix.status === "named" && ix.programAddress === TOKEN_2022_PROGRAM && ix.name === "setTransferFee") {
       const bp = arg(ix, "transferFeeBasisPoints"), max = arg(ix, "maximumFee"), mint = accountNamed(ix, "mint");
@@ -105,11 +113,12 @@ export function buildIntentContext(input: {session: Session; decoded: DecodedIns
     const recipient = r ?? `unresolved owner of token account ${t.tokenAccount}`;
     add("transfer", 0, `Did you intend to send ${amount} to ${recipient}?`, `Decoded signed instruction ${t.ix.index} in transaction ${t.txIndex}: ${amount} to ${recipient}. ${h && r ? `${count} successful outgoing transaction(s) to this exact recipient observed in recorded history ${h.since} to ${h.now}${partial ? " (partial)" : ""}.` : "Previous outgoing activity or exact recipient unknown."} Familiarity does not establish safety.`, [], report.evidence.filter((e) => e.transactionIndex === t.txIndex && e.instructionPath?.[0] === t.ix.index).map((e) => e.id));
   }
-  const onlyMemo = instructions.length > 0 && instructions.every(({ix}) => ix.status === "named" && [MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress));
+  const effective = instructions.filter(({ix}) => !isBudgetSetting(ix));
+  const onlyMemo = effective.length > 0 && effective.every(({ix}) => ix.status === "named" && [MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress));
   if (onlyMemo) add("memo", 0, "Did you intend to sign this memo?", `Decoded signed transactions ${report.session.transactions.map((t) => t.index).join(", ")} call only the Memo program. A memo label does not establish semantics for any other instruction.`, [], report.evidence.filter((e) => e.type === "instruction").map((e) => e.id));
   if (!candidates.length) add("unknown", 2, "Did you intend to authorize these effects?", "The available decoded instructions do not establish a supported routine intent; effects remain unknown.", [], report.evidence.map((e) => e.id));
   candidates.sort((a, b) => b.priority - a.priority);
-  const routine = instructions.every(({ix}) => ix.status === "named" && ([MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress) || requestTransfers({ session, decoded: [[ix]], state }, state.wallet ?? "").some((t) => t.recipient !== null)));
+  const routine = effective.every(({ix}) => ix.status === "named" && ([MEMO_PROGRAM, MEMO_V1_PROGRAM].includes(ix.programAddress) || requestTransfers({ session, decoded: [[ix]], state }, state.wallet ?? "").some((t) => t.recipient !== null)));
   if (!routine && candidates.every((c) => c.kind === "transfer" || c.kind === "memo")) {
     add("unknown", 2, "Did you intend to authorize additional effects beyond this transfer?", "Additional decoded instructions are not covered by a supported routine intent template; their effects remain unresolved here.", [], report.evidence.map((e) => e.id));
     candidates.sort((a, b) => b.priority - a.priority);
