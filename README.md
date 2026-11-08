@@ -21,13 +21,13 @@
 
 ## Demo video
 
-<!-- VIDEO PLACEHOLDER: replace the link and thumbnail below once the video is uploaded. -->
 <p align="center">
-  <a href="https://youtu.be/VIDEO_ID_HERE">
-    <img src="docs/assets/cover.png" alt="Watch the 2-minute ClearSign demo" width="720">
+  <a href="https://github.com/kelvara-labs/kelvara-clearsign/releases/download/demo-video/clearsign-demo.mp4">
+    <img src="docs/assets/title-card.png" alt="Watch the 2-minute ClearSign demo" width="720">
   </a>
   <br>
-  <i>2-minute demo: coming soon</i>
+  <a href="https://github.com/kelvara-labs/kelvara-clearsign/releases/download/demo-video/clearsign-demo.mp4"><b>▶ Watch the 2-minute demo (MP4)</b></a> ·
+  <a href="https://github.com/kelvara-labs/kelvara-clearsign/releases/tag/demo-video">release page</a>
 </p>
 
 ## Why ClearSign
