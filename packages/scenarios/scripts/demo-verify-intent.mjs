@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Bundle via demo:verify-intent. Read-only proof against the real prepared proposals.
 import assert from 'node:assert/strict';
+import { TextDecoder } from 'node:util';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { analyzeSession, ingestSession, createRpcAccountReader, validateIntentContext, loadRegistry } from '../.devnet/fees/intent-engine.mjs';
