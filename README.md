@@ -63,7 +63,7 @@ Gates: G1 build, G2 decode, G3 rules, G4 report contract, G5 registry, G6 localn
 
 ## Test playground
 
-Open http://localhost:8780 while the demo server is running. It has a benign memo (L0), a Token-2022 trap (L2), a Squads authority hijack (L3), a wallet sweep (L4), and a genuine fee-change proposal (L1), all on devnet. Every action requests a signature preview; the page never submits it.
+Open http://localhost:47731 while the demo server is running. It has a benign memo (L0), a Token-2022 trap (L2), a Squads authority hijack (L3), a wallet sweep (L4), and a genuine fee-change proposal (L1), all on devnet. Every action requests a signature preview; the page never submits it.
 
 Connect a devnet wallet. The page shows one shared funded demo account and its local import-file path. Import/select it once and connect to enable all five scenarios, then preview and choose Block. A benign memo can use any funded devnet account. No license is needed. See DEMO.md for setup, `pnpm demo:prepare` to prepare the shared account, and `pnpm demo:serve` startup; run it from the checkout containing the prepared scenario state. The current server runs from the scenarios worktree.
 
