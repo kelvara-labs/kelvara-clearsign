@@ -98,7 +98,11 @@ export interface ReportDetails {
   balances?: string[];
 }
 
+/** A token named in the report text: the label as written there and its full mint (shown on hover). */
+export interface TokenRef { mint: string; label: string }
+
 export interface ReportView {
+  tokens?: TokenRef[];
   intent?: ReportIntent;
   details?: ReportDetails;
   /** Message-signing review (signMessage / signIn); the transaction sections are then empty. */
@@ -226,7 +230,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : []), ...(Object.hasOwn(x, "tokens") ? ["tokens"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -244,6 +248,7 @@ export function validateReportView(x: unknown): ReportView | null {
   if (Object.hasOwn(x, "network") && !oneOf(x.network, REPORT_NETWORKS)) return null;
   if (Object.hasOwn(x, "routedBy") && !str(x.routedBy, 64)) return null;
   if (Object.hasOwn(x, "trustedSite") && !str(x.trustedSite, 64)) return null;
+  if (Object.hasOwn(x, "tokens") && !list(x.tokens, (t): t is TokenRef => plain(t) && exact(t, ["mint", "label"]) && str(t.mint, 64) && str(t.label, 64) && t.label.length > 0, 32)) return null;
   return x as unknown as ReportView;
 }
 

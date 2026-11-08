@@ -1,4 +1,6 @@
 import type { Explanation } from "../shared/explanation.js";
+import type { TokenRef } from "../shared/report-view.js";
+import { withTokens } from "./tokens.js";
 import type { ReportIntent } from "../intent/selection.js";
 function node<K extends keyof HTMLElementTagNameMap>(tag: K, text = "", attrs: Record<string, string> = {}): HTMLElementTagNameMap[K] {
   const e = document.createElement(tag);
@@ -29,13 +31,15 @@ export interface Assessment {
  * changes the transaction, its risk level or its signing controls: "Yes" only opens the review details,
  * "No" rejects the request.
  */
-export function assessmentCard(intent: ReportIntent | undefined, level: number | null, question: string = GENERIC_QUESTION): Assessment {
+export function assessmentCard(intent: ReportIntent | undefined, level: number | null, question: string = GENERIC_QUESTION, tokens?: TokenRef[]): Assessment {
   const asking = hasIntentQuestion(intent, level);
   const card = node("section", "", { class: "intent-card assessment", "data-report-step": "intent", "data-intent-status": intent?.status ?? "template" });
   if (asking) card.setAttribute("data-kelvara-intent", "");
-  const caption = node("p", "Preparing assessment…", { class: "eyebrow caption", role: "status", "data-intent-source": intent?.source ?? "engine" });
+  const caption = node("p", "Preparing…", { class: "eyebrow caption", role: "status", "data-intent-source": intent?.source ?? "engine" });
   const body = node("div", "", { class: "explanation", "data-intent-explain": "" });
-  card.append(node("h2", "Assessment", { id: "assessment-title" }), caption, body);
+  const head = node("div", "", { class: "assessment-head" });
+  head.append(node("h2", "Assessment", { id: "assessment-title" }), caption);
+  card.append(head, body);
 
   if (asking) {
     const selected = intent.context.candidates.find((c) => c.id === intent.selectedId)!;
@@ -43,7 +47,7 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
     const reasons = node("ul");
     for (const id of intent.reasonIds) {
       const reason = selected.reasons.find((r) => r.id === id)!;
-      reasons.append(node("li", reason.text, { "data-intent-reason": id }));
+      reasons.append((() => { const li = node("li", "", { "data-intent-reason": id }); li.append(...withTokens(reason.text, tokens)); return li; })());
     }
     card.append(reasons);
     if (selected.kind === "transfer" || selected.kind === "poisoning") card.append(node("p", intent.context.historyNote, { class: "muted", "data-intent-history": "" }));
@@ -76,9 +80,9 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
     confirm,
     reject,
     show(explanation) {
-      caption.textContent = explanation.source === "ai" || intent?.source === "ai" ? "Assessment by your AI provider" : "Assessment by ClearSign";
+      caption.textContent = explanation.source === "ai" || intent?.source === "ai" ? "AI provider" : "ClearSign";
       caption.setAttribute("data-explain-source", explanation.source);
-      body.replaceChildren(...explanation.sentences.map((s) => node("p", s.text, { "data-claim-ids": s.claimIds.join(",") })));
+      body.replaceChildren(...explanation.sentences.map((s) => (() => { const p = node("p", "", { "data-claim-ids": s.claimIds.join(",") }); p.append(...withTokens(s.text, tokens)); return p; })()));
     }
   };
 }

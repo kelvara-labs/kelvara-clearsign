@@ -241,11 +241,11 @@ describe("assessment card (step 1)", () => {
     const elements = fakeDom();
     const a = assessmentCard(templateIntent(context), 2);
     const caption = elements.find(e => has(e, "data-intent-source"))!;
-    expect(caption.textContent).toBe("Preparing assessment…");
+    expect(caption.textContent).toBe("Preparing…");
     a.show({ source: "signguard", sentences: [{ text: "One.", claimIds: [] }] });
-    expect(caption.textContent).toBe("Assessment by ClearSign");
+    expect(caption.textContent).toBe("ClearSign");
     a.show({ source: "ai", sentences: [{ text: "Two.", claimIds: [] }] });
-    expect(caption.textContent).toBe("Assessment by your AI provider");
+    expect(caption.textContent).toBe("AI provider");
     expect(elements.find(e => has(e, "data-intent-explain"))!.children.map(c => c.textContent)).toEqual(["Two."]);
     expect(fallbackExplanation(reportView).source).toBe("signguard");
   });

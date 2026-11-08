@@ -20,6 +20,7 @@ import {
   type Risk,
   VIEW_CAPS
 } from "../shared/report-view.js";
+import { reportMints, relabel, tokenAmountText, tokenLabels, tokenMetas, type TokenMeta } from "./tokens.js";
 import { authorizeFacts, factLines, factSummary, hasNoPermissionChange, humanSimulation, NO_PERMISSION_TEXT } from "./facts-text.js";
 import { idlPathFor } from "./idl-paths.js";
 
@@ -159,6 +160,13 @@ const argRows = (args: unknown): EvidenceField[] => {
   }
   return rows;
 };
+/** Instruction arguments; an amount next to a known mint reads "23.18 USDC" instead of base units. */
+function tokenArgRows(args: unknown, accounts: unknown, metas: Map<string, TokenMeta>, labels: Map<string, string>): EvidenceField[] {
+  const a = args && typeof args === "object" && !Array.isArray(args) ? (args as Record<string, unknown>) : {};
+  const mintAccount = (Array.isArray(accounts) ? accounts : []).map((x) => (x && typeof x === "object" ? (x as Record<string, unknown>) : {})).find((x) => x.name === "mint");
+  const mint = typeof a.mint === "string" ? a.mint : typeof mintAccount?.address === "string" ? mintAccount.address : null;
+  return argRows(args).map((row) => (mint && /^(amount|tokenAmount|uiAmount)$/.test(row.key) && /^\d+$/.test(row.value) ? { key: row.key, value: clip(tokenAmountText(row.value, mint, metas, labels, a.decimals) ?? row.value, MAX_SHORT) } : row));
+}
 const accountRows = (accounts: unknown): EvidenceField[] => {
   const rows: EvidenceField[] = [];
   if (Array.isArray(accounts)) {
@@ -170,11 +178,6 @@ const accountRows = (accounts: unknown): EvidenceField[] => {
   return rows;
 };
 
-const KNOWN_MINTS: Record<string, string> = {
-  EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: "USDC",
-  Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB: "USDT",
-  So11111111111111111111111111111111111111112: "wSOL"
-};
 const SYSTEM_ID = "11111111111111111111111111111111";
 const big = (v: unknown): bigint | null => { try { return typeof v === "bigint" ? v : typeof v === "string" || typeof v === "number" ? BigInt(v) : null; } catch { return null; } };
 const amount = (raw: bigint, decimals: number): string => {
@@ -184,7 +187,7 @@ const amount = (raw: bigint, decimals: number): string => {
 };
 
 /** "You · −0.000019116 SOL", "5Bzo…EUD6 · +4.862954 USDC", "73eQ…8syi · account closed". */
-function balanceLines(r: Report): string[] {
+function balanceLines(r: Report, metas: Map<string, TokenMeta>, labels: Map<string, string>): string[] {
   const payer = (() => {
     for (const e of r.evidence) { const d = e.data as Record<string, unknown> | null; if (e.type === "derivation" && d && typeof d.feePayer === "string") return d.feePayer; }
     return null;
@@ -201,8 +204,10 @@ function balanceLines(r: Report): string[] {
     for (const c of Array.isArray(d.tokenChanges) ? d.tokenChanges : []) {
       const x = c as Record<string, unknown>, delta = big(x.delta);
       if (typeof x.owner !== "string" || typeof x.mint !== "string" || delta === null || delta === 0n) continue;
-      const dec = typeof x.decimals === "number" ? x.decimals : null;
-      out.push(`${who(x.owner)} · ${dec === null ? `${delta < 0n ? "−" : "+"}${(delta < 0n ? -delta : delta).toString()} base units` : amount(delta, dec)} ${KNOWN_MINTS[x.mint] ?? `token ${shortId(x.mint)}`}`);
+      const dec = typeof x.decimals === "number" ? x.decimals : metas.get(x.mint)?.decimals ?? null;
+      const label = labels.get(x.mint) ?? `token ${shortId(x.mint)}`;
+      const sign = delta < 0n ? "−" : "+";
+      out.push(`${who(x.owner)} · ${dec === null ? `${sign}${(delta < 0n ? -delta : delta).toString()} base units of ${label}` : `${amount(delta, dec)} ${label}`}`);
     }
     for (const c of Array.isArray(d.stateChanges) ? d.stateChanges : []) {
       const x = c as Record<string, unknown>;
@@ -217,6 +222,7 @@ function balanceLines(r: Report): string[] {
 
 /** Step 2 of the report: ordered instructions named from the IDL, and what changes after signing. */
 function reviewDetails(r: Report): ReportDetails {
+  const metas = tokenMetas(r), labels = tokenLabels(reportMints(r, metas), metas);
   const ixs = instructionViews(r).slice(0, MAX_ITEMS);
   const multi = r.session.transactions.length > 1;
   const changes: string[] = [];
@@ -226,9 +232,9 @@ function reviewDetails(r: Report): ReportDetails {
   for (const c of r.claims) if (c.kind === "Fact" && c.level !== "L0" && c.level !== null && !c.ruleId?.startsWith("fact.")) changes.push(clip(c.statement.trim(), 600));
   if (hasNoPermissionChange(r)) changes.push(NO_PERMISSION_TEXT);
   return {
-    instructions: ixs.map((i) => ({ tx: i.tx, path: i.path, program: clip(i.program, MAX_SHORT), name: i.name ? clip(i.name, MAX_SHORT) : null, args: argRows(i.args), accounts: accountRows(i.accounts) })),
+    instructions: ixs.map((i) => ({ tx: i.tx, path: i.path, program: clip(i.program, MAX_SHORT), name: i.name ? clip(i.name, MAX_SHORT) : null, args: tokenArgRows(i.args, i.accounts, metas, labels), accounts: accountRows(i.accounts) })),
     changes: [...new Set(changes)].slice(0, 32),
-    balances: balanceLines(r)
+    balances: balanceLines(r, metas, labels)
   };
 }
 
@@ -439,20 +445,33 @@ export function fromReport(input: unknown, hashes: readonly string[], routedBy?:
     const head: { title: string; summary: string; routed?: boolean } = !r.session.complete && LEVELS[r.alert.level] < 2
       ? { title: "Warning: analysis incomplete, some accounts could not be resolved", summary: header(r, ex).summary }
       : header(r, ex, level < 2 ? routedBy : undefined);
-    const view = validateReportView({
-      title: head.title,
-      summary: head.summary,
-      simulation: simulationLine(r),
-      authorizes: authorizes(r),
-      details: reviewDetails(r),
-      capabilities: rankCapabilities(r),
-      preview: previews(r),
-      claims: viewClaims,
+    const metas = tokenMetas(r), labels = tokenLabels(reportMints(r, metas), metas);
+    const tl = (t: string, max: number = MAX_TEXT): string => clip(relabel(t, labels), max);
+    const factText = new Map(factLines(r).filter((f) => f.rule === "fact.token_transfer" || f.rule === "fact.swap").map((f) => [f.claimId, `${f.text}.`]));
+    const byClaimId = new Map(r.claims.map((x) => [x.id, x]));
+    const humanFact = (text: string, human: string | undefined, statement: string | undefined): string => (!human ? text : statement && text.includes(statement) ? text.replace(statement, human.replace(/\.$/, "")) : `${human} ${text}`);
+    const details = reviewDetails(r);
+    const body = {
+      title: tl(head.title, MAX_SHORT),
+      summary: tl(head.summary),
+      simulation: (() => { const s = simulationLine(r); return s === null ? null : tl(s); })(),
+      authorizes: (() => { const a = authorizes(r); return a === null ? null : tl(a); })(),
+      details: {
+        ...details,
+        changes: details.changes.map((c) => tl(c, 600)),
+        instructions: details.instructions.map((i) => ({ ...i, args: i.args.map((f) => ({ ...f, value: tl(f.value, MAX_SHORT) })), accounts: i.accounts.map((f) => ({ ...f, value: tl(f.value, MAX_SHORT) })) }))
+      },
+      capabilities: rankCapabilities(r).map((c) => ({ ...c, authority: tl(c.authority, MAX_SHORT), holder: tl(c.holder, MAX_SHORT) })),
+      preview: previews(r).map((p) => ({ ...p, authority: tl(p.authority, MAX_SHORT), can: p.can.map((a) => ({ ...a, detail: tl(a.detail, MAX_SHORT) })) })),
+      claims: viewClaims.map((c) => ({ ...c, title: tl(c.title, MAX_SHORT), text: tl(humanFact(c.text, factText.get(c.id), byClaimId.get(c.id)?.statement)), advice: c.advice === null ? null : tl(c.advice) })),
       evidence,
       messageHashes: [...hashes],
       limited: false,
       ...(head.routed && routedBy ? { routedBy } : {})
-    });
+    };
+    const shown = JSON.stringify([body.title, body.summary, body.simulation, body.authorizes, body.details, body.capabilities, body.preview, body.claims]);
+    const tokens = [...labels].filter(([, l]) => shown.includes(l)).slice(0, 32).map(([mint, label]) => ({ mint, label }));
+    const view = validateReportView(tokens.length ? { ...body, tokens } : body);
     if (!view) return fail("engine error: report cannot be shown");
     return { ok: true, level, report: view };
   } catch (e) {

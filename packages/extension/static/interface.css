@@ -746,7 +746,9 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 .calm-head .level-chip { margin-top: 2px; }
 .card > .report-context { margin-top: var(--space-2); }
 
-.assessment .caption { display: block; margin: 0 0 var(--space-3); padding: 0; border: 0; text-transform: none; letter-spacing: 0; font-size: var(--fs-label); font-weight: 600; color: var(--brand-mint); }
+.assessment-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-3); }
+.assessment-head h2 { margin: 0; }
+.assessment .caption { display: inline-block; margin: 0; padding: 0; border: 0; text-transform: none; letter-spacing: 0; font-size: var(--fs-label); font-weight: 600; color: var(--brand-mint); }
 .assessment[data-intent-status="selected"] .caption { color: var(--brand-violet); }
 .assessment .explanation p { margin: 0 0 var(--space-2); font-size: var(--fs-body); line-height: var(--lh-body); color: var(--text-1); }
 .assessment .question { margin: var(--space-4) 0 var(--space-2); font-size: var(--fs-title); line-height: var(--lh-title); letter-spacing: -0.01em; font-weight: 650; text-transform: none; color: var(--text-1); }
@@ -823,3 +825,5 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 .ix-args dd { margin: 0; color: var(--text-1); font-family: var(--font-mono); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
 .claim[data-claim-kind="fact"] > summary { padding-left: 26px; position: relative; }
 .claim[data-claim-kind="fact"] > summary::before { content: "✓"; position: absolute; left: 6px; color: var(--brand-mint); font-weight: 700; }
+.token { border-bottom: 1px dotted var(--text-3); cursor: help; }
+.token:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
