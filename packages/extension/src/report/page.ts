@@ -21,6 +21,11 @@ function addr(value: string): HTMLElement {
   return el("code", { class: "addr", title: value }, el("span", { class: "addr-head" }, value.slice(0, -6)), el("span", { class: "addr-tail" }, value.slice(-6)));
 }
 
+/** Plain-text "site · network" line; the designer styles it. */
+function contextLine(r: ReportView): HTMLElement {
+  return el("p", { class: "report-context" }, r.origin ? el("span", { "data-kelvara-origin": "" }, r.origin) : null, r.origin && r.network ? " · " : null, r.network ? el("span", { "data-kelvara-network": "" }, r.network) : null);
+}
+
 function section(title: string, ...kids: Kids): HTMLElement {
   return el("section", {}, el("h2", {}, title), ...kids);
 }
@@ -130,7 +135,7 @@ function render(v: WorkerVerdict, deadline: number, answer: (allow: boolean) => 
   const status = el("p", { class: "status", role: "status" });
   const secondsLeft = () => Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
   status.textContent = statusLine(v, secondsLeft());
-  banner.append(el("div", { class: "risk-top" }, el("span", { class: "level-icon", "aria-hidden": "true" }), badge), el("h1", { id: "title" }, r?.title ?? v.reason));
+  banner.append(el("div", { class: "risk-top" }, el("span", { class: "level-icon", "aria-hidden": "true" }), badge), el("h1", { id: "title" }, r?.title ?? v.reason), ...(r && (r.origin || r.network) ? [contextLine(r)] : []));
   card.append(el("header", {}, el("small", { class: "brand" }, el("img", { src: "mark.svg", alt: "" }), "Kelvara SignGuard")), banner);
 
   let answered = false;
