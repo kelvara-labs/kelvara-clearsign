@@ -1,6 +1,5 @@
 import { AI_STORAGE_KEY, DEFAULT_AI_MODEL, DEFAULT_AI_URL, providerOrigin, readProvider, type Permissions } from "../intent/provider.js";
-import { selectIntent, AI_TIMEOUT_MS } from "../intent/client.js";
-import type { IntentContext } from "@kelvara/core";
+import { SW_TEST_PROVIDER, providerTestStatus } from "../shared/provider-test.js";
 import type { Store, Outcome } from "./actions.js";
 export interface ProviderForm { url: string; model: string; key: string; enabled: boolean }
 const error = (text: string): Outcome => ({ text, kind: "err", clearField: false });
@@ -30,17 +29,12 @@ export async function deleteProvider(store: Store): Promise<Outcome> {
     return { text: "Provider and saved API key removed. Engine templates remain available.", kind: "ok", clearField: true };
   } catch { return error("Provider could not be removed; the key may still be saved. Reload and try again."); }
 }
-// Explicit provider test uses only a non-transaction test question; never reads chain data.
-const testContext: IntentContext = {
-  version: "kelvara-intent-v1", messageHashes: [], complex: true, fallbackId: "provider-test", historyNote: "Provider connection test only.",
-  candidates: [{ id: "provider-test", kind: "unknown", priority: 4, question: "Is this provider connection test intentional?", comparison: null,
-    reasons: [{ id: "provider-test-reason", text: "This is a connection test, not a transaction or chain fact.", claimIds: [], evidenceIds: [] }] }]
-};
-export async function testProvider(store: Store, permissions: Permissions, fetchFn: typeof fetch): Promise<Outcome> {
+// The UI never reads the saved provider key for Test or performs provider network requests.
+export async function requestProviderTest(send: (message: { type: string }) => Promise<unknown>): Promise<Outcome> {
   try {
-    const provider = readProvider((await store.get([AI_STORAGE_KEY]))[AI_STORAGE_KEY]);
-    if (!provider) return error("Save a provider before testing it.");
-    const result = await selectIntent(testContext, { ...provider, enabled: true }, { fetch: fetchFn, permissions, timeoutMs: AI_TIMEOUT_MS });
-    return result.source === "ai" ? { text: "Provider returned a valid structured selection. This test used no transaction data.", kind: "ok", clearField: false } : error("Provider test did not return a valid selection. Check permission, endpoint, model and authentication; engine templates remain available.");
+    const status = providerTestStatus(await send({ type: SW_TEST_PROVIDER }));
+    if (status === "ok") return { text: "Provider returned a valid structured selection. This test used no transaction data.", kind: "ok", clearField: false };
+    if (status === "not-configured") return error("Save a provider before testing it.");
+    return error("Provider test did not return a valid selection. Check permission, endpoint, model and authentication; engine templates remain available.");
   } catch { return error("Provider test unavailable. Engine templates remain available."); }
 }

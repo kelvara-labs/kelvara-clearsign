@@ -1,7 +1,8 @@
+import { testSavedProvider } from "../src/sw/provider-test.js";
 import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import { DEFAULT_AI_URL, providerOrigin, providerUrl, readProvider, type Permissions } from "../src/intent/provider.js";
-import { deleteProvider, loadProviderView, saveProvider, testProvider } from "../src/options/ai-actions.js";
+import { deleteProvider, loadProviderView, saveProvider } from "../src/options/ai-actions.js";
 import type { Store } from "../src/options/actions.js";
 const KEY = "unit-test-only-secret";
 const provider = { url: DEFAULT_AI_URL, model: "gpt-4.1-mini", key: KEY, enabled: true };
@@ -81,7 +82,7 @@ describe("provider configuration", () => {
       expect(input.candidates[0].question).toContain("connection test");
       return new Response(JSON.stringify({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify({ binding: "", candidateId: "provider-test", reasonIds: ["provider-test-reason"] }) } }] }));
     });
-    expect((await testProvider(memory({ aiProvider: provider }), permissions(), fetchFn)).kind).toBe("ok");
+    expect((await testSavedProvider({ get: memory({ aiProvider: provider }).get, permissions: permissions(), fetch: fetchFn })).status).toBe("ok");
     expect(fetchFn).toHaveBeenCalledOnce();
   });
   it("all three provider fields initially live inside collapsed details, including reload logic", () => {

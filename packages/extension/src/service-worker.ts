@@ -1,3 +1,4 @@
+import { handleProviderTest } from "./sw/provider-test.js";
 import { enhanceIntent } from "./intent/enhance.js";
 // Module service worker: validates bridge messages, runs analysis, decides.
 // Never signs, never submits, never stores wallet secrets.
@@ -103,7 +104,14 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
-  // Only our own content scripts, inside a tab.
+  const providerTest = handleProviderTest(msg, sender, { id: chrome.runtime.id, optionsUrl: chrome.runtime.getURL("options.html") }, {
+    get: keys => chrome.storage.local.get(keys), permissions: chrome.permissions, fetch: fetch.bind(globalThis)
+  });
+  if (providerTest) {
+    providerTest.then(sendResponse);
+    return true;
+  }
+  // Transaction bridge: only our own content scripts, inside a tab.
   if (sender.id !== chrome.runtime.id || !sender.tab) return false;
   if (!msg || typeof msg !== "object") return false;
   const m = msg as Record<string, unknown>;

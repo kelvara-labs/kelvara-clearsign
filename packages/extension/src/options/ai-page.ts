@@ -1,4 +1,4 @@
-import { deleteProvider, loadProviderView, saveProvider, testProvider } from "./ai-actions.js";
+import { deleteProvider, loadProviderView, saveProvider, requestProviderTest } from "./ai-actions.js";
 import type { Outcome } from "./actions.js";
 export async function mountAIOptions(): Promise<void> {
   const get = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -44,6 +44,6 @@ export async function mountAIOptions(): Promise<void> {
   };
   save.addEventListener("click", run(() => saveProvider(store, permissions, { url: url.value, key: key.value.trim(), model: model.value, enabled: enabled.checked })));
   remove.addEventListener("click", run(() => deleteProvider(store)));
-  test.addEventListener("click", run(() => testProvider(store, permissions, fetch.bind(globalThis))));
+  test.addEventListener("click", run(() => requestProviderTest(message => chrome.runtime.sendMessage(message))));
   await refresh();
 }
