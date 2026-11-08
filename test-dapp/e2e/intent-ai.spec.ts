@@ -3,70 +3,16 @@
 // The provider is saved through the real Options UI. Headless Chromium cannot accept the native permission prompt, so
 // the extension under test is a TEMP COPY of dist whose manifest gets http://127.0.0.1/* in host_permissions
 // (test-dapp/README.md). The release zip and packages/extension/dist are never modified.
-import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import os from "node:os";
+import { readFileSync } from "node:fs";
 import path from "node:path";
-import { pathToFileURL } from "node:url";
 import {
-  CASES_MISSING, DAPP_URL, EXT_DIR, ROOT, calls, expect, expectRejected, hasRealEngine, hasReportUi, localCase, openDapp, pending, reportLevel, SEL,
+  CASES_MISSING, DAPP_URL, ROOT, calls, expect, expectRejected, hasRealEngine, hasReportUi, localCase, openDapp, pending, reportLevel, SEL,
   heliusKey, startSign, test, waitForModal, within, type Ext, type LocalCase, type LocalRole
 } from "./support.js";
+import { AI_DIR, SYNTHETIC_KEY, feePayer, saveProvider, startMock } from "./ai-support.js";
 import type { Frame } from "../../tools/selfcheck/src/playwright.mjs";
 
-const AI_DIR = mkdtempSync(path.join(os.tmpdir(), "kelvara-ai-ext-"));
-cpSync(EXT_DIR, AI_DIR, { recursive: true });
-{
-  const mp = path.join(AI_DIR, "manifest.json");
-  const m = JSON.parse(readFileSync(mp, "utf8")) as { host_permissions?: string[] };
-  m.host_permissions = [...(m.host_permissions ?? []), "http://127.0.0.1/*"];
-  writeFileSync(mp, JSON.stringify(m));
-}
-process.on("exit", () => rmSync(AI_DIR, { recursive: true, force: true }));
 test.use({ extDir: AI_DIR });
-
-interface Mock { url: string; last(): MockRequest | null; close(): Promise<void> }
-interface MockRequest { path: string; mode: string; authorization: string | null; bodyText: string; input: Record<string, unknown> }
-async function startMock(mode: string): Promise<Mock> {
-  const mod = (await import(pathToFileURL(path.join(ROOT, "test-dapp/scripts/mock-provider.mjs")).href as string)) as { startMock(o: { mode: string }): Promise<Mock> };
-  return mod.startMock({ mode });
-}
-
-const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-function base58(bytes: Uint8Array): string {
-  let n = 0n;
-  for (const b of bytes) n = n * 256n + BigInt(b);
-  let out = "";
-  for (; n > 0n; n /= 58n) out = B58[Number(n % 58n)] + out;
-  for (const b of bytes) { if (b) break; out = "1" + out; }
-  return out;
-}
-/** Fee payer (first account key) of a wire transaction: the signer that sends the transfer. */
-function feePayer(txB64: string): string {
-  const raw = Buffer.from(txB64, "base64");
-  let o = 0, sigs = 0, shift = 0;
-  for (;;) { const b = raw[o++]!; sigs |= (b & 0x7f) << shift; if (!(b & 0x80)) break; shift += 7; }
-  o += sigs * 64;
-  if (raw[o]! & 0x80) o += 1;
-  o += 3;
-  while (raw[o++]! & 0x80) { /* skip account count */ }
-  return base58(raw.subarray(o, o + 32));
-}
-
-const SYNTHETIC_KEY = "VERIFIER_SYNTHETIC_PROVIDER_KEY_NEVER_REAL";
-
-async function saveProvider(ext: Ext, url: string, key?: string) {
-  const options = await ext.context.newPage();
-  await options.goto(`chrome-extension://${ext.extId}/options.html`);
-  await options.locator("#ai-provider summary").click();
-  await options.locator("#ai-url").fill(url);
-  await options.locator("#ai-model").fill("mock-model");
-  if (key) await options.locator("#ai-key").fill(key);
-  await options.locator("#ai-enabled").check();
-  await options.locator("#ai-save").click();
-  await expect(options.locator("#ai-result")).toHaveAttribute("data-kind", "ok");
-  await options.close();
-  await ext.approveConfiguredProvider();
-}
 
 interface Snapshot {
   level: string | null; actions: string[]; hashes: string[]; claims: string[];
