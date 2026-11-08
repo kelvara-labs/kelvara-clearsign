@@ -19,17 +19,17 @@ export function intentCard(intent: ReportIntent, onBlock?: () => void): HTMLElem
   }
   card.append(reasons, node("p", context.historyNote, { class: "muted", "data-intent-history": "" }));
   if (selected.comparison) {
-    const compare = node("details", "", { "data-intent-compare": "" });
+    const compare = node("details", "", { "data-intent-compare": "", open: "" });
     compare.append(node("summary", "Compare addresses"));
     const { proposed, previous, prefix, suffix } = selected.comparison;
     for (const [label, address] of [["Proposed recipient", proposed], ["Previous recipient", previous]]) {
-      compare.append(node("p", label));
+      compare.append(node("p", label, { class: "cmp-label" }));
       const code = node("code");
       // Mark exact matching prefix/suffix positions, while retaining full addresses as text.
       for (let i = 0; i < address!.length; i++) code.append(node(i < prefix || i >= address!.length - suffix ? "mark" : "span", address![i]!));
       compare.append(code);
     }
-    compare.append(node("p", `Matching positions: first ${prefix} and last ${suffix} characters. Similarity does not prove identity.`));
+    compare.append(node("p", `Matching positions: first ${prefix} and last ${suffix} characters. Similarity does not prove identity.`, { class: "cmp-note" }));
     card.append(compare);
   }
   const correction = node("details", "", { "data-intent-correction": "" });
@@ -37,7 +37,7 @@ export function intentCard(intent: ReportIntent, onBlock?: () => void): HTMLElem
   const feedback = node("p", "", { role: "status", "data-intent-feedback": "" });
   const choices = ["I expected a transfer", "I expected a fee change", "I did not expect an authority change", "I need more information"];
   choices.forEach((text, index) => {
-    const button = node("button", text, { type: "button", class: "secondary", "data-intent-choice": String(index) });
+    const button = node("button", text, { type: "button", class: "chip", "data-intent-choice": String(index) });
     button.addEventListener("click", () => { feedback.textContent = `${text}. This transaction has not changed. Use Cancel / Block below; a changed transaction requires a fresh report.`; });
     correction.append(button);
   });
