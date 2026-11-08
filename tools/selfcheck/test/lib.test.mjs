@@ -60,3 +60,9 @@ test("envFilePath: worktree uses common dir, plain clone follows a local origin"
   git(path.join(dir, "orphan"), "remote", "remove", "origin");
   assert.equal(envFilePath(path.join(dir, "orphan")), path.join(dir, "orphan", ".env"));
 });
+
+test('provider bearer values and seeded key patterns are redacted before gate logs', () => {
+  const r = makeRedactor([]);
+  assert.equal(r('Authorization: Bearer SYNTHETIC_PROVIDER_VALUE'), 'Authorization: Bearer REDACTED');
+  assert.equal(r('key=sk-proj-VERIFIER_SYNTHETIC_NOT_REAL_123456789'), 'key=REDACTED');
+});

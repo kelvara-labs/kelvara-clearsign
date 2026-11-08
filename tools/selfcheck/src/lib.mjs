@@ -61,7 +61,7 @@ export function loadEnv(cwd = ROOT) {
 // Values that must never reach a log, a report or SELFCHECK.md.
 export function secretValues(env = loadEnv()) {
   const vals = new Set();
-  for (const k of ["HELIUS_API_KEY"]) {
+  for (const k of ["HELIUS_API_KEY", "OPENAI_API_KEY", "AI_PROVIDER_KEY"]) {
     const v = env[k] ?? process.env[k];
     if (v && v.length >= 8) vals.add(v);
   }
@@ -75,7 +75,9 @@ export function makeRedactor(secrets = secretValues()) {
   return (s) => {
     let r = String(s)
       .replace(/(api[-_]?key=)[^&\s"'<>]+/gi, "$1REDACTED")
-      .replace(/("api[-_]?key"\s*:\s*")[^"]+/gi, "$1REDACTED");
+      .replace(/("api[-_]?key"\s*:\s*")[^"]+/gi, "$1REDACTED")
+      .replace(/(Authorization\s*[:=]\s*["']?Bearer\s+)[^\s"']+/gi, "$1REDACTED")
+      .replace(/\bsk-(?:proj-|svcacct-)?[A-Za-z0-9_-]{20,}/g, "REDACTED");
     if (literal) r = r.replace(literal, "REDACTED");
     return r;
   };

@@ -231,3 +231,33 @@ test("checkHosts names inert entries that no longer occur (stale allowlist)", ()
   assert.match(r.detail ?? r.note ?? JSON.stringify(r), /1 unused inert entry .*gone\.example\.org/);
   assert.deepEqual(checkHosts(b, inert.slice(0, 1)).unused, []);
 });
+
+test('optional provider capability never permits required wildcard grants', () => {
+  const m = { ...goodManifest, optional_host_permissions: ['https://*/*', 'http://localhost/*'] };
+  assert.equal(checkPermissions(m).status, 'PASS');
+  assert.equal(checkHosts(bundle({ 'manifest.json': JSON.stringify(m) })).status, 'PASS');
+  assert.equal(checkPermissions({ ...m, host_permissions: ['https://*/*'] }).status, 'FAIL');
+  for (const pattern of ['<all_urls>', '*://*/*', 'http://*/*', 'https://*.example.com/*']) {
+    assert.equal(checkPermissions({ ...m, optional_host_permissions: [pattern] }).status, 'FAIL', pattern);
+  }
+});
+
+test('seeded provider secret cannot enter dist files or zip; URL and model are not secrets', () => {
+  const seed = 'sk-proj-VERIFIER_SYNTHETIC_NOT_A_REAL_KEY_123456789';
+  assert.equal(checkNoSecrets(bundle({ 'options.js': `const key="${seed}"` })).status, 'FAIL');
+  assert.equal(checkNoSecrets(bundle({ 'options.js': 'safe' }), [seed], writeZip({ 'seed.txt': seed })).status, 'FAIL');
+  assert.equal(checkNoSecrets(bundle({ 'options.js': 'url="https://provider.example/v1";model="model-name"' })).status, 'PASS');
+  for (const encoded of secretVariants(seed)) {
+    assert.equal(checkNoSecrets(bundle({ 'seed.js': encoded }), [seed]).status, 'FAIL');
+  }
+});
+
+test('default AI host is scoped to provider-capable SW bundle; dynamic/foreign hosts still fail', () => {
+  const m = { ...goodManifest, optional_host_permissions: ['https://*/*'] };
+  const providerBundle = (code, file = 'service-worker.js') => bundle({ 'manifest.json': JSON.stringify(m), [file]: code });
+  assert.equal(checkHosts(providerBundle('fetch("https://api.openai.com/v1/chat/completions")')).status, 'PASS');
+  assert.equal(checkHosts(providerBundle('fetch("https://api.openai.com/v1")', 'hook.js')).status, 'FAIL');
+  assert.equal(checkHosts(providerBundle('fetch("https://foreign.example.com/v1")')).status, 'FAIL');
+  assert.equal(checkHosts(providerBundle('fetch(`https://${host}/v1`)')).status, 'FAIL');
+  assert.equal(checkHosts(bundle({ 'service-worker.js': 'fetch("https://api.openai.com/v1")' })).status, 'FAIL');
+});
