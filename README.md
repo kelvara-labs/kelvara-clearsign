@@ -80,7 +80,7 @@ Trusted dApps (Jupiter, Kamino and others) are matched by exact HTTPS origin. Lo
 Requirements: Node 22+, pnpm 10, Chrome 120+. The localnet gates and demo program also need the Solana CLI and `cargo-build-sbf`.
 
 ```sh
-git clone https://github.com/kelvara-xyz/kelvara-clearsign.git
+git clone https://github.com/kelvara-labs/kelvara-clearsign.git
 cd kelvara-clearsign
 cp .env.example .env          # add your HELIUS_API_KEY (never commit it)
 pnpm install --frozen-lockfile
