@@ -179,6 +179,11 @@ export const RULE_TEMPLATES: Readonly<Record<string, RuleTemplate>> = {
     why: "A Jupiter route trades the tokens in your source token account for the tokens in your destination token account; the amounts are the most you give and the least you receive.",
     advice: "Check both tokens, the amounts and the slippage tolerance."
   },
+  "fact.program_call": {
+    title: "Calls a program instruction",
+    why: "ClearSign reads the instruction's name and values, but has no deeper model of what it moves or authorizes.",
+    advice: "Check that this is the action you meant to take on this program."
+  },
   "fact.priority_fee": {
     title: "Pays a priority fee",
     why: "A unit limit and price make the fee payer pay extra so the transaction is processed sooner; this is a fee, not a permission.",
@@ -258,7 +263,10 @@ const sentence = (s: string): string => {
 };
 
 export function explainClaim(claim: Claim): ClaimExplanation {
-  const { template, source } = templateFor(claim.ruleId);
+  const { template: base, source } = templateFor(claim.ruleId);
+  // A program call is titled by its own program and instruction: "Velocity · Request remove insurance fund stake".
+  const lead = claim.statement.replace(/\.$/, "").split(": ")[0]!;
+  const template = claim.ruleId === "fact.program_call" && lead.includes(" · ") ? { ...base, title: lead } : base;
   return {
     claimId: claim.id,
     ruleId: claim.ruleId,
@@ -276,14 +284,17 @@ export function explainClaim(claim: Claim): ClaimExplanation {
 const levelNum = (l: AlertLevel): number => Number(l.slice(1));
 
 /** Strongest fact first: what the transaction does matters more than what it costs. */
-const FACT_ORDER = ["fact.unknown_instruction", "fact.swap", "fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
+const FACT_ORDER = ["fact.unknown_instruction", "fact.swap", "fact.program_call", "fact.sol_transfer", "fact.token_transfer", "fact.memo", "fact.priority_fee", "fact.network_fee", "fact.no_permission_change"];
 
 /** L0 headline: says what the transaction does; says "No risks found" only when every instruction was understood. */
 function calmHeadline(report: Report, claims: ClaimExplanation[]): string {
   const strongest = FACT_ORDER.map((id) => claims.find((c) => c.ruleId === id)).find((c) => !!c);
+  const lower = (t: string) => `${t.charAt(0).toLowerCase()}${t.slice(1)}`;
+  // Everything is decoded but some instruction is only named: say which program and action, not "can't verify".
+  if ((strongest?.ruleId === "fact.program_call" || strongest?.ruleId === "fact.swap") && !claims.some((c) => c.ruleId === "fact.unknown_instruction")) return strongest.title;
   const allUnderstood = claims.some((c) => c.ruleId === "fact.no_permission_change");
   const head = allUnderstood ? "No risks found" : "Can't fully verify this transaction";
-  return strongest ? `${head}: ${strongest.title.charAt(0).toLowerCase()}${strongest.title.slice(1)}` : head;
+  return strongest ? `${head} · ${lower(strongest.title)}` : head;
 }
 
 /** The default explanation of a report: templates only, deterministic. */

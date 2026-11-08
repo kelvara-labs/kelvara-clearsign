@@ -6,7 +6,7 @@ const text = (max: number) => z.string().check(z.minLength(1), z.maxLength(max))
 const id = text(80);
 const reasonSchema = z.strictObject({ id, text: text(600), claimIds: z.array(id).check(z.maxLength(64)), evidenceIds: z.array(id).check(z.maxLength(64)) });
 const candidateSchema = z.strictObject({
-  id, kind: z.enum(["transfer", "authority", "fees", "token-risk", "poisoning", "memo", "unknown"]),
+  id, kind: z.enum(["transfer", "authority", "fees", "token-risk", "poisoning", "memo", "swap", "unknown"]),
   priority: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4)]),
   question: text(300), reasons: z.array(reasonSchema).check(z.minLength(1), z.maxLength(6)),
   comparison: z.nullable(z.strictObject({ proposed: text(44), previous: text(44), prefix: z.int().check(z.nonnegative()), suffix: z.int().check(z.nonnegative()) }))
