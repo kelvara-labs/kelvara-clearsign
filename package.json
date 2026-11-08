@@ -45,7 +45,8 @@
     "fixtures:poison": "pnpm --filter @kelvara/scenarios fixtures:poison",
     "demo:serve": "pnpm --filter @kelvara/scenarios demo:serve",
     "demo:prepare": "pnpm --filter @kelvara/scenarios demo:prepare",
-    "demo:prepare-fees": "pnpm --filter @kelvara/scenarios demo:prepare-fees"
+    "demo:prepare-fees": "pnpm --filter @kelvara/scenarios demo:prepare-fees",
+    "demo:verify-intent": "pnpm --filter @kelvara/scenarios demo:verify-intent"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
