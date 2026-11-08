@@ -105,6 +105,10 @@ export interface ReportView {
   message?: MessageReview;
   /** Requesting page origin (scheme://host[:port], no path, query or key), shown as a "site" pill. */
   origin?: string;
+  /** Name of the trusted site (sw/trusted-sites.ts) the request origin exactly matches; display only (green site pill). Absent: not on the list. */
+  trustedSite?: string;
+  /** Name of the trusted aggregator site (sw/trusted-sites.ts) that routes this request through third-party programs. Display only. */
+  routedBy?: string;
   /** Network the request is analyzed on, shown as a "network" pill. */
   network?: ReportNetwork;
   /** Risk header: one line, what is at stake. */
@@ -222,7 +226,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -238,6 +242,8 @@ export function validateReportView(x: unknown): ReportView | null {
   if (Object.hasOwn(x, "message") && !validateMessageReview(x.message)) return null;
   if (Object.hasOwn(x, "origin") && !isOrigin(x.origin)) return null;
   if (Object.hasOwn(x, "network") && !oneOf(x.network, REPORT_NETWORKS)) return null;
+  if (Object.hasOwn(x, "routedBy") && !str(x.routedBy, 64)) return null;
+  if (Object.hasOwn(x, "trustedSite") && !str(x.trustedSite, 64)) return null;
   return x as unknown as ReportView;
 }
 

@@ -500,6 +500,8 @@ input:not([type="checkbox"]):focus, select:focus { border-color: var(--focus); b
 .program-row + .program-row, .programs-search:not([hidden]) + #programs-list > .program-row:first-child, #programs-empty { border-top: 1px solid var(--border); }
 .program-id { font-family: var(--font-mono); font-size: var(--fs-label); font-weight: 400; color: var(--text-2); margin-left: var(--space-1); }
 .program-meta { justify-content: flex-end; }
+.trusted-head { margin-top: var(--space-6); }
+.trusted-row + .trusted-row { border-top: 1px solid var(--border); }
 .program-meta .pill[data-verification="unverified"] { color: var(--risk-1-fg); border-color: var(--risk-1-border); background: var(--risk-1-bg); }
 
 #ai-provider > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-3); padding: var(--space-4) var(--space-5); min-height: 64px; cursor: pointer; list-style: none; transition: background var(--dur-fast) var(--ease); }
@@ -719,6 +721,9 @@ html[data-level="L2"] .decision .sign { border-color: var(--border-strong); colo
 /* Site and network pills under the report headline (p.report-context) */
 .report-context { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-3); font-size: 0; }
 [data-kelvara-origin], [data-kelvara-network] { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 2px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); background: var(--surface-1); color: var(--text-1); font-size: var(--fs-label); line-height: var(--lh-label); font-weight: 600; white-space: nowrap; }
+[data-kelvara-origin][data-kelvara-trusted="true"] { color: var(--brand-mint); border-color: rgba(128, 239, 211, 0.3); background: rgba(128, 239, 211, 0.07); }
+[data-kelvara-origin][data-kelvara-trusted="true"]::before { content: "\2713"; margin-right: 6px; font-family: var(--font-sans, inherit); font-weight: 700; }
+[data-kelvara-origin][data-kelvara-trusted="false"] { color: var(--risk-2-fg); border-color: var(--risk-2-border); background: var(--risk-2-bg); }
 [data-kelvara-origin] { min-width: 0; font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; display: inline-block; }
 [data-kelvara-network]::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
 [data-kelvara-network] { color: var(--risk-0-fg); }

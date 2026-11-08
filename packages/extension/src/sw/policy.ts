@@ -43,7 +43,8 @@ export async function decide(
   req: SignRequest,
   settings: Settings,
   engine: EngineLike,
-  sha256: Sha256 = webSha256
+  sha256: Sha256 = webSha256,
+  routedBy?: string
 ): Promise<WorkerVerdict> {
   let hashes: string[];
   try {
@@ -69,7 +70,7 @@ export async function decide(
   let level: 0 | 1 | 2 | 3 | 4;
   let report: ReportView | null;
   try {
-    const { level: l, ...view } = await engine.analyze(req, endpoint, hashes);
+    const { level: l, ...view } = await engine.analyze(req, endpoint, hashes, routedBy);
     level = l;
     report = validateReportView({ ...view, messageHashes: hashes, limited: false });
   } catch (e) {

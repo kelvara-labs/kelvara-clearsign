@@ -356,7 +356,7 @@ function claimsAndEvidence(r: Report, ex: ReportExplanation): { claims: ViewClai
   return { claims, evidence: [...used.values()] };
 }
 
-function header(r: Report, ex: ReportExplanation): { title: string; summary: string } {
+function header(r: Report, ex: ReportExplanation, routedBy?: string): { title: string; summary: string; routed?: boolean } {
   const byId = new Map(r.claims.map((c) => [c.id, c]));
   const top = r.alert.claimIds.map((id) => byId.get(id)!);
   // Counts only as a small secondary sentence, and only when something changed.
@@ -368,6 +368,9 @@ function header(r: Report, ex: ReportExplanation): { title: string; summary: str
     if (unknown.length) {
       const n = unknown.reduce((a, [, c]) => a + c, 0);
       const names = unknown.map(([p]) => p).join(", ");
+      if (routedBy && r.counts.granted + r.counts.revoked === 0 && r.claims.every((c) => c.level === "L0")) {
+        return { routed: true, title: clip(`Routed by ${routedBy} · ${n} third-party instruction${n === 1 ? "" : "s"}`, MAX_SHORT), summary: clip(`${routedBy} routes this trade through programs ClearSign can't read (${names}); that is normal for an aggregator. ${human}`.trim(), MAX_TEXT) };
+      }
       const lead = `It calls ${n === 1 ? "a program" : `${n} instructions on programs`} ClearSign doesn't recognize (${names}), so what ${n === 1 ? "it moves or authorizes" : "they move or authorize"} is unknown.`;
       return { title: clip(`Can't fully verify · ${n} unreadable instruction${n === 1 ? "" : "s"}`, MAX_SHORT), summary: clip(`${lead} ${human} ${tally}`.trim(), MAX_TEXT) };
     }
@@ -404,7 +407,7 @@ export function engineErrorVerdict(reason: string, hashes: readonly string[]): W
  * itself from the bytes it holds (policy.ts messageHashes); the report must cover exactly those.
  * limited is always false here: the license limiter runs after this, in decide().
  */
-export function fromReport(input: unknown, hashes: readonly string[]): FromReport {
+export function fromReport(input: unknown, hashes: readonly string[], routedBy?: string): FromReport {
   const fail = (reason: string): FromReport => ({ ok: false, reason, verdict: engineErrorVerdict(reason, hashes) });
   try {
     const checked = validateReport(input);
@@ -433,9 +436,9 @@ export function fromReport(input: unknown, hashes: readonly string[]): FromRepor
       });
       if (viewClaims.length > MAX_ITEMS) throw new Unrepresentable("claims");
     }
-    const head = !r.session.complete && LEVELS[r.alert.level] < 2
+    const head: { title: string; summary: string; routed?: boolean } = !r.session.complete && LEVELS[r.alert.level] < 2
       ? { title: "Warning: analysis incomplete, some accounts could not be resolved", summary: header(r, ex).summary }
-      : header(r, ex);
+      : header(r, ex, level < 2 ? routedBy : undefined);
     const view = validateReportView({
       title: head.title,
       summary: head.summary,
@@ -447,7 +450,8 @@ export function fromReport(input: unknown, hashes: readonly string[]): FromRepor
       claims: viewClaims,
       evidence,
       messageHashes: [...hashes],
-      limited: false
+      limited: false,
+      ...(head.routed && routedBy ? { routedBy } : {})
     });
     if (!view) return fail("engine error: report cannot be shown");
     return { ok: true, level, report: view };
