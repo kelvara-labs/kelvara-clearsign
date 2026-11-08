@@ -867,3 +867,4 @@ html[data-level="L4"] .report-head .level { background: var(--risk-4-fg); border
 .orb-button:hover { color: var(--text-1); border-color: var(--focus); }
 .orb-icon { width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, var(--brand-mint), var(--brand-violet)); flex: none; }
 .program-meta .orb-button { margin: 0; align-self: center; }
+[data-kelvara-origin][data-kelvara-impostor="true"] { color: var(--on-risk-4); background: var(--risk-4-fg); border-color: var(--risk-4-fg); }
