@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { ReportBuilder, ingestSession, type Report, type Session } from "@kelvara/core";
+import { ReportBuilder, buildIntentContext, ingestSession, readTokenMeta, reportDigest, type Report, type Session } from "@kelvara/core";
 import { copyRawButton, detailsStep } from "../src/report/page.js";
 import { assessmentCard } from "../src/report/intent.js";
 import { withTokens } from "../src/report/tokens.js";
@@ -13,6 +13,8 @@ import { validateReportView, type ReportView } from "../src/shared/report-view.j
 import { fromReport } from "../src/sw/from-report.js";
 import { messageHashes, type Sha256 } from "../src/sw/policy.js";
 import { rawInstructions } from "../src/sw/raw-instruction.js";
+import { relabelIntent } from "../src/sw/tokens.js";
+import { analyze, decoder, json, manifestFixtures, replay, sessionFromRuntime, sessionOf, type Recording } from "../../core/test/rules-helpers.js";
 import { relabel, tokenAmountText, tokenLabels, tokenMetas, reportMints } from "../src/sw/tokens.js";
 
 const sha: Sha256 = async (b) => new Uint8Array(createHash("sha256").update(b).digest());
@@ -38,7 +40,7 @@ function swapReport(opts: { tokenMeta?: boolean } = { tokenMeta: true }): Report
   const meta = opts.tokenMeta !== false;
   const ev = (type: "derivation" | "simulation" | "instruction", data: unknown, summary: string, extra: object = {}) => b.addEvidence({ type, source: "message", summary, transactionIndex: 0, data, ...extra } as never);
   const payer = ev("derivation", { feePayer: WALLET }, "fee payer");
-  const toks = meta ? [ev("derivation", { mint: USDC, symbol: "USDC", name: "USD Coin", decimals: 6, source: "token list" }, "token USDC"), ev("derivation", { mint: WSOL, symbol: "SOL", name: "Wrapped SOL", decimals: 9, source: "token list" }, "token wSOL")] : [];
+  const toks = meta ? [ev("derivation", { kind: "token", mint: USDC, symbol: "USDC", name: "USD Coin", decimals: 6, source: "helius-das" }, "token USDC"), ev("derivation", { kind: "token", mint: WSOL, symbol: "SOL", name: "Wrapped SOL", decimals: 9, source: "helius-das" }, "token wSOL")] : [];
   const sim = ev("simulation", {
     solChanges: [{ address: WALLET, delta: "258554337" }, { address: POOL, delta: "-258554337" }],
     tokenChanges: [
@@ -64,6 +66,66 @@ const ok = (r: Report) => {
   return m;
 };
 
+const recording = json<Recording>("packages/core/test/fixtures/tokens/jupiter.json");
+const jupiter = manifestFixtures().filter((f) => f.path.includes("/jupiter-v6/"));
+/** The recorded real Jupiter swaps analyzed with E26's token metadata replayed from real Helius responses. */
+async function realSwap(i: number) {
+  const f = jupiter[i]!;
+  const sess = f.loaded ? await sessionFromRuntime(f.base64, f.loaded) : await sessionOf([f.base64]);
+  const { rpc, reader } = replay(recording);
+  const m = await readTokenMeta(rpc, reader, sess, decoder.decodeSession(sess));
+  const state = { tokens: m.tokens, tokenAccountMints: m.tokenAccountMints };
+  const report = analyze(sess, state);
+  const hs = report.session.transactions.map((t) => t.messageHash);
+  const mapped = fromReport(report, hs);
+  if (!mapped.ok) throw new Error(mapped.reason);
+  const context = relabelIntent(buildIntentContext({ session: sess, state, report, decoded: decoder.decodeSession(sess), decoder }), report);
+  return { report, view: mapped.report, context };
+}
+const JUPUSD = "JuprjznTrTSp2UFa3ZBUFgwdAmtZCq4MQCwysN55USD";
+
+describe("real E26 output on the recorded Jupiter swaps", () => {
+  it("JupUSD -> USDC: symbols only, the mint on hover, no short tags or developer words", async () => {
+    const { view, context } = await realSwap(0);
+    for (const text of [view.summary, view.authorizes!, ...view.claims.map((c) => c.text), ...context.candidates.flatMap((c) => [c.question, ...c.reasons.map((r) => r.text)])]) {
+      expect(text).not.toMatch(/\(Jupr…5USD\)|\(EPjF…Dt1v\)|base units of token mint|token mint/);
+    }
+    expect(view.summary).toBe("This transaction swaps 5.77101 JupUSD for 5.762509 USDC.");
+    expect(view.authorizes).toContain("Swap on Jupiter: you give up to 5.77101 JupUSD and get at least 5.762509 USDC");
+    expect(context.candidates.find((c) => c.kind === "swap")!.question).toBe("Did you intend to swap up to 5.77101 JupUSD for at least 5.762509 USDC?");
+    expect(view.tokens).toEqual([{ mint: JUPUSD, label: "JupUSD" }, { mint: USDC, label: "USDC" }]);
+    expect(validateReportView(view)).not.toBeNull();
+  });
+  it("two different tokens that share a symbol keep their short mint tags", async () => {
+    const { report } = await realSwap(1);
+    const bent = structuredClone(report) as Report;
+    for (const e of bent.evidence) if ((e.data as { symbol?: string } | null)?.symbol === "ETH") (e.data as { symbol: string }).symbol = "BTC";
+    for (const c of bent.claims) c.statement = c.statement.split("ETH (CXWN…pump)").join("BTC (CXWN…pump)");
+    const fixed = { ...bent, digest: reportDigest(bent) } as Report;
+    const m = fromReport(fixed, fixed.session.transactions.map((t) => t.messageHash));
+    if (!m.ok) throw new Error(m.reason);
+    expect(m.report.summary).toContain("BTC (C5xp…pump)");
+    expect(m.report.summary).toContain("BTC (CXWN…pump)");
+    expect(m.report.tokens!.map((t) => t.label).sort()).toEqual(["BTC (C5xp…pump)", "BTC (CXWN…pump)"]);
+  });
+  it("wrapped SOL stays 'SOL (wrapped)' and links its mint", async () => {
+    const { view } = await realSwap(2);
+    expect(view.authorizes).toContain("SOL (wrapped)");
+    expect(view.tokens).toEqual([{ mint: WSOL, label: "SOL (wrapped)" }]);
+  });
+  it("a Velocity program call reads in plain words", async () => {
+    const dirV = new URL("../../core/test/fixtures/velocity/", import.meta.url);
+    const name = (await import("node:fs")).readdirSync(dirV).sort()[0]!;
+    const fx = JSON.parse(readFileSync(new URL(name, dirV), "utf8")) as { transaction: string; meta: { loadedAddresses?: { writable: string[]; readonly: string[] } } };
+    const sess = await sessionFromRuntime(fx.transaction, fx.meta.loadedAddresses ?? { writable: [], readonly: [] });
+    const r = analyze(sess);
+    const m = fromReport(r, r.session.transactions.map((t) => t.messageHash));
+    if (!m.ok) throw new Error(m.reason);
+    expect(m.report.authorizes).toMatch(/Velocity · [A-Z]/);
+    expect(m.report.authorizes).not.toMatch(/token mint|intent template|decoded instruction|program id/i);
+  });
+});
+
 describe("token names from evidence", () => {
   it("labels come from the evidence, with no hard-coded map", () => {
     const r = swapReport();
@@ -71,7 +133,7 @@ describe("token names from evidence", () => {
     expect([...metas.values()].map((m) => m.symbol)).toEqual(["USDC", "SOL"]);
     const labels = tokenLabels(reportMints(r, metas), metas);
     expect(labels.get(USDC)).toBe("USDC");
-    expect(labels.get(WSOL)).toBe("wSOL");
+    expect(labels.get(WSOL)).toBe("SOL (wrapped)");
     expect(relabel(`send ${USDC}`, labels)).toBe("send USDC");
     expect(readFileSync(new URL("../src/sw/from-report.ts", import.meta.url), "utf8")).not.toContain("KNOWN_MINTS");
   });

@@ -13,7 +13,7 @@ const site = (origin: string, name: string, role: TrustedSite["role"], reason: s
 
 export const TRUSTED_SITES: readonly TrustedSite[] = Object.freeze([
   site("https://jup.ag/", "Jupiter", "aggregator", "Swap aggregator: routes each trade through third-party liquidity programs by design."),
-  site("https://app.velocity.exchange/", "Velocity", "perp-dex", "Perpetuals exchange; its own program is decoded from its IDL, so unreadable third-party programs are still flagged.")
+  site("https://app.velocity.exchange/", "Velocity", "perp-dex", "Perpetuals exchange; its own program is read from its IDL, so unreadable third-party programs are still flagged.")
 ]);
 
 function httpsOrigin(url: unknown): string | null {

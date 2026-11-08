@@ -10,6 +10,7 @@ import type { SignRequest } from "../shared/protocol.js";
 import type { Endpoint } from "./endpoint.js";
 import { EngineFailure } from "./engine-failure.js";
 import type { EngineLike, EngineReport } from "./engine-stub.js";
+import { relabelIntent } from "./tokens.js";
 import { rawInstructions } from "./raw-instruction.js";
 import type { RawInstruction } from "../shared/report-view.js";
 import { routedIntent } from "./route-intent.js";
@@ -98,7 +99,8 @@ export function createRealEngine(overrides: Partial<RealEngineDeps> = {}): Engin
       if (!validated) throw new EngineFailure("engine error: intent context failed validation");
       const details = mapped.report.details;
       if (details) details.instructions = details.instructions.map((i) => { const r = raw.get(`${i.tx}:${i.path}`); return r ? { ...i, raw: r } : i; });
-      const intent = mapped.report.routedBy ? routedIntent(validated) : templateIntent(validated);
+      const shownContext = relabelIntent(validated, report);
+      const intent = mapped.report.routedBy ? routedIntent(shownContext) : templateIntent(shownContext);
       if (intent) mapped.report.intent = intent;
       // decide() adds the worker's own hashes and the license flag back.
       const view: Partial<typeof mapped.report> = { ...mapped.report };

@@ -43,7 +43,9 @@ export function assessmentCard(intent: ReportIntent | undefined, level: number |
 
   if (asking) {
     const selected = intent.context.candidates.find((c) => c.id === intent.selectedId)!;
-    card.append(node("h3", selected.question, { class: "question", "data-intent-question": selected.id }));
+    const question = node("h3", tokens?.length ? "" : selected.question, { class: "question", "data-intent-question": selected.id });
+    if (tokens?.length) question.append(...withTokens(selected.question, tokens));
+    card.append(question);
     const reasons = node("ul");
     for (const id of intent.reasonIds) {
       const reason = selected.reasons.find((r) => r.id === id)!;

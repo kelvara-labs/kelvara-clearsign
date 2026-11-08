@@ -20,7 +20,7 @@ import {
   type Risk,
   VIEW_CAPS
 } from "../shared/report-view.js";
-import { reportMints, relabel, tokenAmountText, tokenLabels, tokenMetas, type TokenMeta } from "./tokens.js";
+import { reportMints, relabel, tagLabels, tokenAmountText, tokenLabels, tokenMetas, type TokenMeta } from "./tokens.js";
 import { netBalances } from "./net-balances.js";
 import { authorizeFacts, feeLine, factLines, factSummary, hasNoPermissionChange, humanSimulation, NO_PERMISSION_TEXT } from "./facts-text.js";
 import { idlPathFor } from "./idl-paths.js";
@@ -449,7 +449,8 @@ export function fromReport(input: unknown, hashes: readonly string[], routedBy?:
       ? { title: "Warning: analysis incomplete, some accounts could not be resolved", summary: header(r, ex).summary }
       : header(r, ex, level < 2 ? routedBy : undefined);
     const metas = tokenMetas(r), labels = tokenLabels(reportMints(r, metas), metas);
-    const tl = (t: string, max: number = MAX_TEXT): string => clip(relabel(t, labels), max);
+    const tags = tagLabels(labels, metas);
+    const tl = (t: string, max: number = MAX_TEXT): string => clip(relabel(t, labels, tags), max);
     const factText = new Map(factLines(r).filter((f) => f.rule === "fact.token_transfer" || f.rule === "fact.swap").map((f) => [f.claimId, `${f.text}.`]));
     const byClaimId = new Map(r.claims.map((x) => [x.id, x]));
     const humanFact = (text: string, human: string | undefined, statement: string | undefined): string => (!human ? text : statement && text.includes(statement) ? text.replace(statement, human.replace(/\.$/, "")) : `${human} ${text}`);
@@ -472,8 +473,7 @@ export function fromReport(input: unknown, hashes: readonly string[], routedBy?:
       limited: false,
       ...(head.routed && routedBy ? { routedBy } : {})
     };
-    const shown = JSON.stringify([body.title, body.summary, body.simulation, body.authorizes, body.details, body.capabilities, body.preview, body.claims]);
-    const tokens = [...labels].filter(([, l]) => shown.includes(l)).slice(0, 32).map(([mint, label]) => ({ mint, label }));
+    const tokens = [...labels].slice(0, 32).map(([mint, label]) => ({ mint, label }));
     const view = validateReportView(tokens.length ? { ...body, tokens } : body);
     if (!view) return fail("engine error: report cannot be shown");
     return { ok: true, level, report: view };

@@ -1,6 +1,7 @@
 // Token names from the engine's token evidence ({mint, symbol, name, decimals, source}); no hard-coded mint map.
 // A token without metadata is "token EPjF…Dt1v" and its raw amount is labelled "base units". Pure.
 import type { Evidence, Report } from "@kelvara/core";
+import type { IntentContext } from "@kelvara/core/intent-schema";
 
 export interface TokenMeta { mint: string; symbol: string | null; name: string | null; decimals: number | null }
 
@@ -40,16 +41,36 @@ export function reportMints(r: Report, metas: Map<string, TokenMeta>): Set<strin
   return new Set([...mints].filter((m) => B58.test(m)));
 }
 
-/** One label per mint: the symbol, or "token EPjF…Dt1v"; two mints with one symbol are told apart by their short id. */
+export const WRAPPED_SOL = "So11111111111111111111111111111111111111112";
+
+/** The engine's own display name for a token with metadata ("USDC (EPjF…Dt1v)", "SOL (wrapped)"); null without a name. */
+export function engineTag(meta: TokenMeta | undefined): string | null {
+  if (!meta) return null;
+  if (meta.mint === WRAPPED_SOL) return "SOL (wrapped)";
+  const n = meta.symbol ?? meta.name;
+  return n ? `${n} (${shortMint(meta.mint)})` : null;
+}
+
+/**
+ * One label per mint: the symbol alone when it is unique in this report, else the engine's tag with the short
+ * mint ("BTC (C5xp…pump)", real memecoins reuse tickers), or "token EPjF…Dt1v" without metadata. A name without a
+ * symbol never stands alone. The full mint is shown on hover.
+ */
 export function tokenLabels(mints: Set<string>, metas: Map<string, TokenMeta>): Map<string, string> {
-  const base = new Map<string, string>();
-  for (const m of mints) {
-    const s = metas.get(m)?.symbol;
-    base.set(m, s ? (s === "SOL" ? "wSOL" : s) : `token ${shortMint(m)}`);
-  }
+  const symbolOf = (m: string): string | null => (m === WRAPPED_SOL ? "SOL (wrapped)" : metas.get(m)?.symbol ?? null);
   const count = new Map<string, number>();
-  for (const l of base.values()) count.set(l, (count.get(l) ?? 0) + 1);
-  return new Map([...base].map(([m, l]) => [m, (count.get(l) ?? 0) > 1 ? `${l} ${shortMint(m)}` : l]));
+  for (const m of mints) { const s = symbolOf(m); if (s) count.set(s, (count.get(s) ?? 0) + 1); }
+  return new Map([...mints].map((m) => {
+    const s = symbolOf(m);
+    return [m, s && count.get(s) === 1 ? s : engineTag(metas.get(m)) ?? `token ${shortMint(m)}`];
+  }));
+}
+
+/** engine tag -> label, for stripping the short mint from the engine's text when the symbol is unique. */
+export function tagLabels(labels: Map<string, string>, metas: Map<string, TokenMeta>): Map<string, string> {
+  const out = new Map<string, string>();
+  for (const [m, l] of labels) { const t = engineTag(metas.get(m)); if (t && t !== l) out.set(t, l); }
+  return out;
 }
 
 /** Raw base units as decimal text, or null when decimals are unknown. */
@@ -74,9 +95,20 @@ export function tokenAmountText(raw: unknown, mint: string, metas: Map<string, T
   try { return `${BigInt(raw as string).toString()} base units of ${label.startsWith("token ") ? label : `${label} (decimals unknown)`}`; } catch { return null; }
 }
 
-/** Replace every full mint address in a text with its label. */
-export function relabel(text: string, labels: Map<string, string>): string {
+/** The intent question and reasons in the same token words as the rest of the report (display text only). */
+export function relabelIntent(context: IntentContext, r: Report): IntentContext {
+  const metas = tokenMetas(r), labels = tokenLabels(reportMints(r, metas), metas), tags = tagLabels(labels, metas);
+  const t = (s: string, max: number): string => relabel(s, labels, tags).slice(0, max);
+  return { ...context, candidates: context.candidates.map((c) => ({ ...c, question: t(c.question, 300), reasons: c.reasons.map((x) => ({ ...x, text: t(x.text, 600) })) })) };
+}
+
+/** Replace every full mint address (and the engine's short tag, when the symbol is unique) with the label. */
+export function relabel(text: string, labels: Map<string, string>, tags: Map<string, string> = new Map()): string {
   let out = text;
-  for (const [m, l] of labels) if (out.includes(m)) out = out.split(m).join(l);
+  for (const [m, l] of labels) {
+    if (out.includes(`token mint ${m}`)) out = out.split(`token mint ${m}`).join(l);
+    if (out.includes(m)) out = out.split(m).join(l);
+  }
+  for (const [t, l] of tags) if (out.includes(t)) out = out.split(t).join(l);
   return out;
 }
