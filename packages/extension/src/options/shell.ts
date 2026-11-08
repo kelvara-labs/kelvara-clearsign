@@ -108,18 +108,27 @@ export function mountShell(): void {
   $("helius-key")?.addEventListener("input", hide);
   select?.addEventListener("change", hide);
 
+  const keyInput = $<HTMLInputElement>("helius-key");
+  let networkTouched = false;
+  const root = document.documentElement;
+  const updateSave = () => { root.dataset.save = (keyInput?.value.length ?? 0) > 0 || networkTouched ? "dirty" : "clean"; };
+  keyInput?.addEventListener("input", updateSave);
+  select?.addEventListener("change", () => { networkTouched = true; updateSave(); });
+  if (result) new MutationObserver(() => { if (result.dataset.kind === "ok" && /saved/i.test(result.textContent ?? "")) networkTouched = false; updateSave(); }).observe(result, { attributes: true, childList: true, characterData: true, subtree: true });
+  updateSave();
+
   const links = Array.from(document.querySelectorAll<HTMLAnchorElement>(".side a"));
   const targets = links.map((a) => document.querySelector(a.getAttribute("href") ?? ""));
   const mark = (id: string) => links.forEach((a) => a.toggleAttribute("aria-current", a.getAttribute("href") === `#${id}`));
   mark("sec-connection");
-  try {
-    const io = new IntersectionObserver((entries) => {
-      const top = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (top) mark(top.target.id);
-    }, { rootMargin: "-80px 0px -60% 0px" });
-    for (const t of targets) if (t) io.observe(t);
-  } catch {
-    /* no highlight */
-  }
+  const spy = () => {
+    const bottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    let current = targets.find((t) => t) as Element | undefined;
+    for (const t of targets) if (t && t.getBoundingClientRect().top <= 140) current = t;
+    if (bottom) current = targets[targets.length - 1] ?? current;
+    if (current) mark(current.id);
+  };
+  window.addEventListener("scroll", spy, { passive: true });
+  spy();
   for (const a of links) a.addEventListener("click", () => mark(a.getAttribute("href")!.slice(1)));
 }
