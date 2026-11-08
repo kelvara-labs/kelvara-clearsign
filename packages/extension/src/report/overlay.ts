@@ -25,7 +25,14 @@ export function parseFrameAnswer(data: unknown): boolean | null {
 export function showReport(verdict: WorkerVerdict, deadline: number, id?: string): Promise<boolean> {
   const mode = reportMode(verdict);
   // Orphaned after an extension reload: the report page cannot be loaded, so the request is not approved.
-  if (typeof chrome.runtime?.getURL !== "function") return Promise.resolve(false);
+  let reportUrl: string;
+  try {
+    if (typeof chrome.runtime?.getURL !== "function") return Promise.resolve(false);
+    reportUrl = chrome.runtime.getURL("report.html");
+  } catch {
+    return Promise.resolve(false); // orphaned after an extension reload: never approve
+  }
+  void reportUrl;
   return new Promise((resolve) => {
     const secret = randomId((a) => crypto.getRandomValues(a));
     const host = document.createElement("div");
@@ -38,7 +45,7 @@ export function showReport(verdict: WorkerVerdict, deadline: number, id?: string
     frame.src = chrome.runtime.getURL(`report.html#${secret}`);
     root.append(frame);
     // Lets the worker answer this frame's explanation request, and only this frame's (request id + secret + tab).
-    if (id && mode === "hold") void Promise.resolve(chrome.runtime.sendMessage({ type: SW_BIND, id, secret })).catch(() => {});
+    if (id && mode === "hold") { try { void Promise.resolve(chrome.runtime.sendMessage({ type: SW_BIND, id, secret })).catch(() => {}); } catch { /* orphaned: the report cannot bind, so it cannot approve */ } }
     const channel = new MessageChannel();
     let settled = false;
     const finish = (allow: boolean) => {
