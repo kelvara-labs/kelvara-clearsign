@@ -1,6 +1,6 @@
 // V16 report context (X18) and engine E22. Real-engine localnet reports name the page origin (no path or query) and the
 // network; a routine transfer that includes ComputeBudget instructions is not sent to the AI mock.
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { AI_DIR, SYNTHETIC_KEY, feePayer, saveProvider, startMock } from "./ai-support.js";
 import {
@@ -57,3 +57,65 @@ test("E22: a routine transfer with ComputeBudget instructions does not call the 
     expect(mock.last(), "provider was contacted for a routine transfer with ComputeBudget").toBeNull();
   } finally { await mock.close(); }
 });
+
+// E23/X19: readable report. Real mainnet memo fixture (benign) and the real localnet risk cases.
+const NO_PERM = "No authority, delegate, owner or upgrade permission changes";
+const memoFixture = () => {
+  const dir = path.join(ROOT, "fixtures/tx/mainnet/memo");
+  return readdirSync(dir).filter((f) => f.endsWith(".json")).sort().map((f) => (JSON.parse(readFileSync(path.join(dir, f), "utf8")) as { transaction: string }).transaction);
+};
+
+test("E23/X19: benign memo report names the memo, says no permission changes, has no claim tally and no 'Transaction 0:' prefix", async ({ ext }) => {
+  if (!hasRealEngine()) pending("real engine not wired into the extension");
+  if (!hasReportUi()) pending("report UI not landed");
+  if (!heliusKey()) pending("HELIUS_API_KEY missing");
+  let seen = "";
+  for (const tx of memoFixture().slice(0, 5)) {
+    const page = await openDapp(ext, "mainnet");
+    const p = startSign(page, { path: "ws-app-ready", txs: [tx], chain: "solana:mainnet", account: feePayer(tx) });
+    const m = await waitForModal(ext, 45_000);
+    expect(m, "no report modal").not.toBeNull();
+    const authorizes = await m!.locator(".authorize p").innerText();
+    seen = authorizes;
+    if (/Signs a memo/.test(authorizes)) {
+      expect(authorizes).toMatch(/Signs a memo: “.+”/);
+      expect(authorizes).toContain(NO_PERM);
+      expect(authorizes).not.toContain("Unknown");
+      const body = await m!.locator("body").innerText();
+      expect(body, "claim tally line must be gone").not.toMatch(/claim\(s\)|\d+ granted/);
+      const sim = await m!.locator(".simulation p").innerText();
+      expect(sim).not.toMatch(/Transaction 0:/);
+      await expect(m!.locator('[data-claim-kind="fact"]').first()).toHaveCount(1);
+      await m!.locator(SEL.block).first().click();
+      expectRejected(await within(p, 10_000), "memo Block");
+      expect((await calls(page)).count).toBe(0);
+      return;
+    }
+    await m!.locator(SEL.block).first().click();
+    await within(p, 10_000);
+    await page.close();
+  }
+  throw new Error(`no memo fixture produced a memo report; last authorizes: ${seen}`);
+});
+
+for (const [role, level] of [["l2-trap", "L2"], ["l3-admin", "L3"], ["l4-sweep", "L4"]] as const) {
+  test(`E23/X19: ${role} keeps ${level}; Grants/Revokes come first and the no-permission line never appears`, async ({ ext }) => {
+    if (!hasRealEngine()) pending("real engine not wired into the extension");
+    if (CASES_MISSING) pending(`localnet cases unavailable: ${CASES_MISSING}`);
+    if (!hasReportUi()) pending("report UI not landed");
+    const c = await localCase(role);
+    const page = await openDapp(ext, "localnet");
+    const p = startSign(page, { path: "ws-app-ready", txs: [c.tx], chain: c.chain, account: c.signer });
+    const m = await waitForModal(ext, 45_000);
+    expect(m, `${role}: no report modal`).not.toBeNull();
+    await expect(m!.locator(SEL.level).first()).toHaveAttribute("data-kelvara-level", level);
+    const authorizes = await m!.locator(".authorize p").innerText();
+    expect(authorizes).toMatch(/^(Grants|Revokes) /);
+    expect(authorizes).not.toContain(NO_PERM);
+    expect(await m!.locator("body").innerText()).not.toMatch(/claim\(s\)/);
+    expect(await m!.locator(".simulation p").innerText()).not.toMatch(/Transaction 0:/);
+    const block = m!.locator(SEL.block).first();
+    if (await block.count()) { await block.click(); expectRejected(await within(p, 10_000), `${role} Block`); }
+    expect((await calls(page)).count).toBe(0);
+  });
+}
