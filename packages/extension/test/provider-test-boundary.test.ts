@@ -38,12 +38,16 @@ describe("worker-only saved provider test", () => {
     expect(init).toMatchObject({ credentials: "omit", redirect: "error" });
     expect(init.body).not.toContain(KEY);
   });
+  it("accepts the Options page when opened as a tab (open_in_tab), as in production", async () => {
+    const deps = dependencies();
+    expect(await handleProviderTest(message, { ...sender, tab: { id: 1 }, frameId: 0 } as chrome.runtime.MessageSender, runtime, deps)).toEqual({ status: "ok" });
+  });
   it.each([
     { id: "foreign-extension", url: runtime.optionsUrl },
     { url: runtime.optionsUrl },
     { id: runtime.id },
     { id: runtime.id, url: "https://site.example/options.html", tab: { id: 1 } },
-    { id: runtime.id, url: runtime.optionsUrl, tab: { id: 1 } },
+    { id: runtime.id, url: runtime.optionsUrl, frameId: 3 },
     { id: runtime.id, url: "chrome-extension://unit-extension/report.html" },
     { id: runtime.id, url: "chrome-extension://unit-extension/popup.html" },
     { id: runtime.id, url: `${runtime.optionsUrl}?from=page` },

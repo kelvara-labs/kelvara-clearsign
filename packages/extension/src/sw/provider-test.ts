@@ -27,6 +27,6 @@ export function handleProviderTest(
   message: unknown, sender: chrome.runtime.MessageSender,
   runtime: { id: string; optionsUrl: string }, deps: ProviderTestDeps
 ): Promise<ProviderTestResponse> | null {
-  if (sender.id !== runtime.id || sender.url !== runtime.optionsUrl || sender.tab !== undefined || !isProviderTestRequest(message)) return null;
+  if (sender.id !== runtime.id || sender.url !== runtime.optionsUrl || (sender.frameId ?? 0) !== 0 || !isProviderTestRequest(message)) return null;
   return testSavedProvider(deps);
 }

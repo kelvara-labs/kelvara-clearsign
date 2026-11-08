@@ -73,3 +73,33 @@ const pending = page.evaluate(
   [txB64, signerPubkey]
 );
 ```
+
+## Mock AI provider (loopback, for AI-intent e2e)
+
+`scripts/mock-provider.mjs` is an OpenAI-compatible mock (node:http only, bound to 127.0.0.1). It serves
+`POST /v1/chat/completions` and `POST /v1/responses`, parses the selection input exactly as the extension's
+`client.ts` sends it, and answers according to a mode.
+
+Start: `node test-dapp/scripts/mock-provider.mjs [--port N]` (prints `{"url","port","modes"}` as one JSON line; ephemeral port by default), or import `startMock({ port, mode, slowMs })` which resolves `{ url, port, last(), setMode(), close() }`.
+
+Select a mode by URL path prefix (`<url>/mode/<name>/v1/chat/completions`, used as the provider API URL) or by `POST <url>/mode/<name>` (sets the default). `GET <url>/last` returns the last request (`path`, `mode`, `authorization`, `headers`, `bodyText`, `input`) or `null`; it is the mock's only introspection and it is loopback-only.
+
+| Mode | Behavior | Extension result |
+|---|---|---|
+| `select-highest` | valid: highest-priority candidate with priority >= fallback, all its reasons in order | `source=ai`, `status=selected` |
+| `fallback` | valid selection of the fallback candidate | `ai` / `selected` |
+| `lower-priority` | candidate below fallback priority | engine template, `invalid` |
+| `wrong-binding` | binding tampered | `invalid` |
+| `invented-reason` | extra reason ID not in the candidate | `invalid` |
+| `refusal` | refusal content | `invalid` |
+| `malformed` | content is not JSON | `invalid` |
+| `http-500` | HTTP 500 | `unavailable` |
+| `redirect` | 307 (client uses `redirect: "error"`) | `unavailable` |
+| `slow` | answers after 6.5 s (> `AI_TIMEOUT_MS` 5 s) | `unavailable` |
+| `oversize` | body > `AI_OUTPUT_MAX` (16384 B) | `unavailable` |
+
+Assertions via `/last`: `authorization` is `null` unless a key was configured; `bodyText` must not contain the key; `input` has only `binding`, `fallbackId`, `candidates` (no bytes, signatures, wallet or page content).
+
+### Granting the optional host permission headlessly
+
+`chrome.permissions.request` shows a native browser prompt that Playwright cannot accept, so Save with a fresh install hangs. Do not add any production permission. Instead, load a **test copy** of `packages/extension/dist` whose `manifest.json` has `"http://127.0.0.1/*"` appended to `host_permissions` (point `KELVARA_EXT_DIR` at the copy). The request then resolves `true` without a prompt, `permissions.contains({origins:["http://127.0.0.1:<port>/*"]})` is `true` (port-agnostic), and the real Options UI works: open `options.html`, expand `#ai-provider`, fill `#ai-url` (`<mock>/mode/<name>/v1/chat/completions`), `#ai-model`, optional `#ai-key`, check `#ai-enabled`, click `#ai-save`, then `#ai-test`. Verified with Chromium headless: Save succeeds, Test reports a valid selection, and `/last` shows `Authorization: Bearer <key>`.
