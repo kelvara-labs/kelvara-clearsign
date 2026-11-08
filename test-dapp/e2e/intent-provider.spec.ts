@@ -40,3 +40,18 @@ test('saved seeded provider key is never prefilled or exposed by options reload'
   expect(saved).toBeUndefined();
   await options.close();
 });
+
+test('actual Chrome options tab can test saved provider through authenticated service worker', async ({ ext }) => {
+  const options = await ext.context.newPage();
+  await options.goto(`chrome-extension://${ext.extId}/options.html`);
+  await options.locator('#ai-provider summary').click();
+  await options.locator('#ai-test').click();
+  await expect(options.locator('#ai-result')).toHaveText('Save a provider before testing it.');
+  // Assert the precise fixed SW result using Chrome's actual options sender metadata as well.
+  const result = await options.evaluate(async () => {
+    const c = (globalThis as unknown as { chrome: { runtime: { sendMessage(v: object): Promise<unknown> } } }).chrome;
+    return c.runtime.sendMessage({ type: 'kelvara-signguard/test-provider' });
+  });
+  expect(result).toEqual({ status: 'not-configured' });
+  await options.close();
+});
