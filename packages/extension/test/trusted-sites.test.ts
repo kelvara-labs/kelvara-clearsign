@@ -47,8 +47,8 @@ const ok = (m: FromReport) => {
 const n = () => session.transactions.reduce((a, t) => a + t.instructions.length, 0);
 
 describe("trusted site matching", () => {
-  it("lists exactly the two reviewed aggregator origins, frozen", () => {
-    expect(TRUSTED_SITES.map((s) => [s.origin, s.role])).toEqual([["https://jup.ag", "aggregator"], ["https://app.velocity.exchange", "aggregator"]]);
+  it("lists exactly the two reviewed origins with their roles, frozen", () => {
+    expect(TRUSTED_SITES.map((s) => [s.origin, s.role])).toEqual([["https://jup.ag", "aggregator"], ["https://app.velocity.exchange", "perp-dex"]]);
     expect(Object.isFrozen(TRUSTED_SITES)).toBe(true);
     for (const s of TRUSTED_SITES) expect(s.reason.length).toBeGreaterThan(10);
   });
