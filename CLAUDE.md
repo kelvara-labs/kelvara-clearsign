@@ -19,6 +19,11 @@ Only the owner edits a path. Need a change elsewhere? Ask its owner by Orca mess
 | extension | `team/extension` | packages/extension, test-dapp | M5, extension half of M7 |
 | scenarios | `team/scenarios` | packages/scenarios (incl. programs/), fixtures, DEMO.md, tools/browser | localnet scenarios in M4, M6, demo assets for M8 |
 | verifier | `team/verifier` | tools/selfcheck, SELFCHECK.md, e2e specs under test-dapp/e2e | gate runner from M0 on; runs and reports every gate |
+| designer | `team/designer` | visual layer only: packages/extension/static (CSS, HTML layout, icons) and presentational DOM in packages/extension/src/{report,options,popup}; playground page markup/CSS in packages/scenarios (demo-serve page only) | M8 UI polish (added 2026-11-08) |
+
+Designer rules: never change behavior, decisions, timers, message contracts, permissions, hosts or
+dependencies; keep every id, data-* attribute and test-facing text; logic changes go to the extension
+or scenarios owner. Playground listens on port 47731 (was 8780).
 
 Shared files with special rules:
 - LICENSES.md: anyone may append a row for a dependency they add; never edit others' rows.
