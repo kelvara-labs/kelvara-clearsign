@@ -54,7 +54,6 @@ export function outputText(body: unknown, responses: boolean): string | null {
 }
 export interface ClientDeps { fetch: typeof fetch; permissions: Pick<Permissions, "contains">; timeoutMs: number }
 export async function selectIntent(context: IntentContext, raw: unknown, deps: ClientDeps): Promise<ReportIntent> {
-  if (!context.complex) return templateIntent(context);
   const provider = readProvider(raw);
   if (!provider?.enabled) return templateIntent(context, "not-configured");
   const fallback = (status: "unavailable" | "invalid") => templateIntent(context, status);

@@ -27,9 +27,7 @@ export async function explainReport(verdict: WorkerVerdict, deps: ExplainDeps): 
   const report = verdict.report;
   const own = report ? fallbackExplanation(report) : { source: "signguard" as const, sentences: [{ text: verdict.reason.slice(0, 600) || "ClearSign could not describe this request.", claimIds: [] }] };
   if (!report) return own;
-  // Routine transfers need no confirmation question and no provider call.
-  const needsAi = (verdict.level ?? 0) >= 1 || report.intent?.context.complex === true;
-  if (!needsAi) return own;
+  // User decision (2026-11-08): the enabled provider explains every report, routine ones included.
   let timer: ReturnType<typeof setTimeout> | undefined;
   const controller = new AbortController();
   const timeout = new Promise<Explanation>((resolve) => { timer = setTimeout(() => { controller.abort(); resolve(own); }, deps.timeoutMs ?? AI_TIMEOUT_MS); });

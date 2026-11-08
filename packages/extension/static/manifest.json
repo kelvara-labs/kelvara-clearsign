@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Kelvara ClearSign",
-  "version": "0.5.6",
+  "version": "0.5.8",
   "description": "Holds Solana signing requests and shows what they hand over before your wallet opens.",
   "minimum_chrome_version": "120",
   "permissions": [

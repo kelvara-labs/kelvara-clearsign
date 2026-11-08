@@ -96,10 +96,6 @@
    "name": "Bubblegum"
   },
   {
-   "programId": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
-   "name": "Kamino Lending"
-  },
-  {
    "programId": "ccvrfu3fSpbnPLiUqdWAt85Zn9nq96ekwGTbHqGtdgQ",
    "name": "Cc Vrf"
   },
@@ -178,10 +174,6 @@
   {
    "programId": "BSwp6bEBihVLdqJRKGgzjcGLHkcTuzmSo1TQkHepzH8p",
    "name": "Bonkswap"
-  },
-  {
-   "programId": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
-   "name": "Farms"
   },
   {
    "programId": "opnb2LAfJYbRMAHHvqjCwQxanZn7ReEHp1k81EohpZb",

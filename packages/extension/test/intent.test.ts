@@ -108,9 +108,9 @@ describe("engine-bound selection", () => {
     });
     expect((await selectIntent(context, { ...provider, url: "http://localhost:11434/v1/responses", key: "" }, deps(fetchFn))).source).toBe("ai");
   });
-  it("routine and disabled/missing provider make no network or permission calls", async () => {
+  it("disabled/missing provider make no network or permission calls (routine requests now also go to an enabled provider)", async () => {
     const fetchFn = vi.fn<typeof fetch>();
-    expect((await selectIntent(routineContext, provider, deps(fetchFn))).status).toBe("template");
+    expect((await selectIntent(routineContext, null, deps(fetchFn))).status).toBe("not-configured");
     expect((await selectIntent(context, null, deps(fetchFn))).status).toBe("not-configured");
     expect((await selectIntent(context, { ...provider, enabled: false }, deps(fetchFn))).status).toBe("not-configured");
     expect(fetchFn).not.toHaveBeenCalled();

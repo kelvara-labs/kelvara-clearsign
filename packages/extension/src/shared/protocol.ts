@@ -266,6 +266,8 @@ export interface NoticeMessage {
 export const SW_BIND = "kelvara-signguard/bind";
 /** report frame -> worker: the plain-language explanation of its own held report (SW_BIND binds id, secret and tab). */
 export const SW_EXPLAIN = "kelvara-signguard/explain";
+/** report frame / options page -> worker: open this program's Orb page in a new tab. Never changes a decision. */
+export const SW_OPEN_EXPLORER = "kelvara-signguard/open-explorer";
 export const SW_DECIDED = "kelvara-signguard/decided";
 export interface DecidedMessage {
   type: typeof SW_DECIDED;

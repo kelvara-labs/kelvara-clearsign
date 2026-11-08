@@ -19,6 +19,8 @@ import {
 import { realEngine } from "./sw/engine.js";
 import { networkFor } from "./sw/endpoint.js";
 import { messageVerdict, reviewMessage } from "./sw/message-review.js";
+import { handleOpenExplorer, openExplorerRequest } from "./sw/explorer.js";
+import { impostorFor, impostorVerdict } from "./sw/impostor.js";
 import { trustedSiteFor } from "./sw/trusted-sites.js";
 import { withContext } from "./sw/report-context.js";
 import { decide } from "./sw/policy.js";
@@ -83,12 +85,14 @@ async function handleAnalyze(msg: Record<string, unknown>, sender: { url?: strin
   const req = validateSignRequest(msg.request);
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
   const site = trustedSiteFor(sender.url, sender.tab?.url);
+  const imitated = site ? null : impostorFor(sender.url, sender.tab?.url);
   const loaded = await loadSettings((keys) => chrome.storage.local.get(keys));
   const deterministic = loaded.ok ? await decide(req, loaded.settings, realEngine, undefined, site?.role === "aggregator" ? site.name : undefined) : blocked(loaded.reason);
   // The explanation runs beside the intent selection, so it adds no wait before the report opens.
-  explainStore.start(req.id, deterministic, modelDeps());
-  const enhanced = await enhanceIntent(deterministic, modelDeps());
-  const verdict = withContext(enhanced, msg.url, loaded.ok ? networkFor(req.chain, loaded.settings.network) : null, site?.name);
+  if (!imitated) explainStore.start(req.id, deterministic, modelDeps());
+  const enhanced = imitated ? deterministic : await enhanceIntent(deterministic, modelDeps());
+  const context = withContext(enhanced, msg.url, loaded.ok ? networkFor(req.chain, loaded.settings.network) : null, site?.name);
+  const verdict = imitated ? impostorVerdict(context, imitated) : context;
   await appendLog({
     ts: Date.now(),
     id: req.id,
@@ -108,7 +112,10 @@ async function handleAnalyze(msg: Record<string, unknown>, sender: { url?: strin
 async function handleMessage(msg: Record<string, unknown>, sender: { url?: string; tab?: { url?: string } }): Promise<WorkerVerdict> {
   const req = validateMessageRequest(msg.request);
   if (!req || typeof msg.url !== "string") return blocked("malformed request");
-  const verdict = withContext(messageVerdict(reviewMessage(req, msg.url)), msg.url, null, trustedSiteFor(sender.url, sender.tab?.url)?.name);
+  const site = trustedSiteFor(sender.url, sender.tab?.url);
+  const imitated = site ? null : impostorFor(sender.url, sender.tab?.url);
+  const context = withContext(messageVerdict(reviewMessage(req, msg.url)), msg.url, null, site?.name);
+  const verdict = imitated ? impostorVerdict(context, imitated) : context;
   await appendLog({
     ts: Date.now(), id: req.id, url: msg.url.slice(0, 512), method: req.method, wallet: req.wallet, chain: req.chain,
     txCount: 0, kind: "message", level: verdict.level, allow: verdict.allow, hold: verdict.hold, reason: verdict.reason
@@ -131,6 +138,10 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 chrome.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
+  if (openExplorerRequest(msg)) {
+    handleOpenExplorer(msg, sender, { id: chrome.runtime.id, reportUrl: reportFrameUrl(chrome.runtime.getURL), optionsUrl: chrome.runtime.getURL("options.html") }, chrome.tabs).then(sendResponse);
+    return true;
+  }
   const providerTest = handleProviderTest(msg, sender, { id: chrome.runtime.id, optionsUrl: chrome.runtime.getURL("options.html") }, {
     get: keys => chrome.storage.local.get(keys), permissions: chrome.permissions, fetch: fetch.bind(globalThis)
   });

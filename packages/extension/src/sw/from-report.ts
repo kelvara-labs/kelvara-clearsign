@@ -235,7 +235,7 @@ function reviewDetails(r: Report): ReportDetails {
   for (const c of r.claims) if (c.kind === "Fact" && c.level !== "L0" && c.level !== null && !c.ruleId?.startsWith("fact.")) changes.push(clip(c.statement.trim(), 600));
   if (hasNoPermissionChange(r)) changes.push(NO_PERMISSION_TEXT);
   return {
-    instructions: ixs.map((i) => ({ tx: i.tx, path: i.path, program: clip(i.program, MAX_SHORT), name: i.name ? clip(i.name, MAX_SHORT) : null, args: tokenArgRows(i.args, i.accounts, metas, labels), accounts: accountRows(i.accounts) })),
+    instructions: ixs.map((i) => ({ ...(i.programId && /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(i.programId) ? { programId: i.programId } : {}), tx: i.tx, path: i.path, program: clip(i.program, MAX_SHORT), name: i.name ? clip(i.name, MAX_SHORT) : null, args: tokenArgRows(i.args, i.accounts, metas, labels), accounts: accountRows(i.accounts) })),
     changes: [...new Set(changes)].slice(0, 32),
     ...(net ? { balances: net.balances, ...(net.other.length ? { other: net.other } : {}) } : { balances: balanceLines(r, metas, labels) })
   };

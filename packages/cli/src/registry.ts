@@ -42,6 +42,7 @@ interface ManifestIdl {
   programId: string;
   format: string;
   verified?: boolean;
+  rootOnly?: boolean;
 }
 
 /** `path` or `path:programId` (program id overrides the IDL's own address). */
@@ -70,7 +71,7 @@ export function loadRegistry(opts: { root?: string; idls?: string[] } = {}): Reg
     const map = buildAuthorityMap(readJson<AnchorIdlJson>(file), { ...(programId ? { programId } : {}), source: rel.startsWith("..") ? file : rel, verified });
     maps.set(map.programId, map); // later sources (explicit --idl) win
   };
-  for (const e of manifest.idls.filter(anchor)) add(path.join(root, `packages/idls/raw/${e.name}.json`), e.verified === true, e.programId);
+  for (const e of manifest.idls.filter((x) => anchor(x) && !x.rootOnly)) add(path.join(root, `packages/idls/raw/${e.name}.json`), e.verified === true, e.programId);
   // The demo program's IDL (scenarios; unverified per its README).
   const programs = path.join(root, "packages/scenarios/programs");
   if (existsSync(programs)) for (const f of readdirSync(programs).filter((x) => x.endsWith(".idl.json")).sort()) add(path.join(programs, f), false);

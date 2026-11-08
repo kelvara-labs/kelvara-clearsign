@@ -56,7 +56,8 @@ async function request(c) {
     const data = await response.json(); if(!response.ok) throw Error(data.error);
     if(data.chain !== 'solana:devnet' || data.account !== account.address) throw Error('Transaction account/network mismatch');
     status('Preview requested. Expected '+c.expected+'. Review ClearSign and choose Block for the attack test.');
-    const [result] = await selected.features['solana:signTransaction'].signTransaction({ account, chain:'solana:devnet', transaction:Uint8Array.from(atob(data.transaction), c=>c.charCodeAt(0)) });
+    // A wallet or review left open must not lock every card: give up waiting after 120 s (nothing is submitted either way).
+    const [result] = await Promise.race([selected.features['solana:signTransaction'].signTransaction({ account, chain:'solana:devnet', transaction:Uint8Array.from(atob(data.transaction), c=>c.charCodeAt(0)) }), new Promise((_, reject) => window.setTimeout(() => reject(Error('No answer from the wallet within 120 s')), 120000))]);
     status('Wallet returned '+result.signedTransaction.length+' signed bytes. Nothing was submitted. You can repeat this preview.');
   } catch(e) { status('Preview stopped: '+e.message+' · Nothing submitted by this page.'); }
   finally { busy=false; render(); }

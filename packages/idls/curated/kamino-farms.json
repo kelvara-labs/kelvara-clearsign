@@ -1,0 +1,78 @@
+{
+  "schema": "kelvara.capability-curated/v1",
+  "program": "kamino-farms",
+  "programId": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-farms.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "instructions": [
+    {
+      "instruction": "stake",
+      "authority": null,
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "stakes tokens in a farm; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "unstake",
+      "authority": null,
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "starts unstaking tokens from a farm; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "withdrawUnstakedDeposits",
+      "authority": null,
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "withdraws tokens whose unstaking finished; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "harvestReward",
+      "authority": null,
+      "capability": "kamino.reward",
+      "class": "other",
+      "changes": "claims farm rewards; acts on the signer's own position; no authority is granted"
+    },
+    {
+      "instruction": "setStakeDelegated",
+      "authority": null,
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "sets delegated staking for the signer's position"
+    },
+    {
+      "instruction": "refreshFarm",
+      "authority": null,
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes a farm; permissionless"
+    },
+    {
+      "instruction": "refreshUserState",
+      "authority": null,
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes a user's farm state; permissionless"
+    },
+    {
+      "instruction": "initializeUser",
+      "authority": null,
+      "capability": "kamino.farm_user",
+      "class": "other",
+      "changes": "creates the signer's farm user state"
+    },
+    {
+      "instruction": "closeEmptyUserState",
+      "authority": null,
+      "capability": "kamino.farm_user",
+      "class": "other",
+      "changes": "closes the signer's empty farm user state"
+    },
+    {
+      "instruction": "transferOwnership",
+      "authority": null,
+      "capability": "kamino.farm_owner",
+      "class": "admin_control",
+      "changes": "transfers a user state to a new owner"
+    }
+  ]
+}

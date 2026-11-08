@@ -93,6 +93,8 @@ export interface RawInstruction {
 
 export interface InstructionLine {
   raw?: RawInstruction;
+  /** Base58 program id, for the "View on Orb" button. */
+  programId?: string;
   tx: number;
   path: string;
   /** Display name of the program ("System Program") or its address. */
@@ -116,6 +118,8 @@ export interface ReportDetails {
 export interface TokenRef { mint: string; label: string }
 
 export interface ReportView {
+  /** The page imitates this trusted site (sw/impostor.ts): red banner, L4, blocked. */
+  impostor?: { name: string; origin: string };
   tokens?: TokenRef[];
   intent?: ReportIntent;
   details?: ReportDetails;
@@ -228,7 +232,8 @@ function isRaw(x: unknown, tx: unknown, path: unknown): x is RawInstruction {
 function isInstructionLine(x: unknown): x is InstructionLine {
   return (
     plain(x) &&
-    exact(x, ["tx", "path", "program", "name", "args", "accounts", ...(Object.hasOwn(x, "raw") ? ["raw"] : [])]) &&
+    exact(x, ["tx", "path", "program", "name", "args", "accounts", ...(Object.hasOwn(x, "raw") ? ["raw"] : []), ...(Object.hasOwn(x, "programId") ? ["programId"] : [])]) &&
+    (!Object.hasOwn(x, "programId") || (typeof x.programId === "string" && B58_HASH.test(x.programId))) &&
     (!Object.hasOwn(x, "raw") || isRaw(x.raw, x.tx, x.path)) &&
     Number.isInteger(x.tx) && (x.tx as number) >= 0 &&
     typeof x.path === "string" && /^[0-9]{1,4}(\.[0-9]{1,4}){0,7}$/.test(x.path) &&
@@ -261,7 +266,7 @@ function isClaim(x: unknown): x is Claim {
 
 export function validateReportView(x: unknown): ReportView | null {
   if (!plain(x)) return null;
-  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : []), ...(Object.hasOwn(x, "tokens") ? ["tokens"] : [])])) return null;
+  if (!exact(x, ["title", "summary", "simulation", "authorizes", "capabilities", "preview", "claims", "evidence", "messageHashes", "limited", ...(Object.hasOwn(x, "intent") ? ["intent"] : []), ...(Object.hasOwn(x, "details") ? ["details"] : []), ...(Object.hasOwn(x, "message") ? ["message"] : []), ...(Object.hasOwn(x, "origin") ? ["origin"] : []), ...(Object.hasOwn(x, "network") ? ["network"] : []), ...(Object.hasOwn(x, "routedBy") ? ["routedBy"] : []), ...(Object.hasOwn(x, "trustedSite") ? ["trustedSite"] : []), ...(Object.hasOwn(x, "tokens") ? ["tokens"] : []), ...(Object.hasOwn(x, "impostor") ? ["impostor"] : [])])) return null;
   if (typeof x.limited !== "boolean") return null;
   if (!str(x.title, MAX_SHORT) || !str(x.summary)) return null;
   if (!(x.simulation === null || str(x.simulation)) || !(x.authorizes === null || str(x.authorizes))) return null;
@@ -279,6 +284,7 @@ export function validateReportView(x: unknown): ReportView | null {
   if (Object.hasOwn(x, "network") && !oneOf(x.network, REPORT_NETWORKS)) return null;
   if (Object.hasOwn(x, "routedBy") && !str(x.routedBy, 64)) return null;
   if (Object.hasOwn(x, "trustedSite") && !str(x.trustedSite, 64)) return null;
+  if (Object.hasOwn(x, "impostor") && !(plain(x.impostor) && exact(x.impostor, ["name", "origin"]) && str(x.impostor.name, 64) && isOrigin(x.impostor.origin))) return null;
   if (Object.hasOwn(x, "tokens") && !list(x.tokens, (t): t is TokenRef => plain(t) && exact(t, ["mint", "label"]) && str(t.mint, 64) && str(t.label, 64) && t.label.length > 0, 32)) return null;
   return x as unknown as ReportView;
 }

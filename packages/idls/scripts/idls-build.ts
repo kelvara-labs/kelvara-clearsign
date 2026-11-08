@@ -68,6 +68,7 @@ interface ManifestEntry {
   verified: boolean;
   verification: string;
   note?: string;
+  rootOnly?: boolean;
 }
 interface Manifest { schema: string; generatedAt: string; idls: ManifestEntry[] }
 
@@ -208,7 +209,8 @@ for (const spec of PROGRAMS) {
       : base.programData && !base.upgradeAuthority
         ? `on-chain IDL account, hash pinned, but the program is immutable (no upgrade authority), so the IDL authority ${pin.idlAuthority} cannot be tied to the deployed code`
         : `on-chain IDL account, hash pinned, but its authority ${pin.idlAuthority} is not the upgrade authority ${base.upgradeAuthority ?? "(not read)"}`,
-    ...(spec.note ? { note: spec.note } : {})
+    ...(spec.note ? { note: spec.note } : {}),
+    ...(spec.rootOnly ? { rootOnly: true } : {})
   });
 }
 

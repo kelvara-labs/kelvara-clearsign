@@ -1,0 +1,361 @@
+{
+  "schema": "kelvara.capability-map/v1",
+  "program": "kamino-farms",
+  "programId": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+  "kind": "curated",
+  "checkedAgainst": "packages/idls/roots/kamino-farms.json",
+  "reviewed": "E28 (engine), 2026-11-08: user-facing instructions classified by hand against roots/kamino-farms.json (on-chain IDL): actions on the signer's own position are class other; ownership transfers and admin creation are flagged; every other instruction keeps the low-confidence keyword class",
+  "entries": [
+    {
+      "instruction": "initializeGlobalConfig",
+      "discriminator": "71d87a83e1d11637",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize global config: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGlobalConfig",
+      "discriminator": "a45482bd6f3afac8",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update global config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeFarm",
+      "discriminator": "fc1cb9acf44a75a5",
+      "authority": null,
+      "signers": [
+        "farmAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize farm: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeFarmDelegated",
+      "discriminator": "fa546519334dcc5b",
+      "authority": null,
+      "signers": [
+        "farmAdmin",
+        "farmDelegate"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize farm delegated: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeReward",
+      "discriminator": "5f87c0c4f281e644",
+      "authority": null,
+      "signers": [
+        "farmAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "initialize reward: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "addRewards",
+      "discriminator": "58ba19e326895117",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "add rewards: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFarmConfig",
+      "discriminator": "d6b0bcf4cb3be6cf",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "update farm config: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "initializeUser",
+      "discriminator": "6f11b9fa3c7a26fe",
+      "authority": null,
+      "signers": [
+        "authority",
+        "payer"
+      ],
+      "capability": "kamino.farm_user",
+      "class": "other",
+      "changes": "creates the signer's farm user state",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "transferOwnership",
+      "discriminator": "41b1d749352d632f",
+      "authority": null,
+      "signers": [
+        "oldOwner",
+        "payer"
+      ],
+      "capability": "kamino.farm_owner",
+      "class": "admin_control",
+      "changes": "transfers a user state to a new owner",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "rewardUserOnce",
+      "discriminator": "db8939165eba6072",
+      "authority": null,
+      "signers": [
+        "delegateAuthority"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "reward user once: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "refreshFarm",
+      "discriminator": "d6838ab790c2ac2a",
+      "authority": null,
+      "signers": [],
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes a farm; permissionless",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "stake",
+      "discriminator": "ceb0ca12c8d1b36c",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "stakes tokens in a farm; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "setStakeDelegated",
+      "discriminator": "49abb84b1e38c6df",
+      "authority": null,
+      "signers": [
+        "delegateAuthority"
+      ],
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "sets delegated staking for the signer's position",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "harvestReward",
+      "discriminator": "44c8e4e9b820e2bc",
+      "authority": null,
+      "signers": [
+        "payer"
+      ],
+      "capability": "kamino.reward",
+      "class": "other",
+      "changes": "claims farm rewards; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "unstake",
+      "discriminator": "5a5f6b2acd7c32e1",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "starts unstaking tokens from a farm; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "refreshUserState",
+      "discriminator": "01870c3ef38c4d6c",
+      "authority": null,
+      "signers": [],
+      "capability": "kamino.refresh",
+      "class": "other",
+      "changes": "refreshes a user's farm state; permissionless",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawUnstakedDeposits",
+      "discriminator": "2466bb31dc248443",
+      "authority": null,
+      "signers": [
+        "owner"
+      ],
+      "capability": "kamino.stake",
+      "class": "other",
+      "changes": "withdraws tokens whose unstaking finished; acts on the signer's own position; no authority is granted",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "withdrawTreasury",
+      "discriminator": "283f7a9e90d85360",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw treasury: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "depositToFarmVault",
+      "discriminator": "83a6405e6cd572b7",
+      "authority": null,
+      "signers": [
+        "depositor"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "deposit to farm vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawFromFarmVault",
+      "discriminator": "165280fa564f7c4e",
+      "authority": null,
+      "signers": [
+        "withdrawAuthority"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw from farm vault: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawSlashedAmount",
+      "discriminator": "cad9434aac168cd8",
+      "authority": null,
+      "signers": [
+        "crank"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw slashed amount: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateFarmAdmin",
+      "discriminator": "142588137aef2482",
+      "authority": null,
+      "signers": [
+        "pendingFarmAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update farm admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateGlobalConfigAdmin",
+      "discriminator": "b85717c19ceeaf77",
+      "authority": null,
+      "signers": [
+        "pendingGlobalAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update global config admin: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "withdrawReward",
+      "discriminator": "bfbbb0890919bbf4",
+      "authority": null,
+      "signers": [
+        "farmAdmin"
+      ],
+      "capability": null,
+      "class": "fund_movement",
+      "changes": "withdraw reward: can move or burn balances it does not own (owner, permanent delegate, unlimited delegate) (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "updateSecondDelegatedAuthority",
+      "discriminator": "7f1a06b5cbf87540",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "admin_control",
+      "changes": "update second delegated authority: can change protocol, multisig or program configuration as its admin (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    },
+    {
+      "instruction": "closeEmptyUserState",
+      "discriminator": "f01809e356e1c75f",
+      "authority": null,
+      "signers": [
+        "signer"
+      ],
+      "capability": "kamino.farm_user",
+      "class": "other",
+      "changes": "closes the signer's empty farm user state",
+      "source": "curated",
+      "confidence": "curated"
+    },
+    {
+      "instruction": "idlMissingTypes",
+      "discriminator": "8250269950d4b6fd",
+      "authority": null,
+      "signers": [
+        "globalAdmin"
+      ],
+      "capability": null,
+      "class": "other",
+      "changes": "idl missing types: any other power (keyword map)",
+      "source": "keyword",
+      "confidence": "low"
+    }
+  ],
+  "authorityTypes": []
+}

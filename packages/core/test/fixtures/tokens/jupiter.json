@@ -1,13 +1,7 @@
 {
  "network": "mainnet",
  "inputs": {},
- "observed": {
-  "tx/mainnet/jupiter-v6/2a5KCPg7Jn5fpg5gqGqfuGoXhb6BEvRs3MDqNmoSKGHXXa12Q6rCU9vCz5t5RqihUMa3LFwy885ayiQPV2eUmeSv.json": 2,
-  "tx/mainnet/jupiter-v6/2kSvoVZAUg5EHQeBcHbkF98tx1aw5wTddkfbbsboXTFQ9831ahfd2zeP8DNVmnCWsm27d1nYLqj6vC5MFUEKhfVS.json": 2,
-  "tx/mainnet/jupiter-v6/3NPAtLekwnGfbhAAz1nMdPedbVgMsHtjQ9ViZ2f7moLjAkwnfSymAwvVDutrZEraCDt4vraYUKY6eTwvw6vkZSoF.json": 1,
-  "tx/mainnet/jupiter-v6/3sEW1hAb1NKRBqNeC4E1Nj1ALK8tfK3gnkEb5RFgw1dcdZzfzYEhGLoDQG2U73bVvPEpBvQVitDgLprU2nqyQFre.json": 2,
-  "tx/mainnet/jupiter-v6/5XywntkKJV2M6bWHHB26azYEePvafQUSdjaPn14q37KhyiRUE6qufDaP4mzyWyEgfpgGqFPAZ8xY6vxGb4X5R55A.json": 0
- },
+ "observed": {},
  "calls": [
   {
    "method": "getMultipleAccounts",
@@ -24,7 +18,7 @@
    ],
    "result": {
     "context": {
-     "slot": 466907464,
+     "slot": 466928047,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
@@ -78,14 +72,14 @@
    ],
    "result": {
     "context": {
-     "slot": 466907465,
+     "slot": 466928049,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
      {
       "lamports": 558873655207,
       "data": [
-       "AQAAAJj+huiNm+Lqi8HMpIeLKYjCQPUrhCS/tA7Rot3LXhmbVLxs+O0wHwAGAQEAAABicKqKWcWUBbRShshncubNEm6bil06OFNtN/e0FOi2Zw==",
+       "AQAAAJj+huiNm+Lqi8HMpIeLKYjCQPUrhCS/tA7Rot3LXhmbZZXjNK8wHwAGAQEAAABicKqKWcWUBbRShshncubNEm6bil06OFNtN/e0FOi2Zw==",
        "base64"
       ],
       "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
@@ -177,11 +171,11 @@
      "burnt": false,
      "token_info": {
       "symbol": "USDC",
-      "supply": 8779522911288404,
+      "supply": 8779253342770533,
       "decimals": 6,
       "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
       "price_info": {
-       "price_per_token": 0.9997817,
+       "price_per_token": 0.99974,
        "currency": "USDC"
       },
       "mint_authority": "BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG",
@@ -256,7 +250,7 @@
       "decimals": 6,
       "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
       "price_info": {
-       "price_per_token": 0.999382,
+       "price_per_token": 0.99935585,
        "currency": "USDC"
       },
       "mint_authority": "CkzLnD9r4d4ZZofsgNVo2VNunxDmte5YJ4vfAgMfBZNA",
@@ -280,14 +274,14 @@
    ],
    "result": {
     "context": {
-     "slot": 466907466,
+     "slot": 466928049,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
      {
       "lamports": 1513840,
       "data": [
-       "pLX/cnhsBvgxMpKbTolmUQAEpYXWzG4ha6uaLMlIsz+LrNskidVmcGddQsNl8kktZQbKv6fp+U3V9DjRS5MXsVW3VhEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgcAAAA=",
+       "pLX/cnhsBvgxMpKbTolmUQAEpYXWzG4ha6uaLMlIsz+LrNskidVmcGddQsNl8kktZQbKv6fp+U3V9DjRS5MXsa+eqhAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgcAAAA=",
        "base64"
       ],
       "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
@@ -298,7 +292,7 @@
      {
       "lamports": 1513840,
       "data": [
-       "q0EzH1zk5aJX04KqK+2JGKk5/ua9Ti+M9JrloMMq2i+LrNskidVmcGddQsNl8kktZQbKv6fp+U3V9DjRS5MXsbHkdQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgcAAAA=",
+       "q0EzH1zk5aJX04KqK+2JGKk5/ua9Ti+M9JrloMMq2i+LrNskidVmcGddQsNl8kktZQbKv6fp+U3V9DjRS5MXsScjggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgcAAAA=",
        "base64"
       ],
       "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
@@ -334,14 +328,14 @@
    ],
    "result": {
     "context": {
-     "slot": 466907466,
+     "slot": 466928049,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
      {
       "lamports": 1295819291,
       "data": [
-       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAtXeyvFKFAwAGAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARIAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKS1/3J4bAb4MTKSm06JZlEABKWF1sxuIWurmizJSLM/EwCLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApLX/cnhsBvgxMpKbTolmUQAEpYXWzG4ha6uaLMlIsz8OAAAAQmlnIFRpdHR5IENvaW4DAAAAQlRDKgAAAGh0dHBzOi8vbWV0YWRhdGEuajd0cmFja2VyLmlvL20vMjQyWHJDVXU2dQAAAAA=",
+       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9GVrlVKFAwAGAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARIAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKS1/3J4bAb4MTKSm06JZlEABKWF1sxuIWurmizJSLM/EwCLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApLX/cnhsBvgxMpKbTolmUQAEpYXWzG4ha6uaLMlIsz8OAAAAQmlnIFRpdHR5IENvaW4DAAAAQlRDKgAAAGh0dHBzOi8vbWV0YWRhdGEuajd0cmFja2VyLmlvL20vMjQyWHJDVXU2dQAAAAA=",
        "base64"
       ],
       "owner": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
@@ -442,11 +436,11 @@
      },
      "token_info": {
       "symbol": "BTC",
-      "supply": 991015329757109,
+      "supply": 991014670788084,
       "decimals": 6,
       "token_program": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
       "price_info": {
-       "price_per_token": 0.010655428,
+       "price_per_token": 0.010830155,
        "currency": "USDC"
       }
      }
@@ -525,7 +519,7 @@
       "decimals": 6,
       "token_program": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb",
       "price_info": {
-       "price_per_token": 0.0011114011,
+       "price_per_token": 0.0011289766,
        "currency": "USDC"
       }
      }
@@ -547,14 +541,14 @@
    ],
    "result": {
     "context": {
-     "slot": 466907467,
+     "slot": 466928051,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
      {
-      "lamports": 20140483107,
+      "lamports": 20230473019,
       "data": [
-       "BpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAGHjpXqSVfYyMKDWxNkx/LXRueJtakCqfIAdTChq5sEbzNEWLAEAAAAAQAAAK3YeRG0z0tu4u/RcqwONPudPTUgIJo9t2K5o9CMxHkMAQEAAADwHR8AAAAAAADodkgXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "BpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAGHjpXqSVfYyMKDWxNkx/LXRueJtakCqfIAdTChq5sEb0tntbUEAAAAAQAAAKMwTevrX3xWhEt6sE7eKdtLTw8CZGgTa0rh7pSL8c6dAQEAAADwHR8AAAAAAADodkgXAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
        "base64"
       ],
       "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
@@ -563,9 +557,9 @@
       "space": 165
      },
      {
-      "lamports": 65227946,
+      "lamports": 65240650,
       "data": [
-       "BpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAGHjpXqSVfYyMKDWxNkx/LXRueJtakCqfIAdTChq5sEb1n8xgMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAABRUBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "BpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAGHjpXqSVfYyMKDWxNkx/LXRueJtakCqfIAdTChq5sEb/ktxwMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAABRUBwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
        "base64"
       ],
       "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
@@ -600,7 +594,7 @@
    ],
    "result": {
     "context": {
-     "slot": 466907468,
+     "slot": 466928052,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
@@ -691,7 +685,7 @@
       "decimals": 9,
       "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
       "price_info": {
-       "price_per_token": 89.54286,
+       "price_per_token": 89.613075,
        "currency": "USDC"
       }
      }
@@ -713,7 +707,7 @@
    ],
    "result": {
     "context": {
-     "slot": 466907469,
+     "slot": 466928053,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
@@ -747,7 +741,7 @@
    ],
    "result": {
     "context": {
-     "slot": 466907469,
+     "slot": 466928054,
      "apiVersion": "4.3.0-alpha.2"
     },
     "value": [
@@ -929,7 +923,258 @@
       "decimals": 9,
       "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
       "price_info": {
-       "price_per_token": 89.54286,
+       "price_per_token": 89.613075,
+       "currency": "USDC"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
+     "TxnPTwwyZA3WpzUsxagVJEs7H1zVnpvzTe2spvK2XrS",
+     "bWRG9MGKoLd77zHoTegVTnKWH6ESgqtoWPE23Mc7uAe"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466928055,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 6979116527,
+      "data": [
+       "AgAAADAPUGBbvrcwh4nmwPvj5KNgIENvbqDK2oAmDbRv9mCE",
+       "base64"
+      ],
+      "owner": "BPFLoaderUpgradeab1e11111111111111111111111",
+      "executable": true,
+      "rentEpoch": 18446744073709552000,
+      "space": 36
+     },
+     {
+      "lamports": 1488440,
+      "data": [
+       "xvp6877brTo9ZfNqq8l0MbG75MLS9uDkfKYCA0UvXWGcU0/V8Ql7gxni38TgIGgrEg0bOBPowDWMRHYBdcQBAXwPg0YAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 165
+     },
+     {
+      "lamports": 26262971171,
+      "data": [
+       "BpuIV/6rgYT7aH9jRhjANdrEOdwa6ztVmKDwAAAAAAGcU0/V8Ql7gxni38TgIGgrEg0bOBPowDWMRHYBdcQBAetsTh0GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQEAAAA4thYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 165
+     }
+    ]
+   }
+  },
+  {
+   "method": "getMultipleAccounts",
+   "params": [
+    [
+     "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+     "So11111111111111111111111111111111111111112"
+    ],
+    {
+     "encoding": "base64",
+     "commitment": "confirmed"
+    }
+   ],
+   "result": {
+    "context": {
+     "slot": 466928056,
+     "apiVersion": "4.3.0-alpha.2"
+    },
+    "value": [
+     {
+      "lamports": 558873655207,
+      "data": [
+       "AQAAAJj+huiNm+Lqi8HMpIeLKYjCQPUrhCS/tA7Rot3LXhmbZZXjNK8wHwAGAQEAAABicKqKWcWUBbRShshncubNEm6bil06OFNtN/e0FOi2Zw==",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 82
+     },
+     {
+      "lamports": 1864695949081,
+      "data": [
+       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+       "base64"
+      ],
+      "owner": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "executable": false,
+      "rentEpoch": 18446744073709552000,
+      "space": 82
+     }
+    ]
+   }
+  },
+  {
+   "method": "getAssetBatch",
+   "params": {
+    "ids": [
+     "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+     "So11111111111111111111111111111111111111112"
+    ]
+   },
+   "result": [
+    {
+     "interface": "FungibleToken",
+     "id": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "",
+      "files": [
+       {
+        "uri": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "name": "USD Coin",
+       "symbol": "USDC"
+      },
+      "links": {
+       "image": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png"
+      }
+     },
+     "authorities": [
+      {
+       "address": "2wmVCSfPxGPjrnMMn7rchp4uaeoTqN39mXFC2zhPdri9",
+       "scopes": [
+        "full"
+       ]
+      }
+     ],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "token_info": {
+      "symbol": "USDC",
+      "supply": 8779253342770533,
+      "decimals": 6,
+      "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "price_info": {
+       "price_per_token": 0.99974,
+       "currency": "USDC"
+      },
+      "mint_authority": "BJE5MMbqXjVwjAF7oxwPYXnTXDyspzZyt4vwenNw5ruG",
+      "freeze_authority": "7dGbd2QZcCKcTndnHcTL8q7SMVXAkp688NTQYwrRCrar"
+     }
+    },
+    {
+     "interface": "FungibleToken",
+     "id": "So11111111111111111111111111111111111111112",
+     "content": {
+      "$schema": "https://schema.metaplex.com/nft1.0.json",
+      "json_uri": "",
+      "files": [
+       {
+        "uri": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+        "cdn_uri": "https://cdn.helius-rpc.com/cdn-cgi/image//https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png",
+        "mime": "image/png"
+       }
+      ],
+      "metadata": {
+       "name": "Wrapped SOL",
+       "symbol": "SOL"
+      },
+      "links": {
+       "image": "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+      }
+     },
+     "authorities": [
+      {
+       "address": "AqH29mZfQFgRpfwaPoTMWSKJ5kqauoc1FwVBRksZyQrt",
+       "scopes": [
+        "full"
+       ]
+      }
+     ],
+     "compression": {
+      "eligible": false,
+      "compressed": false,
+      "data_hash": "",
+      "creator_hash": "",
+      "asset_hash": "",
+      "tree": "",
+      "seq": 0,
+      "leaf_id": 0
+     },
+     "grouping": [],
+     "royalty": {
+      "royalty_model": "creators",
+      "target": null,
+      "percent": 0,
+      "basis_points": 0,
+      "primary_sale_happened": false,
+      "locked": false
+     },
+     "creators": [],
+     "ownership": {
+      "frozen": false,
+      "delegated": false,
+      "delegate": null,
+      "ownership_model": "token",
+      "owner": ""
+     },
+     "supply": null,
+     "mutable": true,
+     "burnt": false,
+     "token_info": {
+      "symbol": "SOL",
+      "supply": 0,
+      "decimals": 9,
+      "token_program": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA",
+      "price_info": {
+       "price_per_token": 89.613075,
        "currency": "USDC"
       }
      }

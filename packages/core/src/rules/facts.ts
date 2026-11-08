@@ -160,18 +160,27 @@ export function programDisplayName(ctx: { state: RuleContext["state"] }, ix: Dec
 
 /** Key scalar arguments in plain words; token amounts use decimals and the name when the instruction's token accounts name one mint. */
 export function programCallArgs(ctx: { state: RuleContext["state"] }, ix: DecodedInstruction): string {
-  const mints = new Set<string>();
+  const named: { name: string; mint: string }[] = [];
   for (const a of ix.accounts) {
     if (!a.address || !a.name) continue;
-    if (/TokenAccount$/.test(a.name)) { const m = mintOfTokenAccount(ctx, a.address); if (m) mints.add(m); }
-    else if (/Mint$|^mint$/.test(a.name)) mints.add(a.address);
+    if (/TokenAccount$/.test(a.name)) { const m = mintOfTokenAccount(ctx, a.address); if (m) named.push({ name: a.name, mint: m }); }
+    else if (/Mint$|^mint$/.test(a.name)) named.push({ name: a.name, mint: a.address });
   }
-  const mint = mints.size === 1 ? [...mints][0]! : null;
+  // The token an amount is of: the only mint named, else (shares vs underlying) the one whose account name matches the argument's wording.
+  const mintFor = (arg: string): string | null => {
+    const shares = /shares/i.test(arg);
+    const pool = named.filter((n) => /shares/i.test(n.name) === shares);
+    const distinct = new Set((pool.length ? pool : named).map((n) => n.mint));
+    return distinct.size === 1 ? [...distinct][0]! : null;
+  };
   const parts: string[] = [];
   for (const [k, v] of Object.entries(ix.args ?? {})) {
     if (k === "discriminator" || parts.length >= 6) continue;
     const label = k.replace(/([a-z0-9])([A-Z])/g, "$1 $2").toLowerCase();
-    if (typeof v === "bigint" && /amount/i.test(k)) parts.push(`${label} ${mint ? tokenAmountText(ctx, v, mint) : `${v} base units`}`);
+    if (typeof v === "bigint" && /amount/i.test(k)) {
+      const mint = mintFor(k);
+      parts.push(`${label} ${v === 2n ** 64n - 1n ? "maximum (everything available)" : mint ? tokenAmountText(ctx, v, mint) : `${v} base units`}`);
+    }
     else if (typeof v === "bigint" || typeof v === "number" || typeof v === "boolean") parts.push(`${label} ${v}`);
     else if (typeof v === "string" && v.length <= 24) parts.push(`${label} ${v}`);
   }
